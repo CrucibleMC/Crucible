@@ -1,12 +1,6 @@
 package thermos.updater;
 
-import java.io.InputStreamReader;
-import java.lang.Thread.UncaughtExceptionHandler;
-
-import thermos.Thermos;
-import thermos.TLog;
 import net.minecraft.server.MinecraftServer;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -14,6 +8,11 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import thermos.TLog;
+import thermos.Thermos;
+
+import java.io.InputStreamReader;
+import java.lang.Thread.UncaughtExceptionHandler;
 
 public class TVersionRetriever implements Runnable, UncaughtExceptionHandler {
     private static final boolean DEBUG;
@@ -28,27 +27,14 @@ public class TVersionRetriever implements Runnable, UncaughtExceptionHandler {
         sParser = new JSONParser();
     }
 
-    public static void init(MinecraftServer server) {
-        sServer = server;
-        if (MinecraftServer.thermosConfig.updatecheckerEnable.getValue()) {
-            startServer(DefaultUpdateCallback.INSTANCE, true);
-        }
-    }
-
-    public static void startServer(IVersionCheckCallback callback, boolean loop) {
-        new TVersionRetriever(callback, loop, true, Thermos.getGroup(),
-                Thermos.getChannel());
-    }
-
     private final IVersionCheckCallback mCallback;
     private final boolean mLoop;
     private final Thread mThread;
     private final String mGroup;
     private final String mName;
     private final boolean mUpToDateSupport;
-
     public TVersionRetriever(IVersionCheckCallback callback, boolean loop,
-            boolean upToDateSupport, String group, String name) {
+                             boolean upToDateSupport, String group, String name) {
         if (DEBUG)
             sLogger.info("Created new version retriever");
         mCallback = callback;
@@ -61,6 +47,18 @@ public class TVersionRetriever implements Runnable, UncaughtExceptionHandler {
         mThread.setDaemon(true);
         mThread.setUncaughtExceptionHandler(this);
         mThread.start();
+    }
+
+    public static void init(MinecraftServer server) {
+        sServer = server;
+        if (MinecraftServer.thermosConfig.updatecheckerEnable.getValue()) {
+            startServer(DefaultUpdateCallback.INSTANCE, true);
+        }
+    }
+
+    public static void startServer(IVersionCheckCallback callback, boolean loop) {
+        new TVersionRetriever(callback, loop, true, Thermos.getGroup(),
+                Thermos.getChannel());
     }
 
     @Override

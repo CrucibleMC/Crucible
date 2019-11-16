@@ -25,10 +25,15 @@ public class BeaconEffectEvent extends BlockEvent implements Cancellable {
         this.primary = primary;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     @Override
     public boolean isCancelled() {
         return cancelled;
     }
+
     @Override
     public void setCancelled(boolean cancelled) {
         this.cancelled = true;
@@ -39,16 +44,15 @@ public class BeaconEffectEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
     /**
      * Gets the effect being applied.
+     *
      * @return Potion effect
      */
     public PotionEffect getEffect() {
         return effect;
     }
+
     /**
      * Sets the potion effect that will be applied.
      *
@@ -57,6 +61,7 @@ public class BeaconEffectEvent extends BlockEvent implements Cancellable {
     public void setEffect(PotionEffect effect) {
         this.effect = effect;
     }
+
     /**
      * Gets the player who the potion effect is being applied to.
      *
@@ -65,6 +70,7 @@ public class BeaconEffectEvent extends BlockEvent implements Cancellable {
     public Player getPlayer() {
         return player;
     }
+
     /**
      * Gets whether the effect is a primary beacon effect.
      *

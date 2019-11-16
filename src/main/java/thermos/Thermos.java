@@ -1,21 +1,28 @@
 package thermos;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import org.spigotmc.RestartCommand;
+
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import org.spigotmc.RestartCommand;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
-
 public class Thermos {
     public static final ThreadGroup sThermosThreadGroup = new ThreadGroup("Thermos");
-
+    public static File sNewServerLocation;
+    public static String sNewServerVersion;
+    public static boolean sUpdateInProgress;
     private static boolean sManifestParsed = false;
+    private static String sCurrentVersion;
+    private static File sServerLocation;
+    private static File sServerHome;
+    private static String sGroup;
+    private static String sBranch;
+    private static String sChannel;
+    private static boolean sLegacy, sOfficial;
+    private static int sForgeRevision = 0;
 
     private static void parseManifest() {
         if (sManifestParsed)
@@ -52,21 +59,15 @@ public class Thermos {
         }
     }
 
-    private static String sCurrentVersion;
-
     public static String getCurrentVersion() {
         parseManifest();
         return sCurrentVersion;
     }
 
-    private static File sServerLocation;
-
     public static File getServerLocation() {
         parseManifest();
         return sServerLocation;
     }
-
-    private static File sServerHome;
 
     public static File getServerHome() {
         if (sServerHome == null) {
@@ -81,48 +82,34 @@ public class Thermos {
         return sServerHome;
     }
 
-    private static String sGroup;
-
     public static String getGroup() {
         parseManifest();
         return sGroup;
     }
-
-    private static String sBranch;
 
     public static String getBranch() {
         parseManifest();
         return sBranch;
     }
 
-    private static String sChannel;
-
     public static String getChannel() {
         parseManifest();
         return sChannel;
     }
-    
-    private static boolean sLegacy, sOfficial;
-    
+
     public static boolean isLegacy() {
         parseManifest();
         return sLegacy;
     }
-    
+
     public static boolean isOfficial() {
         parseManifest();
         return sOfficial;
     }
 
-    public static File sNewServerLocation;
-    public static String sNewServerVersion;
-    public static boolean sUpdateInProgress;
-
     public static void restart() {
         RestartCommand.restart(true);
     }
-    
-    private static int sForgeRevision = 0;
 
     public static int lookupForgeRevision() {
         if (sForgeRevision != 0) return sForgeRevision;

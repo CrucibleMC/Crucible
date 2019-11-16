@@ -1,21 +1,25 @@
 package thermos.updater;
 
-import thermos.Thermos;
-import thermos.ThermosCommand;
-import thermos.updater.TVersionRetriever.IVersionCheckCallback;
-import net.minecraft.server.MinecraftServer;
-
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
+import thermos.Thermos;
+import thermos.ThermosCommand;
+import thermos.updater.TVersionRetriever.IVersionCheckCallback;
 
 public class DefaultUpdateCallback implements IVersionCheckCallback {
     public static DefaultUpdateCallback INSTANCE;
 
     static {
         INSTANCE = new DefaultUpdateCallback();
+    }
+
+    private boolean mHasUpdate;
+    private String mCurrentVersion;
+    private String mNewVersion;
+
+    private DefaultUpdateCallback() {
     }
 
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -33,13 +37,6 @@ public class DefaultUpdateCallback implements IVersionCheckCallback {
 
     private void sendUpdate(CommandSender player) {
         CommandSenderUpdateCallback.newVersion(player, mCurrentVersion, mNewVersion);
-    }
-
-    private boolean mHasUpdate;
-    private String mCurrentVersion;
-    private String mNewVersion;
-
-    private DefaultUpdateCallback() {
     }
 
     @Override

@@ -1,12 +1,10 @@
 package thermos;
 
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.cauldron.configuration.BoolSetting;
 import net.minecraftforge.cauldron.configuration.ConfigBase;
 import net.minecraftforge.cauldron.configuration.Setting;
-import net.minecraftforge.cauldron.configuration.StringSetting;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ThermosConfig extends ConfigBase {
     public BoolSetting commandEnable = new BoolSetting(this, "command.enable", true, "Enable Thermos command");
@@ -16,9 +14,9 @@ public class ThermosConfig extends ConfigBase {
 
     public BoolSetting loggingMaterialInjection = new BoolSetting(this, "logging.materialInjection", false, "Log material injection event");
     public BoolSetting loggingClientModList = new BoolSetting(this, "logging.clientModList", true, "Print client's mod list during attempt to join");
-        
+
     public BoolSetting commonAllowNetherPortal = new BoolSetting(this, "common.allowNetherPortalBesidesOverworld", false, "Allow nether portals in dimensions besides overworld");
-    
+
     public ThermosConfig() {
         super("thermos.yml", "thermos");
         register(commandEnable);

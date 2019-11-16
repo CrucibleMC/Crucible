@@ -1,40 +1,47 @@
 package thermos.thermite;
+
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A subclass of java.util.random that implements the Xorshift random number
  * generator
- *
+ * <p>
  * - it is 30% faster than the generator from Java's library - it produces
  * random sequences of higher quality than java.util.Random - this class also
  * provides a clone() function
- *
+ * <p>
  * Usage: XSRandom rand = new XSRandom(); //Instantiation x = rand.nextInt();
  * //pull a random number
- *
+ * <p>
  * To use the class in legacy code, you may also instantiate an XSRandom object
  * and assign it to a java.util.Random object: java.util.Random rand = new
  * XSRandom();
- *
+ * <p>
  * for an explanation of the algorithm, see
  * http://demesos.blogspot.com/2011/09/pseudo-random-number-generators.html
  *
  * @author Wilfried Elmenreich University of Klagenfurt/Lakeside Labs
  * http://www.elmenreich.tk
- *
+ * <p>
  * This code is released under the GNU Lesser General Public License Version 3
  * http://www.gnu.org/licenses/lgpl-3.0.txt
  */
 public class ThermiteRandom extends Random {
 
     private static final long serialVersionUID = 6208727693524452904L;
-    private long seed;
+    private static final AtomicLong seedUniquifier
+            = new AtomicLong(8682522807148012L);
 
     /*
      MODIFIED BY: Robotia
      Modification: Implemented Random class seed generator
      */
+    private static final double DOUBLE_UNIT = 0x1.0p-53; // 1.0 / (1L << 53)
+    boolean haveNextNextGaussian = false;
+    double nextNextGaussian = 0;
+    private long seed;
+
     /**
      * Creates a new pseudo random number generator. The seed is initialized to
      * the current time, as if by
@@ -42,20 +49,6 @@ public class ThermiteRandom extends Random {
      */
     public ThermiteRandom() {
         this(seedUniquifier() ^ System.nanoTime());
-    }
-    private static final AtomicLong seedUniquifier
-            = new AtomicLong(8682522807148012L);
-
-    private static long seedUniquifier() {
-        // L'Ecuyer, "Tables of Linear Congruential Generators of
-        // Different Sizes and Good Lattice Structure", 1999
-        for (;;) {
-            long current = seedUniquifier.get();
-            long next = current * 181783497276652981L;
-            if (seedUniquifier.compareAndSet(current, next)) {
-                return next;
-            }
-        }
     }
 
     /**
@@ -67,14 +60,27 @@ public class ThermiteRandom extends Random {
     public ThermiteRandom(long seed) {
         this.seed = seed;
     }
+
+    private static long seedUniquifier() {
+        // L'Ecuyer, "Tables of Linear Congruential Generators of
+        // Different Sizes and Good Lattice Structure", 1999
+        for (; ; ) {
+            long current = seedUniquifier.get();
+            long next = current * 181783497276652981L;
+            if (seedUniquifier.compareAndSet(current, next)) {
+                return next;
+            }
+        }
+    }
+
     public boolean nextBoolean() {
         return next(1) != 0;
     }
-    private static final double DOUBLE_UNIT = 0x1.0p-53; // 1.0 / (1L << 53)
-    
+
     public double nextDouble() {
-        return (((long)(next(26)) << 27) + next(27)) * DOUBLE_UNIT;
-    }    
+        return (((long) (next(26)) << 27) + next(27)) * DOUBLE_UNIT;
+    }
+
     /**
      * Returns the current state of the seed, can be used to clone the object
      *
@@ -120,8 +126,7 @@ public class ThermiteRandom extends Random {
         x &= ((1L << nbits) - 1);
         return (int) x;
     }
-    boolean haveNextNextGaussian = false;
-    double nextNextGaussian = 0;
+
     synchronized public double nextGaussian() {
         // See Knuth, ACP, Section 3.4.1 Algorithm C.
         if (haveNextNextGaussian) {
@@ -134,12 +139,13 @@ public class ThermiteRandom extends Random {
                 v2 = 2 * nextDouble() - 1; // between -1 and 1
                 s = v1 * v1 + v2 * v2;
             } while (s >= 1 || s == 0);
-            double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s)/s);
+            double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s) / s);
             nextNextGaussian = v2 * multiplier;
             haveNextNextGaussian = true;
             return v1 * multiplier;
         }
     }
+
     /**
      * Returns a pseudorandom, uniformly distributed {@code int} value between 0
      * (inclusive) and the specified value (exclusive), drawn from this random
@@ -207,13 +213,14 @@ public class ThermiteRandom extends Random {
             r = (int) ((bound * (long) r) >> 31);
         } else {
             for (int u = r;
-                    u - (r = u % bound) + m < 0;
-                    u = next(31))
+                 u - (r = u % bound) + m < 0;
+                 u = next(31))
                 ;
         }
         return r;
     }
+
     public int nextInt() {
         return next(32);
-    }    
+    }
 }
