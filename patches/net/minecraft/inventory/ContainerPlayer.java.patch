@@ -34,7 +34,7 @@
          this.addSlotToContainer(new SlotCrafting(p_i1819_1_.player, this.craftMatrix, this.craftResult, 0, 144, 36));
          int i;
          int j;
-@@ -72,12 +87,24 @@
+@@ -72,12 +87,28 @@
              this.addSlotToContainer(new Slot(p_i1819_1_, i, 8 + i * 18, 142));
          }
  
@@ -54,14 +54,18 @@
 +        {
 +            return;
 +        }
++        //Crucible start - Fix ClassCastException
++        if (super.crafters.get(0) instanceof EntityPlayerMP){
++            EntityPlayerMP player = (EntityPlayerMP) super.crafters.get(0);
++            player.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, 0, craftResult));
++        }  // TODO: 16/11/2019 Do I have to do something if it's not a player?
 +
-+        EntityPlayerMP player = (EntityPlayerMP) super.crafters.get(0); // TODO: Is this _always_ correct? Seems like it.
-+        player.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(player.openContainer.windowId, 0, craftResult));
++        //Crucible end
 +        // CraftBukkit end
      }
  
      public void onContainerClosed(EntityPlayer p_75134_1_)
-@@ -187,4 +214,18 @@
+@@ -187,4 +218,18 @@
      {
          return p_94530_2_.inventory != this.craftResult && super.func_94530_a(p_94530_1_, p_94530_2_);
      }

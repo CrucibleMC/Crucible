@@ -206,7 +206,15 @@
  
          for (int k = b0 - 1; k <= b0 + 32; ++k)
          {
-@@ -641,6 +744,35 @@
+@@ -631,7 +734,6 @@
+                 }
+             }
+         }
+-
+         this.worldObj.setBlock(p_70975_1_, b0 + 0, p_70975_2_, Blocks.bedrock);
+         this.worldObj.setBlock(p_70975_1_, b0 + 1, p_70975_2_, Blocks.bedrock);
+         this.worldObj.setBlock(p_70975_1_, b0 + 2, p_70975_2_, Blocks.bedrock);
+@@ -641,6 +743,35 @@
          this.worldObj.setBlock(p_70975_1_, b0 + 2, p_70975_2_ + 1, Blocks.torch);
          this.worldObj.setBlock(p_70975_1_, b0 + 3, p_70975_2_, Blocks.bedrock);
          this.worldObj.setBlock(p_70975_1_, b0 + 4, p_70975_2_, Blocks.dragon_egg);
@@ -242,7 +250,7 @@
          BlockEndPortal.field_149948_a = false;
      }
  
-@@ -675,4 +807,13 @@
+@@ -675,4 +806,13 @@
      {
          return 5.0F;
      }
