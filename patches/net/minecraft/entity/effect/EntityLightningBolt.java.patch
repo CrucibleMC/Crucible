@@ -75,7 +75,7 @@
              }
          }
      }
-+
+ 
 +    // Spigot start
 +    public EntityLightningBolt(World world, double x, double y, double z, boolean isEffect, boolean isSilent)
 +    {
@@ -83,7 +83,7 @@
 +        this.isSilent = isSilent;
 +    }
 +    // Spigot end
- 
++
      public void onUpdate()
      {
          super.onUpdate();

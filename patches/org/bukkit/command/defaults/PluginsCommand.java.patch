@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/PluginsCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/PluginsCommand.java
+@@ -19,8 +19,9 @@
+     @Override
+     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
+         if (!testPermission(sender)) return true;
+-
+-        sender.sendMessage("Plugins " + getPluginList());
++        // TODO: 16/11/2019 Add a setting to disable the plugin list.
++        //sender.sendMessage("Plugins " + getPluginList());
++        sender.sendMessage("Plugins " + ChatColor.GREEN + "[CrucibleMC]"); // Crucible - Disable plugin list
+         return true;
+     }
+ 
