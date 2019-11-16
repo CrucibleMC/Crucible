@@ -28,6 +28,18 @@ All builds will be in `build/distributions`
 * Re apply patches & build binaries
   * `./gradlew clean setupCauldron jar`
 
+## TODO List:
+- [ ] Implement the PaperMC API.
+- [ ] Implement the Glowstone API.
+- [ ] Rewrite most of Cauldron/Thermos code.
+- [ ] Fix most remaining bugs and incompatibilities.
+- [ ] Update the Spigot and Bukkit API.
+- [ ] Performance Improvements.
+- [ ] Rewrite parts of the project build process for easier maintenance.
+- [ ] Fixes for better support [Travertine](https://github.com/PaperMC/Travertine).
+- [ ] Make the project compatible with Windows.
+- [ ] Backport useful things.
+
 [forge]: https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-green.svg "Minecraft Forge v10.13.4.1614"
 [mc]: https://img.shields.io/badge/Minecraft-v1.7.10-green.svg "Minecraft 1.7.10"
 [java]: https://img.shields.io/badge/Java%20JDK-v1.8-blue.svg "Java JDK 8"
