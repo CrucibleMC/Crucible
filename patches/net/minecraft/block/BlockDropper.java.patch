@@ -21,7 +21,7 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_149941_1_, p_149941_2_, p_149941_3_, p_149941_4_);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
-@@ -60,10 +65,33 @@
+@@ -60,10 +65,54 @@
  
                  if (iinventory != null)
                  {
@@ -38,7 +38,28 @@
 +                    }
 +                    else
 +                    {
-+                        destinationInventory = iinventory.getOwner().getInventory();
++                        // Crucible start - support mod inventories, with no owners
++                        try {
++
++                            if (iinventory.getOwner().getInventory() != null) {
++                                destinationInventory = iinventory.getOwner().getInventory();
++                            } else {
++                                // TODO: create a mod inventory for passing to the event, instead of null
++                                destinationInventory = null;
++                            }
++                        } catch (AbstractMethodError e) { // fixes openblocks AbstractMethodError
++                            if (iinventory instanceof TileEntity) {
++                                org.bukkit.inventory.InventoryHolder holder = net.minecraftforge.cauldron.CauldronUtils.getOwner((net.minecraft.tileentity.TileEntity)iinventory);
++                                if (holder != null) {
++                                    destinationInventory = holder.getInventory();
++                                } else {
++                                    destinationInventory = null;
++                                }
++                            } else {
++                                destinationInventory = null;
++                            }
++                        }
++                        // Crucible end
 +                    }
 +
 +                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(tileentitydispenser.getOwner().getInventory(), oitemstack.clone(), destinationInventory, true);
