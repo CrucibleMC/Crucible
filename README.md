@@ -5,20 +5,22 @@ Crucible is a continuation of [Thermos](https://github.com/CyberdyneCC/Thermos) 
 
 Advantages over Thermos:
 + It is now possible to build :)
++ Fixed several minor bugs.
 
 ## Build Requirements
 * Java 8u101 JDK or higher
+* Linux (apparently the project breaks in windows).
 * `JAVA_HOME` defined on your OS
 
 ## Building
 * Checkout project
   * You can use IDE or clone from console:
-  `https://github.com/juanmuscaria/Crucible.git`
+  `git clone https://github.com/CrucibleMC/Crucible.git`
 * Build
   * This process downloads minecraft and apply patches
   * If you have gradle integration in IDE - you can still use gui
   * Manual:
-  `./gradlew setupCauldron jar`
+  `./gradlew setupCrucible jar`
 
 All builds will be in `build/distributions`
   
@@ -26,7 +28,7 @@ All builds will be in `build/distributions`
 * Update sources
   * `git pull origin master`
 * Re apply patches & build binaries
-  * `./gradlew clean setupCauldron jar`
+  * `./gradlew clean setupCrucible jar`
 
 ## TODO List:
 - [ ] Implement the PaperMC API.

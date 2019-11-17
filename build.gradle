@@ -26,18 +26,6 @@ buildscript {
         classpath files('CrucibleGradle-1.0.jar')
     }
 }
-allprojects {
-    gradle.taskGraph.whenReady {
-        tasks.each { task ->
-            if (task.name.contains("createVersionPropertiesFML")
-                    || task.name.contains("createChangelog")
-            ) {
-                task.enabled = false
-            }
-        }
-    }
-}
-
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.8'
