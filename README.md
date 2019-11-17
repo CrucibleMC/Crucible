@@ -9,7 +9,7 @@ Advantages over Thermos:
 
 ## Build Requirements
 * Java 8u101 JDK or higher
-* Linux (apparently the project breaks in windows).
+* Linux (apparently the project breaks on Windows).
 * `JAVA_HOME` defined on your OS
 
 ## Building
