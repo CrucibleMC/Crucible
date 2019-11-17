@@ -6,6 +6,8 @@ import net.minecraftforge.cauldron.configuration.ConfigBase;
 import net.minecraftforge.cauldron.configuration.Setting;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import io.github.crucible.CrucibleConfigs;
+
 public class ThermosConfig extends ConfigBase {
     public BoolSetting commandEnable = new BoolSetting(this, "command.enable", true, "Enable Thermos command");
     public BoolSetting opConsoleOnly = new BoolSetting(this, "op.consoleonly", false, "Set the OP command to only be allowed to run in console");
@@ -35,7 +37,7 @@ public class ThermosConfig extends ConfigBase {
 
     @Override
     public void registerCommands() {
-        if (commandEnable.getValue()) {
+        if (CrucibleConfigs.configs.thermos_commandEnable) {
             super.registerCommands();
         }
     }

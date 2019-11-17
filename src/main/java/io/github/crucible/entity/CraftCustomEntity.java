@@ -1,4 +1,4 @@
-package net.minecraftforge.cauldron.entity;
+package io.github.crucible.entity;
 
 import net.minecraft.entity.Entity;
 

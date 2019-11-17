@@ -16,7 +16,7 @@
 -
 -        sender.sendMessage("Plugins " + getPluginList());
 +        // Crucible start - Disable plugin list
-+        if (CrucibleConfigs.configs.hidePluginList) {
++        if (CrucibleConfigs.configs.crucible_hidePluginList) {
 +            sender.sendMessage("Plugins " + ChatColor.GREEN + "[CrucibleMC]");
 +        } else {
 +            sender.sendMessage("Plugins " + getPluginList());

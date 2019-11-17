@@ -31,6 +31,7 @@ All builds will be in `build/distributions`
   * `./gradlew clean setupCrucible jar`
 
 ## TODO List:
+- [ ] Create Crucible API.
 - [ ] Implement the PaperMC API.
 - [ ] Implement the Glowstone API.
 - [ ] Rewrite most of Cauldron/Thermos code.

@@ -16,10 +16,11 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import io.github.crucible.entity.CraftCustomEntity;
+
 // Cauldron start
 import java.util.Map;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.cauldron.entity.CraftCustomEntity;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -173,7 +174,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         else if (entity instanceof net.minecraft.entity.item.EntityFireworkRocket) { return new CraftFirework(server, (net.minecraft.entity.item.EntityFireworkRocket) entity); }
         // Cauldron - used for custom entities that extend Entity directly
         else if (entity instanceof net.minecraft.entity.Entity) {
-            if (entity instanceof net.minecraft.entity.IProjectile) return new thermos.entity.CustomProjectileEntity(server, entity); // Thermos
+            if (entity instanceof net.minecraft.entity.IProjectile) return new io.github.crucible.entity.CustomProjectileEntity(server, entity); // Thermos
             return new CraftCustomEntity(server, (net.minecraft.entity.Entity) entity); }
 	else { return null; }
         //throw new AssertionError("Unknown entity " + entity == null ? null : entity.getClass() + ": " + entity); // Cauldron - show the entity that caused exception

@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/org/bukkit/command/defaults/OpCommand.java
++++ ../src-work/minecraft/org/bukkit/command/defaults/OpCommand.java
+@@ -17,6 +17,8 @@
+ 
+ import com.google.common.collect.ImmutableList;
+ 
++import io.github.crucible.CrucibleConfigs;
++
+ public class OpCommand extends VanillaCommand {
+     public OpCommand() {
+         super("op");
+@@ -35,7 +37,7 @@
+ 
+         OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+ 
+-        if(MinecraftServer.thermosConfig.opConsoleOnly.getValue()) {
++        if(CrucibleConfigs.configs.thermos_opConsoleOnly) {
+ 
+             if(!(sender instanceof Player)) {
+                 player.setOp(true);
