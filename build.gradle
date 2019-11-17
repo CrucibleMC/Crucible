@@ -22,8 +22,8 @@ buildscript {
         }
     }
     dependencies {
-        //classpath files('ForgeGradle.jar')
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath files('CrucibleGradle-1.0.jar')
     }
 }
 allprojects {
@@ -44,10 +44,9 @@ task wrapper(type: Wrapper) {
 }
 
 apply plugin: 'maven'
-apply plugin: 'cauldron'
+apply plugin: 'crucible'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
-apply plugin: 'idea'
 
 repositories {
     jcenter()
