@@ -1942,24 +1942,30 @@
 -                itemstack = packetbuffer.readItemStackFromBuffer();
 +                push = packetbuffer.readItemStackFromBuffer();
  
--                if (itemstack != null)
+-                if (itemstack == null)
 +                if (push != null)
                  {
--                    if (!ItemEditableBook.validBookTagContents(itemstack.getTagCompound()))
+-                    return;
+-                }
 +                    if (!ItemEditableBook.validBookTagContents(push.getTagCompound()))
-                     {
-                         throw new IOException("Invalid book tag!");
-                     }
++                    {
++                        throw new IOException("Invalid book tag!");
++                    }
  
--                    itemstack1 = this.playerEntity.inventory.getCurrentItem();
+-                if (!ItemEditableBook.validBookTagContents(itemstack.getTagCompound()))
+-                {
+-                    throw new IOException("Invalid book tag!");
+-                }
 +                    stack = this.playerEntity.inventory.getCurrentItem();
  
--                    if (itemstack1 == null)
+-                itemstack1 = this.playerEntity.inventory.getCurrentItem();
 +                    if (stack == null)
-                     {
-                         return;
-                     }
++                    {
++                        return;
++                    }
  
+-                if (itemstack1 != null)
+-                {
 -                    if (itemstack.getItem() == Items.written_book && itemstack1.getItem() == Items.writable_book)
 +                    if (push.getItem() == Items.written_book && stack.getItem() == Items.writable_book)
                      {

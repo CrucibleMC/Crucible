@@ -18,7 +18,15 @@
  
  import com.google.common.base.Joiner;
  import com.google.common.base.Strings;
-@@ -282,6 +287,7 @@
+@@ -54,6 +59,7 @@
+ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.server.FMLServerHandler;
++import io.github.crucible.hook.ModlistHook;
+ 
+ 
+ /**
+@@ -282,6 +288,7 @@
      {
          Loader.instance().serverStarted();
          sidedDelegate.allowLogins();
@@ -26,7 +34,7 @@
      }
  
      public void handleServerStopping()
-@@ -385,10 +391,11 @@
+@@ -385,10 +392,11 @@
          {
              return;
          }
@@ -39,7 +47,7 @@
          handlerSet.add(handler);
          handlerToCheck = new WeakReference<SaveHandler>(handler); // for confirmBackupLevelDatUse
          Map<String,NBTBase> additionalProperties = Maps.newHashMap();
-@@ -496,7 +503,14 @@
+@@ -496,7 +504,14 @@
  
      public String getModName()
      {
@@ -55,7 +63,7 @@
          modNames.add("fml");
          if (!noForge)
          {
-@@ -540,8 +554,21 @@
+@@ -540,14 +555,36 @@
          bus().post(new InputEvent.KeyInputEvent());
      }
  
@@ -77,3 +85,19 @@
          bus().post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
      }
  
+     public void firePlayerLoggedIn(EntityPlayer player)
+     {
+-        bus().post(new PlayerEvent.PlayerLoggedInEvent(player));
++    	//Crucible start
++    	PlayerEvent.PlayerLoggedInEvent loginEvent = new PlayerEvent.PlayerLoggedInEvent(player);
++    	bus().post(loginEvent);
++    	
++    	try {
++    		ModlistHook.instance.playerLoggedIn(loginEvent);
++    	}catch(Exception e) {
++    		System.out.println("Crucible "+this.getClass().getCanonicalName() + ":firePlayerLoggedIn");
++    	}
++    	//Cruicible end
+     }
+ 
+     public void firePlayerLoggedOut(EntityPlayer player)

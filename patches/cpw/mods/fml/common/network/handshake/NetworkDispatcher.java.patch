@@ -35,7 +35,15 @@
          }
          return false;
      }
-@@ -304,6 +314,7 @@
+@@ -243,6 +253,7 @@
+     {
+         kickWithMessage("This is modded. No modded response received. Bye!");
+     }
++    
+     private void kickWithMessage(String message)
+     {
+         final ChatComponentText chatcomponenttext = new ChatComponentText(message);
+@@ -304,6 +315,7 @@
              state = ConnectionState.HANDSHAKING;
          }
          String channelName = msg.func_149559_c();
@@ -43,7 +51,7 @@
          if ("FML|HS".equals(channelName) || "REGISTER".equals(channelName) || "UNREGISTER".equals(channelName))
          {
              FMLProxyPacket proxy = new FMLProxyPacket(msg);
-@@ -325,6 +336,7 @@
+@@ -325,6 +337,7 @@
          else if (NetworkRegistry.INSTANCE.hasChannel(channelName, Side.SERVER))
          {
              FMLProxyPacket proxy = new FMLProxyPacket(msg);
@@ -51,7 +59,7 @@
              proxy.setDispatcher(this);
              context.fireChannelRead(proxy);
              return true;
-@@ -482,7 +494,7 @@
+@@ -482,7 +495,7 @@
          // Stop the epic channel closed spam at close
          if (!(cause instanceof ClosedChannelException))
          {

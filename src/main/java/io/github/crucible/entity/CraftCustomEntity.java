@@ -31,8 +31,9 @@ public class CraftCustomEntity extends CraftEntity {
         return this.entityName;
     }
 
+    @SuppressWarnings("deprecation")
     public EntityType getType() {
-        EntityType type = EntityType.fromName(this.entityName);
+		EntityType type = EntityType.fromName(this.entityName);
         if (type != null)
             return type;
         else return EntityType.UNKNOWN;
