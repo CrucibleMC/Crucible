@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/Loader.java
++++ ../src-work/minecraft/cpw/mods/fml/common/Loader.java
+@@ -86,6 +86,7 @@
+ import cpw.mods.fml.common.versioning.VersionParser;
+ import cpw.mods.fml.relauncher.ModListHelper;
+ import cpw.mods.fml.relauncher.Side;
++import io.github.crucible.CrucibleModContainer;
+ 
+ /**
+  * The loader class performs the actual loading of the mod code from disk.
+@@ -332,6 +333,7 @@
+         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
+         // Add in the MCP mod container
+         mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
++        mods.add(new InjectedModContainer(new CrucibleModContainer(),null)); // Crucible - inject the Crucible DummyMod.
+         for (String cont : injectedContainers)
+         {
+             ModContainer mc;
