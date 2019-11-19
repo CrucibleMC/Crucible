@@ -80,7 +80,7 @@ public class CrucibleModContainer extends DummyModContainer {
     @Subscribe
     public void serverStarting(FMLServerStartingEvent evt)
     {
-        evt.registerServerCommand("crucible", new CrucibleCommand());
+        evt.registerServerCommand("crucible", new CrucibleCommand(evt.getServer()));
     }
     
     @Override
