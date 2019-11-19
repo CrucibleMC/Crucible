@@ -1,36 +1,40 @@
+![Minecraft Forge v10.13.4.1614][forge]
+![Minecraft v1.7.10][mc]
+![Spigot 1.7.10 Snapshot ][spigot]
+![Java JDK v1.8][java]
 ![Crucible](logo.png)
 ### What's Crucible?
 
 Crucible is a continuation of [Thermos](https://github.com/CyberdyneCC/Thermos) as it has been discontinued.
 
 Advantages over Thermos:
-+ It is now possible to build :)
++ It is now possible to build. :)
 + Fixed several minor bugs.
++ Performance Improvements.
++ Updated some libraries.
 
 ## Build Requirements
 * Java 8u101 JDK or higher
 * Linux (apparently the project breaks on Windows).
 * `JAVA_HOME` defined on your OS
 
-## Building
+## Setup the Workspace
 * Checkout project
   * You can use IDE or clone from console:
   `git clone https://github.com/CrucibleMC/Crucible.git`
-* Build
-  * This process downloads minecraft and apply patches
-  * If you have gradle integration in IDE - you can still use gui
-  * Manual:
-  `./gradlew setupCrucible jar`
-
-All builds will be in `build/distributions`
-  
-## Updating sources
-* Update sources
-  * `git pull origin master`
-* Re apply patches & build binaries
-  * `./gradlew clean setupCrucible jar`
-
-## TODO List:
+* Creating the workspace
+  * To create the workspace just run the command: `./gradlew setupCrucible`
+  * To create the patches with the changes made just run: `./gradlew genPatches`
+* Building
+  * Before you can build you must first setup the workspace!
+  * To build just run the command: `./gradlew jar`
+  * All builds will be in `build/distributions`
+* Updating sources
+  * Update sources: `git pull origin master`
+  * Recreate the workspace: `./gradlew clean setupCrucible`
+## Useful links
++ [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler. "
+## TODO List
 - [ ] Create Crucible API.
 - [ ] Implement the PaperMC API.
 - [ ] Implement the Glowstone API.
