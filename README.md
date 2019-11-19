@@ -1,4 +1,4 @@
-![Crucible](icon.png)
+![Crucible](logo.png)
 ### What's Crucible?
 
 Crucible is a continuation of [Thermos](https://github.com/CyberdyneCC/Thermos) as it has been discontinued.
