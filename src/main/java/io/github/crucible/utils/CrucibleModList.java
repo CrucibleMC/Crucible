@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.entity.DataWatcher;
+import net.minecraft.world.gen.ChunkProviderServer;
+
 public class CrucibleModList {
 	
 	private String forgeVersion;
@@ -12,6 +15,7 @@ public class CrucibleModList {
 	public CrucibleModList(String forgeVersion, ArrayList<String> mods) {
 		this.setForgeVersion(forgeVersion);
 		this.setMods(mods);
+		
 	}
 	
 	public boolean loadFromObject(Map<String, String> object) {

@@ -277,8 +277,8 @@
 +
 +                trigger = !trigger;
 +                if(trigger)
-+                    this.server.getPluginManager().callEvent(event);
-+
++                	this.server.getPluginManager().callEvent(event);
++                
 +                // If the event is cancelled we move the player back to their old location.
 +                if (event.isCancelled())
 +                {
@@ -724,40 +724,40 @@
 +            }
 +            else if (true)
 +            {
-+                String[] bits = s.split(" ");
++            	String[] bits = s.split(" ");
++            	
++            	HashSet<String> possibilities = new HashSet<String>(); // No duplicates allowed
++            	for (String str: bits)
++            	{
++            		if (str.length() <= 17 && str.length() >= 4)
++            		{
++            			if(str.charAt(0) != '@')
++            				continue;
++            			possibilities.add(str.substring(1));
  
 -            this.chatSpamThresholdCount += 20;
-+                HashSet<String> possibilities = new HashSet<String>(); // No duplicates allowed
-+                for (String str: bits)
-+                {
-+                    if (str.length() <= 17 && str.length() >= 4)
-+                    {
-+                        if(str.charAt(0) != '@')
-+                            continue;
-+                        possibilities.add(str.substring(1));
- 
--            if (this.chatSpamThresholdCount > 200 && !this.serverController.getConfigurationManager().func_152596_g(this.playerEntity.getGameProfile()))
-+                    }
-+                }
-+
-+                for (Object o : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
-+                {
-+                    if (! (o instanceof EntityPlayerMP))
-+                    {
-+                        continue;
-+                    }
-+                    EntityPlayerMP ep = (EntityPlayerMP)o;
-+                    if (possibilities.contains(ep.getCommandSenderName()))
-+                    {
-+                        ep.worldObj.playSoundAtEntity(ep, "random.orb", 4.0F, 4.0F);
-+                    }
-+
-+                }
-+
++            		}
++            	}
++            	
++    			for (Object o : MinecraftServer.getServer().getConfigurationManager().playerEntityList)
++    			{
++    				if (! (o instanceof EntityPlayerMP))
++    				{
++    					continue;
++    				}
++    				EntityPlayerMP ep = (EntityPlayerMP)o;
++    				if (possibilities.contains(ep.getCommandSenderName()))
++    				{
++    					ep.worldObj.playSoundAtEntity(ep, "random.orb", 4.0F, 4.0F);
++    				}
++    				
++    			}
++            	
 +                this.chat(s, true);
 +                // CraftBukkit end - the below is for reference. :)
 +            }
-+
+ 
+-            if (this.chatSpamThresholdCount > 200 && !this.serverController.getConfigurationManager().func_152596_g(this.playerEntity.getGameProfile()))
 +            // CraftBukkit start - replaced with thread safe throttle
 +            // this.chatSpamThresholdCount += 20;
 +            if (chatSpamField.addAndGet(this, 20) > 200 && !this.serverController.getConfigurationManager().func_152596_g(this.playerEntity.getGameProfile()))
@@ -928,23 +928,23 @@
 +        org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.startTiming(); // Spigot
 +        // CraftBukkit start
 +        CraftPlayer player = this.getPlayerB();
-+
++        
 +        // Thermos - block specified commands completely - no one will ever believe you.
 +        if(net.minecraftforge.cauldron.configuration.CauldronConfig.instance.blockedCMDs.contains(p_147361_1_))
 +        {
 +            org.bukkit.craftbukkit.SpigotTimings.playerCommandTimer.stopTiming(); // Spigot
 +            return;
 +        }
-+
-+
++        
++        
 +        if (net.minecraftforge.cauldron.configuration.CauldronConfig.instance.noFallbackAlias.getValue())
 +        {
-+            int ind = p_147361_1_.indexOf(':');
-+            int spc = p_147361_1_.indexOf(' ');
-+            if (ind != -1 && ( ind < spc || spc == -1))
-+                p_147361_1_ = "/" + p_147361_1_.substring(ind);
-+        }
-+
++        	int ind = p_147361_1_.indexOf(':');
++        	int spc = p_147361_1_.indexOf(' ');
++        	if (ind != -1 && ( ind < spc || spc == -1))
++        		p_147361_1_ = "/" + p_147361_1_.substring(ind);
++        }        
++        
 +        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, p_147361_1_, new LazyPlayerSet());
 +        this.server.getPluginManager().callEvent(event);
 +
@@ -1140,7 +1140,7 @@
 +
 +                    if (triggerLeashUpdate
 +                            && (event.isCancelled() || this.playerEntity.inventory.getCurrentItem() == null || this.playerEntity.inventory.getCurrentItem()
-+                            .getItem() != Items.lead))
++                                    .getItem() != Items.lead))
 +                    {
 +                        // Refresh the current leash state
 +                        this.sendPacket(new S1BPacketEntityAttach(1, entity, ((EntityLiving) entity).getLeashedToEntity()));
@@ -1148,7 +1148,7 @@
 +
 +                    if (triggerTagUpdate
 +                            && (event.isCancelled() || this.playerEntity.inventory.getCurrentItem() == null || this.playerEntity.inventory.getCurrentItem()
-+                            .getItem() != Items.name_tag))
++                                    .getItem() != Items.name_tag))
 +                    {
 +                        // Refresh the current entity metadata
 +                        this.sendPacket(new S1CPacketEntityMetadata(entity.getEntityId(), entity.dataWatcher, true));
@@ -1156,7 +1156,7 @@
 +
 +                    if (triggerChestUpdate
 +                            && (event.isCancelled() || this.playerEntity.inventory.getCurrentItem() == null || this.playerEntity.inventory.getCurrentItem()
-+                            .getItem() != Item.getItemFromBlock(Blocks.chest)))
++                                    .getItem() != Item.getItemFromBlock(Blocks.chest)))
 +                    {
 +                        this.sendPacket(new S1CPacketEntityMetadata(entity.getEntityId(), entity.dataWatcher, true));
 +                    }
@@ -1190,10 +1190,12 @@
                  }
              }
          }
-@@ -829,12 +1626,24 @@
+@@ -828,14 +1625,26 @@
+     {
          this.playerEntity.func_143004_u();
          C16PacketClientStatus.EnumState enumstate = p_147342_1_.func_149435_c();
- 
+-
++        
 +        final boolean isDead = this.playerEntity.getHealth() <= 0.0F;
          switch (NetHandlerPlayServer.SwitchEnumState.field_151290_a[enumstate.ordinal()])
          {
@@ -1201,21 +1203,22 @@
                  if (this.playerEntity.playerConqueredTheEnd)
                  {
 -                    this.playerEntity = this.serverController.getConfigurationManager().respawnPlayer(this.playerEntity, 0, true);
-+                    // Cauldron start
-+                    if (this.playerEntity.dimension == 1) // coming from end
-+                    {
-+                        // We really should be calling transferPlayerToDimension since the player is coming in contact with a portal.
-+                        this.serverController.getConfigurationManager().respawnPlayer(this.playerEntity, 0, true, null, isDead); // set flag to indicate player is leaving end.
-+                    }
-+                    else
-+                    // not coming from end
-+                    {
-+                        this.playerEntity = this.serverController.getConfigurationManager().respawnPlayer(this.playerEntity, 0, false, null, isDead);
-+                    }
-+                    // Cauldron end
++                // Cauldron start
++                if (this.playerEntity.dimension == 1) // coming from end
++                {
++                    // We really should be calling transferPlayerToDimension since the player is coming in contact with a portal.
++                    this.serverController.getConfigurationManager().respawnPlayer(this.playerEntity, 0, true, null, isDead); // set flag to indicate player is leaving end.
                  }
++                else
++                // not coming from end
++                {
++                	this.playerEntity = this.serverController.getConfigurationManager().respawnPlayer(this.playerEntity, 0, false, null, isDead);
++                }
++                // Cauldron end
++                }
                  else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
                  {
+                     if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
 @@ -857,7 +1666,7 @@
                          return;
                      }
@@ -1620,12 +1623,12 @@
 +
 +                switch (event.getResult())
 +                {
-+                    case ALLOW:
-+                    case DEFAULT:
-+                        itemstack = this.playerEntity.openContainer.slotClick(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(),
-+                                p_147351_1_.func_149542_h(), this.playerEntity);
-+                        break;
-+                    case DENY:
++                case ALLOW:
++                case DEFAULT:
++                    itemstack = this.playerEntity.openContainer.slotClick(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(),
++                            p_147351_1_.func_149542_h(), this.playerEntity);
++                    break;
++                case DENY:
 +                    /* Needs enum constructor in InventoryAction
 +                    if (action.modifiesOtherSlots()) {
 +                    } else {
@@ -1636,51 +1639,51 @@
 +                            this.player.playerConnection.sendPacket(new Packet103SetSlot(this.player.activeContainer.windowId, packet102windowclick.slot, this.player.activeContainer.getSlot(packet102windowclick.slot).getItem()));
 +                        }
 +                    }*/
-+                        switch (action)
-+                        {
-+                            // Modified other slots
-+                            case PICKUP_ALL:
-+                            case MOVE_TO_OTHER_INVENTORY:
-+                            case HOTBAR_MOVE_AND_READD:
-+                            case HOTBAR_SWAP:
-+                            case COLLECT_TO_CURSOR:
-+                            case UNKNOWN:
-+                                this.playerEntity.sendContainerToPlayer(this.playerEntity.openContainer);
-+                                break;
++                    switch (action)
++                    {
++                    // Modified other slots
++                    case PICKUP_ALL:
++                    case MOVE_TO_OTHER_INVENTORY:
++                    case HOTBAR_MOVE_AND_READD:
++                    case HOTBAR_SWAP:
++                    case COLLECT_TO_CURSOR:
++                    case UNKNOWN:
++                        this.playerEntity.sendContainerToPlayer(this.playerEntity.openContainer);
++                        break;
 +
-+                            // Modified cursor and clicked
-+                            case PICKUP_SOME:
-+                            case PICKUP_HALF:
-+                            case PICKUP_ONE:
-+                            case PLACE_ALL:
-+                            case PLACE_SOME:
-+                            case PLACE_ONE:
-+                            case SWAP_WITH_CURSOR:
-+                                this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(-1, -1, this.playerEntity.inventory.getItemStack()));
-+                                this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(this.playerEntity.openContainer.windowId, p_147351_1_
-+                                        .func_149544_d(), this.playerEntity.openContainer.getSlot(p_147351_1_.func_149544_d()).getStack()));
-+                                break;
++                    // Modified cursor and clicked
++                    case PICKUP_SOME:
++                    case PICKUP_HALF:
++                    case PICKUP_ONE:
++                    case PLACE_ALL:
++                    case PLACE_SOME:
++                    case PLACE_ONE:
++                    case SWAP_WITH_CURSOR:
++                        this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(-1, -1, this.playerEntity.inventory.getItemStack()));
++                        this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(this.playerEntity.openContainer.windowId, p_147351_1_
++                                .func_149544_d(), this.playerEntity.openContainer.getSlot(p_147351_1_.func_149544_d()).getStack()));
++                        break;
 +
-+                            // Modified clicked only
-+                            case DROP_ALL_SLOT:
-+                            case DROP_ONE_SLOT:
-+                                this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(this.playerEntity.openContainer.windowId, p_147351_1_
-+                                        .func_149544_d(), this.playerEntity.openContainer.getSlot(p_147351_1_.func_149544_d()).getStack()));
-+                                break;
++                    // Modified clicked only
++                    case DROP_ALL_SLOT:
++                    case DROP_ONE_SLOT:
++                        this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(this.playerEntity.openContainer.windowId, p_147351_1_
++                                .func_149544_d(), this.playerEntity.openContainer.getSlot(p_147351_1_.func_149544_d()).getStack()));
++                        break;
 +
-+                            // Modified cursor only
-+                            case DROP_ALL_CURSOR:
-+                            case DROP_ONE_CURSOR:
-+                            case CLONE_STACK:
-+                                this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(-1, -1, this.playerEntity.inventory.getItemStack()));
-+                                break;
++                    // Modified cursor only
++                    case DROP_ALL_CURSOR:
++                    case DROP_ONE_CURSOR:
++                    case CLONE_STACK:
++                        this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(-1, -1, this.playerEntity.inventory.getItemStack()));
++                        break;
 +
-+                            // Nothing
-+                            case NOTHING:
-+                                break;
-+                        }
++                    // Nothing
++                    case NOTHING:
++                        break;
++                    }
 +
-+                        return;
++                    return;
 +                }
 +            }
 +            // CraftBukkit end
@@ -1712,7 +1715,7 @@
 +            // CraftBukkit start - Call click event
 +            if (flag
 +                    || (flag1 && !ItemStack.areItemStacksEqual(this.playerEntity.inventoryContainer.getSlot(p_147344_1_.func_149627_c()).getStack(),
-+                    p_147344_1_.func_149625_d()))) // Insist on valid slot
++                            p_147344_1_.func_149625_d()))) // Insist on valid slot
 +            {
 +                org.bukkit.entity.HumanEntity player = this.playerEntity.getBukkitEntity();
 +                InventoryView inventory = new CraftInventoryView(player, player.getInventory(), this.playerEntity.inventoryContainer);
@@ -1741,22 +1744,22 @@
 +
 +                switch (event.getResult())
 +                {
-+                    case ALLOW:
-+                        // Plugin cleared the id / stacksize checks
-+                        flag2 = flag3 = true;
-+                        break;
-+                    case DEFAULT:
-+                        break;
-+                    case DENY:
-+                        // Reset the slot
-+                        if (p_147344_1_.func_149627_c() >= 0)
-+                        {
-+                            this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(this.playerEntity.inventoryContainer.windowId, p_147344_1_
-+                                    .func_149627_c(), this.playerEntity.inventoryContainer.getSlot(p_147344_1_.func_149627_c()).getStack()));
-+                            this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(-1, -1, null));
-+                        }
++                case ALLOW:
++                    // Plugin cleared the id / stacksize checks
++                    flag2 = flag3 = true;
++                    break;
++                case DEFAULT:
++                    break;
++                case DENY:
++                    // Reset the slot
++                    if (p_147344_1_.func_149627_c() >= 0)
++                    {
++                        this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(this.playerEntity.inventoryContainer.windowId, p_147344_1_
++                                .func_149627_c(), this.playerEntity.inventoryContainer.getSlot(p_147344_1_.func_149627_c()).getStack()));
++                        this.playerEntity.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(-1, -1, null));
++                    }
 +
-+                        return;
++                    return;
 +                }
 +            }
 +            // CraftBukkit end
@@ -1939,24 +1942,30 @@
 -                itemstack = packetbuffer.readItemStackFromBuffer();
 +                push = packetbuffer.readItemStackFromBuffer();
  
--                if (itemstack != null)
+-                if (itemstack == null)
 +                if (push != null)
                  {
--                    if (!ItemEditableBook.validBookTagContents(itemstack.getTagCompound()))
+-                    return;
+-                }
 +                    if (!ItemEditableBook.validBookTagContents(push.getTagCompound()))
-                     {
-                         throw new IOException("Invalid book tag!");
-                     }
++                    {
++                        throw new IOException("Invalid book tag!");
++                    }
  
--                    itemstack1 = this.playerEntity.inventory.getCurrentItem();
+-                if (!ItemEditableBook.validBookTagContents(itemstack.getTagCompound()))
+-                {
+-                    throw new IOException("Invalid book tag!");
+-                }
 +                    stack = this.playerEntity.inventory.getCurrentItem();
  
--                    if (itemstack1 == null)
+-                itemstack1 = this.playerEntity.inventory.getCurrentItem();
 +                    if (stack == null)
-                     {
-                         return;
-                     }
++                    {
++                        return;
++                    }
  
+-                if (itemstack1 != null)
+-                {
 -                    if (itemstack.getItem() == Items.written_book && itemstack1.getItem() == Items.writable_book)
 +                    if (push.getItem() == Items.written_book && stack.getItem() == Items.writable_book)
                      {
@@ -2051,7 +2060,7 @@
          }
      }
  
-@@ -1292,39 +2695,54 @@
+@@ -1292,6 +2695,21 @@
          }
      }
  
@@ -2071,66 +2080,5 @@
 +    // Cauldron end
 +
      static final class SwitchEnumState
-+    {
-+        static final int[] field_151290_a = new int[C16PacketClientStatus.EnumState.values().length];
-+        private static final String __OBFID = "CL_00001455";
-+
-+        static
          {
--            static final int[] field_151290_a = new int[C16PacketClientStatus.EnumState.values().length];
--            private static final String __OBFID = "CL_00001455";
-+            try
-+            {
-+                field_151290_a[C16PacketClientStatus.EnumState.PERFORM_RESPAWN.ordinal()] = 1;
-+            }
-+            catch (NoSuchFieldError var3)
-+            {
-+                ;
-+            }
- 
--            static
-+            try
-             {
--                try
--                {
--                    field_151290_a[C16PacketClientStatus.EnumState.PERFORM_RESPAWN.ordinal()] = 1;
--                }
--                catch (NoSuchFieldError var3)
--                {
--                    ;
--                }
-+                field_151290_a[C16PacketClientStatus.EnumState.REQUEST_STATS.ordinal()] = 2;
-+            }
-+            catch (NoSuchFieldError var2)
-+            {
-+                ;
-+            }
- 
--                try
--                {
--                    field_151290_a[C16PacketClientStatus.EnumState.REQUEST_STATS.ordinal()] = 2;
--                }
--                catch (NoSuchFieldError var2)
--                {
--                    ;
--                }
--
--                try
--                {
--                    field_151290_a[C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT.ordinal()] = 3;
--                }
--                catch (NoSuchFieldError var1)
--                {
--                    ;
--                }
-+            try
-+            {
-+                field_151290_a[C16PacketClientStatus.EnumState.OPEN_INVENTORY_ACHIEVEMENT.ordinal()] = 3;
-             }
-+            catch (NoSuchFieldError var1)
-+            {
-+                ;
-+            }
-         }
-+    }
- }
+             static final int[] field_151290_a = new int[C16PacketClientStatus.EnumState.values().length];
