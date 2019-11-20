@@ -1,7 +1,10 @@
-![Minecraft Forge v10.13.4.1614][forge]
-![Minecraft v1.7.10][mc]
-![Spigot 1.7.10 Snapshot ][spigot]
-![Java JDK v1.8][java]
+![](https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-orange?style=flat-square)
+![](https://img.shields.io/badge/Minecraft-1.7.10-orange?style=flat-square)
+![](https://img.shields.io/badge/Spigot-1.7.10--R0.1--SNAPSHOT-orange?style=flat-square)
+![](https://img.shields.io/badge/PaperMC-Not%20Implemented%20Yet-orange?style=flat-square)
+![](https://img.shields.io/badge/CrucibleAPI-Not%20Implemented%20Yet-orange?style=flat-square)
+![](https://img.shields.io/badge/Java%20JDK-v1.8-blue?style=flat-square)
+![](https://img.shields.io/github/v/release/CrucibleMC/Crucible?color=sucess&style=flat-square)
 ![Crucible](logo.png)
 ### What's Crucible?
 
@@ -38,7 +41,7 @@ Advantages over Thermos:
 - [ ] Create Crucible API.
 - [ ] Implement the PaperMC API.
 - [ ] Implement the Glowstone API.
-- [ ] Rewrite most of Cauldron/Thermos code.
+- [X] Rewrite most of Cauldron/Thermos code.
 - [ ] Fix most remaining bugs and incompatibilities.
 - [ ] Update the Spigot and Bukkit API.
 - [ ] Performance Improvements.
