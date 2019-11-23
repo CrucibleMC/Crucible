@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
@@ -35,12 +37,12 @@ import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
 
 public class CrucibleModContainer extends DummyModContainer {
-    
+    public static Logger logger;
     public CrucibleModContainer() {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
         meta.modId       = "Crucible";
-        meta.name        = "Crucible Server Software";
+        meta.name        = "Crucible Server";
         meta.version     = "1.0";
         meta.credits     = "TODO: Add credits";
         meta.authorList  = Arrays.asList("juanmuscaria", "brunoxkk0");
@@ -65,6 +67,7 @@ public class CrucibleModContainer extends DummyModContainer {
     @Subscribe
     public void preInit(FMLPreInitializationEvent evt)
     {
+        logger = evt.getModLog();
     }
 
     @Subscribe

@@ -1,4 +1,4 @@
-package com.destroystokyo.paper.util;
+package com.destroystokyo.paper.utils;
 
 public class SneakyThrow {
     public static void sneaky(Throwable exception) {

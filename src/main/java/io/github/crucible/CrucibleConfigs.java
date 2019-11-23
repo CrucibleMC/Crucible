@@ -28,6 +28,9 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Hide your plugins from /plugins")
     public boolean crucible_hidePluginList = true;
     
+    @Comment("Log stub calls.")
+    public boolean crucible_logging_logStubs = false;
+    
     private CrucibleConfigs() 
     {
         CONFIG_FILE = new File("Crucible.yml");

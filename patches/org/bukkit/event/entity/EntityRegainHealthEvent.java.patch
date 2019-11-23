@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityRegainHealthEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityRegainHealthEvent.java
+@@ -5,6 +5,9 @@
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.util.NumberConversions;
+ 
++import io.github.crucible.CrucibleConfigs;
++import io.github.crucible.CrucibleModContainer;
++
+ /**
+  * Stores data for health-regain events
+  */
+@@ -25,7 +28,19 @@
+         this.regainReason = regainReason;
+     }
+ 
++    // Paper start - Add getter for isFastRegen
+     /**
++     * Is this event a result of the fast regeneration mechanic
++     *
++     * @return Whether the event is the result of a fast regeneration mechanic
++     */
++    public boolean isFastRegen() {
++        if (CrucibleConfigs.configs.crucible_logging_logStubs) CrucibleModContainer.logger.info("Stub - EntityRegainHealthEvent.isFastRegen()");
++        return false; // Crucible - Method stub.
++     }
++    // Paper end
++    
++    /**
+      * Gets the amount of regained health
+      *
+      * @return The amount of health regained
