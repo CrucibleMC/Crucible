@@ -158,8 +158,8 @@
 +            org.spigotmc.SpigotConfig.registerCommands();
 +            // Spigot end
 +            // Cauldron start
-+            thermosConfig.registerCommands();
-+            cauldronConfig.registerCommands();
++            //thermosConfig.registerCommands();
++            //cauldronConfig.registerCommands();
 +            tileEntityConfig.registerCommands();
 +            sushchestvoConfig.registerCommands();
 +            // Cauldron end

@@ -176,15 +176,11 @@ public class SimpleCommandMap implements CommandMap {
         }
 
         try {
-            target.timings.startTiming(); // Spigot
             // Note: we don't return the result of target.execute as thats success / failure, we return handled (true) or not handled (false)
             target.execute(sender, sentCommandLabel, Arrays_copyOfRange(args, 1, args.length));
-            target.timings.stopTiming(); // Spigot
         } catch (CommandException ex) {
-            target.timings.stopTiming(); // Spigot
             throw ex;
         } catch (Throwable ex) {
-            target.timings.stopTiming(); // Spigot
             throw new CommandException("Unhandled exception executing '" + commandLine + "' in " + target, ex);
         }
 
@@ -252,7 +248,6 @@ public class SimpleCommandMap implements CommandMap {
         try {
             return target.tabComplete(sender, commandName, args);
         } catch (CommandException ex) {
-            target.timings.stopTiming(); // Spigot
             throw ex;
         } catch (Throwable ex) {
             throw new CommandException("Unhandled exception executing tab-completer for '" + cmdLine + "' in " + target, ex);

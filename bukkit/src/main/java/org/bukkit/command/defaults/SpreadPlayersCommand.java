@@ -92,7 +92,7 @@ public class SpreadPlayersCommand extends VanillaCommand {
         final int rangeSpread = range(world, distance, xRangeMin, zRangeMin, xRangeMax, zRangeMax, locations);
 
         if (rangeSpread == -1) {
-            sender.sendMessage(String.format("Could not spread %d %s around %s,%s (too many players for space - try using spread of at most %s)", spreadSize, teams ? "teams" : "players", x, z, "TODO")); // TODO: Add latest argument
+            sender.sendMessage(String.format("Could not spread %d %s around %s,%s (too many players for space - try using spread of at most %s)", spreadSize, teams ? "teams" : "players", x, z));
             return false;
         }
 

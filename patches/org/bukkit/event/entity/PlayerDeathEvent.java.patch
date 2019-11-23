@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/PlayerDeathEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/PlayerDeathEvent.java
+@@ -137,7 +137,7 @@
+         this.keepLevel = keepLevel;
+     }
+ 
+-	/**
++    /**
+      * Sets if the Player keeps inventory on death.
+      *
+      * @param keepInventory True to keep the inventory

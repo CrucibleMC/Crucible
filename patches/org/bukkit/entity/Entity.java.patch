@@ -1,0 +1,77 @@
+--- ../src-base/minecraft/org/bukkit/entity/Entity.java
++++ ../src-work/minecraft/org/bukkit/entity/Entity.java
+@@ -65,7 +65,8 @@
+     public World getWorld();
+ 
+     /**
+-     * Teleports this entity to the given location
++     * Teleports this entity to the given location. If this entity is riding a
++     * vehicle, it will be dismounted prior to teleportation.
+      *
+      * @param location New location to teleport this entity to
+      * @return <code>true</code> if the teleport was successful
+@@ -73,7 +74,8 @@
+     public boolean teleport(Location location);
+ 
+     /**
+-     * Teleports this entity to the given location
++     * Teleports this entity to the given location. If this entity is riding a
++     * vehicle, it will be dismounted prior to teleportation.
+      *
+      * @param location New location to teleport this entity to
+      * @param cause The cause of this teleportation
+@@ -82,7 +84,8 @@
+     public boolean teleport(Location location, TeleportCause cause);
+ 
+     /**
+-     * Teleports this entity to the target Entity
++     * Teleports this entity to the target Entity. If this entity is riding a
++     * vehicle, it will be dismounted prior to teleportation.
+      *
+      * @param destination Entity to teleport this entity to
+      * @return <code>true</code> if the teleport was successful
+@@ -90,7 +93,8 @@
+     public boolean teleport(Entity destination);
+ 
+     /**
+-     * Teleports this entity to the target Entity
++     * Teleports this entity to the target Entity. If this entity is riding a
++     * vehicle, it will be dismounted prior to teleportation.
+      *
+      * @param destination Entity to teleport this entity to
+      * @param cause The cause of this teleportation
+@@ -291,4 +295,34 @@
+      * @return The current vehicle.
+      */
+     public Entity getVehicle();
++
++    // Spigot Start
++    public class Spigot
++    {
++
++        /**
++         * Returns whether this entity is invulnerable.
++         *         
++        * @return True if the entity is invulnerable.
++         */
++        public boolean isInvulnerable()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++    }
++
++    Spigot spigot();
++    // Spigot End
++    
++    
++    // Paper start
++    /**
++     * Gets the location where this entity originates from.
++     * <p>
++     * This value can be null if the entity hasn't yet been added to the world.
++     *
++     * @return Location where entity originates or null if not yet added
++     */
++    Location getOrigin();
++    // Paper end
+ }

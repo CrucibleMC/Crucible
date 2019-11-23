@@ -18,7 +18,7 @@ public interface Messenger {
     /**
      * Represents the largest size that a Plugin Channel may be.
      */
-    public static final int MAX_CHANNEL_SIZE = 20; // Cauldron - Vanilla increased limit of C17PacketCustomPayload size from 16 -> 20 in 1.7
+    public static final int MAX_CHANNEL_SIZE = 16;
 
     /**
      * Checks if the specified channel is a reserved name.

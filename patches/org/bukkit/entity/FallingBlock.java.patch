@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/org/bukkit/entity/FallingBlock.java
++++ ../src-work/minecraft/org/bukkit/entity/FallingBlock.java
+@@ -45,4 +45,16 @@
+      * @param drop true to break into an item when obstructed
+      */
+     void setDropItem(boolean drop);
++    
++    
++    /**
++     * Gets the source block location of the FallingBlock
++     *
++     * @return the source block location the FallingBlock was spawned from
++     * @deprecated replaced by {@link Entity#getOrigin()}
++     */
++    @Deprecated
++    default org.bukkit.Location getSourceLoc() {
++        return this.getOrigin();
++    }
+ }

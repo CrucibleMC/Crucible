@@ -137,7 +137,7 @@ public class PlayerDeathEvent extends EntityDeathEvent {
         this.keepLevel = keepLevel;
     }
 
-    /**
+	/**
      * Sets if the Player keeps inventory on death.
      *
      * @param keepInventory True to keep the inventory

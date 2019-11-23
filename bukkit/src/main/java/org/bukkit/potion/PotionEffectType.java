@@ -202,7 +202,7 @@ public abstract class PotionEffectType {
         return "PotionEffectType[" + id + ", " + getName() + "]";
     }
 
-    private static final Map<Integer, PotionEffectType> byId = new HashMap<Integer, PotionEffectType>(); // Cauldron change underlying storage to map
+    private static final PotionEffectType[] byId = new PotionEffectType[24];
     private static final Map<String, PotionEffectType> byName = new HashMap<String, PotionEffectType>();
     // will break on updates.
     private static boolean acceptingNew = true;
@@ -216,9 +216,9 @@ public abstract class PotionEffectType {
      */
     @Deprecated
     public static PotionEffectType getById(int id) {
-        if (id >= byId.size() || id < 0) // Cauldron
+        if (id >= byId.length || id < 0)
             return null;
-        return byId.get(id); // Cauldron
+        return byId[id];
     }
 
     /**
@@ -240,18 +240,15 @@ public abstract class PotionEffectType {
      * @param type PotionType to register
      */
     public static void registerPotionEffectType(PotionEffectType type) {
-        // Cauldron start - allow vanilla to replace potions
-        /*
         if (byId[type.id] != null || byName.containsKey(type.getName().toLowerCase())) {
             throw new IllegalArgumentException("Cannot set already-set type");
         } else if (!acceptingNew) {
             throw new IllegalStateException(
                     "No longer accepting new potion effect types (can only be done by the server implementation)");
         }
-        */
-        byId.put(type.id, type);
+
+        byId[type.id] = type;
         byName.put(type.getName().toLowerCase(), type);
-        // Cauldron end
     }
 
     /**
@@ -267,11 +264,6 @@ public abstract class PotionEffectType {
      * @return Array of types.
      */
     public static PotionEffectType[] values() {
-        // Cauldron start
-        int maxId = 0;
-        for(int id : byId.keySet()) maxId = Math.max(maxId, id);
-        PotionEffectType[] result = new PotionEffectType[maxId + 1];
-        return byId.values().toArray(result); // Cauldron change underlying storage to map
-        // Cauldron end
+        return byId.clone();
     }
 }

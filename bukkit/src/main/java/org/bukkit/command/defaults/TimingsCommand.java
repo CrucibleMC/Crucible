@@ -19,103 +19,23 @@ import org.bukkit.util.StringUtil;
 
 import com.google.common.collect.ImmutableList;
 
-// Spigot start
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.logging.Level;
-
-import org.bukkit.command.RemoteConsoleCommandSender;
-import org.bukkit.plugin.SimplePluginManager;
-import org.spigotmc.CustomTimingsHandler;
-// Spigot end
-
 public class TimingsCommand extends BukkitCommand {
-    private static final List<String> TIMINGS_SUBCOMMANDS = ImmutableList.of("report", "reset", "on", "off", "paste"); // Spigot
-    public static long timingStart = 0; // Spigot
+    private static final List<String> TIMINGS_SUBCOMMANDS = ImmutableList.of("merged", "reset", "separate");
 
     public TimingsCommand(String name) {
         super(name);
-        this.description = "Manages Spigot Timings data to see performance of the server."; // Spigot
-        this.usageMessage = "/timings <reset|report|on|off|paste>"; // Spigot
+        this.description = "Records timings for all plugin events";
+        this.usageMessage = "/timings <reset|merged|separate>";
         this.setPermission("bukkit.command.timings");
     }
-
-    // Spigot start - redesigned Timings Command
-    public void executeSpigotTimings(CommandSender sender, String[] args) {
-        if ( "on".equals( args[0] ) )
-        {
-            ( (SimplePluginManager) Bukkit.getPluginManager() ).useTimings( true );
-            CustomTimingsHandler.reload();
-            sender.sendMessage( "Enabled Timings & Reset" );
-            return;
-        } else if ( "off".equals( args[0] ) )
-        {
-            ( (SimplePluginManager) Bukkit.getPluginManager() ).useTimings( false );
-            sender.sendMessage( "Disabled Timings" );
-            return;
-        }
-
-        if ( !Bukkit.getPluginManager().useTimings() )
-        {
-            sender.sendMessage( "Please enable timings by typing /timings on" );
-            return;
-        }
-
-        boolean paste = "paste".equals( args[0] );
-        if ("reset".equals(args[0])) {
-            CustomTimingsHandler.reload();
-            sender.sendMessage("Timings reset");
-        } else if ("merged".equals(args[0]) || "report".equals(args[0]) || paste) {
-            long sampleTime = System.nanoTime() - timingStart;
-            int index = 0;
-            File timingFolder = new File("timings");
-            timingFolder.mkdirs();
-            File timings = new File(timingFolder, "timings.txt");
-            ByteArrayOutputStream bout = ( paste ) ? new ByteArrayOutputStream() : null;
-            while (timings.exists()) timings = new File(timingFolder, "timings" + (++index) + ".txt");
-            PrintStream fileTimings = null;
-            try {
-                fileTimings = ( paste ) ? new PrintStream( bout ) : new PrintStream( timings );
-
-                CustomTimingsHandler.printTimings(fileTimings);
-                fileTimings.println( "Sample time " + sampleTime + " (" + sampleTime / 1E9 + "s)" );
-
-                // ++++<
-                fileTimings.println( "<spigotConfig>" );
-                fileTimings.println( Bukkit.spigot().getConfig().saveToString() );
-                fileTimings.println( "</spigotConfig>" );
-                // ++++>
-
-                if ( paste )
-                {
-                    new PasteThread( sender, bout ).start();
-                    return;
-                }
-
-                sender.sendMessage("Timings written to " + timings.getPath());
-                sender.sendMessage( "Paste contents of file into form at http://www.spigotmc.org/go/timings to read results." );
-
-            } catch (IOException e) {
-            } finally {
-                if (fileTimings != null) {
-                    fileTimings.close();
-                }
-            }
-        }
-    }
-    // Spigot end
 
     @Override
     public boolean execute(CommandSender sender, String currentAlias, String[] args) {
         if (!testPermission(sender)) return true;
-        if (args.length < 1)  { // Spigot
+        if (args.length != 1)  {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);
             return false;
         }
-        if (true) { executeSpigotTimings(sender, args); return true; } // Spigot
         if (!sender.getServer().getPluginManager().useTimings()) {
             sender.sendMessage("Please enable timings by setting \"settings.plugin-profiling\" to true in bukkit.yml");
             return true;
@@ -198,79 +118,4 @@ public class TimingsCommand extends BukkitCommand {
         }
         return ImmutableList.of();
     }
-
-    // Spigot start
-    private static class PasteThread extends Thread
-    {
-
-        private final CommandSender sender;
-        private final ByteArrayOutputStream bout;
-
-        public PasteThread(CommandSender sender, ByteArrayOutputStream bout)
-        {
-            super( "Timings paste thread" );
-            this.sender = sender;
-            this.bout = bout;
-        }
-
-        @Override
-        public synchronized void start() {
-            if (sender instanceof RemoteConsoleCommandSender) {
-                run();
-            } else {
-                super.start();
-            }
-        }
-
-        /*@Override
-        public void run()
-        {
-            try
-            {
-                HttpURLConnection con = (HttpURLConnection) new URL( "http://paste.ubuntu.com/" ).openConnection();
-                con.setDoOutput( true );
-                con.setRequestMethod( "POST" );
-                con.setInstanceFollowRedirects( false );
-
-                OutputStream out = con.getOutputStream();
-                out.write( "poster=Spigot&syntax=text&content=".getBytes( "UTF-8" ) );
-                out.write( URLEncoder.encode( bout.toString( "UTF-8" ), "UTF-8" ).getBytes( "UTF-8" ) );
-                out.close();
-                con.getInputStream().close();
-
-                String location = con.getHeaderField( "Location" );
-                String pasteID = location.substring( "http://paste.ubuntu.com/".length(), location.length() - 1 );
-                sender.sendMessage( ChatColor.GREEN + "View timings results can be viewed at http://www.spigotmc.org/go/timings?url=" + pasteID );
-            } catch ( IOException ex )
-            {
-                sender.sendMessage( ChatColor.RED + "Error pasting timings, check your console for more information" );
-                Bukkit.getServer().getLogger().log( Level.WARNING, "Could not paste timings", ex );
-            }
-        }*/
-        public void run()
-        {
-            try
-            {
-                HttpURLConnection con = (HttpURLConnection) new URL( "https://timings.spigotmc.org/paste" ).openConnection();
-                con.setDoOutput( true );
-                con.setRequestMethod( "POST" );
-                con.setInstanceFollowRedirects( false );
-
-                OutputStream out = con.getOutputStream();
-                out.write( bout.toByteArray() );
-                out.close();
-
-                com.google.gson.JsonObject location = new com.google.gson.Gson().fromJson(new java.io.InputStreamReader(con.getInputStream()), com.google.gson.JsonObject.class);
-                con.getInputStream().close();
-
-                String pasteID = location.get( "key" ).getAsString();
-                sender.sendMessage( ChatColor.GREEN + "Timings results can be viewed at https://www.spigotmc.org/go/timings?url=" + pasteID );
-            } catch ( IOException ex )
-            {
-                sender.sendMessage( ChatColor.RED + "Error pasting timings, check your console for more information" );
-                Bukkit.getServer().getLogger().log( Level.WARNING, "Could not paste timings", ex );
-            }
-        }
-    }
-    // Spigot end
 }

@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/org/bukkit/Bukkit.java
++++ ../src-work/minecraft/org/bukkit/Bukkit.java
+@@ -197,7 +197,6 @@
+     /**
+      * @see Server#getPlayer(String name)
+      */
+-    @Deprecated
+     public static Player getPlayer(String name) {
+         return server.getPlayer(name);
+     }
+@@ -205,7 +204,6 @@
+     /**
+      * @see Server#matchPlayer(String name)
+      */
+-    @Deprecated
+     public static List<Player> matchPlayer(String name) {
+         return server.matchPlayer(name);
+     }
+@@ -301,6 +299,7 @@
+      */
+     public static void reload() {
+         server.reload();
++        org.spigotmc.CustomTimingsHandler.reload(); // Spigot
+     }
+ 
+     /**
+@@ -447,7 +446,6 @@
+     /**
+      * @see Server#getPlayerExact(String name)
+      */
+-    @Deprecated
+     public static Player getPlayerExact(String name) {
+         return server.getPlayerExact(name);
+     }
+@@ -747,4 +745,29 @@
+     public static UnsafeValues getUnsafe() {
+         return server.getUnsafe();
+     }
++
++    // Paper start
++    /**
++     * Gets the current server TPS
++     * @return current server TPS (1m, 5m, 15m in Paper-Server)
++     */
++    
++    public static double[] getTPS() {
++        return server.getTPS();
++    }
++    
++    /**
++     * Gets the active {@link org.bukkit.command.CommandMap}
++     *
++     * @return the active command map
++     */
++    public static org.bukkit.command.CommandMap getCommandMap() {
++        return server.getCommandMap();
++    }
++    // Paper end
++    
++    public static Server.Spigot spigot()
++    {
++        return server.spigot();
++    }
+ }

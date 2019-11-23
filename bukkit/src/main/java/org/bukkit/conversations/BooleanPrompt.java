@@ -15,13 +15,12 @@ public abstract class BooleanPrompt extends ValidatingPrompt{
 
     @Override
     protected boolean isInputValid(ConversationContext context, String input) {
-        String[] accepted = {"true", "false", "on", "off", "yes", "no" /* Spigot: */, "y", "n", "1", "0", "right", "wrong", "correct", "incorrect", "valid", "invalid"}; // Spigot
+        String[] accepted = {"true", "false", "on", "off", "yes", "no"};
         return ArrayUtils.contains(accepted, input.toLowerCase());
     }
 
     @Override
     protected Prompt acceptValidatedInput(ConversationContext context, String input) {
-        if (input.equalsIgnoreCase("y") || input.equals("1") || input.equalsIgnoreCase("right") || input.equalsIgnoreCase("correct") || input.equalsIgnoreCase("valid")) input = "true"; // Spigot
         return acceptValidatedInput(context, BooleanUtils.toBoolean(input));
     }
 

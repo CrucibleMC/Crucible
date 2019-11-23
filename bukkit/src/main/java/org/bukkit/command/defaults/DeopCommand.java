@@ -49,9 +49,9 @@ public class DeopCommand extends VanillaCommand {
 
         if (args.length == 1) {
             List<String> completions = new ArrayList<String>();
-            for (OfflinePlayer player : Bukkit.getOperators()) {
+            for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                 String playerName = player.getName();
-                if (StringUtil.startsWithIgnoreCase(playerName, args[0])) {
+                if (player.isOp() && StringUtil.startsWithIgnoreCase(playerName, args[0])) {
                     completions.add(playerName);
                 }
             }

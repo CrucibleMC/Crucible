@@ -65,8 +65,7 @@ public interface Entity extends Metadatable {
     public World getWorld();
 
     /**
-     * Teleports this entity to the given location. If this entity is riding a
-     * vehicle, it will be dismounted prior to teleportation.
+     * Teleports this entity to the given location
      *
      * @param location New location to teleport this entity to
      * @return <code>true</code> if the teleport was successful
@@ -74,8 +73,7 @@ public interface Entity extends Metadatable {
     public boolean teleport(Location location);
 
     /**
-     * Teleports this entity to the given location. If this entity is riding a
-     * vehicle, it will be dismounted prior to teleportation.
+     * Teleports this entity to the given location
      *
      * @param location New location to teleport this entity to
      * @param cause The cause of this teleportation
@@ -84,8 +82,7 @@ public interface Entity extends Metadatable {
     public boolean teleport(Location location, TeleportCause cause);
 
     /**
-     * Teleports this entity to the target Entity. If this entity is riding a
-     * vehicle, it will be dismounted prior to teleportation.
+     * Teleports this entity to the target Entity
      *
      * @param destination Entity to teleport this entity to
      * @return <code>true</code> if the teleport was successful
@@ -93,8 +90,7 @@ public interface Entity extends Metadatable {
     public boolean teleport(Entity destination);
 
     /**
-     * Teleports this entity to the target Entity. If this entity is riding a
-     * vehicle, it will be dismounted prior to teleportation.
+     * Teleports this entity to the target Entity
      *
      * @param destination Entity to teleport this entity to
      * @param cause The cause of this teleportation
@@ -295,22 +291,4 @@ public interface Entity extends Metadatable {
      * @return The current vehicle.
      */
     public Entity getVehicle();
-
-    // Spigot Start
-    public class Spigot
-    {
-
-        /**
-         * Returns whether this entity is invulnerable.
-         *         
-        * @return True if the entity is invulnerable.
-         */
-        public boolean isInvulnerable()
-        {
-            throw new UnsupportedOperationException( "Not supported yet." );
-        }
-    }
-
-    Spigot spigot();
-    // Spigot End
 }

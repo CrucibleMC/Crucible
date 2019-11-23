@@ -1,7 +1,10 @@
 package io.github.crucible;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -14,13 +17,14 @@ import org.spigotmc.RestartCommand;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.cauldron.CauldronHooks;
 import net.minecraftforge.common.DimensionManager;
 
-public class CrucibleCommand extends Command{
+public class CrucibleCommand extends Command {
 
-	private static WeakReference<MinecraftServer> serveReference;
-	private static final DecimalFormat timeFormat = new DecimalFormat("########0.000");
-	
+    private static WeakReference<MinecraftServer> serveReference;
+    private static final DecimalFormat timeFormat = new DecimalFormat("########0.000");
+    
     protected CrucibleCommand(MinecraftServer server){
         super("crucible");
         
@@ -59,6 +63,14 @@ public class CrucibleCommand extends Command{
             if (!testPermission(sender, "crucible.info"))
                 return true;
             sender.sendMessage(generateInfo());
+        } else if (args[0].equalsIgnoreCase("chunks")) {
+            if (!testPermission(sender, "crucible.chunks"))
+                return true;
+            processChunks(sender, args);
+        } else if (args[0].equalsIgnoreCase("heap")) {
+            if (!testPermission(sender, "crucible.heap"))
+                return true;
+            processHeap(sender, args);
         } else {
             sender.sendMessage(ChatColor.RED + "Unknown subcommand.");
             sender.sendMessage(usageMessage);
@@ -107,7 +119,7 @@ public class CrucibleCommand extends Command{
             }
 
             pluginList.append(plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED);
-            pluginList.append(plugin.getDescription().getName());
+            pluginList.append(plugin.getDescription().getName() + "@" + plugin.getDescription().getVersion());
         }
 
         return "(" + plugins.length + "): " + pluginList.toString();
@@ -124,52 +136,90 @@ public class CrucibleCommand extends Command{
                 modList.append(", ");
             }
 
-            modList.append(ChatColor.GREEN + mod.getName());
+            modList.append(ChatColor.GREEN + mod.getName() + "@" + mod.getVersion());
         }
 
         return "(" + mods.size() + "): " + modList.toString();
     }
     
     private static String getTps() {
-    	StringBuilder tps = new StringBuilder();
-    	
-    	tps.append("&8[&e&l\u26a1&r&8] &7TPS from last 1m, 5m, 15m: &r");
-    	
-    	double[] recentTps = MinecraftServer.getServer().recentTps;
-    	
-    	for(double t : recentTps) {
-    		tps.append(parseTps(t));
-    	}
-    	
-    	double meanTickTime = CrucibleCommand.mean(getServer().tickTimeArray) * 1.0E-6D;
-    	tps.append("\n&r&8[&e&l\u26a1&r&8]&7 Mean tick time: &l" + timeFormat.format(meanTickTime) + "&r&7ms&r\n");
-    	
+        StringBuilder tps = new StringBuilder();
+        
+        tps.append("&8[&e&l\u26a1&r&8] &7TPS from last 1m, 5m, 15m: &r");
+        
+        double[] recentTps = MinecraftServer.getServer().recentTps;
+        
+        for(double t : recentTps) {
+            tps.append(parseTps(t));
+        }
+        
+        double meanTickTime = mean(getServer().tickTimeArray) * 1.0E-6D;
+        tps.append("\n&r&8[&e&l\u26a1&r&8]&7 Mean tick time: &l" + timeFormat.format(meanTickTime) + "&r&7ms&r\n");
+        
         for (Integer dimId : DimensionManager.getIDs()){
-        	
-            double worldTickTime = CrucibleCommand.mean(getServer().worldTickTimes.get(dimId)) * 1.0E-6D;
+            
+            double worldTickTime = mean(getServer().worldTickTimes.get(dimId)) * 1.0E-6D;
             double worldTPS = Math.min(1000.0/worldTickTime, 20);
             String name = "";
             tps.append("&8(&f&l" + dimId + "&r&f \u279c "+ (((name = DimensionManager.getProvider(dimId).getDimensionName()) != null) ? name : " ") + "&r&8) &7 Mean tick time: &l" + timeFormat.format(worldTickTime) + "&r&7ms Mean tps: " + parseTps(worldTPS)+ "&r\n");
             
         }
-    	
-    	tps.append("&r");
-    	return tps.toString().replace("&", "\u00a7");
+        
+        tps.append("&r");
+        return tps.toString().replace("&", "\u00a7");
     }
     
     private static String parseTps(double tps) {
-    	
-    	StringBuilder  t = new StringBuilder();
-    	
-    	if(tps <= 10) {
-			t.append("&c&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
-		}else if(tps <= 15) {
-			t.append("&e&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
-		}else {
-			t.append("&a&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
-		}
-    	
-    	return  t.toString();
+        
+        StringBuilder  t = new StringBuilder();
+        
+        if(tps <= 10) {
+            t.append("&c&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
+        }else if(tps <= 15) {
+            t.append("&e&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
+        }else {
+            t.append("&a&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
+        }
+        
+        return  t.toString();
+    }
+    
+    private void processHeap(CommandSender sender, String[] args)
+    {
+        File file = new File(new File(new File("."), "dumps"), "heap-dump-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.bin");
+        sender.sendMessage("Writing heap dump to: " + file);
+        CauldronHooks.dumpHeap(file, true);
+        sender.sendMessage("Heap dump complete.");
+    }
+
+    private void processChunks(CommandSender sender, String[] args)
+    {
+        sender.sendMessage(ChatColor.GOLD + "Dimension stats: ");
+        for (net.minecraft.world.WorldServer world : MinecraftServer.getServer().worlds)
+        {
+            sender.sendMessage(ChatColor.GOLD + "Dimension: " + ChatColor.GRAY + world.provider.dimensionId +
+                    ChatColor.GOLD + " Loaded Chunks: " + ChatColor.GRAY + world.theChunkProviderServer.loadedChunkHashMap_KC.size() +
+                    ChatColor.GOLD + " Active Chunks: " + ChatColor.GRAY + world.activeChunkSet.size() +
+                    ChatColor.GOLD + " Entities: " + ChatColor.GRAY + world.loadedEntityList.size() +
+                    ChatColor.GOLD + " Tile Entities: " + ChatColor.GRAY + world.loadedTileEntityList.size()
+                    );
+            sender.sendMessage(ChatColor.GOLD + " Entities Last Tick: " + ChatColor.GRAY + world.entitiesTicked +
+                    ChatColor.GOLD + " Tiles Last Tick: " + ChatColor.GRAY + world.tilesTicked +
+                    ChatColor.GOLD + " Removed Entities: " + ChatColor.GRAY + world.unloadedEntityList.size() +
+                    ChatColor.GOLD + " Removed Tile Entities: " + ChatColor.GRAY + world.field_147483_b.size()
+                    );
+        }
+
+        if ((args.length < 2) || !"dump".equalsIgnoreCase(args[1]))
+        {
+            return;
+        }
+        boolean dumpAll = ((args.length > 2) && "all".equalsIgnoreCase(args[2]));
+
+        File file = new File(new File(new File("."), "chunk-dumps"), "chunk-info-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt");
+        sender.sendMessage("Writing chunk info to: " + file);
+        CauldronHooks.writeChunks(file, dumpAll);
+        sender.sendMessage("Chunk info complete");
     }
     
     /*

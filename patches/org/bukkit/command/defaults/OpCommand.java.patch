@@ -1,6 +1,11 @@
 --- ../src-base/minecraft/org/bukkit/command/defaults/OpCommand.java
 +++ ../src-work/minecraft/org/bukkit/command/defaults/OpCommand.java
-@@ -17,6 +17,8 @@
+@@ -12,9 +12,13 @@
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.entity.Player;
+ import org.bukkit.util.StringUtil;
++import thermos.Thermos;
++import net.minecraft.server.MinecraftServer;
  
  import com.google.common.collect.ImmutableList;
  
@@ -9,12 +14,33 @@
  public class OpCommand extends VanillaCommand {
      public OpCommand() {
          super("op");
-@@ -35,7 +37,7 @@
+@@ -32,10 +36,26 @@
+         }
  
          OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+-        player.setOp(true);
  
--        if(MinecraftServer.thermosConfig.opConsoleOnly.getValue()) {
+-        Command.broadcastCommandMessage(sender, "Opped " + args[0]);
+-        return true;
 +        if(CrucibleConfigs.configs.thermos_opConsoleOnly) {
++
++            if(!(sender instanceof Player)) {
++                player.setOp(true);
++
++                Command.broadcastCommandMessage(sender, "Opped " + args[0]);
++                return true;
++            } else {
++                sender.sendMessage(ChatColor.RED + "This command can only be run in the console.");
++                return false;
++            }
++
++        } else {
++            player.setOp(true);
++
++            Command.broadcastCommandMessage(sender, "Opped " + args[0]);
++            return true;
++        }
++
+     }
  
-             if(!(sender instanceof Player)) {
-                 player.setOp(true);
+     @Override

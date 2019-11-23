@@ -29,9 +29,9 @@ public class VersionCommand extends BukkitCommand {
         if (!testPermission(sender)) return true;
 
         if (args.length == 0) {
-            sender.sendMessage("This server is running Crucible (Thermos) " + Bukkit.getBukkitVersion() + " | " + Bukkit.getVersion());
+            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
         } else {
-            /*StringBuilder name = new StringBuilder();
+            StringBuilder name = new StringBuilder();
 
             for (String arg : args) {
                 if (name.length() > 0) {
@@ -60,14 +60,12 @@ public class VersionCommand extends BukkitCommand {
             if (!found) {
                 sender.sendMessage("This server is not running any plugin by that name.");
                 sender.sendMessage("Use /plugins to get a list of plugins.");
-            }*/
-            sender.sendMessage("This server is not running any plugins.");
+            }
         }
         return true;
     }
 
     private void describeToSender(Plugin plugin, CommandSender sender) {
-/*
         PluginDescriptionFile desc = plugin.getDescription();
         sender.sendMessage(ChatColor.GREEN + desc.getName() + ChatColor.WHITE + " version " + ChatColor.GREEN + desc.getVersion());
 
@@ -86,7 +84,6 @@ public class VersionCommand extends BukkitCommand {
                 sender.sendMessage("Authors: " + getAuthors(desc));
             }
         }
-*/
     }
 
     private String getAuthors(final PluginDescriptionFile desc) {
@@ -117,11 +114,7 @@ public class VersionCommand extends BukkitCommand {
         Validate.notNull(args, "Arguments cannot be null");
         Validate.notNull(alias, "Alias cannot be null");
 
-        List<String> completions = new ArrayList<String>();
-        completions.add("None");
-        return completions;
-
-  /*      if (args.length == 1) {
+        if (args.length == 1) {
             List<String> completions = new ArrayList<String>();
             String toComplete = args[0].toLowerCase();
             for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
@@ -131,6 +124,6 @@ public class VersionCommand extends BukkitCommand {
             }
             return completions;
         }
-        return ImmutableList.of();*/
+        return ImmutableList.of();
     }
 }

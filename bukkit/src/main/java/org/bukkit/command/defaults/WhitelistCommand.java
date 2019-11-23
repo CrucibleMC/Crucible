@@ -104,7 +104,7 @@ public class WhitelistCommand extends VanillaCommand {
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("add")) {
                 List<String> completions = new ArrayList<String>();
-                for (OfflinePlayer player : Bukkit.getOnlinePlayers()) { // Spigot - well maybe sometimes you haven't turned the whitelist on just yet.
+                for (OfflinePlayer player : Bukkit.getOfflinePlayers()) {
                     String name = player.getName();
                     if (StringUtil.startsWithIgnoreCase(name, args[1]) && !player.isWhitelisted()) {
                         completions.add(name);

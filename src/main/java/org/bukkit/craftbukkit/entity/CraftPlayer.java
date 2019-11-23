@@ -1317,6 +1317,96 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
         collection.add(new net.minecraft.entity.ai.attributes.ModifiableAttributeInstance(getHandle().getAttributeMap(), (new net.minecraft.entity.ai.attributes.RangedAttribute("generic.maxHealth", scaledHealth ? healthScale : getMaxHealth(), 0.0D, Float.MAX_VALUE)).setDescription("Max Health").setShouldWatch(true)));
     }
+    // Paper start
+    public boolean getAffectsSpawning() {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public void setAffectsSpawning(boolean affects) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    
+    public int getViewDistance() {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public void setViewDistance(int viewDistance) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+ 
+    public void setPlayerListHeaderFooter(net.md_5.bungee.api.chat.BaseComponent[] header, net.md_5.bungee.api.chat.BaseComponent[] footer) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public void setPlayerListHeaderFooter(net.md_5.bungee.api.chat.BaseComponent header, net.md_5.bungee.api.chat.BaseComponent footer) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Deprecated
+    public void setTitleTimes(int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Deprecated
+    public void setSubtitle(net.md_5.bungee.api.chat.BaseComponent[] subtitle) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Deprecated
+    public void setSubtitle(net.md_5.bungee.api.chat.BaseComponent subtitle) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Deprecated
+    public void showTitle(net.md_5.bungee.api.chat.BaseComponent[] title) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Deprecated
+    public void showTitle(net.md_5.bungee.api.chat.BaseComponent title) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    @Deprecated
+    public void showTitle(net.md_5.bungee.api.chat.BaseComponent[] title, net.md_5.bungee.api.chat.BaseComponent[] subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+
+    @Deprecated
+    public void showTitle(net.md_5.bungee.api.chat.BaseComponent title, net.md_5.bungee.api.chat.BaseComponent subtitle, int fadeInTicks, int stayTicks, int fadeOutTicks) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public void sendTitle(com.destroystokyo.paper.Title title) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public void updateTitle(com.destroystokyo.paper.Title title) {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public void hideTitle() {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    // Paper end
+
 
     // Spigot start
     private final Player.Spigot spigot = new Player.Spigot()

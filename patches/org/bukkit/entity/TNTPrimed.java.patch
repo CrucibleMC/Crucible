@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/org/bukkit/entity/TNTPrimed.java
++++ ../src-work/minecraft/org/bukkit/entity/TNTPrimed.java
+@@ -35,4 +35,15 @@
+      * @return the source of this primed TNT
+      */
+     public Entity getSource();
++    
++    /**
++     * Gets the source block location of the FallingBlock
++     *
++     * @return the source block location the FallingBlock was spawned from
++     * @deprecated replaced by {@link Entity#getOrigin()}
++     */
++    @Deprecated
++    default org.bukkit.Location getSourceLoc() {
++        return this.getOrigin();
++    }
+ }

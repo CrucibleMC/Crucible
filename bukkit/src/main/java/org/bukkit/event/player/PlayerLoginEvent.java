@@ -14,7 +14,6 @@ public class PlayerLoginEvent extends PlayerEvent {
     private final String hostname;
     private Result result = Result.ALLOWED;
     private String message = "";
-    private final InetAddress realAddress; // Spigot
 
     /**
      * @deprecated Address should be provided in other constructor
@@ -41,17 +40,10 @@ public class PlayerLoginEvent extends PlayerEvent {
      * @param address The address the player used to connect, provided for
      *     timing issues
      */
-    public PlayerLoginEvent(final Player player, final String hostname, final InetAddress address, final InetAddress realAddress) { // Spigot
+    public PlayerLoginEvent(final Player player, final String hostname, final InetAddress address) {
         super(player);
         this.hostname = hostname;
         this.address = address;
-        // Spigot start
-        this.realAddress = realAddress;
-    }
-
-    public PlayerLoginEvent(final Player player, final String hostname, final InetAddress address) {
-        this(player, hostname, address, address);
-        // Spigot end
     }
 
     /**
@@ -60,7 +52,7 @@ public class PlayerLoginEvent extends PlayerEvent {
      */
     @Deprecated
     public PlayerLoginEvent(final Player player, final Result result, final String message) {
-        this(player, "", null, result, message, null); // Spigot
+        this(player, "", null, result, message);
     }
 
     /**
@@ -73,22 +65,11 @@ public class PlayerLoginEvent extends PlayerEvent {
      * @param result The result status for this event
      * @param message The message to be displayed if result denies login
      */
-    public PlayerLoginEvent(final Player player, String hostname, final InetAddress address, final Result result, final String message, final InetAddress realAddress) { // Spigot
-        this(player, hostname, address, realAddress); // Spigot
+    public PlayerLoginEvent(final Player player, String hostname, final InetAddress address, final Result result, final String message) {
+        this(player, hostname, address);
         this.result = result;
         this.message = message;
     }
-
-    // Spigot start
-    /**
-     * Gets the connection address of this player, regardless of whether it has been spoofed or not.
-     *
-     * @return the player's connection address
-     */
-    public InetAddress getRealAddress() {
-        return realAddress;
-    }
-    // Spigot end
 
     /**
      * Gets the current result of the login, as an enum
@@ -156,7 +137,6 @@ public class PlayerLoginEvent extends PlayerEvent {
         this.message = message;
     }
 
-    // Spigot start
     /**
      * Gets the {@link InetAddress} for the Player associated with this event.
      * This method is provided as a workaround for player.getAddress()

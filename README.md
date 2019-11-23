@@ -1,7 +1,7 @@
 ![](https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-orange?style=flat-square)
 ![](https://img.shields.io/badge/Minecraft-1.7.10-orange?style=flat-square)
 ![](https://img.shields.io/badge/Spigot-1.7.10--R0.1--SNAPSHOT-orange?style=flat-square)
-![](https://img.shields.io/badge/PaperMC-Not%20Implemented%20Yet-orange?style=flat-square)
+![](https://img.shields.io/badge/PaperMC-1.14.4--R0.1--SNAPSHOT-orange?style=flat-square)
 ![](https://img.shields.io/badge/CrucibleAPI-Not%20Implemented%20Yet-orange?style=flat-square)
 ![](https://img.shields.io/badge/Java%20JDK-v1.8-blue?style=flat-square)
 ![](https://img.shields.io/github/v/release/CrucibleMC/Crucible?color=sucess&style=flat-square)
@@ -39,7 +39,7 @@ Advantages over Thermos:
 + [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler. "
 ## TODO List
 - [ ] Create Crucible API.
-- [ ] Implement the PaperMC API.
+- [X] Implement the PaperMC API.
 - [ ] Implement the Glowstone API.
 - [X] Rewrite most of Cauldron/Thermos code.
 - [ ] Fix most remaining bugs and incompatibilities.
@@ -49,6 +49,9 @@ Advantages over Thermos:
 - [ ] Fixes for better support [Travertine](https://github.com/PaperMC/Travertine).
 - [ ] Make the project compatible with Windows.
 - [ ] Backport useful things.
+- [ ] Isolate the PluginClassloader and create a special library injection and remapper.
+- [ ] Add @Mod(bukkitplugin) Support.
+- [ ] implement [Timings](https://github.com/PaperMC/Paper/blob/ver/1.14/Spigot-API-Patches/0004-Timings-v2.patch).
 
 [forge]: https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-green.svg "Minecraft Forge v10.13.4.1614"
 [mc]: https://img.shields.io/badge/Minecraft-v1.7.10-green.svg "Minecraft 1.7.10"

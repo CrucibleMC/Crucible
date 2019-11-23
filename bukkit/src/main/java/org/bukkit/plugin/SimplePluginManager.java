@@ -132,16 +132,7 @@ public final class SimplePluginManager implements PluginManager {
             try {
                 description = loader.getPluginDescription(file);
                 String name = description.getName();
-                // Spigot Start
-                if ( name.equalsIgnoreCase( "Orebfuscator" ) )
-                {
-                    server.getLogger().log( Level.WARNING, "Skipping loading of Orebfuscator as it does not work with Spigot 1.8 builds!" );
-                    continue;
-                }
-                // Spigot End
-                if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")
-                        // Cauldron - Add more restricted names
-                        || name.equalsIgnoreCase("spigot") || name.equalsIgnoreCase("forge") || name.equalsIgnoreCase("cauldron") || name.equalsIgnoreCase("mcpc") || name.equalsIgnoreCase("kcauldron") || name.equalsIgnoreCase("thermos")) {
+                if (name.equalsIgnoreCase("bukkit") || name.equalsIgnoreCase("minecraft") || name.equalsIgnoreCase("mojang")) {
                     server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
                     continue;
                 } else if (description.rawName.indexOf(' ') != -1) {
@@ -196,9 +187,6 @@ public final class SimplePluginManager implements PluginManager {
                 }
             }
         }
-
-        // Cauldron - fill names for Cauldron-provided dependencies
-        loadedPlugins.addAll(ImmutableSet.of("Cauldron", "Forge", "MCPC", "MCPC+", "KCauldron", "Thermos"));
 
         while (!plugins.isEmpty()) {
             boolean missingDependency = true;
@@ -307,7 +295,6 @@ public final class SimplePluginManager implements PluginManager {
             }
         }
 
-        org.bukkit.command.defaults.TimingsCommand.timingStart = System.nanoTime(); // Spigot
         return result.toArray(new Plugin[result.size()]);
     }
 

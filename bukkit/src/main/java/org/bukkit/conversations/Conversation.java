@@ -209,7 +209,6 @@ public class Conversation {
      * @param input The user's chat text.
      */
     public void acceptInput(String input) {
-        try { // Spigot
         if (currentPrompt != null) {
 
             // Echo the user's input
@@ -229,12 +228,6 @@ public class Conversation {
             currentPrompt = currentPrompt.acceptInput(context, input);
             outputNextPrompt();
         }
-        // Spigot Start
-        } catch ( Throwable t )
-        {
-            org.bukkit.Bukkit.getLogger().log( java.util.logging.Level.SEVERE, "Error handling conversation prompt", t );
-        }
-        // Spigot End
     }
 
     /**

@@ -32,7 +32,7 @@ public class BanIpCommand extends VanillaCommand {
             return false;
         }
 
-        String reason = StringUtils.join(args, ' ', 1, args.length);
+        String reason = args.length > 0 ? StringUtils.join(args, ' ', 1, args.length) : null;
 
         if (ipValidity.matcher(args[0]).matches()) {
             processIPBan(args[0], sender, reason);

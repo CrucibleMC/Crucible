@@ -31,7 +31,6 @@ public abstract class Command {
     protected String usageMessage;
     private String permission;
     private String permissionMessage;
-    public org.spigotmc.CustomTimingsHandler timings; // Spigot
 
     protected Command(String name) {
         this(name, "", "/" + name, new ArrayList<String>());
@@ -45,7 +44,6 @@ public abstract class Command {
         this.usageMessage = usageMessage;
         this.aliases = aliases;
         this.activeAliases = new ArrayList<String>(aliases);
-        this.timings = new org.spigotmc.CustomTimingsHandler("** Command: " + name); // Spigot
     }
 
     /**
@@ -202,7 +200,6 @@ public abstract class Command {
     public boolean setLabel(String name) {
         this.nextLabel = name;
         if (!isRegistered()) {
-            this.timings = new org.spigotmc.CustomTimingsHandler("** Command: " + name); // Spigot
             this.label = name;
             return true;
         }

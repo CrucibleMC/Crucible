@@ -91,6 +91,7 @@ public class CrucibleModContainer extends DummyModContainer {
                 "io.github.crucible.events",
                 "io.github.crucible.hook",
                 "io.github.crucible.utils",
+                "io.github.crucible.wrapper",
                 "io.github.crucible"
                 );
     }

@@ -12,8 +12,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
-import thermos.Thermos;
-import net.minecraft.server.MinecraftServer;
 
 import com.google.common.collect.ImmutableList;
 
@@ -34,26 +32,10 @@ public class OpCommand extends VanillaCommand {
         }
 
         OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+        player.setOp(true);
 
-        if(MinecraftServer.thermosConfig.opConsoleOnly.getValue()) {
-
-            if(!(sender instanceof Player)) {
-                player.setOp(true);
-
-                Command.broadcastCommandMessage(sender, "Opped " + args[0]);
-                return true;
-            } else {
-                sender.sendMessage(ChatColor.RED + "This command can only be run in the console.");
-                return false;
-            }
-
-        } else {
-            player.setOp(true);
-
-            Command.broadcastCommandMessage(sender, "Opped " + args[0]);
-            return true;
-        }
-
+        Command.broadcastCommandMessage(sender, "Opped " + args[0]);
+        return true;
     }
 
     @Override

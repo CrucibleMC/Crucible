@@ -50,7 +50,7 @@ public class GameModeCommand extends VanillaCommand {
 
             GameMode mode = GameMode.getByValue(value);
 
-            if (mode == null || mode == GameMode.NOT_SET) { // Cauldron
+            if (mode == null) {
                 if (modeArg.equalsIgnoreCase("creative") || modeArg.equalsIgnoreCase("c")) {
                     mode = GameMode.CREATIVE;
                 } else if (modeArg.equalsIgnoreCase("adventure") || modeArg.equalsIgnoreCase("a")) {

@@ -11,10 +11,6 @@ import org.bukkit.event.Listener;
 public class TimedRegisteredListener extends RegisteredListener {
     private int count;
     private long totalTime;
-    // Spigot start
-    public long curTickTotal = 0;
-    public long violations = 0;
-    // Spigot end
     private Class<? extends Event> eventClass;
     private boolean multiple = false;
 
@@ -24,13 +20,6 @@ public class TimedRegisteredListener extends RegisteredListener {
 
     @Override
     public void callEvent(Event event) throws EventException {
-        // Spigot start
-        if ( org.bukkit.Bukkit.getServer() != null && !org.bukkit.Bukkit.getServer().getPluginManager().useTimings() )
-        {
-            super.callEvent( event );
-            return;
-        }
-        // Spigot end
         if (event.isAsynchronous()) {
             super.callEvent(event);
             return;
@@ -45,11 +34,7 @@ public class TimedRegisteredListener extends RegisteredListener {
         }
         long start = System.nanoTime();
         super.callEvent(event);
-        // Spigot start
-        long diff = System.nanoTime() - start;
-        curTickTotal += diff;
-        totalTime += diff;
-        // Spigot end
+        totalTime += System.nanoTime() - start;
     }
 
     private static Class<?> getCommonSuperclass(Class<?> class1, Class<?> class2) {
@@ -65,10 +50,6 @@ public class TimedRegisteredListener extends RegisteredListener {
     public void reset() {
         count = 0;
         totalTime = 0;
-        // Spigot start
-        curTickTotal = 0;
-        violations = 0;
-        // Spigot end
     }
 
     /**

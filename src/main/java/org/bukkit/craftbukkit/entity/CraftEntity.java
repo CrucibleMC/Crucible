@@ -633,4 +633,11 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return spigot;
     }
     // Spigot end
+    
+    // Paper start
+    public Location getOrigin() {
+        //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    // Paper end
 }

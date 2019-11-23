@@ -1,0 +1,67 @@
+--- ../src-base/minecraft/org/bukkit/scoreboard/Team.java
++++ ../src-work/minecraft/org/bukkit/scoreboard/Team.java
+@@ -118,7 +118,16 @@
+      */
+     Set<OfflinePlayer> getPlayers() throws IllegalStateException;
+ 
++    // Spigot start
+     /**
++     * Same as the player method, but with an arbitrary string.
++     *
++     * @see #getPlayers()
++     */
++    Set<String> getEntries() throws IllegalStateException;
++    // Spigot End
++
++    /**
+      * Gets the size of the team
+      *
+      * @return number of players on the team
+@@ -145,7 +154,16 @@
+      */
+     void addPlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException;
+ 
++    // Spigot start
+     /**
++     * Same as the player method, but with an arbitrary string.
++     *
++     * @see #addPlayer(org.bukkit.OfflinePlayer)
++     */
++    void addEntry(String entry) throws IllegalStateException, IllegalArgumentException;
++    // Spigot end
++
++    /**
+      * Removes the player from this team.
+      *
+      * @param player the player to remove
+@@ -155,7 +173,16 @@
+      */
+     boolean removePlayer(OfflinePlayer player) throws IllegalStateException, IllegalArgumentException;
+ 
++    // Spigot start
+     /**
++     * Same as the player method, but with an arbitrary string.
++     *
++     * @see #removePlayer(org.bukkit.OfflinePlayer)
++     */
++    boolean removeEntry(String entry) throws IllegalStateException, IllegalArgumentException;
++    // Spigot end
++
++    /**
+      * Unregisters this team from the Scoreboard
+      *
+      * @throws IllegalStateException if this team has been unregistered
+@@ -171,4 +198,13 @@
+      * @throws IllegalStateException if this team has been unregistered
+      */
+     boolean hasPlayer(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException;
++
++    // Spigot start
++    /**
++     * Same as the player method, but with an arbitrary string.
++     *
++     * @see #hasPlayer(org.bukkit.OfflinePlayer)
++     */
++    boolean hasEntry(String entry) throws IllegalArgumentException,IllegalStateException;
++    // Spigot end
+ }

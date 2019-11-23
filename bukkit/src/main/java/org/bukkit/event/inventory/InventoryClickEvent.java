@@ -47,7 +47,6 @@ public class InventoryClickEvent extends InventoryInteractEvent {
     private static final HandlerList handlers = new HandlerList();
     private final ClickType click;
     private final InventoryAction action;
-    private final Inventory clickedInventory;
     private SlotType slot_type;
     private int whichSlot;
     private int rawSlot;
@@ -59,17 +58,10 @@ public class InventoryClickEvent extends InventoryInteractEvent {
         this(view, type, slot, right ? (shift ? ClickType.SHIFT_RIGHT : ClickType.RIGHT) : (shift ? ClickType.SHIFT_LEFT : ClickType.LEFT), InventoryAction.SWAP_WITH_CURSOR);
     }
 
-    public InventoryClickEvent(InventoryView view, InventoryType.SlotType type, int slot, ClickType click, InventoryAction action) {
+    public InventoryClickEvent(InventoryView view, SlotType type, int slot, ClickType click, InventoryAction action) {
         super(view);
         this.slot_type = type;
         this.rawSlot = slot;
-        if (slot < 0) {
-            this.clickedInventory = null;
-        } else if (view.getTopInventory() != null && slot < view.getTopInventory().getSize()) {
-            this.clickedInventory = view.getTopInventory();
-        } else {
-            this.clickedInventory = view.getBottomInventory();
-        }
         this.whichSlot = view.convertSlot(slot);
         this.click = click;
         this.action = action;
@@ -78,14 +70,6 @@ public class InventoryClickEvent extends InventoryInteractEvent {
     public InventoryClickEvent(InventoryView view, SlotType type, int slot, ClickType click, InventoryAction action, int key) {
         this(view, type, slot, click, action);
         this.hotbarKey = key;
-    }
-
-    /**
-     * Gets the inventory that was clicked, or null if outside of window
-     * @return The clicked inventory
-     */
-    public Inventory getClickedInventory() {
-        return clickedInventory;
     }
 
     /**

@@ -421,15 +421,7 @@ public class StandardMessenger implements Messenger {
         Set<PluginMessageListenerRegistration> registrations = getIncomingChannelRegistrations(channel);
 
         for (PluginMessageListenerRegistration registration : registrations) {
-            // Spigot Start
-            try
-            {
-                registration.getListener().onPluginMessageReceived( channel, source, message );
-            } catch ( Throwable t )
-            {
-                org.bukkit.Bukkit.getLogger().log( java.util.logging.Level.WARNING, "Could not pass incoming plugin message to " + registration.getPlugin(), t );
-            }
-            // Spigot End
+            registration.getListener().onPluginMessageReceived(channel, source, message);
         }
     }
 

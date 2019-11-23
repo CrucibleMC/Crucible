@@ -1830,6 +1830,13 @@ public final class CraftServer implements Server {
         return CraftMagicNumbers.INSTANCE;
     }
 
+    // Paper start
+    public double[] getTPS() {
+       //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    // Paper end
+
     @Override
     public Server.Spigot spigot() {
         return this.spigot;

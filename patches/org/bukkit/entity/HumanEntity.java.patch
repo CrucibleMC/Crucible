@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/org/bukkit/entity/HumanEntity.java
++++ ../src-work/minecraft/org/bukkit/entity/HumanEntity.java
+@@ -148,14 +148,14 @@
+     public int getSleepTicks();
+ 
+     /**
+-     * Gets this humans current {@link GameMode}
++     * Gets this human's current {@link GameMode}
+      *
+      * @return Current game mode
+      */
+     public GameMode getGameMode();
+ 
+     /**
+-     * Sets this humans current {@link GameMode}
++     * Sets this human's current {@link GameMode}
+      *
+      * @param mode New game mode
+      */
