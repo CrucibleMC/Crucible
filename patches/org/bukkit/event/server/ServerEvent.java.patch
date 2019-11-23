@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/org/bukkit/event/server/ServerEvent.java
++++ ../src-work/minecraft/org/bukkit/event/server/ServerEvent.java
+@@ -1,9 +1,12 @@
+ package org.bukkit.event.server;
+ 
+ import org.bukkit.event.Event;
+-
++import org.bukkit.Bukkit;
+ /**
+  * Miscellaneous server events
+  */
+ public abstract class ServerEvent extends Event {
++    public ServerEvent() {
++        super(!Bukkit.isPrimaryThread()); // Paper
++    }
+ }

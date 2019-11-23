@@ -1,6 +1,17 @@
 --- ../src-base/minecraft/org/bukkit/command/SimpleCommandMap.java
 +++ ../src-work/minecraft/org/bukkit/command/SimpleCommandMap.java
-@@ -176,11 +176,15 @@
+@@ -17,6 +17,10 @@
+ import org.bukkit.entity.Player;
+ import org.bukkit.util.StringUtil;
+ 
++import com.destroystokyo.paper.event.server.ServerExceptionEvent;
++import com.destroystokyo.paper.exception.ServerCommandException;
++import com.destroystokyo.paper.exception.ServerTabCompleteException;
++
+ public class SimpleCommandMap implements CommandMap {
+     private static final Pattern PATTERN_ON_SPACE = Pattern.compile(" ", Pattern.LITERAL);
+     protected final Map<String, Command> knownCommands = new HashMap<String, Command>();
+@@ -176,12 +180,19 @@
          }
  
          try {
@@ -10,17 +21,28 @@
 +            target.timings.stopTiming(); // Spigot
          } catch (CommandException ex) {
 +            target.timings.stopTiming(); // Spigot
++            server.getPluginManager().callEvent(new ServerExceptionEvent(new ServerCommandException(ex, target, sender, args))); // Paper
              throw ex;
          } catch (Throwable ex) {
+-            throw new CommandException("Unhandled exception executing '" + commandLine + "' in " + target, ex);
 +            target.timings.stopTiming(); // Spigot
-             throw new CommandException("Unhandled exception executing '" + commandLine + "' in " + target, ex);
++            String msg = "Unhandled exception executing '" + commandLine + "' in " + target;
++            server.getPluginManager().callEvent(new ServerExceptionEvent(new ServerCommandException(ex, target, sender, args))); // Paper
++            throw new CommandException(msg, ex);
          }
  
-@@ -248,6 +252,7 @@
+         // return true as command was handled
+@@ -248,9 +259,12 @@
          try {
              return target.tabComplete(sender, commandName, args);
          } catch (CommandException ex) {
 +            target.timings.stopTiming(); // Spigot
              throw ex;
          } catch (Throwable ex) {
-             throw new CommandException("Unhandled exception executing tab-completer for '" + cmdLine + "' in " + target, ex);
+-            throw new CommandException("Unhandled exception executing tab-completer for '" + cmdLine + "' in " + target, ex);
++            String msg = "Unhandled exception executing tab-completer for '" + cmdLine + "' in " + target;
++            server.getPluginManager().callEvent(new ServerExceptionEvent(new ServerTabCompleteException(msg, ex, target, sender, args))); // Paper
++            throw new CommandException(msg, ex);
+         }
+     }
+ 

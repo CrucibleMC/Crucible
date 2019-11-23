@@ -537,4 +537,17 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
     public void _INVALID_setMaxHealth(int health) {
         setMaxHealth(health);
     }
+    
+
+    // Paper start
+    public int getArrowsStuck() {
+      //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+
+    public void setArrowsStuck(int arrows) {
+      //TODO: Implementation.
+        throw new UnsupportedOperationException( "Not supported yet." );
+    }
+    // Paper end
 }

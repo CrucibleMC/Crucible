@@ -36,7 +36,7 @@ Advantages over Thermos:
   * Update sources: `git pull origin master`
   * Recreate the workspace: `./gradlew clean setupCrucible`
 ## Useful links
-+ [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler. "
++ [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler."
 ## TODO List
 - [ ] Create Crucible API.
 - [X] Implement the PaperMC API.

@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/org/bukkit/event/Event.java
++++ ../src-work/minecraft/org/bukkit/event/Event.java
+@@ -72,6 +72,22 @@
+     public final boolean isAsynchronous() {
+         return async;
+     }
++    
++    // Paper start
++    /**
++     * Calls the event and tests if cancelled.
++     *
++     * @return false if event was cancelled, if cancellable. otherwise true.
++     */
++    public boolean callEvent() {
++        org.bukkit.Bukkit.getPluginManager().callEvent(this);
++        if (this instanceof Cancellable) {
++            return !((Cancellable) this).isCancelled();
++        } else {
++            return true;
++        }
++    }
++    // Paper end
+ 
+     public enum Result {
+ 
