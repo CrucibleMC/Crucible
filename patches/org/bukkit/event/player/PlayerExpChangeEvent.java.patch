@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerExpChangeEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerExpChangeEvent.java
+@@ -1,5 +1,6 @@
+ package org.bukkit.event.player;
+ 
++import org.bukkit.entity.Entity; // Paper
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+ 
+@@ -9,13 +10,29 @@
+ public class PlayerExpChangeEvent extends PlayerEvent {
+     private static final HandlerList handlers = new HandlerList();
+     private int exp;
++   // Paper start
++    private final Entity source;
+ 
+     public PlayerExpChangeEvent(final Player player, final int expAmount) {
+-         super(player);
+-         exp = expAmount;
++        this(player, null, expAmount);
+     }
+ 
++    public PlayerExpChangeEvent(final Player player,final Entity sourceEntity, final int expAmount) {
++        super(player);
++        source = sourceEntity;
++        exp = expAmount;
++    }
++
+     /**
++    * Get the source that provided the experience.
++    *
++    * @return The source of the experience
++    */
++    public Entity getSource() {
++        return source;
++    }
++    // Paper end
++    /**
+      * Get the amount of experience the player will receive
+      *
+      * @return The amount of experience
