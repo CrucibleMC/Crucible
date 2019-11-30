@@ -36,6 +36,7 @@ Advantages over Thermos:
   * Update sources: `git pull origin master`
   * Recreate the workspace: `./gradlew clean setupCrucible`
 ## Useful links
++ [Fakeplayer List](FakeplayerList.md) "A list of all mod fakeplayers."
 + [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler."
 ## TODO List
 - [ ] Create Crucible API.
