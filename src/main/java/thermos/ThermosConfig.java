@@ -36,13 +36,6 @@ public class ThermosConfig extends ConfigBase {
     }
 
     @Override
-    public void registerCommands() {
-        if (CrucibleConfigs.configs.thermos_commandEnable) {
-            super.registerCommands();
-        }
-    }
-
-    @Override
     protected void addCommands() {
         commands.put(commandName, new ThermosCommand());
     }

@@ -36,6 +36,8 @@ public class CrucibleCommand extends Command {
         b.append("/crucible tps - Show tps statistics.\n");
         b.append("/crucible restart - Restart the server.\n");
         b.append("/crucible info - Print some informations about the server.\n");
+        b.append("/crucible chunks - Print some informations about loaded chunks.\n");
+        b.append("/crucible heap - Dump the server heap.\n");
         setUsage(b.toString());
         setPermission("crucible");
    

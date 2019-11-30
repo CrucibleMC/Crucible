@@ -24,7 +24,7 @@ public class CustomProjectileEntity extends CraftCustomEntity implements Project
     public CustomProjectileEntity(CraftServer server, Entity entity) {
         super(server, entity);
     }
-
+    //TODO: Olhar mais a fundo esse metodo.
     @Override
     public LivingEntity _INVALID_getShooter() {
         if (shooter instanceof LivingEntity) {

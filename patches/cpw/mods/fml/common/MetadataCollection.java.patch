@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/MetadataCollection.java
++++ ../src-work/minecraft/cpw/mods/fml/common/MetadataCollection.java
+@@ -31,6 +31,7 @@
+ import com.google.gson.stream.JsonWriter;
+ import cpw.mods.fml.common.versioning.ArtifactVersion;
+ import cpw.mods.fml.common.versioning.VersionParser;
++import io.github.crucible.CrucibleConfigs;
+ 
+ public class MetadataCollection
+ {
+@@ -73,7 +74,8 @@
+         }
+         catch (JsonParseException e)
+         {
+-            FMLLog.log(Level.ERROR, e, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
++            if (CrucibleConfigs.configs.crucible_logging_reduceSpam) FMLLog.log(Level.TRACE, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
++            else FMLLog.log(Level.ERROR, e, "The mcmod.info file in %s cannot be parsed as valid JSON. It will be ignored", sourceName);
+             return new MetadataCollection();
+         }
+         catch (Exception e)

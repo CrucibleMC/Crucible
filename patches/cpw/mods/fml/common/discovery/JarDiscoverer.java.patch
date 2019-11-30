@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/discovery/JarDiscoverer.java
++++ ../src-work/minecraft/cpw/mods/fml/common/discovery/JarDiscoverer.java
+@@ -27,6 +27,7 @@
+ import cpw.mods.fml.common.ModContainer;
+ import cpw.mods.fml.common.ModContainerFactory;
+ import cpw.mods.fml.common.discovery.asm.ASMModParser;
++import io.github.crucible.CrucibleConfigs;
+ 
+ public class JarDiscoverer implements ITypeDiscoverer
+ {
+@@ -92,7 +93,8 @@
+         }
+         catch (Exception e)
+         {
+-            FMLLog.log(Level.WARN, e, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
++            if (CrucibleConfigs.configs.crucible_logging_reduceSpam) FMLLog.log(Level.WARN, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
++            else FMLLog.log(Level.WARN, e, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
+         }
+         finally
+         {

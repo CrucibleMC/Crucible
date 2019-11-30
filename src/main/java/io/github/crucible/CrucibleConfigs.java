@@ -1,6 +1,8 @@
 package io.github.crucible;
 
 import java.io.File;
+import java.time.ZoneId;
+import java.util.TimeZone;
 
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.ConfigMode;
@@ -9,9 +11,6 @@ import net.cubespace.Yamler.Config.YamlConfig;
 
 public class CrucibleConfigs extends YamlConfig {
     public static final CrucibleConfigs configs = new CrucibleConfigs();
-    
-    @Comment("Enable Thermos command")
-    public boolean thermos_commandEnable = true;
     
     @Comment("Set the OP command to only be allowed to run in console")
     public boolean thermos_opConsoleOnly = false;
@@ -31,29 +30,48 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Log stub calls.")
     public boolean crucible_logging_logStubs = false;
     
-    private CrucibleConfigs() 
-    {
+    @Comment("Log Material injections.")
+    public boolean crucible_logging_logMaterialInjection = false;
+    
+    @Comment("Dump all item registry to <minecraftDir>/itemStackRegistry.csv.")
+    public boolean crucible_logging_dumpRegistry = false;
+    
+    @Comment("Attempts to reduce console spam by removing \"useless\" logs.")
+    public boolean crucible_logging_reduceSpam = false;
+    
+    @Comment("Force a specific timezone.")
+    public boolean crucible_vmTimeZone_forceTimeZone = false;
+    
+    @Comment("The timezone id to set.")
+    public String crucible_vmTimeZone_timeZoneId = TimeZone.getDefault().getID();
+    
+    private CrucibleConfigs() {
         CONFIG_FILE = new File("Crucible.yml");
         CONFIG_MODE = ConfigMode.PATH_BY_UNDERSCORE;
-        try
-        {
+        
+        try {
             init();
-        }
-        catch (InvalidConfigurationException e)
-        {
+        } catch (InvalidConfigurationException e) {
             e.printStackTrace();
             save();
         }
+        
+        if (crucible_vmTimeZone_forceTimeZone) {
+            try {
+                String timezone = ZoneId.of(crucible_vmTimeZone_timeZoneId).getId();
+                TimeZone.setDefault(TimeZone.getTimeZone(timezone));
+                System.setProperty("user.timezone", timezone);
+            } catch (Exception e) {
+                System.out.println("[Crucible] Invalid timezone id:" + crucible_vmTimeZone_timeZoneId);
+                crucible_vmTimeZone_timeZoneId = TimeZone.getDefault().getID();
+            }
+        }
     }
     
-    public void save() 
-    {
-        try 
-        {
+    public void save() {
+        try {
             super.save();
-        }
-        catch (InvalidConfigurationException e) 
-        {
+        } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
     }
