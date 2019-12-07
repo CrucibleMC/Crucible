@@ -931,6 +931,15 @@
              boolean flag = true;
              String s = null;
              String s1 = ".";
+@@ -1271,7 +1635,7 @@
+ 
+             for (int j = 0; j < p_main_0_.length; ++j)
+             {
+-                String s3 = p_main_0_[j];
++                String s3 = p_main_0_[j];não existia antes
+                 String s4 = j == p_main_0_.length - 1 ? null : p_main_0_[j + 1];
+                 boolean flag3 = false;
+ 
 @@ -1356,16 +1720,34 @@
              {
                  dedicatedserver.setGuiEnabled();
@@ -1048,7 +1057,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1455,9 +1892,213 @@
+@@ -1455,9 +1892,218 @@
          return this.serverStopped;
      }
  
@@ -1189,9 +1198,14 @@
 +                    useConsole = false;
 +                }
 +                // Cauldron start - initialize config
++                //TODO crucible - Change settings loading to after server has started.
 +                configFile = (File) options.valueOf("bukkit-settings");
 +                commandFile = (File)options.valueOf("commands-settings");
-+                configuration = YamlConfiguration.loadConfiguration(configFile);
++                try {
++                    configuration = YamlConfiguration.loadConfiguration(configFile);
++                } catch (Exception e) {
++                    configuration = new YamlConfiguration();
++                }
 +                configuration.options().copyDefaults(true);
 +                configuration.setDefaults(YamlConfiguration.loadConfiguration(MinecraftServer.class.getClassLoader().getResourceAsStream("configurations/bukkit.yml")));
 +                ConfigurationSection legacyAlias = null;

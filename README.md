@@ -12,7 +12,7 @@ Crucible is a continuation of [Thermos](https://github.com/CyberdyneCC/Thermos) 
 
 Advantages over Thermos:
 + It is now possible to build. :)
-+ Fixed several minor bugs.
++ Fixed several bugs.
 + Performance Improvements.
 + Updated some libraries.
 

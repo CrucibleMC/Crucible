@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeDecorator.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
-@@ -24,6 +24,14 @@
+@@ -24,6 +24,15 @@
  import net.minecraftforge.common.*;
  import net.minecraftforge.event.terraingen.*;
  
@@ -8,6 +8,7 @@
 +import java.util.ArrayList;
 +import java.util.Iterator;
 +import java.util.List;
++import java.util.Objects;
 +
 +import net.minecraft.world.chunk.Chunk;
 +// Spigot End
@@ -15,7 +16,7 @@
  public class BiomeDecorator
  {
      public World currentWorld;
-@@ -61,6 +69,8 @@
+@@ -61,6 +70,8 @@
      public int clayPerChunk;
      public int bigMushroomsPerChunk;
      public boolean generateLakes;
@@ -24,7 +25,7 @@
      private static final String __OBFID = "CL_00000164";
  
      public BiomeDecorator()
-@@ -92,12 +102,29 @@
+@@ -92,30 +103,49 @@
  
      public void decorateChunk(World p_150512_1_, Random p_150512_2_, BiomeGenBase p_150512_3_, int p_150512_4_, int p_150512_5_)
      {
@@ -60,16 +61,32 @@
              this.currentWorld = p_150512_1_;
              this.randomGenerator = p_150512_2_;
              this.chunk_X = p_150512_4_;
-@@ -105,7 +132,7 @@
-             this.genDecorations(p_150512_3_);
-             this.currentWorld = null;
-             this.randomGenerator = null;
+             this.chunk_Z = p_150512_5_;
+-            this.genDecorations(p_150512_3_);
+-            this.currentWorld = null;
+-            this.randomGenerator = null;
 -        }
++            this.genDecorations(p_150512_3_); //Crucible note - Thaumcraft is broken so.... DO NOT TOUCH THIS.
++            //this.currentWorld = null; //Crucible quickfix - fuck, isso está gerando NPE com o thaumcraft.
++            //this.randomGenerator = null;
 +      } finally { decorateLock.unlock(); }
      }
  
      protected void genDecorations(BiomeGenBase p_150513_1_)
-@@ -194,7 +221,7 @@
+     {
+         MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Pre(currentWorld, randomGenerator, chunk_X, chunk_Z));
++        Objects.requireNonNull(p_150513_1_, "[Crucible FATAL] field p_150513_1_ (BiomeGenBase) is null.");
++        Objects.requireNonNull(currentWorld, "[Crucible FATAL] field currentWorld (World) is null.");
++        Objects.requireNonNull(randomGenerator, "[Crucible FATAL] field randomGenerator (Random) is null.");
+         this.generateOres();
+         int i;
+         int j;
+         int k;
+-
+         boolean doGen = TerrainGen.decorate(currentWorld, randomGenerator, chunk_X, chunk_Z, SAND);
+         for (i = 0; doGen && i < this.sandPerChunk2; ++i)
+         {
+@@ -194,7 +224,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -78,7 +95,7 @@
              WorldGenerator worldgenerator = p_150513_1_.getRandomWorldGenForGrass(this.randomGenerator);
              worldgenerator.generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
-@@ -204,7 +231,7 @@
+@@ -204,7 +234,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -87,7 +104,7 @@
              (new WorldGenDeadBush(Blocks.deadbush)).generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
  
-@@ -214,7 +241,7 @@
+@@ -214,7 +244,7 @@
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
  
@@ -96,7 +113,7 @@
              {
                  ;
              }
-@@ -229,7 +256,7 @@
+@@ -229,7 +259,7 @@
              {
                  k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
                  l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -105,7 +122,7 @@
                  this.mushroomBrownGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
              }
  
-@@ -237,7 +264,7 @@
+@@ -237,7 +267,7 @@
              {
                  k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
                  l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -114,7 +131,7 @@
                  this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
              }
          }
-@@ -246,7 +273,7 @@
+@@ -246,7 +276,7 @@
          {
              j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -123,7 +140,7 @@
              this.mushroomBrownGen.generate(this.currentWorld, this.randomGenerator, j, l, k);
          }
  
-@@ -254,7 +281,7 @@
+@@ -254,7 +284,7 @@
          {
              j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -132,7 +149,7 @@
              this.mushroomRedGen.generate(this.currentWorld, this.randomGenerator, j, l, k);
          }
  
-@@ -263,7 +290,7 @@
+@@ -263,7 +293,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -141,7 +158,7 @@
              this.reedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
  
-@@ -271,7 +298,7 @@
+@@ -271,7 +301,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -150,7 +167,7 @@
              this.reedGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
  
-@@ -280,7 +307,7 @@
+@@ -280,7 +310,7 @@
          {
              j = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              k = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -159,7 +176,7 @@
              (new WorldGenPumpkin()).generate(this.currentWorld, this.randomGenerator, j, l, k);
          }
  
-@@ -289,7 +316,7 @@
+@@ -289,7 +319,7 @@
          {
              k = this.chunk_X + this.randomGenerator.nextInt(16) + 8;
              l = this.chunk_Z + this.randomGenerator.nextInt(16) + 8;
@@ -168,7 +185,7 @@
              this.cactusGen.generate(this.currentWorld, this.randomGenerator, k, i1, l);
          }
  
-@@ -313,6 +340,7 @@
+@@ -313,6 +343,7 @@
              }
          }
  
@@ -176,7 +193,7 @@
          MinecraftForge.EVENT_BUS.post(new DecorateBiomeEvent.Post(currentWorld, randomGenerator, chunk_X, chunk_Z));
      }
  
-@@ -360,6 +388,33 @@
+@@ -360,6 +391,33 @@
          MinecraftForge.ORE_GEN_BUS.post(new OreGenEvent.Post(currentWorld, randomGenerator, chunk_X, chunk_Z));
      }
  
