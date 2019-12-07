@@ -100,7 +100,7 @@ public class CrucibleCommand extends Command {
     
     public static String generateInfo() {
         StringBuilder b = new StringBuilder();
-        b.append("This server is running &3Crucible&r [v1.0] (Thermos fork by CrucibleMC Team).\n");
+        b.append("This server is running &3Crucible&r [v2.0] (Thermos fork by CrucibleMC Team).\n");
         b.append("&9https://github.com/CrucibleMC/Crucible\n&r");
         b.append("Bukkit|Spigot|PaperMC|Glowstone version: " + Bukkit.getBukkitVersion() + "|1.7.10-R0.1-SNAPSHOT|PaperMC-1.14.4-R0.1-SNAPSHOT|???\n");//#Hardcoded
         b.append("Minecraft Forge version: " + Bukkit.getVersion() + "\n");
