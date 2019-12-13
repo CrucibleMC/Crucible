@@ -333,7 +333,7 @@
          }
          else if (this.bannedIPs.func_152708_a(p_148542_1_))
          {
-@@ -368,10 +521,75 @@
+@@ -368,10 +521,78 @@
          }
          else
          {
@@ -355,6 +355,7 @@
 +        PlayerLoginEvent event = new PlayerLoginEvent(player, hostname, ((java.net.InetSocketAddress) socketaddress).getAddress(),
 +                ((java.net.InetSocketAddress) loginlistener.field_147333_a.getRawAddress()).getAddress()); // Spigot
 +        String s;
++        UserListEntry entry = null;
 +
 +        if (this.bannedPlayers.func_152702_a(gameprofile) && !this.bannedPlayers.func_152683_b(gameprofile).hasBanExpired())
 +        {
@@ -374,7 +375,9 @@
 +            // return "You are not white-listed on this server!";
 +            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
 +        }
-+        else if (this.bannedIPs.func_152708_a(socketaddress) && !this.bannedPlayers.func_152683_b(gameprofile).hasBanExpired())
++        //TODO: Crucible quick fix, need to find the NPE cause.
++        //else if (this.bannedIPs.func_152708_a(socketaddress) && !this.bannedPlayers.func_152683_b(gameprofile).hasBanExpired())
++        else if (this.bannedIPs.func_152708_a(socketaddress) && ((entry = this.bannedPlayers.func_152683_b(gameprofile)) == null || !entry.hasBanExpired()))
 +        {
 +            IPBanEntry ipbanentry = this.bannedIPs.func_152709_b(socketaddress);
 +            s = "Your IP address is banned from this server!\nReason: " + ipbanentry.getBanReason();
@@ -410,7 +413,7 @@
      public EntityPlayerMP createPlayerForUser(GameProfile p_148545_1_)
      {
          UUID uuid = EntityPlayer.func_146094_a(p_148545_1_);
-@@ -410,80 +628,307 @@
+@@ -410,80 +631,307 @@
          return new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), p_148545_1_, (ItemInWorldManager)object);
      }
  
@@ -756,7 +759,7 @@
          return entityplayermp1;
      }
  
-@@ -492,34 +937,112 @@
+@@ -492,34 +940,112 @@
          transferPlayerToDimension(p_72356_1_, p_72356_2_, mcServer.worldServerForDimension(p_72356_2_).getDefaultTeleporter());
      }
  
@@ -889,7 +892,7 @@
      }
  
      public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, Teleporter teleporter)
-@@ -605,6 +1128,109 @@
+@@ -605,6 +1131,109 @@
          p_82448_1_.setWorld(p_82448_4_);
      }
  
@@ -999,7 +1002,7 @@
      public void sendPlayerInfoToAllPlayers()
      {
          if (++this.playerPingIndex > 600)
-@@ -612,11 +1238,13 @@
+@@ -612,11 +1241,13 @@
              this.playerPingIndex = 0;
          }
  
@@ -1013,7 +1016,7 @@
      }
  
      public void sendPacketToAllPlayers(Packet p_148540_1_)
-@@ -877,13 +1505,24 @@
+@@ -877,13 +1508,24 @@
          for (int j = 0; j < this.playerEntityList.size(); ++j)
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
@@ -1040,7 +1043,7 @@
                  if (d4 * d4 + d5 * d5 + d6 * d6 < p_148543_8_ * p_148543_8_)
                  {
                      entityplayermp.playerNetServerHandler.sendPacket(p_148543_11_);
-@@ -941,13 +1580,16 @@
+@@ -941,13 +1583,16 @@
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(1, 0.0F));
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(7, p_72354_2_.getRainStrength(1.0F)));
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(8, p_72354_2_.getWeightedThunderStrength(1.0F)));
@@ -1058,7 +1061,7 @@
          p_72385_1_.playerNetServerHandler.sendPacket(new S09PacketHeldItemChange(p_72385_1_.inventory.currentItem));
      }
  
-@@ -961,9 +1603,17 @@
+@@ -961,9 +1606,17 @@
          return this.maxPlayers;
      }
  
@@ -1077,7 +1080,7 @@
      }
  
      public void setWhiteListEnabled(boolean p_72371_1_)
-@@ -1032,12 +1682,30 @@
+@@ -1032,12 +1685,30 @@
  
      public void removeAllPlayers()
      {
