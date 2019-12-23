@@ -73,7 +73,7 @@
              return false;
          }
          else
-@@ -285,18 +332,70 @@
+@@ -285,18 +332,91 @@
                      if (this.getStackInSlot(j) != null)
                      {
                          ItemStack itemstack = this.getStackInSlot(j).copy();
@@ -81,7 +81,7 @@
 -
 +                        // CraftBukkit start - Call event when pushing items into other inventories
 +                        CraftItemStack oitemstack = CraftItemStack.asCraftMirror(this.decrStackSize(j, 1));
-+                        Inventory destinationInventory;
++                        Inventory destinationInventory = null;
 +    
 +                        // Have to special case large chests as they work oddly
 +                        if (iinventory instanceof InventoryLargeChest)
@@ -91,25 +91,46 @@
 +                        else
 +                        {
 +                            // Cauldron start - support mod inventories, with no owners
-+                            try {
-+                                if (iinventory.getOwner() != null) {
++                            try 
++                            {
++                                if (iinventory.getOwner() != null) 
++                                {
 +                                    destinationInventory = iinventory.getOwner().getInventory();
-+                                } else {
++                                } 
++                                else 
++                                {
 +                                    // TODO: create a mod inventory for passing to the event, instead of null
 +                                    destinationInventory = null;
 +                                }
-+                             } catch (AbstractMethodError e) { // fixes openblocks AbstractMethodError
-+                                if (iinventory instanceof net.minecraft.tileentity.TileEntity) {
++                             } 
++                            catch (AbstractMethodError e) 
++                            { // fixes openblocks AbstractMethodError
++                                if (iinventory instanceof net.minecraft.tileentity.TileEntity) 
++                                {
 +                                    org.bukkit.inventory.InventoryHolder holder = net.minecraftforge.cauldron.CauldronUtils.getOwner((net.minecraft.tileentity.TileEntity)iinventory);
-+                                    if (holder != null) {
++                                    if (holder != null) 
++                                    {
 +                                        destinationInventory = holder.getInventory();
-+                                    } else {
++                                    } 
++                                    else 
++                                    {
 +                                        destinationInventory = null;
 +                                    }
-+                                } else {
++                                } 
++                                else 
++                                {
 +                                    destinationInventory = null;
 +                                }
 +                            }
++                            //Crucible start - Add Mod Inventory support.
++                            finally 
++                            { 
++                                if (destinationInventory == null)
++                                { 
++                                    destinationInventory = new io.github.crucible.wrapper.ModInventoryWrapper(iinventory); //Crucible note - Should we do that? What will be the side effects?
++                                } 
++                            }
++                            ///Crucible end
 +                            // Cauldron end
 +                        }
 +    
@@ -149,7 +170,7 @@
                  return false;
              }
          }
-@@ -427,11 +526,71 @@
+@@ -427,11 +547,77 @@
          if (itemstack != null && func_145890_b(p_145892_1_, itemstack, p_145892_2_, p_145892_3_))
          {
              ItemStack itemstack1 = itemstack.copy();
@@ -174,7 +195,7 @@
 +                    } 
 +                    else
 +                    {
-+                        // TODO: create a mod inventory for passing to the event, instead of null
++                       
 +                        sourceInventory = null;
 +                    }
 +                }
@@ -182,7 +203,13 @@
 +                {
 +                    sourceInventory = null;
 +                }
-+                finally { if (sourceInventory == null) { sourceInventory = new thermos.CraftInventoryWrapper(p_145892_1_); } }
++                finally 
++                { 
++                    if (sourceInventory == null) 
++                    { 
++                        sourceInventory = new io.github.crucible.wrapper.ModInventoryWrapper(p_145892_1_); 
++                    } 
++                }
 +                // Cauldron end
 +            }
 +
@@ -223,7 +250,7 @@
                  return true;
              }
  
-@@ -451,6 +610,20 @@
+@@ -451,6 +637,20 @@
          }
          else
          {

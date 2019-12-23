@@ -1,4 +1,4 @@
-package thermos;
+package io.github.crucible.wrapper;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -12,17 +12,17 @@ import org.bukkit.inventory.InventoryHolder;
 import java.util.Collections;
 import java.util.List;
 
-public class CraftInventoryWrapper extends CraftInventory {
-    public CraftInventoryWrapper(IInventory inventory) {
-        super(new Inv(inventory));
-        ((Inv) super.inventory).wrapper = this;
+public class ModInventoryWrapper extends CraftInventory {
+    public ModInventoryWrapper(IInventory inventory) {
+        super(new WrappedInventory(inventory));
+        ((WrappedInventory) super.inventory).wrapper = this;
     }
 
-    private static final class Inv implements IInventory, InventoryHolder {
-        CraftInventoryWrapper wrapper;
+    private static final class WrappedInventory implements IInventory, InventoryHolder {
+        ModInventoryWrapper wrapper;
         IInventory inventory;
 
-        Inv(IInventory inventory) {
+        WrappedInventory(IInventory inventory) {
             this.inventory = inventory;
         }
 

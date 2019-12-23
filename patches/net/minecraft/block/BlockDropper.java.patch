@@ -21,14 +21,14 @@
      {
          BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_149941_1_, p_149941_2_, p_149941_3_, p_149941_4_);
          TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.getBlockTileEntity();
-@@ -60,10 +65,54 @@
+@@ -60,10 +65,72 @@
  
                  if (iinventory != null)
                  {
 -                    itemstack1 = TileEntityHopper.func_145889_a(iinventory, itemstack.copy().splitStack(1), Facing.oppositeSide[i1]);
 +                    // CraftBukkit start - Fire event when pushing items into other inventories
 +                    CraftItemStack oitemstack = CraftItemStack.asCraftMirror(itemstack.copy().splitStack(1));
-+                    org.bukkit.inventory.Inventory destinationInventory;
++                    org.bukkit.inventory.Inventory destinationInventory = null;;
  
 -                    if (itemstack1 == null)
 +                    // Have to special case large chests as they work oddly
@@ -39,25 +39,43 @@
 +                    else
 +                    {
 +                        // Crucible start - support mod inventories, with no owners
-+                        try {
-+
-+                            if (iinventory.getOwner().getInventory() != null) {
++                        try 
++                        {
++                            if (iinventory.getOwner() != null) 
++                            {
 +                                destinationInventory = iinventory.getOwner().getInventory();
-+                            } else {
++                            } 
++                            else 
++                            {
 +                                // TODO: create a mod inventory for passing to the event, instead of null
 +                                destinationInventory = null;
 +                            }
-+                        } catch (AbstractMethodError e) { // fixes openblocks AbstractMethodError
-+                            if (iinventory instanceof TileEntity) {
++                         } 
++                        catch (AbstractMethodError e) 
++                        { // fixes openblocks AbstractMethodError
++                            if (iinventory instanceof net.minecraft.tileentity.TileEntity) 
++                            {
 +                                org.bukkit.inventory.InventoryHolder holder = net.minecraftforge.cauldron.CauldronUtils.getOwner((net.minecraft.tileentity.TileEntity)iinventory);
-+                                if (holder != null) {
++                                if (holder != null) 
++                                {
 +                                    destinationInventory = holder.getInventory();
-+                                } else {
++                                } 
++                                else 
++                                {
 +                                    destinationInventory = null;
 +                                }
-+                            } else {
++                            } 
++                            else 
++                            {
 +                                destinationInventory = null;
 +                            }
++                        }
++                        finally 
++                        { 
++                            if (destinationInventory == null)
++                            { 
++                                destinationInventory = new io.github.crucible.wrapper.ModInventoryWrapper(iinventory); //Crucible note - Should we do that? What will be the side effects?
++                            } 
 +                        }
 +                        // Crucible end
 +                    }
