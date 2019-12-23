@@ -15,6 +15,7 @@ Advantages over Thermos:
 + Fixed several bugs.
 + Performance Improvements.
 + Updated some libraries.
++ You can see more changes in the [releases](https://github.com/CrucibleMC/Crucible/releases) changelog.
 
 ## Build Requirements
 * Java 8u101 JDK or higher
@@ -35,9 +36,12 @@ Advantages over Thermos:
 * Updating sources
   * Update sources: `git pull origin master`
   * Recreate the workspace: `./gradlew clean setupCrucible`
+## Know incompatibilities and bugs
+* Industrial Craft 2 has some problems with the crucible internal chunkmap, we have a fix via [Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) using [Grimoire](https://github.com/CrucibleMC/Grimoire).
 ## Useful links
 + [Fakeplayer List](FakeplayerList.md) "A list of all mod fakeplayers."
 + [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler."
++ [Grimoire](https://github.com/CrucibleMC/Grimoire) "A core mod that [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) Modules use to be loaded up."
 ## TODO List
 - [ ] Create Crucible API.
 - [X] Implement the PaperMC API.
