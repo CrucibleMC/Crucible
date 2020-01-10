@@ -1,1 +1,3 @@
 rootProject.name = 'Crucible'
+
+include 'eclipse/Cauldron'
