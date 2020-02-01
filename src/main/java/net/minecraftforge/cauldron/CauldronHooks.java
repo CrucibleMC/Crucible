@@ -2,6 +2,7 @@ package net.minecraftforge.cauldron;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.map.hash.TObjectLongHashMap;
+import io.github.crucible.CrucibleConfigs;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,6 +36,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
+import net.minecraftforge.common.ForgeChunkManager;
 
 import org.bukkit.craftbukkit.util.LongHash;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -352,7 +354,7 @@ public class CauldronHooks
             }
 
             // Tick with no players near?
-            if (!teCache.tickNoPlayers && !world.isActiveBlockCoord(tileEntity.xCoord, tileEntity.zCoord))
+            if (!teCache.tickNoPlayers && !world.isActiveBlockCoord(tileEntity.xCoord, tileEntity.zCoord) && (CrucibleConfigs.configs.crucible_tickHandler_forcedChunkTick && !ForgeChunkManager.getPersistentChunksFor(world).containsValue(world.getChunkFromBlockCoords(tileEntity.xCoord, tileEntity.zCoord))))
             {
                 return false;
             }

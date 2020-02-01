@@ -38,16 +38,18 @@ import net.minecraftforge.server.command.ForgeCommand;
 
 public class CrucibleModContainer extends DummyModContainer {
     public static Logger logger;
+    public static CrucibleModContainer instance;
     public CrucibleModContainer() {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
         meta.modId       = "Crucible";
         meta.name        = "Crucible Server";
-        meta.version     = "2.0";
+        meta.version     = "2.1";
         meta.credits     = "TODO: Add credits";
         meta.authorList  = Arrays.asList("juanmuscaria", "brunoxkk0");
         meta.description = "Pure black magic and gambiarras!";
         meta.url         = "https://github.com/CrucibleMC/Crucible";
+        instance = this;
     }
     
     @Override

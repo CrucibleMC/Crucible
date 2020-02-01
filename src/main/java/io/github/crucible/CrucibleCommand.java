@@ -100,7 +100,7 @@ public class CrucibleCommand extends Command {
     
     public static String generateInfo() {
         StringBuilder b = new StringBuilder();
-        b.append("This server is running &3Crucible&r [v2.0] (Thermos fork by CrucibleMC Team).\n");
+        b.append("This server is running &3Crucible&r ["+CrucibleModContainer.instance.getVersion()+"] (Thermos fork by CrucibleMC Team).\n");
         b.append("&9https://github.com/CrucibleMC/Crucible\n&r");
         b.append("Bukkit|Spigot|PaperMC|Glowstone version: " + Bukkit.getBukkitVersion() + "|1.7.10-R0.1-SNAPSHOT|PaperMC-1.14.4-R0.1-SNAPSHOT|???\n");//#Hardcoded
         b.append("Minecraft Forge version: " + Bukkit.getVersion() + "\n");
@@ -161,7 +161,7 @@ public class CrucibleCommand extends Command {
         for (Integer dimId : DimensionManager.getIDs()){
             
             double worldTickTime = mean(getServer().worldTickTimes.get(dimId)) * 1.0E-6D;
-            double worldTPS = Math.min(1000.0/worldTickTime, 20);
+            double worldTPS = Math.min(1000.0/worldTickTime, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate);
             String name = "";
             tps.append("&8(&f&l" + dimId + "&r&f \u279c "+ (((name = DimensionManager.getProvider(dimId).getDimensionName()) != null) ? name : " ") + "&r&8) &7 Mean tick time: &l" + timeFormat.format(worldTickTime) + "&r&7ms Mean tps: " + parseTps(worldTPS)+ "&r\n");
             
@@ -176,11 +176,11 @@ public class CrucibleCommand extends Command {
         StringBuilder  t = new StringBuilder();
         
         if(tps <= 10) {
-            t.append("&c&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
+            t.append("&c&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate )) + "&r ");
         }else if(tps <= 15) {
-            t.append("&e&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
+            t.append("&e&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate )) + "&r ");
         }else {
-            t.append("&a&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 )) + "&r ");
+            t.append("&a&l" + String.format("%.2f", Math.min( Math.round( tps * 100.0 ) / 100.0, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate )) + "&r ");
         }
         
         return  t.toString();

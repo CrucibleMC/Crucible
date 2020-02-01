@@ -2,6 +2,9 @@ package org.spigotmc;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
+
+import io.github.crucible.CrucibleConfigs;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -39,6 +42,6 @@ public class TicksPerSecondCommand extends Command
     private String format(double tps)
     {
         return ( ( tps > 18.0 ) ? ChatColor.GREEN : ( tps > 16.0 ) ? ChatColor.YELLOW : ChatColor.RED ).toString()
-                + ( ( tps > 20.0 ) ? "*" : "" ) + Math.min( Math.round( tps * 100.0 ) / 100.0, 20.0 );
+                + ( ( tps > CrucibleConfigs.configs.crucible_tickHandler_serverTickRate ) ? "*" : "" ) + Math.min( Math.round( tps * 100.0 ) / 100.0, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate );
     }
 }

@@ -45,6 +45,15 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("The timezone id to set.")
     public String crucible_vmTimeZone_timeZoneId = TimeZone.getDefault().getID();
     
+    @Comment("If true, tiles in forced chunks will be ticked even without nearby players, experimental, can cause problems!")
+    public boolean crucible_tickHandler_forcedChunkTick = true;
+    
+    @Comment("Sets the server max tps, experimental, can cause problems!")
+    public int crucible_tickHandler_serverTickRate = 20;
+    
+    @Comment("Sets the server max tick time, experimental, can cause problems!")
+    public int crucible_tickHandler_serverTickTime = 1000000000;
+    
     private CrucibleConfigs() {
         CONFIG_FILE = new File("Crucible.yml");
         CONFIG_MODE = ConfigMode.PATH_BY_UNDERSCORE;
@@ -74,5 +83,10 @@ public class CrucibleConfigs extends YamlConfig {
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
+    }
+    
+    public int getTickTime() 
+    {
+        return crucible_tickHandler_serverTickTime / crucible_tickHandler_serverTickRate;
     }
 }

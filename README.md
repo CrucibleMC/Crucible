@@ -49,7 +49,7 @@ Advantages over Thermos:
 - [X] Rewrite most of Cauldron/Thermos code.
 - [ ] Fix most remaining bugs and incompatibilities.
 - [ ] Update the Spigot and Bukkit API.
-- [ ] Performance Improvements.
+- [X] Performance Improvements.
 - [ ] Rewrite parts of the project build process for easier maintenance.
 - [ ] Fixes for better support [Travertine](https://github.com/PaperMC/Travertine).
 - [ ] Make the project compatible with Windows.
