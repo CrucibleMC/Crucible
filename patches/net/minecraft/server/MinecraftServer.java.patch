@@ -618,6 +618,15 @@
          if (file1.isFile())
          {
              ByteBuf bytebuf = Unpooled.buffer();
+@@ -512,7 +802,7 @@
+             }
+             catch (Exception exception)
+             {
+-                logger.error("Couldn\'t load server icon", exception);
++                logger.error("Couldn't load server icon", exception);
+             }
+             finally
+             {
 @@ -532,8 +822,12 @@
  
      public void tick()
