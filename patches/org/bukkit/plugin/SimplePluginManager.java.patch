@@ -47,7 +47,22 @@
          return result.toArray(new Plugin[result.size()]);
      }
  
-@@ -403,7 +420,8 @@
+@@ -337,6 +354,14 @@
+         return result;
+     }
+ 
++    public synchronized Plugin loadModPlugin(Plugin plugin) {
++        if (plugin != null && plugin.getDescription() != null) {
++            plugins.add(plugin);
++            lookupNames.put(plugin.getDescription().getName(), plugin);
++        }
++        return plugin;
++    }
++
+     private void checkUpdate(File file) {
+         if (updateDirectory == null || !updateDirectory.isDirectory()) {
+             return;
+@@ -403,7 +428,8 @@
              try {
                  plugin.getPluginLoader().enablePlugin(plugin);
              } catch (Throwable ex) {
@@ -57,7 +72,7 @@
              }
  
              HandlerList.bakeAll();
-@@ -422,32 +440,37 @@
+@@ -422,32 +448,37 @@
              try {
                  plugin.getPluginLoader().disablePlugin(plugin);
              } catch (Throwable ex) {
@@ -100,7 +115,7 @@
              }
          }
      }
-@@ -727,4 +750,11 @@
+@@ -727,4 +758,11 @@
      public void useTimings(boolean use) {
          useTimings = use;
      }

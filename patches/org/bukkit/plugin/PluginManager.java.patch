@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/org/bukkit/plugin/PluginManager.java
++++ ../src-work/minecraft/org/bukkit/plugin/PluginManager.java
+@@ -74,6 +74,8 @@
+      */
+     public Plugin loadPlugin(File file) throws InvalidPluginException, InvalidDescriptionException, UnknownDependencyException;
+ 
++    public Plugin loadModPlugin(Plugin plugin);
++
+     /**
+      * Loads the plugins contained within the specified directory
+      *
