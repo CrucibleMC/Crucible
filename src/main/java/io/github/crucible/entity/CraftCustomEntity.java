@@ -1,12 +1,10 @@
 package io.github.crucible.entity;
 
+import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.entity.Entity;
-
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.EntityType;
-
-import cpw.mods.fml.common.registry.EntityRegistry;
 
 public class CraftCustomEntity extends CraftEntity {
 
@@ -23,7 +21,7 @@ public class CraftCustomEntity extends CraftEntity {
 
     @Override
     public net.minecraft.entity.Entity getHandle() {
-        return (net.minecraft.entity.Entity) entity;
+        return entity;
     }
 
     @Override
@@ -33,7 +31,7 @@ public class CraftCustomEntity extends CraftEntity {
 
     @SuppressWarnings("deprecation")
     public EntityType getType() {
-		EntityType type = EntityType.fromName(this.entityName);
+        EntityType type = EntityType.fromName(this.entityName);
         if (type != null)
             return type;
         else return EntityType.UNKNOWN;

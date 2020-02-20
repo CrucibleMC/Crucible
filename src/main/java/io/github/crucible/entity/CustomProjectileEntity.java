@@ -6,13 +6,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.world.WorldServer;
-
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
-import org.bukkit.projectiles.*;
+import org.bukkit.projectiles.BlockProjectileSource;
+import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.UUID;
 
@@ -24,6 +24,7 @@ public class CustomProjectileEntity extends CraftCustomEntity implements Project
     public CustomProjectileEntity(CraftServer server, Entity entity) {
         super(server, entity);
     }
+
     //TODO: Olhar mais a fundo esse metodo.
     @Override
     public LivingEntity _INVALID_getShooter() {
@@ -59,7 +60,7 @@ public class CustomProjectileEntity extends CraftCustomEntity implements Project
     @Override
     public void _INVALID_setShooter(LivingEntity living) {
         if (living instanceof ProjectileSource) {
-            this.shooter = (ProjectileSource) living;
+            this.shooter = living;
         }
     }
 

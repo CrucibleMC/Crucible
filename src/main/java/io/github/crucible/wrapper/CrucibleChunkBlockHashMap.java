@@ -1,92 +1,92 @@
 package io.github.crucible.wrapper;
 
-import java.util.Collection;
-
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.world.chunk.Chunk;
 
+import java.util.Collection;
+
 public class CrucibleChunkBlockHashMap {
-	
-	/*
-	 * ChunkBlockHashMap implementation using fastutils Long2ObjectMap
-	 */
-	
-	private final Long2ObjectMap<Chunk[][]> map = new Long2ObjectOpenHashMap<Chunk[][]>();
-	private Chunk last1, last2, last3, last4;
-	private int size = 0;
-	
-	public Long2ObjectMap<Chunk[][]> raw() {
-		return map;
-	}
-	
-	public int size() {
-		return size;
-	}
-	
-	public boolean bulkCheck(Collection<int[]> coords) {
-		
+
+    /*
+     * ChunkBlockHashMap implementation using fastutils Long2ObjectMap
+     */
+
+    private final Long2ObjectMap<Chunk[][]> map = new Long2ObjectOpenHashMap<Chunk[][]>();
+    private Chunk last1, last2, last3, last4;
+    private int size = 0;
+
+    public Long2ObjectMap<Chunk[][]> raw() {
+        return map;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public boolean bulkCheck(Collection<int[]> coords) {
+
         Chunk[][] last = null;
-        
+
         int x = -1, z = -1;
-        
+
         for (int[] set : coords) {
-        	
+
             if (last != null) {
-            	
+
                 if (set[0] >> 4 == x >> 4 && set[1] >> 4 == z >> 4) {
                     x = set[0];
                     z = set[1];
                     x %= 16;
                     z %= 16;
-                    
+
                     if (last[(x + (x >> 31)) ^ (x >> 31)][(z + (z >> 31)) ^ (z >> 31)] == null) {
                         return false;
                     }
-                    
+
                     x = set[0];
                     z = set[1];
-                    
+
                 } else {
-                	
+
                     x = set[0];
                     z = set[1];
-                    
+
                     last = this.map.get((((long) (x >> 4)) << 32L) ^ (z >> 4));
-                    
+
                     if (last == null) {
                         return false;
                     }
-                    
+
                     x %= 16;
                     z %= 16;
-                    
+
                     if (last[(x + (x >> 31)) ^ (x >> 31)][(z + (z >> 31)) ^ (z >> 31)] == null) {
                         return false;
                     }
-                    
+
                     x = set[0];
                     z = set[1];
 
                 }
-                
+
             } else {
                 x = set[0];
                 z = set[1];
-                
+
                 last = this.map.get((((long) (x >> 4)) << 32L) ^ (z >> 4));
 
                 if (last == null) {
                     return false;
                 }
-                
+
                 x %= 16;
                 z %= 16;
-                
+
                 if (last[(x + (x >> 31)) ^ (x >> 31)][(z + (z >> 31)) ^ (z >> 31)] == null) {
                     return false;
                 }
-                
+
                 x = set[0];
                 z = set[1];
             }
@@ -94,8 +94,8 @@ public class CrucibleChunkBlockHashMap {
 
         return true;
     }
-	
-	public Chunk get(int x, int z) {
+
+    public Chunk get(int x, int z) {
         if (last1 != null && last1.xPosition == x && last1.zPosition == z) {
             return last1;
         }
@@ -124,7 +124,7 @@ public class CrucibleChunkBlockHashMap {
         }
         return ref;
     }
-	
+
     public void put(Chunk chunk) {
         if (chunk == null)
             return;
@@ -155,7 +155,7 @@ public class CrucibleChunkBlockHashMap {
             last1 = chunk;
         }
     }
-    
+
     public void remove(Chunk chunk) {
         int x = chunk.xPosition, z = chunk.zPosition;
         Chunk[][] temp_chunk_bunch = this.map.get((((long) (x >> 4)) << 32L) ^ (z >> 4));
