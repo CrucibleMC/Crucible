@@ -1,10 +1,16 @@
 package io.github.crucible;
 
 
+import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
+import com.avaje.ebean.EbeanServer;
+import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableList;
@@ -35,10 +41,24 @@ import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.event.Event;
+import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.*;
 
-public class CrucibleModContainer extends DummyModContainer {
+public class CrucibleModContainer extends DummyModContainer implements Plugin {
     public static Logger logger;
     public static CrucibleModContainer instance;
+    public static Metrics metrics;
+    private PluginLoader dummyPluginLoader;
+    private PluginDescriptionFile dummyPluginDescription;
+    private boolean isPluginEnabled = false;
+
     public CrucibleModContainer() {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
@@ -83,9 +103,11 @@ public class CrucibleModContainer extends DummyModContainer {
     }
 
     @Subscribe
-    public void serverStarting(FMLServerStartingEvent evt)
-    {
+    public void serverStarting(FMLServerStartingEvent evt) {
         evt.registerServerCommand("crucible", new CrucibleCommand(evt.getServer()));
+        getServer().getPluginManager().loadModPlugin(this);
+        getServer().getPluginManager().enablePlugin(this);
+        metrics = new Metrics(this, 6555);
     }
     
     @Override
@@ -100,5 +122,146 @@ public class CrucibleModContainer extends DummyModContainer {
                 "io.github.crucible.wrapper",
                 "io.github.crucible"
                 );
+    }
+
+    @Override
+    public File getDataFolder() {
+    return new File(((File) MinecraftServer.options.valueOf("plugins")),"forge");
+    }
+
+    @Override
+    public PluginDescriptionFile getDescription() {
+        if (dummyPluginDescription == null) {
+            dummyPluginDescription = new PluginDescriptionFile(CrucibleModContainer.instance.getName(),CrucibleModContainer.instance.getVersion(),CrucibleModContainer.class.getName());
+        }
+        return dummyPluginDescription;
+    }
+
+    @Override
+    public FileConfiguration getConfig() {
+        return null;
+    }
+
+    @Override
+    public InputStream getResource(String filename) {
+        return null;
+    }
+
+    @Override
+    public void saveConfig() {
+
+    }
+
+    @Override
+    public void saveDefaultConfig() {
+
+    }
+
+    @Override
+    public void saveResource(String resourcePath, boolean replace) {
+
+    }
+
+    @Override
+    public void reloadConfig() {
+
+    }
+
+    @Override
+    public PluginLoader getPluginLoader() {
+        if (dummyPluginLoader == null) {
+            dummyPluginLoader = new PluginLoader() {
+                @Override
+                public Plugin loadPlugin(File file) throws InvalidPluginException, UnknownDependencyException {
+                    try {
+                        return getServer().getPluginManager().loadPlugin(file);
+                    } catch (InvalidDescriptionException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                public PluginDescriptionFile getPluginDescription(File file) {
+                    if (dummyPluginDescription == null) {
+                    dummyPluginDescription = new PluginDescriptionFile(CrucibleModContainer.instance.getName(),CrucibleModContainer.instance.getVersion(),CrucibleModContainer.class.getName());
+                    }
+                    return dummyPluginDescription;
+                }
+
+                @Override
+                public Pattern[] getPluginFileFilters() {
+                    return new Pattern[0];
+                }
+
+                @Override
+                public Map<Class<? extends Event>, Set<RegisteredListener>> createRegisteredListeners(Listener listener, Plugin plugin) {
+                    return null;
+                }
+
+                @Override
+                public void enablePlugin(Plugin plugin) {
+                    isPluginEnabled = true;
+                }
+
+                @Override
+                public void disablePlugin(Plugin plugin) {
+                    if (!MinecraftServer.getServer().isServerRunning()) isPluginEnabled = false;
+                }
+            };
+        }
+        return dummyPluginLoader;
+    }
+
+    @Override
+    public Server getServer() {
+        return Bukkit.getServer();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isPluginEnabled;
+    }
+
+    @Override
+    public void onDisable() { }
+
+    @Override
+    public void onLoad() { }
+
+    @Override
+    public void onEnable() { }
+
+    @Override
+    public boolean isNaggable() {
+        return false;
+    }
+
+    @Override
+    public void setNaggable(boolean canNag) { }
+
+    @Override
+    public EbeanServer getDatabase() {
+        return null;
+    }
+
+    @Override
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+        return null;
+    }
+
+    @Override
+    public java.util.logging.Logger getLogger() {
+        return Bukkit.getLogger();
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return null;
     }
 }
