@@ -98,7 +98,7 @@ public class WatchdogThread extends Thread
 
                 log.log(Level.SEVERE, "------------------------------");
 
-                if (MinecraftServer.getServer().cauldronConfig.dumpChunksOnDeadlock.getValue())
+                if (MinecraftServer.cauldronConfig.dumpChunksOnDeadlock.getValue())
                 {
                     // Dump detailed world info to a watchdog report log
                     File file = new File(new File(new File("."), "crash-reports"), "watchdog-chunks-"
@@ -109,7 +109,7 @@ public class WatchdogThread extends Thread
                     log.log(Level.SEVERE, "Writing complete");
                     log.log(Level.SEVERE, "------------------------------");
                 }
-                if (MinecraftServer.getServer().cauldronConfig.dumpHeapOnDeadlock.getValue())
+                if (MinecraftServer.cauldronConfig.dumpHeapOnDeadlock.getValue())
                 {
                     // Dump detailed world info to a watchdog report log
                     File file = new File(new File(new File("."), "crash-reports"), "watchdog-heap-"
@@ -162,7 +162,7 @@ public class WatchdogThread extends Thread
                     log.log(Level.WARNING, "  Entities Last Tick: " + world.entitiesTicked);
                     log.log(Level.WARNING, "  Tiles Last Tick: " + world.tilesTicked);
                 }
-                if (MinecraftServer.getServer().cauldronConfig.dumpThreadsOnWarn.getValue())
+                if (MinecraftServer.cauldronConfig.dumpThreadsOnWarn.getValue())
                 {
                     log.log(Level.WARNING, "Server thread dump (Look for mods or plugins here before reporting to Cauldron!):");
                     dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(MinecraftServer.getServer().primaryThread.getId(), Integer.MAX_VALUE), log,
@@ -213,9 +213,8 @@ public class WatchdogThread extends Thread
             log.log( level, "\tStack:" );
             //
             StackTraceElement[] stack = thread.getStackTrace();
-            for ( int line = 0; line < stack.length; line++ )
-            {
-                log.log( level, "\t\t" + stack[line].toString() );
+            for (StackTraceElement stackTraceElement : stack) {
+                log.log(level, "\t\t" + stackTraceElement.toString());
             }
         }
     }

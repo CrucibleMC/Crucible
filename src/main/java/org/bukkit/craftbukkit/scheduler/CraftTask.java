@@ -95,7 +95,7 @@ public class CraftTask implements BukkitTask, Runnable { // Spigot
         this.next = next;
     }
 
-    Class<? extends Runnable> getTaskClass() {
+    public Class<? extends Runnable> getTaskClass() {
         return task.getClass();
     }
 
