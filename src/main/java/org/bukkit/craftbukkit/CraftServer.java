@@ -108,6 +108,7 @@ import org.bukkit.plugin.messaging.StandardMessenger;
 import org.bukkit.scheduler.BukkitWorker;
 import org.bukkit.util.StringUtil;
 import org.bukkit.util.permissions.DefaultPermissions;
+import org.jetbrains.annotations.NotNull;
 import org.spigotmc.SpigotConfig;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -223,9 +224,32 @@ public final class CraftServer implements Server {
         }
         this.spigot = new Server.Spigot(){
 
+            @Deprecated
             @Override
             public YamlConfiguration getConfig() {
                 return SpigotConfig.getConfig();
+            }
+
+            @NotNull
+            @Override
+            public YamlConfiguration getBukkitConfig()
+            {
+                return configuration;
+            }
+
+            @NotNull
+            @Override
+            public YamlConfiguration getSpigotConfig()
+            {
+                return org.spigotmc.SpigotConfig.getConfig();
+            }
+
+            @NotNull
+            @Override
+            public YamlConfiguration getPaperConfig()
+            {
+                //return com.destroystokyo.paper.PaperConfig.config;
+                return null;//TODO implement PaperConfig
             }
 
             @Override

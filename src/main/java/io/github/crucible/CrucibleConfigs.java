@@ -1,5 +1,7 @@
 package io.github.crucible;
 
+import co.aikar.timings.Timings;
+import co.aikar.timings.TimingsManager;
 import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.ConfigMode;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
@@ -7,6 +9,8 @@ import net.cubespace.Yamler.Config.YamlConfig;
 
 import java.io.File;
 import java.time.ZoneId;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TimeZone;
 
 public class CrucibleConfigs extends YamlConfig {
@@ -54,6 +58,20 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Sets the server max tick time, experimental, can cause problems!")
     public int crucible_tickHandler_serverTickTime = 1000000000;
 
+    public boolean timings_enable = true;
+
+    public boolean timings_verbose = true;
+
+    public boolean timings_serverNamePrivacy = false;
+
+    public List<String> timings_hiddenConfigEntries = Arrays.asList("database", "settings.bungeecord-addresses");
+
+    public int timings_historyInterval = 300;
+
+    public int timings_historyLength = 3600;
+
+    public String timings_serverName = "Crucible Server";
+
     private CrucibleConfigs() {
         CONFIG_FILE = new File("Crucible.yml");
         CONFIG_MODE = ConfigMode.PATH_BY_UNDERSCORE;
@@ -75,6 +93,7 @@ public class CrucibleConfigs extends YamlConfig {
                 crucible_vmTimeZone_timeZoneId = TimeZone.getDefault().getID();
             }
         }
+        timings();
     }
 
     public void save() {
@@ -87,5 +106,15 @@ public class CrucibleConfigs extends YamlConfig {
 
     public int getTickTime() {
         return crucible_tickHandler_serverTickTime / crucible_tickHandler_serverTickRate;
+    }
+
+    private void timings() {
+        TimingsManager.privacy = timings_serverNamePrivacy;
+        TimingsManager.hiddenConfigs = timings_hiddenConfigEntries;
+
+        Timings.setVerboseTimingsEnabled(timings_verbose);
+        Timings.setTimingsEnabled(timings_enable);
+        Timings.setHistoryInterval(timings_historyInterval * 20);
+        Timings.setHistoryLength(timings_historyLength * 20);
     }
 }

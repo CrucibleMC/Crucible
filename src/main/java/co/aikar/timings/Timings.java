@@ -268,7 +268,7 @@ public final class Timings {
     =================
     */
     @NotNull
-    static TimingHandler ofSafe(@NotNull String name) {
+    public static TimingHandler ofSafe(@NotNull String name) {
         return ofSafe(null, name, null);
     }
 
@@ -282,7 +282,7 @@ public final class Timings {
     }
 
     @NotNull
-    static TimingHandler ofSafe(@NotNull String name, @Nullable Timing groupHandler) {
+    public static TimingHandler ofSafe(@NotNull String name, @Nullable Timing groupHandler) {
         return ofSafe(null, name, groupHandler);
     }
 

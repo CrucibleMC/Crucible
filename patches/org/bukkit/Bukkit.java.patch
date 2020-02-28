@@ -16,15 +16,7 @@
      public static List<Player> matchPlayer(String name) {
          return server.matchPlayer(name);
      }
-@@ -301,6 +299,7 @@
-      */
-     public static void reload() {
-         server.reload();
-+        org.spigotmc.CustomTimingsHandler.reload(); // Spigot
-     }
- 
-     /**
-@@ -447,7 +446,6 @@
+@@ -447,7 +445,6 @@
      /**
       * @see Server#getPlayerExact(String name)
       */
@@ -32,7 +24,7 @@
      public static Player getPlayerExact(String name) {
          return server.getPlayerExact(name);
      }
-@@ -747,4 +745,29 @@
+@@ -747,4 +744,29 @@
      public static UnsafeValues getUnsafe() {
          return server.getUnsafe();
      }

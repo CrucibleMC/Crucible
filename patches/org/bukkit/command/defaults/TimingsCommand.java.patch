@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/org/bukkit/command/defaults/TimingsCommand.java
 +++ ../src-work/minecraft/org/bukkit/command/defaults/TimingsCommand.java
-@@ -19,23 +19,103 @@
+@@ -19,23 +19,102 @@
  
  import com.google.common.collect.ImmutableList;
  
@@ -14,7 +14,6 @@
 +
 +import org.bukkit.command.RemoteConsoleCommandSender;
 +import org.bukkit.plugin.SimplePluginManager;
-+import org.spigotmc.CustomTimingsHandler;
 +// Spigot end
 +
  public class TimingsCommand extends BukkitCommand {
@@ -36,7 +35,7 @@
 +        if ( "on".equals( args[0] ) )
 +        {
 +            ( (SimplePluginManager) Bukkit.getPluginManager() ).useTimings( true );
-+            CustomTimingsHandler.reload();
++            //CustomTimingsHandler.reload();
 +            sender.sendMessage( "Enabled Timings & Reset" );
 +            return;
 +        } else if ( "off".equals( args[0] ) )
@@ -54,7 +53,7 @@
 +
 +        boolean paste = "paste".equals( args[0] );
 +        if ("reset".equals(args[0])) {
-+            CustomTimingsHandler.reload();
++            //CustomTimingsHandler.reload();
 +            sender.sendMessage("Timings reset");
 +        } else if ("merged".equals(args[0]) || "report".equals(args[0]) || paste) {
 +            long sampleTime = System.nanoTime() - timingStart;
@@ -68,7 +67,7 @@
 +            try {
 +                fileTimings = ( paste ) ? new PrintStream( bout ) : new PrintStream( timings );
 +
-+                CustomTimingsHandler.printTimings(fileTimings);
++                //CustomTimingsHandler.printTimings(fileTimings);
 +                fileTimings.println( "Sample time " + sampleTime + " (" + sampleTime / 1E9 + "s)" );
 +
 +                // ++++<
@@ -108,7 +107,7 @@
          if (!sender.getServer().getPluginManager().useTimings()) {
              sender.sendMessage("Please enable timings by setting \"settings.plugin-profiling\" to true in bukkit.yml");
              return true;
-@@ -118,4 +198,79 @@
+@@ -118,4 +197,79 @@
          }
          return ImmutableList.of();
      }

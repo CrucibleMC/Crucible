@@ -44,6 +44,15 @@ public final class MinecraftTimings {
     public static final Timing antiXrayUpdateTimer = Timings.ofSafe("anti-xray - update");
     public static final Timing antiXrayObfuscateTimer = Timings.ofSafe("anti-xray - obfuscate");
 
+    // Crucible start
+    public static final Timing entityMoveTimer = Timings.ofSafe("## entityMove");
+    public static final Timing  timerEntityBaseTick = Timings.ofSafe("## livingEntityBaseTick");
+    public static final Timing  timerEntityAI = Timings.ofSafe("## livingEntityAI");
+    public static final Timing  timerEntityAICollision = Timings.ofSafe("## livingEntityAICollision");
+    public static final Timing  timerEntityAIMove = Timings.ofSafe("## livingEntityAIMove");
+    public static final Timing  timerEntityTickRest = Timings.ofSafe("## livingEntityTickRest");
+    //Crucible end
+
     private static final Map<Class<?>, String> taskNameCache = new MapMaker().weakKeys().makeMap();
 
     private MinecraftTimings() {}

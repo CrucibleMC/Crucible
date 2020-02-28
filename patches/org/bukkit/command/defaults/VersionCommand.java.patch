@@ -40,7 +40,7 @@
 -            }
 -        }
 +        sender.sendMessage("This server is running §3Crucible§r (Thermos fork by CrucibleMC Team) " + Bukkit.getVersion());
-+        sender.sendMessage("§9https://github.com/CrucibleMC/Crucible");
++        sender.sendMessage("§9 https://github.com/CrucibleMC/Crucible");
 +        sender.sendMessage("Bukkit version:" + Bukkit.getBukkitVersion());
          return true;
      }

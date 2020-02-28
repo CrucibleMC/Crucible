@@ -18,7 +18,7 @@
 +      {
          if (!testPermission(sender)) return true;
  
-+        org.spigotmc.CustomTimingsHandler.reload(); // Spigot: TODO: Why is this here?
++        //org.spigotmc.CustomTimingsHandler.reload(); // Spigot: TODO: Why is this here?
          Bukkit.reload();
          Command.broadcastCommandMessage(sender, ChatColor.GREEN + "Reload complete.");
 +      }

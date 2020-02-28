@@ -104,7 +104,8 @@ def gitInfo(String key) {
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "1614"
 ext.revision = "1.0.7"
-version = "${mcVersion}-${forgeVersion}.${revision}"
+ext.crucibleVersion = "3.0"
+version = "${mcVersion}-${crucibleVersion}"
 
 launch4j {
     jreMinVersion = '1.8.0'

@@ -83,7 +83,7 @@ public final class CustomTimingsHandler {
             plugin = TimingsManager.getPluginByClassloader(calling);
         } catch (Exception ignored) {}
 
-        new AuthorNagException("Deprecated use of CustomTimingsHandler. Please Switch to Timings.of ASAP").printStackTrace();
+        //new AuthorNagException("Deprecated use of CustomTimingsHandler. Please Switch to Timings.of ASAP").printStackTrace();
         if (plugin != null) {
             timing = Timings.of(plugin, "(Deprecated API) " + name);
         } else {
@@ -91,6 +91,58 @@ public final class CustomTimingsHandler {
                 final Method ofSafe = TimingsManager.class.getDeclaredMethod("getHandler", String.class, String.class, Timing.class);
                 ofSafe.setAccessible(true);
                 timing = (Timing) ofSafe.invoke(null,"Minecraft", "(Deprecated API) " + name, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Bukkit.getLogger().log(Level.SEVERE, "This handler could not be registered");
+                timing = Timings.NULL_HANDLER;
+            }
+        }
+        handler = timing;
+    }
+
+    //#perguiça
+    public CustomTimingsHandler(@NotNull String name, CustomTimingsHandler parent) {
+        if (sunReflectAvailable == null) {
+            String javaVer = System.getProperty("java.version");
+            String[] elements = javaVer.split("\\.");
+
+            int major = Integer.parseInt(elements.length >= 2 ? elements[1] : javaVer);
+            if (major <= 8) {
+                sunReflectAvailable = true;
+
+                try {
+                    Class<?> reflection = Class.forName("sun.reflect.Reflection");
+                    getCallerClass = reflection.getMethod("getCallerClass", int.class);
+                } catch (ClassNotFoundException | NoSuchMethodException ignored) {
+                }
+            } else {
+                sunReflectAvailable = false;
+            }
+        }
+
+        Class calling = null;
+        if (sunReflectAvailable) {
+            try {
+                calling = (Class) getCallerClass.invoke(null, 2);
+            } catch (IllegalAccessException | InvocationTargetException ignored) {
+            }
+        }
+
+        Timing timing;
+
+        Plugin plugin = null;
+        try {
+            plugin = TimingsManager.getPluginByClassloader(calling);
+        } catch (Exception ignored) {}
+
+        //new AuthorNagException("Deprecated use of CustomTimingsHandler. Please Switch to Timings.of ASAP").printStackTrace();
+        if (plugin != null) {
+            timing = Timings.of(plugin, "(Deprecated API) " + name,parent.handler);
+        } else {
+            try {
+                final Method ofSafe = TimingsManager.class.getDeclaredMethod("getHandler", String.class, String.class, Timing.class);
+                ofSafe.setAccessible(true);
+                timing = (Timing) ofSafe.invoke(null,"Minecraft", "(Deprecated API) " + name, parent.handler);
             } catch (Exception e) {
                 e.printStackTrace();
                 Bukkit.getLogger().log(Level.SEVERE, "This handler could not be registered");

@@ -1,6 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -3,6 +3,7 @@
+@@ -1,8 +1,10 @@
+ package net.minecraft.server.dedicated;
+ 
++import co.aikar.timings.MinecraftTimings;
  import cpw.mods.fml.common.FMLCommonHandler;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -8,7 +11,7 @@
  import java.io.BufferedReader;
  import java.io.File;
  import java.io.IOException;
-@@ -34,9 +35,19 @@
+@@ -34,9 +36,18 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
@@ -21,7 +24,6 @@
 +import org.apache.logging.log4j.Level;
 +
 +import org.bukkit.craftbukkit.LoggerOutputStream;
-+import org.bukkit.craftbukkit.SpigotTimings; // Spigot
 +import org.bukkit.event.server.ServerCommandEvent;
 +// CraftBukkit end
 +
@@ -240,7 +242,7 @@
  
      public void executePendingCommands()
      {
-+        SpigotTimings.serverCommandTimer.startTiming(); // Spigot
++        MinecraftTimings.serverCommandTimer.startTiming(); // Spigot
          while (!this.pendingCommandList.isEmpty())
          {
 -            ServerCommand servercommand = (ServerCommand)this.pendingCommandList.remove(0);
@@ -254,7 +256,7 @@
 +            this.server.dispatchServerCommand(this.console, servercommand);
 +            // CraftBukkit end
          }
-+        SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
++        MinecraftTimings.serverCommandTimer.stopTiming(); // Spigot
      }
  
      public boolean isDedicatedServer()

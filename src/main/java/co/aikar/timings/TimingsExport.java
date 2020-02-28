@@ -94,11 +94,11 @@ class TimingsExport extends Thread {
             return;
         }
         final long lastStartDiff = now - TimingsManager.timingStart;
-        if (lastStartDiff < 180000) {
-            listeners.sendMessage(ChatColor.RED + "Please wait at least 3 minutes before generating a Timings report. Unlike Timings v1, v2 benefits from longer timings and is not as useful with short timings. (" + (int)((180000 - lastStartDiff) / 1000) + " seconds)");
-            listeners.done();
-            return;
-        }
+        //if (lastStartDiff < 180000) {
+        //    listeners.sendMessage(ChatColor.RED + "Please wait at least 3 minutes before generating a Timings report. Unlike Timings v1, v2 benefits from longer timings and is not as useful with short timings. (" + (int)((180000 - lastStartDiff) / 1000) + " seconds)");
+        //    listeners.done();
+        //    return;
+        //}
         listeners.sendMessage(ChatColor.GREEN + "Preparing Timings Report...");
         lastReport = now;
         Map parent = createObject(
@@ -109,13 +109,13 @@ class TimingsExport extends Thread {
             pair("end", System.currentTimeMillis() / 1000),
             pair("sampletime", (System.currentTimeMillis() - TimingsManager.timingStart) / 1000)
         );
-        //TODO: stub
+
         if (!TimingsManager.privacy) {
             appendObjectData(parent,
-                //pair("server", Bukkit.getUnsafe().getTimingsServerName()),
-                pair("motd", Bukkit.getServer().getMotd()),
-                pair("online-mode", Bukkit.getServer().getOnlineMode())//,
-                //pair("icon", Bukkit.getServer().getServerIcon().getData())
+                    pair("server", Bukkit.getUnsafe().getTimingsServerName()),
+                    pair("motd", Bukkit.getServer().getMotd()),
+                    pair("online-mode", Bukkit.getServer().getOnlineMode()),
+                    pair("icon", Bukkit.getServer().getServerIcon().getData())
             );
         }
 
@@ -203,12 +203,12 @@ class TimingsExport extends Thread {
 
 
         // Information on the users Config
-        //TODO: stub
-        //parent.put("config", createObject(
-        //    pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
-        //    pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null)),
-        //    pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null))
-        //));
+
+        parent.put("config", createObject(
+            pair("spigot", mapAsJSON(Bukkit.spigot().getSpigotConfig(), null)),
+            pair("bukkit", mapAsJSON(Bukkit.spigot().getBukkitConfig(), null))//,
+            //pair("paper", mapAsJSON(Bukkit.spigot().getPaperConfig(), null))
+        ));
 
         new TimingsExport(listeners, parent, history).start();
     }
@@ -291,8 +291,8 @@ class TimingsExport extends Thread {
                 hostName = InetAddress.getLocalHost().getHostName();
             } catch (Exception ignored) {}
             //TODO: stub
-            //con.setRequestProperty("User-Agent", "Paper/" + Bukkit.getUnsafe().getTimingsServerName() + "/" + hostName);
-            con.setRequestProperty("User-Agent", "Crucible" + "/" + hostName);
+            con.setRequestProperty("User-Agent", "Paper/" + Bukkit.getUnsafe().getTimingsServerName() + "/" + hostName);
+            //con.setRequestProperty("User-Agent", "Paper/CrucibleServer" + "/" + hostName);
             con.setRequestMethod("POST");
             con.setInstanceFollowRedirects(false);
 

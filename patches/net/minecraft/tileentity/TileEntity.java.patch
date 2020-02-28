@@ -1,11 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -22,20 +22,32 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.tileentity;
+ 
++import co.aikar.timings.MinecraftTimings;
++import co.aikar.timings.Timing;
+ import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+@@ -22,20 +24,30 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import org.bukkit.craftbukkit.Overridden;
-+import org.spigotmc.CustomTimingsHandler; // Spigot
 +import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 +
  public class TileEntity
@@ -23,7 +29,7 @@
      protected boolean tileEntityInvalid;
      public int blockMetadata = -1;
      public Block blockType;
-+    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
++    public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Paper
      private static final String __OBFID = "CL_00000340";
  
 +    @Override

@@ -75,7 +75,7 @@
 +    public Chunk defaultEmptyChunk;
 +    public IChunkProvider currentChunkProvider;
 +    public IChunkLoader currentChunkLoader;
-+    public boolean loadChunkOnProvideRequest = MinecraftServer.getServer().cauldronConfig.loadChunkOnRequest.getValue(); // Cauldron - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in cauldron.yml to false
++    public boolean loadChunkOnProvideRequest = MinecraftServer.cauldronConfig.loadChunkOnRequest.getValue(); // Cauldron - if true, allows mods to force load chunks. to disable, set load-chunk-on-request in cauldron.yml to false
 +    public int initialTick; // Cauldron counter to keep track of when this loader was created
 +    public List loadedChunks = new ArrayList(); // Cauldron - vanilla compatibility
 +    public WorldServer worldObj;
@@ -418,9 +418,11 @@
          }
      }
  
-@@ -277,6 +467,35 @@
+@@ -276,21 +466,56 @@
+ 
              if (this.currentChunkProvider != null)
              {
++                try (co.aikar.timings.Timing ignored = this.worldObj.timings.syncChunkLoadPopulateTimer.startTiming()) { // Paper //Crucible - Is this right? I think so
                  this.currentChunkProvider.populate(p_73153_1_, p_73153_2_, p_73153_3_);
 +                // CraftBukkit start
 +                BlockSand.fallInstantly = true;
@@ -453,10 +455,14 @@
 +                // CraftBukkit end
                  GameRegistry.generateWorld(p_73153_2_, p_73153_3_, worldObj, currentChunkProvider, p_73153_1_);
                  chunk.setChunkModified();
++                } // Paper
              }
-@@ -286,11 +505,14 @@
+         }
+     }
+ 
      public boolean saveChunks(boolean p_73151_1_, IProgressUpdate p_73151_2_)
      {
++        try (co.aikar.timings.Timing timed = worldObj.timings.chunkSaveData.startTiming()) { // Paper - Timings //Crucible - Is this right? I think so
          int i = 0;
 -        ArrayList arraylist = Lists.newArrayList(this.loadedChunks);
 +        // Cauldron start - use thread-safe method for iterating loaded chunks
@@ -472,7 +478,16 @@
  
              if (p_73151_1_)
              {
-@@ -325,36 +547,76 @@
+@@ -309,7 +534,7 @@
+                 }
+             }
+         }
+-
++        } // Paper - Timings
+         return true;
+     }
+ 
+@@ -325,36 +550,76 @@
      {
          if (!this.worldObj.levelSaving)
          {
@@ -567,7 +582,7 @@
              if (this.currentChunkLoader != null)
              {
                  this.currentChunkLoader.chunkTick();
-@@ -371,7 +633,8 @@
+@@ -371,7 +636,8 @@
  
      public String makeString()
      {
@@ -577,7 +592,7 @@
      }
  
      public List getPossibleCreatures(EnumCreatureType p_73155_1_, int p_73155_2_, int p_73155_3_, int p_73155_4_)
-@@ -386,8 +649,35 @@
+@@ -386,8 +652,35 @@
  
      public int getLoadedChunkCount()
      {

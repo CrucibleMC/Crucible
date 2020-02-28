@@ -39,22 +39,21 @@
          while (!plugins.isEmpty()) {
              boolean missingDependency = true;
              Iterator<String> pluginIterator = plugins.keySet().iterator();
-@@ -295,6 +311,7 @@
-             }
+@@ -331,12 +347,20 @@
+ 
+         if (result != null) {
+             plugins.add(result);
+-            lookupNames.put(result.getDescription().getName(), result);
++            lookupNames.put(result.getDescription().getName().toLowerCase(java.util.Locale.ENGLISH), result); // Paper
          }
  
-+        org.bukkit.command.defaults.TimingsCommand.timingStart = System.nanoTime(); // Spigot
-         return result.toArray(new Plugin[result.size()]);
-     }
- 
-@@ -337,6 +354,14 @@
          return result;
      }
  
 +    public synchronized Plugin loadModPlugin(Plugin plugin) {
 +        if (plugin != null && plugin.getDescription() != null) {
 +            plugins.add(plugin);
-+            lookupNames.put(plugin.getDescription().getName(), plugin);
++            lookupNames.put(plugin.getDescription().getName().toLowerCase(java.util.Locale.ENGLISH), plugin); // Paper
 +        }
 +        return plugin;
 +    }
@@ -62,7 +61,16 @@
      private void checkUpdate(File file) {
          if (updateDirectory == null || !updateDirectory.isDirectory()) {
              return;
-@@ -403,7 +428,8 @@
+@@ -357,7 +381,7 @@
+      * @return Plugin if it exists, otherwise null
+      */
+     public synchronized Plugin getPlugin(String name) {
+-        return lookupNames.get(name.replace(' ', '_'));
++        return lookupNames.get(name.replace(' ', '_').toLowerCase(java.util.Locale.ENGLISH)); // Paper
+     }
+ 
+     public synchronized Plugin[] getPlugins() {
+@@ -403,7 +427,8 @@
              try {
                  plugin.getPluginLoader().enablePlugin(plugin);
              } catch (Throwable ex) {
@@ -72,7 +80,7 @@
              }
  
              HandlerList.bakeAll();
-@@ -422,32 +448,37 @@
+@@ -422,32 +447,37 @@
              try {
                  plugin.getPluginLoader().disablePlugin(plugin);
              } catch (Throwable ex) {
@@ -115,9 +123,31 @@
              }
          }
      }
-@@ -727,4 +758,11 @@
+@@ -555,7 +585,8 @@
+             throw new IllegalPluginAccessException("Plugin attempted to register " + event + " while not enabled");
+         }
+ 
+-        if (useTimings) {
++        executor = new co.aikar.timings.TimedEventExecutor(executor, plugin, null, event); // Paper
++        if (false) { // Spigot - RL handles useTimings check now // Paper
+             getEventListeners(event).register(new TimedRegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+         } else {
+             getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+@@ -716,7 +747,7 @@
+     }
+ 
+     public boolean useTimings() {
+-        return useTimings;
++        return co.aikar.timings.Timings.isTimingsEnabled(); // Spigot
+     }
+ 
+     /**
+@@ -725,6 +756,13 @@
+      * @param use True if per event timing code should be used
+      */
      public void useTimings(boolean use) {
-         useTimings = use;
+-        useTimings = use;
++        co.aikar.timings.Timings.setTimingsEnabled(use); // Paper
      }
 +    
 +    // Paper start

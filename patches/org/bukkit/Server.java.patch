@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/org/bukkit/Server.java
 +++ ../src-work/minecraft/org/bukkit/Server.java
-@@ -308,23 +308,17 @@
+@@ -41,6 +41,7 @@
+ 
+ import org.bukkit.inventory.ItemFactory;
+ import org.bukkit.inventory.meta.ItemMeta;
++import org.jetbrains.annotations.NotNull;
+ 
+ /**
+  * Represents a server implementation.
+@@ -308,23 +309,17 @@
       * <p>
       * This method may not return objects for offline players.
       *
@@ -24,7 +32,7 @@
      public Player getPlayerExact(String name);
  
      /**
-@@ -334,12 +328,9 @@
+@@ -334,12 +329,9 @@
       * This list is not sorted in any particular order. If an exact match is
       * found, the returned list will only contain a single result.
       *
@@ -37,7 +45,7 @@
      public List<Player> matchPlayer(String name);
  
      /**
-@@ -916,4 +907,53 @@
+@@ -916,4 +908,71 @@
       */
      @Deprecated
      UnsafeValues getUnsafe();
@@ -66,6 +74,24 @@
 +        {
 +            throw new UnsupportedOperationException( "Not supported yet." );
 +        }
++
++        // Paper start
++        @NotNull
++        public org.bukkit.configuration.file.YamlConfiguration getBukkitConfig()
++        {
++            throw new UnsupportedOperationException( "Not supported yet." );
++        }
++        @NotNull
++        public org.bukkit.configuration.file.YamlConfiguration getSpigotConfig()
++        {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++        @NotNull
++        public org.bukkit.configuration.file.YamlConfiguration getPaperConfig()
++        {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++        // Paper end
 +
 +        /**
 +         * Sends the component to the player

@@ -37,6 +37,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
     private PluginLoader dummyPluginLoader;
     private PluginDescriptionFile dummyPluginDescription;
     private boolean isPluginEnabled = false;
+    private java.util.logging.Logger pluginLogger;
 
     public CrucibleModContainer() {
         super(new ModMetadata());
@@ -202,6 +203,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
 
     @Override
     public void onLoad() {
+        getLogger().info("Crucible DummyPlugin injected successfully!");
     }
 
     @Override
@@ -229,7 +231,9 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
 
     @Override
     public java.util.logging.Logger getLogger() {
-        return Bukkit.getLogger();
+        if (pluginLogger == null)
+            pluginLogger = new PluginLogger(this);
+        return pluginLogger;
     }
 
     @Override

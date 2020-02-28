@@ -44,7 +44,7 @@ class TimingHistoryEntry {
         List<Object> result = data.export();
         if (children.length > 0) {
             result.add(
-                toArrayMapper(children, new Function<TimingData, Object>() {
+                toArrayMapper(children, new FunctionStub<TimingData, Object>() {
                     @NotNull
                     @Override
                     public Object apply(TimingData child) {

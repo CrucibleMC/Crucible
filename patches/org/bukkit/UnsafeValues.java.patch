@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/org/bukkit/UnsafeValues.java
++++ ../src-work/minecraft/org/bukkit/UnsafeValues.java
+@@ -30,4 +30,12 @@
+     Achievement getAchievementFromInternalName(String name);
+ 
+     List<String> tabCompleteInternalStatisticOrAchievementName(String token, List<String> completions);
++
++    // Paper start
++    /**
++     * Server name to report to timings v2
++     * @return name
++     */
++    String getTimingsServerName();
++    // Paper end
+ }

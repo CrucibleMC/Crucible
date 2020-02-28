@@ -76,6 +76,10 @@ public class WorldTimingsHandler {
     public final Timing chunkUnloadPOISerialization;
     public final Timing chunkUnloadDataSave;
 
+    //Crucible Start
+    public final Timing worldIOFlush;
+    //Crucible End
+
     public WorldTimingsHandler(World server) {
         String name = server.worldInfo.getWorldName() +" - ";
 
@@ -147,6 +151,10 @@ public class WorldTimingsHandler {
         chunkUnloadPrepareSave = Timings.ofSafe(name + "Chunk unload - Async Save Prepare");
         chunkUnloadPOISerialization = Timings.ofSafe(name + "Chunk unload - POI Data Serialization");
         chunkUnloadDataSave = Timings.ofSafe(name + "Chunk unload - Data Serialization");
+
+        //Crucible start
+        worldIOFlush = Timings.ofSafe(name + "World save - IO Flush");
+        //Crucible end
     }
 
     public static Timing getTickList(WorldServer worldserver, String timingsType) {

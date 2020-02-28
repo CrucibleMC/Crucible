@@ -1,37 +1,62 @@
 --- ../src-base/minecraft/org/bukkit/plugin/java/JavaPluginLoader.java
 +++ ../src-work/minecraft/org/bukkit/plugin/java/JavaPluginLoader.java
-@@ -1,5 +1,15 @@
+@@ -1,22 +1,13 @@
  package org.bukkit.plugin.java;
  
+-import java.io.File;
+-import java.io.FileNotFoundException;
+-import java.io.IOException;
+-import java.io.InputStream;
+-import java.lang.reflect.InvocationTargetException;
+-import java.lang.reflect.Method;
+-import java.util.Arrays;
+-import java.util.HashMap;
+-import java.util.HashSet;
+-import java.util.LinkedHashMap;
+-import java.util.Map;
+-import java.util.Set;
+-import java.util.jar.JarEntry;
+-import java.util.jar.JarFile;
+-import java.util.logging.Level;
+-import java.util.regex.Pattern;
 +// Cauldron start
-+import java.io.BufferedReader;
-+import java.io.InputStreamReader;
+ 
 +import com.google.common.collect.BiMap;
 +import com.google.common.collect.HashBiMap;
++import com.google.common.collect.ImmutableList;
 +import net.md_5.specialsource.InheritanceMap;
 +import net.md_5.specialsource.JarMapping;
 +import net.md_5.specialsource.transformer.MavenShade;
-+// Cauldron end
-+
- import java.io.File;
- import java.io.FileNotFoundException;
- import java.io.IOException;
-@@ -10,6 +20,7 @@
- import java.util.HashMap;
- import java.util.HashSet;
- import java.util.LinkedHashMap;
-+import java.util.List;
- import java.util.Map;
- import java.util.Set;
- import java.util.jar.JarEntry;
-@@ -39,16 +50,20 @@
- import org.bukkit.plugin.RegisteredListener;
- import org.bukkit.plugin.TimedRegisteredListener;
- import org.bukkit.plugin.UnknownDependencyException;
-+import org.spigotmc.CustomTimingsHandler; // Spigot
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Server;
+ import org.bukkit.Warning;
+@@ -29,27 +20,28 @@
+ import org.bukkit.event.Listener;
+ import org.bukkit.event.server.PluginDisableEvent;
+ import org.bukkit.event.server.PluginEnableEvent;
+-import org.bukkit.plugin.AuthorNagException;
+-import org.bukkit.plugin.EventExecutor;
+-import org.bukkit.plugin.InvalidDescriptionException;
+-import org.bukkit.plugin.InvalidPluginException;
+-import org.bukkit.plugin.Plugin;
+-import org.bukkit.plugin.PluginDescriptionFile;
+-import org.bukkit.plugin.PluginLoader;
+-import org.bukkit.plugin.RegisteredListener;
+-import org.bukkit.plugin.TimedRegisteredListener;
+-import org.bukkit.plugin.UnknownDependencyException;
++import org.bukkit.plugin.*;
  import org.yaml.snakeyaml.error.YAMLException;
  
-+import com.google.common.collect.ImmutableList;
++import java.io.*;
++import java.lang.reflect.InvocationTargetException;
++import java.lang.reflect.Method;
++import java.util.*;
++import java.util.jar.JarEntry;
++import java.util.jar.JarFile;
++import java.util.logging.Level;
++import java.util.regex.Pattern;
++
++// Cauldron end
 +
  /**
   * Represents a Java plugin loader, allowing plugins in the form of .jar
@@ -42,11 +67,11 @@
 -    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
 +    private final Map<String, Class<?>> classes = new java.util.concurrent.ConcurrentHashMap<String, Class<?>>(); // Spigot
      private final Map<String, PluginClassLoader> loaders = new LinkedHashMap<String, PluginClassLoader>();
-+    public static final CustomTimingsHandler pluginParentTimer = new CustomTimingsHandler("** Plugins"); // Spigot
- 
+-
      /**
       * This class was not meant to be constructed explicitly
-@@ -59,43 +74,41 @@
+      */
+@@ -59,43 +51,41 @@
          server = instance;
      }
  
@@ -100,7 +125,7 @@
                  file,
                  oldDataFolder,
                  dataFolder
-@@ -104,14 +117,19 @@
+@@ -104,14 +94,19 @@
  
          if (dataFolder.exists() && !dataFolder.isDirectory()) {
              throw new InvalidPluginException(String.format(
@@ -123,7 +148,7 @@
              if (loaders == null) {
                  throw new UnknownDependencyException(pluginName);
              }
-@@ -122,7 +140,7 @@
+@@ -122,7 +117,7 @@
              }
          }
  
@@ -132,7 +157,7 @@
          try {
              loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file);
          } catch (InvalidPluginException ex) {
-@@ -136,6 +154,26 @@
+@@ -136,6 +131,26 @@
          return loader.plugin;
      }
  
@@ -159,36 +184,29 @@
      public PluginDescriptionFile getPluginDescription(File file) throws InvalidDescriptionException {
          Validate.notNull(file, "File cannot be null");
  
-@@ -283,13 +321,19 @@
+@@ -283,8 +298,8 @@
                  }
              }
  
-+            final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName() + " Event: " + listener.getClass().getName() + "::" + method.getName()+"("+eventClass.getSimpleName()+")", pluginParentTimer); // Spigot
-             EventExecutor executor = new EventExecutor() {
-                 public void execute(Listener listener, Event event) throws EventException {
+-            EventExecutor executor = new EventExecutor() {
+-                public void execute(Listener listener, Event event) throws EventException {
++            EventExecutor executor = new co.aikar.timings.TimedEventExecutor(new EventExecutor() { // Paper
++                public void execute(Listener listener, Event event) throws EventException { // Paper
                      try {
                          if (!eventClass.isAssignableFrom(event.getClass())) {
                              return;
-                         }
-+                        // Spigot start
-+                        boolean isAsync = event.isAsynchronous();
-+                        if (!isAsync) timings.startTiming();
-                         method.invoke(listener, event);
-+                        if (!isAsync) timings.stopTiming();
-+                        // Spigot end
-                     } catch (InvocationTargetException ex) {
-                         throw new EventException(ex.getCause());
-                     } catch (Throwable t) {
-@@ -297,7 +341,7 @@
+@@ -296,8 +311,8 @@
+                         throw new EventException(t);
                      }
                  }
-             };
+-            };
 -            if (useTimings) {
++            }, plugin, method, eventClass);
 +            if (false) { // Spigot - RL handles useTimings check now
                  eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
              } else {
                  eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
-@@ -324,6 +368,10 @@
+@@ -324,6 +339,10 @@
                  jPlugin.setEnabled(true);
              } catch (Throwable ex) {
                  server.getLogger().log(Level.SEVERE, "Error occurred while enabling " + plugin.getDescription().getFullName() + " (Is it up to date?)", ex);
@@ -199,7 +217,7 @@
              }
  
              // Perhaps abort here, rather than continue going, but as it stands,
-@@ -362,4 +410,44 @@
+@@ -362,4 +381,44 @@
              }
          }
      }

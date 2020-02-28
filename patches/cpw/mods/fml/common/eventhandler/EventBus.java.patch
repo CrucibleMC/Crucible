@@ -1,0 +1,66 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/eventhandler/EventBus.java
++++ ../src-work/minecraft/cpw/mods/fml/common/eventhandler/EventBus.java
+@@ -9,6 +9,9 @@
+ 
+ import javax.annotation.Nonnull;
+ 
++import co.aikar.timings.Timing;
++import io.github.crucible.CrucibleTimings;
++import net.minecraft.server.MinecraftServer;
+ import org.apache.logging.log4j.Level;
+ 
+ import com.google.common.base.Preconditions;
+@@ -131,19 +134,43 @@
+ 
+     public boolean post(Event event)
+     {
+-        IEventListener[] listeners = event.getListenerList().getListeners(busID);
+-        int index = 0;
+-        try
+-        {
+-            for (; index < listeners.length; index++)
++        if (MinecraftServer.serverStarted) { //Only use timings after the startup.
++            Timing eventTiming = CrucibleTimings.getEventTiming(event); //Crucible
++            eventTiming.startTiming(); //Crucible
++            IEventListener[] listeners = event.getListenerList().getListeners(busID);
++            int index = 0;
++            try
+             {
+-                listeners[index].invoke(event);
++                for (; index < listeners.length; index++)
++                {
++                    Timing listenerTimings = CrucibleTimings.getListenerTiming(listeners[index],eventTiming); //Crucible
++                    listenerTimings.startTiming(); //Crucible
++                    listeners[index].invoke(event);
++                    listenerTimings.stopTiming(); //Crucible
++                }
+             }
++            catch (Throwable throwable)
++            {
++                exceptionHandler.handleException(this, event, listeners, index, throwable);
++                Throwables.propagate(throwable);
++            }
++            eventTiming.stopTiming(); //Crucible
+         }
+-        catch (Throwable throwable)
+-        {
+-            exceptionHandler.handleException(this, event, listeners, index, throwable);
+-            Throwables.propagate(throwable);
++        else { //Original code.
++            IEventListener[] listeners = event.getListenerList().getListeners(busID);
++            int index = 0;
++            try
++            {
++                for (; index < listeners.length; index++)
++                {
++                    listeners[index].invoke(event);
++                }
++            }
++            catch (Throwable throwable)
++            {
++                exceptionHandler.handleException(this, event, listeners, index, throwable);
++                Throwables.propagate(throwable);
++            }
+         }
+         return (event.isCancelable() ? event.isCanceled() : false);
+     }

@@ -336,7 +336,7 @@ public class TimingHistory {
             final Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
             int totalPing = 0;
             for (Player player : onlinePlayers) {
-                //totalPing += player.spigot().getPing();
+                totalPing += player.spigot().getPing();
             }
             avg = onlinePlayers.isEmpty() ? 0 : totalPing / onlinePlayers.size();
         }

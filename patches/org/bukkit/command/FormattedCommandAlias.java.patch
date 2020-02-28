@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/org/bukkit/command/FormattedCommandAlias.java
++++ ../src-work/minecraft/org/bukkit/command/FormattedCommandAlias.java
+@@ -14,6 +14,7 @@
+ 
+     public FormattedCommandAlias(String alias, String[] formatStrings) {
+         super(alias);
++        timings = co.aikar.timings.TimingsManager.getCommandTiming("minecraft", this); // Spigot
+         this.formatStrings = formatStrings;
+     }
+ 
+@@ -121,4 +122,7 @@
+     private static boolean inRange(int i, int j, int k) {
+         return i >= j && i <= k;
+     }
++
++    @Override // Paper
++    public String getTimingName() {return "Command Forwarder - " + super.getTimingName();} // Paper
+ }
