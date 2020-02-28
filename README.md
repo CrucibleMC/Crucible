@@ -5,6 +5,7 @@
 ![](https://img.shields.io/badge/CrucibleAPI-Not%20Implemented%20Yet-orange?style=flat-square)
 ![](https://img.shields.io/badge/Java%20JDK-v1.8-blue?style=flat-square)
 ![](https://img.shields.io/github/v/release/CrucibleMC/Crucible?color=sucess&style=flat-square)
+![](https://img.shields.io/discord/682358465175355393?color=blue&label=Discord&logo=Discord&style=flat-square)
 ![Crucible](logo.png)
 ### What's Crucible?
 
