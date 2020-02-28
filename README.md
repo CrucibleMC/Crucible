@@ -43,6 +43,7 @@ Advantages over Thermos:
 + [Fakeplayer List](FakeplayerList.md) "A list of all mod fakeplayers."
 + [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler."
 + [Grimoire](https://github.com/CrucibleMC/Grimoire) "A core mod that [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) Modules use to be loaded up."
++ [Discord](https://discord.gg/jWSTJ4d) "Our support Discord."
 ## TODO List
 - [ ] Create Crucible API.
 - [X] Implement the PaperMC API.
