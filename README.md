@@ -5,6 +5,7 @@
 ![](https://img.shields.io/badge/CrucibleAPI-Not%20Implemented%20Yet-orange?style=flat-square)
 ![](https://img.shields.io/badge/Java%20JDK-v1.8-blue?style=flat-square)
 ![](https://img.shields.io/github/v/release/CrucibleMC/Crucible?color=sucess&style=flat-square)
+![](https://img.shields.io/discord/682358465175355393?color=blue&label=Discord&logo=Discord&style=flat-square)
 ![Crucible](logo.png)
 ### What's Crucible?
 
@@ -42,6 +43,7 @@ Advantages over Thermos:
 + [Fakeplayer List](FakeplayerList.md) "A list of all mod fakeplayers."
 + [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler."
 + [Grimoire](https://github.com/CrucibleMC/Grimoire) "A core mod that [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) Modules use to be loaded up."
++ [Discord](https://discord.gg/jWSTJ4d) "Our support Discord."
 ## TODO List
 - [ ] Create Crucible API.
 - [X] Implement the PaperMC API.
