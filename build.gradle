@@ -104,7 +104,7 @@ def gitInfo(String key) {
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "1614"
 ext.revision = "1.0.7"
-ext.crucibleVersion = "3.0"
+ext.crucibleVersion = "3.1"
 version = "${mcVersion}-${crucibleVersion}"
 
 launch4j {

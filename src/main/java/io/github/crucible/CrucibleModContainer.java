@@ -44,7 +44,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
         ModMetadata meta = getMetadata();
         meta.modId = "Crucible";
         meta.name = "Crucible Server";
-        meta.version = "3.0";
+        meta.version = "3.1";
         meta.credits = "TODO: Add credits";
         meta.authorList = Arrays.asList("juanmuscaria", "brunoxkk0");
         meta.description = "Pure black magic and gambiarras!";
