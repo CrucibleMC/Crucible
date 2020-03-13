@@ -40,7 +40,6 @@ Advantages over Thermos:
 ## Know incompatibilities and bugs
 * Industrial Craft 2 has some problems with the crucible internal chunkmap, we have a fix via [Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) using [Grimoire](https://github.com/CrucibleMC/Grimoire).
 ## Useful links
-+ [Fakeplayer List](FakeplayerList.md) "A list of all mod fakeplayers."
 + [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler."
 + [Grimoire](https://github.com/CrucibleMC/Grimoire) "A core mod that [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) Modules use to be loaded up."
 + [Discord](https://discord.gg/jWSTJ4d) "Our support Discord."
@@ -58,7 +57,7 @@ Advantages over Thermos:
 - [ ] Backport useful things.
 - [ ] Isolate the PluginClassloader and create a special library injection and remapper.
 - [ ] Add @Mod(bukkitplugin) Support.
-- [ ] implement [Timings](https://github.com/PaperMC/Paper/blob/ver/1.14/Spigot-API-Patches/0004-Timings-v2.patch).
+- [X] implement [Timings](https://github.com/PaperMC/Paper/blob/ver/1.14/Spigot-API-Patches/0004-Timings-v2.patch).
 
 [forge]: https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-green.svg "Minecraft Forge v10.13.4.1614"
 [mc]: https://img.shields.io/badge/Minecraft-v1.7.10-green.svg "Minecraft 1.7.10"
