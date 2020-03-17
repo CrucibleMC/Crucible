@@ -58,8 +58,10 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Sets the server max tick time, experimental, can cause problems!")
     public int crucible_tickHandler_serverTickTime = 1000000000;
 
-    public boolean timings_enable = true;
+    @Comment("Let timings be turned on since the server statup!")
+    public boolean timings_enabledSinceServerStartup = false;
 
+    @Comment("Make timings Verbose! (http://tinyurl.com/wtf-is-verbose)")
     public boolean timings_verbose = true;
 
     public boolean timings_serverNamePrivacy = false;
@@ -113,8 +115,8 @@ public class CrucibleConfigs extends YamlConfig {
         TimingsManager.hiddenConfigs = timings_hiddenConfigEntries;
 
         Timings.setVerboseTimingsEnabled(timings_verbose);
-        Timings.setTimingsEnabled(timings_enable);
         Timings.setHistoryInterval(timings_historyInterval * 20);
         Timings.setHistoryLength(timings_historyLength * 20);
+        Timings.setTimingsEnabled(timings_enabledSinceServerStartup);
     }
 }
