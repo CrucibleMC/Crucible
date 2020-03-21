@@ -49,8 +49,8 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("The timezone id to set.")
     public String crucible_vmTimeZone_timeZoneId = TimeZone.getDefault().getID();
 
-    @Comment("If true, tiles in forced chunks will be ticked even without nearby players, experimental, can cause problems!")
-    public boolean crucible_tickHandler_forcedChunkTick = true;
+    @Comment("If true, all entities and tiles in forced chunks will be ticked even without nearby players, experimental, can cause problems!!!!")
+    public boolean crucible_tickHandler_forcedChunkTick = false;
 
     @Comment("Sets the server max tps, experimental, can cause problems!")
     public int crucible_tickHandler_serverTickRate = 20;

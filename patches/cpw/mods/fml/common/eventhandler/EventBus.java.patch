@@ -1,16 +1,17 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/eventhandler/EventBus.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/eventhandler/EventBus.java
-@@ -9,6 +9,9 @@
+@@ -9,6 +9,10 @@
  
  import javax.annotation.Nonnull;
  
 +import co.aikar.timings.Timing;
++import co.aikar.timings.Timings;
 +import io.github.crucible.CrucibleTimings;
 +import net.minecraft.server.MinecraftServer;
  import org.apache.logging.log4j.Level;
  
  import com.google.common.base.Preconditions;
-@@ -131,19 +134,43 @@
+@@ -131,19 +135,43 @@
  
      public boolean post(Event event)
      {
@@ -19,7 +20,7 @@
 -        try
 -        {
 -            for (; index < listeners.length; index++)
-+        if (MinecraftServer.serverStarted) { //Only use timings after the startup.
++        if (MinecraftServer.serverStarted && Timings.isTimingsEnabled()) { //Only use timings after the startup, and if it is enabled!
 +            Timing eventTiming = CrucibleTimings.getEventTiming(event); //Crucible
 +            eventTiming.startTiming(); //Crucible
 +            IEventListener[] listeners = event.getListenerList().getListeners(busID);
