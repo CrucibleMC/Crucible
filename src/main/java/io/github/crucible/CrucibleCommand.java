@@ -27,8 +27,7 @@ public class CrucibleCommand extends Command {
     protected CrucibleCommand(MinecraftServer server) {
         super("crucible");
 
-        serveReference = new WeakReference<MinecraftServer>(server);
-
+        serveReference = new WeakReference<>(server);
 
         StringBuilder b = new StringBuilder();
         b.append("-------------------[" + ChatColor.BLUE + "Crucible" + ChatColor.RESET + "]-------------------\n");
@@ -178,6 +177,15 @@ public class CrucibleCommand extends Command {
             if (!testPermission(sender, "crucible.heap"))
                 return true;
             processHeap(sender, args);
+        } else if (args[0].equalsIgnoreCase("mods")) {
+            if (!testPermission(sender, "crucible.mods"))
+                return true;
+        } else if (args[0].equalsIgnoreCase("plugins")) {
+            if (!testPermission(sender, "crucible.plugins"))
+                return true;
+        } else if (args[0].equalsIgnoreCase("")) {
+            if (!testPermission(sender, "crucible."))
+                return true;
         } else {
             sender.sendMessage(ChatColor.RED + "Unknown subcommand.");
             sender.sendMessage(usageMessage);
@@ -204,7 +212,7 @@ public class CrucibleCommand extends Command {
     }
 
     private void processHeap(CommandSender sender, String[] args) {
-        File file = new File(new File(new File("."), "dumps"), "heap-dump-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.bin");
+        File file = new File(new File(new File("."), "dumps"), "heap-dump-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.hprof");
         sender.sendMessage("Writing heap dump to: " + file);
         CauldronHooks.dumpHeap(file, true);
         sender.sendMessage("Heap dump complete.");
