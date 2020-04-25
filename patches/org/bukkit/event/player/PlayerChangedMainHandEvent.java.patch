@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerChangedMainHandEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerChangedMainHandEvent.java
+@@ -2,7 +2,7 @@
+ 
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.HandlerList;
+-import org.bukkit.inventory.MainHand;
++//import org.bukkit.inventory.MainHand;
+ import org.jetbrains.annotations.NotNull;
+ 
+ /**
+@@ -13,11 +13,11 @@
+ 
+     private static final HandlerList handlers = new HandlerList();
+     //
+-    private final MainHand mainHand;
++    //private final MainHand mainHand;
+ 
+-    public PlayerChangedMainHandEvent(@NotNull Player who, @NotNull MainHand mainHand) {
++    public PlayerChangedMainHandEvent(@NotNull Player who/*, @NotNull MainHand mainHand*/) {
+         super(who);
+-        this.mainHand = mainHand;
++        //this.mainHand = mainHand;
+     }
+ 
+     /**
+@@ -26,10 +26,10 @@
+      *
+      * @return the new {@link MainHand} of the player
+      */
+-    @NotNull
+-    public MainHand getMainHand() {
+-        return mainHand;
+-    }
++    //@NotNull
++    //public MainHand getMainHand() {
++    //    return mainHand;
++    //}
+ 
+     @NotNull
+     @Override

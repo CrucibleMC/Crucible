@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/org/bukkit/event/player/PlayerPickupArrowEvent.java
++++ ../src-work/minecraft/org/bukkit/event/player/PlayerPickupArrowEvent.java
+@@ -1,6 +1,6 @@
+ package org.bukkit.event.player;
+ 
+-import org.bukkit.entity.AbstractArrow;
++//import org.bukkit.entity.AbstractArrow;
+ import org.bukkit.entity.Item;
+ import org.bukkit.entity.Player;
+ import org.jetbrains.annotations.NotNull;
+@@ -11,11 +11,11 @@
+ //TODO: Implement this!
+ public class PlayerPickupArrowEvent extends PlayerPickupItemEvent {
+ 
+-    private final AbstractArrow arrow;
++    //private final AbstractArrow arrow;
+ 
+-    public PlayerPickupArrowEvent(@NotNull final Player player, @NotNull final Item item, @NotNull final AbstractArrow arrow) {
++    public PlayerPickupArrowEvent(@NotNull final Player player, @NotNull final Item item/*, @NotNull final AbstractArrow arrow*/) {
+         super(player, item, 0);
+-        this.arrow = arrow;
++        //this.arrow = arrow;
+     }
+ 
+     /**
+@@ -23,8 +23,8 @@
+      *
+      * @return The arrow being picked up
+      */
+-    @NotNull
+-    public AbstractArrow getArrow() {
+-        return arrow;
+-    }
++    //@NotNull
++    //public AbstractArrow getArrow() {
++    //    return arrow;
++    //}
+ }

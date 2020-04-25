@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/org/bukkit/event/entity/EntityPotionEffectEvent.java
++++ ../src-work/minecraft/org/bukkit/event/entity/EntityPotionEffectEvent.java
+@@ -5,7 +5,7 @@
+ import org.bukkit.event.HandlerList;
+ import org.bukkit.potion.PotionEffect;
+ import org.bukkit.potion.PotionEffectType;
+-import org.jetbrains.annotations.Contract;
++//import org.jetbrains.annotations.Contract;
+ import org.jetbrains.annotations.NotNull;
+ import org.jetbrains.annotations.Nullable;
+ 
+@@ -25,7 +25,7 @@
+     private final Action action;
+     private boolean override;
+ 
+-    @Contract("_, null, null, _, _, _ -> fail")
++    //@Contract("_, null, null, _, _, _ -> fail")
+     public EntityPotionEffectEvent(@NotNull LivingEntity livingEntity, @Nullable PotionEffect oldEffect, @Nullable PotionEffect newEffect, @NotNull Cause cause, @NotNull Action action, boolean override) {
+         super(livingEntity);
+         this.oldEffect = oldEffect;
