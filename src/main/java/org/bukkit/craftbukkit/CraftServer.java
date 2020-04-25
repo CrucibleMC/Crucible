@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 
 import com.google.common.base.Charsets;
+import io.github.crucible.CrucibleConfigs;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -1075,7 +1076,7 @@ public final class CraftServer implements Server {
             return false;
         }
 
-        if (!(handle.dimension > 1)) {
+        if (CrucibleConfigs.configs.crucible_misc_worldUnloadBlacklist.contains(handle.dimension)) {
             return false;
         }
 

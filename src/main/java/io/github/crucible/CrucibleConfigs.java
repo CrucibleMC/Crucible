@@ -10,6 +10,7 @@ import net.cubespace.Yamler.Config.YamlConfig;
 import java.io.File;
 import java.time.ZoneId;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -58,6 +59,9 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Sets the server max tick time, experimental, can cause problems!")
     public int crucible_tickHandler_serverTickTime = 1000000000;
 
+    @Comment("List of dimension IDs that should never be unloaded.")
+    public List<Integer> crucible_misc_worldUnloadBlacklist = Collections.singletonList(-73);
+
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
 
@@ -80,9 +84,10 @@ public class CrucibleConfigs extends YamlConfig {
 
         try {
             init();
+            save(); //Update old configs.
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
-            save();
+            save(); //Replace broken configs.
         }
 
         if (crucible_vmTimeZone_forceTimeZone) {
@@ -93,6 +98,7 @@ public class CrucibleConfigs extends YamlConfig {
             } catch (Exception e) {
                 System.out.println("[Crucible] Invalid timezone id:" + crucible_vmTimeZone_timeZoneId);
                 crucible_vmTimeZone_timeZoneId = TimeZone.getDefault().getID();
+                save(); //Replace old timezone id.
             }
         }
         timings();
@@ -113,7 +119,6 @@ public class CrucibleConfigs extends YamlConfig {
     private void timings() {
         TimingsManager.privacy = timings_serverNamePrivacy;
         TimingsManager.hiddenConfigs = timings_hiddenConfigEntries;
-
         Timings.setVerboseTimingsEnabled(timings_verbose);
         Timings.setHistoryInterval(timings_historyInterval * 20);
         Timings.setHistoryLength(timings_historyLength * 20);
