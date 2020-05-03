@@ -24,6 +24,7 @@
 package co.aikar.timings;
 
 import com.google.common.collect.ImmutableList;
+import io.github.crucible.CrucibleConfigs;
 import org.apache.commons.lang.Validate;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -76,9 +77,11 @@ public class TimingsCommand extends BukkitCommand {
                 return true;
             }else if (arg.equalsIgnoreCase("stats")){
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&a&l Timings Stats"));
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Start Time: &e" + getFormatedDate(timedTimings.getStartTime())));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Start Time: &e" + getFormatedDate(TimingsManager.timingStart)));
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   End Time: &e" + getFormatedDate(timedTimings.getEndTime())));
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Time Remaining: &3" + timedTimings.getSecondsTillEnds() + " seconds."));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Verbose: &3" + Timings.verboseEnabled));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Ultra-Verbose: &3" + CrucibleConfigs.configs.timings_ultra_verbose));
                 return true;
             }else if (arg.equalsIgnoreCase("cost")){
                 sender.sendMessage("Timings cost: " + TimingsExport.getCost());
@@ -93,6 +96,16 @@ public class TimingsCommand extends BukkitCommand {
 
         if (arg.isEmpty()){
             sendHelp(sender,currentAlias,args);
+            return true;
+        }else if (arg.equalsIgnoreCase("stats")){
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&a&l Timings Stats"));
+            if (Timings.timingsEnabled){
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Enabled Since: &e" + getFormatedDate(TimingsManager.timingStart)));
+            }else {
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c   Not enabled!"));
+            }
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Verbose: &3" + Timings.verboseEnabled));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Ultra-Verbose: &3" + CrucibleConfigs.configs.timings_ultra_verbose));
             return true;
         }else if ("on".equalsIgnoreCase(arg)) {
             Timings.setTimingsEnabled(true);
@@ -123,6 +136,14 @@ public class TimingsCommand extends BukkitCommand {
         } else if ("verboff".equalsIgnoreCase(arg)) {
             Timings.setVerboseTimingsEnabled(false);
             sender.sendMessage("Disabled Verbose Timings");
+            return true;
+        } else if ("ultraverbon".equalsIgnoreCase(arg)) {
+            CrucibleConfigs.configs.timings_ultra_verbose = true;
+            sender.sendMessage("Enabled Ultra-Verbose Timings");
+            return true;
+        } else if ("ultraverboff".equalsIgnoreCase(arg)) {
+            CrucibleConfigs.configs.timings_ultra_verbose = false;
+            sender.sendMessage("Disabled Ultra-Verbose Timings");
             return true;
         } else if ("reset".equalsIgnoreCase(arg)) {
             long now = System.currentTimeMillis();
@@ -179,6 +200,11 @@ public class TimingsCommand extends BukkitCommand {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c  - &e" + currentAlias + " reset &7- &aReset current timings profiller."));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c  - &e" + currentAlias + " verbon &7- &aVerbose On. &7&otinyurl.com/wtf-is-verbose"));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c  - &e" + currentAlias + " verboff &7- &aVerbose Off. &7&otinyurl.com/wtf-is-verbose"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c  - &e" + currentAlias + " ultraverbon" +
+                "" +
+                "" +
+                " &7- &aUltraVerbose On. (Show tiles data)"));
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c  - &e" + currentAlias + " ultraverboff &7- &aUltraVerbose Off"));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c  - &e" + currentAlias + " off &7- &aStop timings profiller."));
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c  - &e" + currentAlias + " timed <seconds> &7- &aStart, then paste, then stop."));
     }

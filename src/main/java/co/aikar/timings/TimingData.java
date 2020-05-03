@@ -33,7 +33,7 @@ import static co.aikar.util.JSONUtil.toArray;
  *
  * This is broken out to reduce memory usage
  */
-class TimingData {
+public class TimingData {
     private final int id;
     private int count = 0;
     private int lagCount = 0;

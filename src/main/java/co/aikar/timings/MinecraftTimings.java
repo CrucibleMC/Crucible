@@ -123,6 +123,9 @@ public final class MinecraftTimings {
         String entityType = entity.getClass().getName();
         return Timings.ofSafe("Minecraft", "## tickTileEntity - " + entityType, tickTileEntityTimer);
     }
+    public static Timing getTileEntityPersonalTimings(TileEntity entity, Timing tileEntityTiming) {
+        return Timings.ofSafe("Minecraft", "## tileSpawnedAt - " + "[world=" + entity.worldObj.getSaveHandler().getWorldDirectoryName() + ", x=" + entity.xCoord + ", y=" + entity.yCoord + ", z=" + entity.zCoord + "]", tileEntityTiming);
+    }
     public static Timing getCancelTasksTimer() {
         return Timings.ofSafe("Cancel Tasks");
     }

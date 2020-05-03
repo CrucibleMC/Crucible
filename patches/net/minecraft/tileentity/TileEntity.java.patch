@@ -8,7 +8,7 @@
  import cpw.mods.fml.common.FMLLog;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-@@ -22,20 +24,30 @@
+@@ -22,20 +24,35 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -30,8 +30,13 @@
      public int blockMetadata = -1;
      public Block blockType;
 +    public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Paper
++    public Timing personalTickTimer = null;  // Crucible, needs to be initialized at TickEvent to prevent NPE
      private static final String __OBFID = "CL_00000340";
  
++    public Timing getPersonalTickTimer(){
++        return personalTickTimer != null ? personalTickTimer : (personalTickTimer = MinecraftTimings.getTileEntityPersonalTimings(this,tickTimer));
++    }
++
 +    @Override
 +    public int hashCode()
 +    {
@@ -41,7 +46,7 @@
      public static void addMapping(Class p_145826_0_, String p_145826_1_)
      {
          if (nameToClassMap.containsKey(p_145826_1_))
-@@ -106,7 +118,11 @@
+@@ -106,7 +123,11 @@
          }
          catch (Exception exception)
          {
@@ -54,7 +59,7 @@
          }
  
          if (tileentity != null)
-@@ -282,6 +298,31 @@
+@@ -282,6 +303,31 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
  

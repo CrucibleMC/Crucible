@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * This class uses interned strings giving us the ability to do an identity check instead of equals() on the strings
  */
-final class TimingIdentifier {
+public final class TimingIdentifier {
     /**
      * Holds all groups. Autoloads on request for a group by name.
      */

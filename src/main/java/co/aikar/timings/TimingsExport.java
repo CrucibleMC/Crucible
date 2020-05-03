@@ -60,7 +60,7 @@ import static co.aikar.util.JSONUtil.toArrayMapper;
 import static co.aikar.util.JSONUtil.toObjectMapper;
 
 @SuppressWarnings({"rawtypes", "SuppressionAnnotation"})
-class TimingsExport extends Thread {
+public class TimingsExport extends Thread {
 
     private final TimingsReportListener listeners;
     private final Map out;

@@ -68,6 +68,9 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Make timings Verbose! (http://tinyurl.com/wtf-is-verbose)")
     public boolean timings_verbose = true;
 
+    @Comment("Make timings Utra-Verbose! (Needs 'timings_verbonse=true' - This cause cause LAG, and depending on how many tiles, will not even work! Don't use always!")
+    public boolean timings_ultra_verbose = true;
+
     public boolean timings_serverNamePrivacy = false;
 
     public List<String> timings_hiddenConfigEntries = Arrays.asList("database", "settings.bungeecord-addresses");

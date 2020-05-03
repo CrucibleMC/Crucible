@@ -36,7 +36,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class TimingHandler implements Timing {
+public class TimingHandler implements Timing {
 
     private static AtomicInteger idPool = new AtomicInteger(1);
     private static Deque<TimingHandler> TIMING_STACK = new ArrayDeque<>();
