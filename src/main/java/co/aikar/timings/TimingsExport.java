@@ -93,7 +93,7 @@ public class TimingsExport extends Thread {
             listeners.done();
             return;
         }
-        final long lastStartDiff = now - TimingsManager.timingStart;
+        //final long lastStartDiff = now - TimingsManager.timingStart;
         //if (lastStartDiff < 180000) {
         //    listeners.sendMessage(ChatColor.RED + "Please wait at least 3 minutes before generating a Timings report. Unlike Timings v1, v2 benefits from longer timings and is not as useful with short timings. (" + (int)((180000 - lastStartDiff) / 1000) + " seconds)");
         //    listeners.done();
@@ -165,7 +165,12 @@ public class TimingsExport extends Thread {
                         }
 
                         String name = id.identifier.name;
-                        if (name.startsWith("##")) {
+                        if (name.startsWith("## !")) {
+                            if (id.shouldBeSkiped()){
+                                continue;
+                            }
+                            name = name.substring(4);
+                        }else if (name.startsWith("##")) {
                             name = name.substring(3);
                         }
                         handlers.put(id.id, toArray(

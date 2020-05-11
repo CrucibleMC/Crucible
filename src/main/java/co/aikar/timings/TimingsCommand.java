@@ -81,7 +81,7 @@ public class TimingsCommand extends BukkitCommand {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   End Time: &e" + getFormatedDate(timedTimings.getEndTime())));
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Time Remaining: &3" + timedTimings.getSecondsTillEnds() + " seconds."));
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Verbose: &3" + Timings.verboseEnabled));
-                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Ultra-Verbose: &3" + CrucibleConfigs.configs.timings_ultra_verbose));
+                sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Ultra-Verbose: &3" + CrucibleConfigs.configs.timings_ultraverbose_enabled));
                 return true;
             }else if (arg.equalsIgnoreCase("cost")){
                 sender.sendMessage("Timings cost: " + TimingsExport.getCost());
@@ -105,7 +105,7 @@ public class TimingsCommand extends BukkitCommand {
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&c   Not enabled!"));
             }
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Verbose: &3" + Timings.verboseEnabled));
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Ultra-Verbose: &3" + CrucibleConfigs.configs.timings_ultra_verbose));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&2   Ultra-Verbose: &3" + CrucibleConfigs.configs.timings_ultraverbose_enabled));
             return true;
         }else if ("on".equalsIgnoreCase(arg)) {
             Timings.setTimingsEnabled(true);
@@ -138,11 +138,12 @@ public class TimingsCommand extends BukkitCommand {
             sender.sendMessage("Disabled Verbose Timings");
             return true;
         } else if ("ultraverbon".equalsIgnoreCase(arg)) {
-            CrucibleConfigs.configs.timings_ultra_verbose = true;
+            CrucibleConfigs.configs.timings_ultraverbose_enabled = true;
+            Timings.setVerboseTimingsEnabled(true);
             sender.sendMessage("Enabled Ultra-Verbose Timings");
             return true;
         } else if ("ultraverboff".equalsIgnoreCase(arg)) {
-            CrucibleConfigs.configs.timings_ultra_verbose = false;
+            CrucibleConfigs.configs.timings_ultraverbose_enabled = false;
             sender.sendMessage("Disabled Ultra-Verbose Timings");
             return true;
         } else if ("reset".equalsIgnoreCase(arg)) {

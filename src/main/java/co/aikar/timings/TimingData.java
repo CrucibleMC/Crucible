@@ -100,6 +100,10 @@ public class TimingData {
         return count > 0;
     }
 
+    public int getCount() {
+        return count;
+    }
+
     long getTotalTime() {
         return totalTime;
     }
@@ -118,5 +122,18 @@ public class TimingData {
 
     void setCurTickTotal(long curTickTotal) {
         this.curTickTotal = curTickTotal;
+    }
+
+    @Override
+    public String toString() {
+        return "TimingData{" +
+                "id=" + id +
+                ", count=" + count +
+                ", lagCount=" + lagCount +
+                ", totalTime=" + totalTime +
+                ", lagTotalTime=" + lagTotalTime +
+                ", curTickCount=" + curTickCount +
+                ", curTickTotal=" + curTickTotal +
+                '}';
     }
 }

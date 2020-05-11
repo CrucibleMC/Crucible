@@ -68,8 +68,11 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Make timings Verbose! (http://tinyurl.com/wtf-is-verbose)")
     public boolean timings_verbose = true;
 
-    @Comment("Make timings Utra-Verbose! (Needs 'timings_verbonse=true' - This cause cause LAG, and depending on how many tiles, will not even work! Don't use always!")
-    public boolean timings_ultra_verbose = true;
+    @Comment("Make timings Utra-Verbose! (Needs 'timings_verbose=true') This can cause LAG, and depending on how many tiles loaded on your server, will not even work! Don't use always!")
+    public boolean timings_ultraverbose_enabled = true;
+
+    @Comment("Only tiles that cost more than this limiar of time in nano-seconds will be sent to timings paste.One tick has 50000 nano-seconds, so 500 means 1% o the tick!")
+    public int timings_ultraverbose_limiar = 500;
 
     public boolean timings_serverNamePrivacy = false;
 
