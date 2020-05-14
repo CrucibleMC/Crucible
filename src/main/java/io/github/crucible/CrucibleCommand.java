@@ -3,6 +3,8 @@ package io.github.crucible;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
 import net.minecraftforge.cauldron.CauldronHooks;
 import net.minecraftforge.common.DimensionManager;
 import org.bukkit.Bukkit;
@@ -89,8 +91,7 @@ public class CrucibleCommand extends Command {
 
     private static String getTps() {
         StringBuilder tps = new StringBuilder();
-
-        tps.append("&8[&e&l\u26a1&r&8] &7TPS from last 1m, 5m, 15m: &r");
+        tps.append("\n&8[&e&l\u26a1&r&8] &7TPS from last 1m, 5m, 15m: &r");
 
         double[] recentTps = MinecraftServer.getServer().recentTps;
 
@@ -102,12 +103,14 @@ public class CrucibleCommand extends Command {
         tps.append("\n&r&8[&e&l\u26a1&r&8]&7 Mean tick time: &l" + timeFormat.format(meanTickTime) + "&r&7ms&r\n");
 
         for (Integer dimId : DimensionManager.getIDs()) {
-
             double worldTickTime = mean(getServer().worldTickTimes.get(dimId)) * 1.0E-6D;
             double worldTPS = Math.min(1000.0 / worldTickTime, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate);
-            String name = "";
-            tps.append("&8(&f&l" + dimId + "&r&f \u279c " + (((name = DimensionManager.getProvider(dimId).getDimensionName()) != null) ? name : " ") + "&r&8) &7 Mean tick time: &l" + timeFormat.format(worldTickTime) + "&r&7ms Mean tps: " + parseTps(worldTPS) + "&r\n");
-
+            WorldProvider worldProvider = DimensionManager.getProvider(dimId);
+            String name = worldProvider.getDimensionName();
+            if (name.equals("Overworld")){
+                name = worldProvider.worldObj.getSaveHandler().getWorldDirectoryName();
+            }
+            tps.append("&8(&2&l" + dimId + " &r&7&o\u279c &r&b" + name + "&r&8) &7Time: &l" + timeFormat.format(worldTickTime) + "&r&7ms TPS: " + parseTps(worldTPS) + "&r\n");
         }
 
         tps.append("&r");

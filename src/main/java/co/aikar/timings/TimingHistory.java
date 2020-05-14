@@ -37,11 +37,8 @@ import co.aikar.util.LoadingMap;
 import co.aikar.util.MRUMapCache;
 
 import java.lang.management.ManagementFactory;
-import java.util.Collection;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -91,12 +88,18 @@ public class TimingHistory {
         }
         this.totalTicks = ticks;
         this.totalTime = FULL_SERVER_TICK.record.getTotalTime();
-        this.entries = new TimingHistoryEntry[TimingsManager.HANDLERS.size()];
 
-        int i = 0;
+        List<TimingHistoryEntry> entryList = new ArrayList<>();
         for (TimingHandler handler : TimingsManager.HANDLERS) {
-            entries[i++] = new TimingHistoryEntry(handler);
+            String name = handler.identifier.name;
+            if (name.startsWith("## !")) {
+                if (handler.shouldBeSkiped()){
+                    continue;
+                }
+            }
+            entryList.add(new TimingHistoryEntry(handler));
         }
+        this.entries = entryList.toArray(new TimingHistoryEntry[0]);
 
         // Information about all loaded chunks/entities
         //noinspection unchecked

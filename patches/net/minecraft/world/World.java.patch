@@ -1135,15 +1135,15 @@
                  try
                  {
 +                    tileentity.tickTimer.startTiming(); // Spigot
-+                    if (CrucibleConfigs.configs.timings_ultra_verbose) tileentity.getPersonalTickTimer().startTiming(); //Crucible
++                    if (CrucibleConfigs.configs.timings_ultraverbose_enabled) tileentity.getPersonalTickTimer().startTiming(); //Crucible
 +                    tilesTicked++;
                      tileentity.updateEntity();
-+                    if (CrucibleConfigs.configs.timings_ultra_verbose) tileentity.getPersonalTickTimer().stopTiming(); //Crucible
++                    if (CrucibleConfigs.configs.timings_ultraverbose_enabled) tileentity.getPersonalTickTimer().stopTiming(); //Crucible
 +                    tileentity.tickTimer.stopTiming(); // Spigot
                  }
                  catch (Throwable throwable)
                  {
-+                    if (CrucibleConfigs.configs.timings_ultra_verbose) tileentity.getPersonalTickTimer().stopTiming(); //Crucible
++                    if (CrucibleConfigs.configs.timings_ultraverbose_enabled) tileentity.getPersonalTickTimer().stopTiming(); //Crucible
 +                    tileentity.tickTimer.stopTiming(); // Spigot
                      crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
                      crashreportcategory = crashreport.makeCategory("Block entity being ticked");

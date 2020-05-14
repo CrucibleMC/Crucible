@@ -112,5 +112,34 @@ public final class TimingIdentifier {
         public int hashCode() {
             return id;
         }
+
+        public TimingGroupClone getClone(){
+            return new TimingGroupClone(this);
+        }
+    }
+
+    static class TimingGroupClone {
+        final int id;
+        final String name;
+        final List<TimingHandler> handlers;
+
+        private TimingGroupClone(TimingGroup timingGroup) {
+            this.id = timingGroup.id;
+            this.name = timingGroup.name;
+            this.handlers = new ArrayList<>(timingGroup.handlers);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TimingGroup that = (TimingGroup) o;
+            return id == that.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return id;
+        }
     }
 }

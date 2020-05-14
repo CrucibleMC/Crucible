@@ -45,9 +45,7 @@ import java.lang.management.RuntimeMXBean;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.zip.GZIPOutputStream;
 
@@ -155,6 +153,37 @@ public class TimingsExport extends Thread {
 
         Map handlers = createObject();
         Map groupData;
+        synchronized (TimingIdentifier.GROUP_MAP){
+            List<TimingIdentifier.TimingGroupClone> timingGroupCloneList = new ArrayList<>();
+            for (TimingIdentifier.TimingGroup TIMING_GROUP : TimingIdentifier.GROUP_MAP.values()) {
+                timingGroupCloneList.add(TIMING_GROUP.getClone());
+            }
+            for (TimingIdentifier.TimingGroupClone group : timingGroupCloneList) {
+                group.handlers.removeIf(id -> {
+                    if (!id.isTimed() && !id.isSpecial()) {
+                        return false;
+                    }
+                    String name = id.identifier.name;
+                    if (name.startsWith("## !")) {
+                        if (id.shouldBeSkiped()){
+                            return true;
+                        }
+                        name = name.substring(4);
+                    }else if (name.startsWith("##")) {
+                        name = name.substring(3);
+                    }
+                    handlers.put(id.id, toArray(
+                            group.id,
+                            name
+                    ));
+                    return false;
+                });
+            }
+            groupData = toObjectMapper(
+                    timingGroupCloneList, group -> pair(group.id, group.name));
+        }
+
+        /*
         synchronized (TimingIdentifier.GROUP_MAP) {
             for (TimingIdentifier.TimingGroup group : TimingIdentifier.GROUP_MAP.values()) {
                 synchronized (group.handlers) {
@@ -184,6 +213,7 @@ public class TimingsExport extends Thread {
             groupData = toObjectMapper(
                 TimingIdentifier.GROUP_MAP.values(), group -> pair(group.id, group.name));
         }
+        */
 
         parent.put("idmap", createObject(
             pair("groups", groupData),

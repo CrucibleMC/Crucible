@@ -214,14 +214,7 @@ public class TimingHandler implements Timing {
 
     public boolean shouldBeSkiped(){
         double result = this.record.getTotalTime() / (double) this.record.getCount();
-        System.out.println("---------------\n\n" + " - " + identifier);
-        System.out.println("Data: " + this.record.toString());
-        System.out.println("---> Result: " + result);
-        if (result < CrucibleConfigs.configs.timings_ultraverbose_limiar){//Anything that is 1% tick-time higher!
-            return true;
-        }
-        System.out.println("Was not Skipped :V");
-        return false;
+        return result < CrucibleConfigs.configs.timings_ultraverbose_limiar;
     }
 
     public boolean isEnabled() {
