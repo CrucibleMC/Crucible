@@ -40,7 +40,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * This class uses interned strings giving us the ability to do an identity check instead of equals() on the strings
  */
-final class TimingIdentifier {
+public final class TimingIdentifier {
     /**
      * Holds all groups. Autoloads on request for a group by name.
      */
@@ -98,6 +98,35 @@ final class TimingIdentifier {
 
         private TimingGroup(String name) {
             this.name = name;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            TimingGroup that = (TimingGroup) o;
+            return id == that.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return id;
+        }
+
+        public TimingGroupClone getClone(){
+            return new TimingGroupClone(this);
+        }
+    }
+
+    static class TimingGroupClone {
+        final int id;
+        final String name;
+        final List<TimingHandler> handlers;
+
+        private TimingGroupClone(TimingGroup timingGroup) {
+            this.id = timingGroup.id;
+            this.name = timingGroup.name;
+            this.handlers = new ArrayList<>(timingGroup.handlers);
         }
 
         @Override

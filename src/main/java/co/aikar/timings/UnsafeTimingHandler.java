@@ -26,7 +26,7 @@ package co.aikar.timings;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 
-class UnsafeTimingHandler extends TimingHandler {
+public class UnsafeTimingHandler extends TimingHandler {
 
     UnsafeTimingHandler(@NotNull TimingIdentifier id) {
         super(id);

@@ -60,13 +60,19 @@ public class CrucibleConfigs extends YamlConfig {
     public int crucible_tickHandler_serverTickTime = 1000000000;
 
     @Comment("List of dimension IDs that should never be unloaded.")
-    public List<Integer> crucible_misc_worldUnloadBlacklist = Collections.singletonList(-73);
+    public List<Integer> crucible_misc_worldUnloadBlacklist = Arrays.asList(-73,0);
 
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
 
     @Comment("Make timings Verbose! (http://tinyurl.com/wtf-is-verbose)")
     public boolean timings_verbose = true;
+
+    @Comment("Make timings Utra-Verbose! (Needs 'timings_verbose=true') This can cause LAG, and depending on how many tiles loaded on your server, will not even work! Don't use always!")
+    public boolean timings_ultraverbose_enabled = true;
+
+    @Comment("Only tiles that cost more than this limiar of time in nano-seconds will be sent to timings paste. One tick has 50000 nano-seconds, so 2500 means 5% o the tick!")
+    public int timings_ultraverbose_limiar = 2500;
 
     public boolean timings_serverNamePrivacy = false;
 

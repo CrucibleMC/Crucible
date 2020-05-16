@@ -24,6 +24,7 @@
 package co.aikar.timings;
 
 import co.aikar.util.LoadingIntMap;
+import io.github.crucible.CrucibleConfigs;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.ArrayDeque;
@@ -36,7 +37,7 @@ import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-class TimingHandler implements Timing {
+public class TimingHandler implements Timing {
 
     private static AtomicInteger idPool = new AtomicInteger(1);
     private static Deque<TimingHandler> TIMING_STACK = new ArrayDeque<>();
@@ -209,6 +210,11 @@ class TimingHandler implements Timing {
 
     boolean isTimed() {
         return timed;
+    }
+
+    public boolean shouldBeSkiped(){
+        double result = this.record.getTotalTime() / (double) this.record.getCount();
+        return result < CrucibleConfigs.configs.timings_ultraverbose_limiar;
     }
 
     public boolean isEnabled() {
