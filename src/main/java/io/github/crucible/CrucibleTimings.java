@@ -4,6 +4,7 @@ import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.IEventListener;
+import net.minecraft.tileentity.TileEntity;
 
 import java.util.HashMap;
 
@@ -16,6 +17,9 @@ public class CrucibleTimings {
     }
     public static Timing getListenerTiming(IEventListener event, Timing timing) {
         return Timings.ofSafe("## Listener - " + getSimpleName(event.getClass()),timing);
+    }
+    public static Timing getPersonalTimingFromTileEntity(TileEntity tileEntity){
+        return tileEntity.getPersonalTickTimer();
     }
 
     private static HashMap<Class,String> simpleNameMap = new HashMap<>(); //Class.getSimpleName() is not cached, we need to create one!
