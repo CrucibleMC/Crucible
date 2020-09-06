@@ -1,16 +1,15 @@
 package org.bukkit.craftbukkit.command;
 
-import java.util.EnumMap;
-import java.util.Map;
-
-import org.fusesource.jansi.Ansi;
-import org.fusesource.jansi.Ansi.Attribute;
 import jline.Terminal;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.CraftServer;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.Ansi.Attribute;
+
+import java.util.EnumMap;
+import java.util.Map;
 
 public class ColouredConsoleSender extends CraftConsoleCommandSender {
     private final Terminal terminal;
@@ -45,6 +44,14 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
         replacements.put(ChatColor.RESET, Ansi.ansi().a(Attribute.RESET).toString());
     }
 
+    public static ConsoleCommandSender getInstance() {
+        if (Bukkit.getConsoleSender() != null) {
+            return Bukkit.getConsoleSender();
+        } else {
+            return new ColouredConsoleSender();
+        }
+    }
+
     @Override
     public void sendMessage(String message) {
         if (terminal.isAnsiSupported()) {
@@ -61,14 +68,6 @@ public class ColouredConsoleSender extends CraftConsoleCommandSender {
             }
         } else {
             super.sendMessage(message);
-        }
-    }
-
-    public static ConsoleCommandSender getInstance() {
-        if (Bukkit.getConsoleSender() != null) {
-            return Bukkit.getConsoleSender();
-        } else {
-            return new ColouredConsoleSender();
         }
     }
 }

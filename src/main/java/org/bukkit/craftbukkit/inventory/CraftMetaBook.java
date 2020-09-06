@@ -1,19 +1,17 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap.Builder;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.BookMeta;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap.Builder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaBook extends CraftMetaItem implements BookMeta {
@@ -103,11 +101,11 @@ class CraftMetaBook extends CraftMetaItem implements BookMeta {
     @Override
     boolean applicableTo(Material type) {
         switch (type) {
-        case WRITTEN_BOOK:
-        case BOOK_AND_QUILL:
-            return true;
-        default:
-            return false;
+            case WRITTEN_BOOK:
+            case BOOK_AND_QUILL:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -160,12 +158,6 @@ class CraftMetaBook extends CraftMetaItem implements BookMeta {
         pages.set(page - 1, text == null ? "" : text.length() > MAX_PAGE_LENGTH ? text.substring(0, MAX_PAGE_LENGTH) : text);
     }
 
-    public void setPages(final String... pages) {
-        this.pages.clear();
-
-        addPage(pages);
-    }
-
     public void addPage(final String... pages) {
         for (String page : pages) {
             if (page == null) {
@@ -184,6 +176,12 @@ class CraftMetaBook extends CraftMetaItem implements BookMeta {
 
     public List<String> getPages() {
         return ImmutableList.copyOf(pages);
+    }
+
+    public void setPages(final String... pages) {
+        this.pages.clear();
+
+        addPage(pages);
     }
 
     public void setPages(List<String> pages) {

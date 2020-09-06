@@ -1,24 +1,17 @@
 package net.md_5.bungee.chat;
 
-import java.lang.reflect.Type;
-import java.util.HashSet;
+import com.google.gson.*;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
-import net.md_5.bungee.chat.TextComponentSerializer;
-import net.md_5.bungee.chat.TranslatableComponentSerializer;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+
+import java.lang.reflect.Type;
+import java.util.HashSet;
 
 public class ComponentSerializer
-implements JsonDeserializer<BaseComponent> {
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(BaseComponent.class, new ComponentSerializer()).registerTypeAdapter(TextComponent.class, new TextComponentSerializer()).registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer()).create();
+        implements JsonDeserializer<BaseComponent> {
     public static final ThreadLocal<HashSet<BaseComponent>> serializedComponents = new ThreadLocal();
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(BaseComponent.class, new ComponentSerializer()).registerTypeAdapter(TextComponent.class, new TextComponentSerializer()).registerTypeAdapter(TranslatableComponent.class, new TranslatableComponentSerializer()).create();
 
     public static BaseComponent[] parse(String json) {
         if (json.startsWith("[")) {
@@ -31,7 +24,7 @@ implements JsonDeserializer<BaseComponent> {
         return gson.toJson(component);
     }
 
-    public static /* varargs */ String toString(BaseComponent ... components) {
+    public static /* varargs */ String toString(BaseComponent... components) {
         return gson.toJson(new TextComponent(components));
     }
 
@@ -42,9 +35,9 @@ implements JsonDeserializer<BaseComponent> {
         }
         JsonObject object = json.getAsJsonObject();
         if (object.has("translate")) {
-            return (BaseComponent)context.deserialize(json, TranslatableComponent.class);
+            return context.deserialize(json, TranslatableComponent.class);
         }
-        return (BaseComponent)context.deserialize(json, TextComponent.class);
+        return context.deserialize(json, TextComponent.class);
     }
 }
 

@@ -1,16 +1,19 @@
 package org.bukkit.craftbukkit.event;
 
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemSword;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraftforge.common.util.FakePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Server;
@@ -18,7 +21,6 @@ import org.bukkit.Statistic.Type;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftStatistic;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -31,18 +33,7 @@ import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.craftbukkit.util.CraftDamageSource;
 import org.bukkit.craftbukkit.util.CraftMagicNumbers;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.LightningStrike;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.entity.ThrownPotion;
+import org.bukkit.entity.*;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.*;
@@ -59,26 +50,18 @@ import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.meta.BookMeta;
 
-import com.google.common.collect.ImmutableMap;
-// Cauldron start
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemSword;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraftforge.common.util.FakePlayer;
-import org.bukkit.block.CreatureSpawner;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 // Cauldron end
 
 
 public class CraftEventFactory {
     public static final net.minecraft.util.DamageSource MELTING = CraftDamageSource.copyOf(net.minecraft.util.DamageSource.onFire);
     public static final net.minecraft.util.DamageSource POISON = CraftDamageSource.copyOf(net.minecraft.util.DamageSource.magic);
+    private static final Function<? super Double, Double> ZERO = Functions.constant(-0.0);
     public static org.bukkit.block.Block blockDamage; // For use in EntityDamageByBlockEvent
     public static Entity entityDamage; // For use in EntityDamageByEntityEvent
 
@@ -102,6 +85,7 @@ public class CraftEventFactory {
         Bukkit.getServer().getPluginManager().callEvent(event);
         return event;
     }
+    // Cauldron end
 
     /**
      * Block place methods
@@ -128,7 +112,6 @@ public class CraftEventFactory {
 
         return event;
     }
-    // Cauldron end
 
     public static BlockPlaceEvent callBlockPlaceEvent(net.minecraft.world.World world, net.minecraft.entity.player.EntityPlayer who, BlockState replacedBlockState, int clickedX, int clickedY, int clickedZ) {
         CraftWorld craftWorld = world.getWorld();
@@ -206,12 +189,12 @@ public class CraftEventFactory {
         if (clickedY > 255) {
             blockClicked = null;
             switch (action) {
-            case LEFT_CLICK_BLOCK:
-                action = Action.LEFT_CLICK_AIR;
-                break;
-            case RIGHT_CLICK_BLOCK:
-                action = Action.RIGHT_CLICK_AIR;
-                break;
+                case LEFT_CLICK_BLOCK:
+                    action = Action.LEFT_CLICK_AIR;
+                    break;
+                case RIGHT_CLICK_BLOCK:
+                    action = Action.RIGHT_CLICK_AIR;
+                    break;
             }
         }
 
@@ -362,12 +345,10 @@ public class CraftEventFactory {
         victim.expToDrop = event.getDroppedExp();
         // Cauldron start - handle any drop changes from plugins
         victim.capturedDrops.clear();
-        for (org.bukkit.inventory.ItemStack stack : event.getDrops())
-        {
+        for (org.bukkit.inventory.ItemStack stack : event.getDrops()) {
             net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(victim.worldObj, entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), CraftItemStack.asNMSCopy(stack));
-            if (entityitem != null)
-            {
-                victim.capturedDrops.add((EntityItem)entityitem);
+            if (entityitem != null) {
+                victim.capturedDrops.add(entityitem);
             }
         }
         // Cauldron end
@@ -395,12 +376,10 @@ public class CraftEventFactory {
 
             // Cauldron start - add support for Forge's PlayerDropsEvent
             //world.dropItemNaturally(entity.getLocation(), stack); // handle world drop in EntityPlayerMP
-            if (victim.captureDrops)
-            {
+            if (victim.captureDrops) {
                 net.minecraft.entity.item.EntityItem entityitem = new net.minecraft.entity.item.EntityItem(victim.worldObj, entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), CraftItemStack.asNMSCopy(stack));
-                if (entityitem != null)
-                {
-                    victim.capturedDrops.add((EntityItem)entityitem);
+                if (entityitem != null) {
+                    victim.capturedDrops.add(entityitem);
                 }
             }
             // Cauldron end
@@ -448,8 +427,8 @@ public class CraftEventFactory {
             DamageCause cause = DamageCause.ENTITY_ATTACK;
             Entity indirect = null;
             if (source instanceof net.minecraft.util.EntityDamageSourceIndirect) {
-                    indirect = ((net.minecraft.util.EntityDamageSourceIndirect) source).getSourceOfDamage();
-                    damager = ((net.minecraft.util.EntityDamageSourceIndirect) source).getProximateDamageSource();
+                indirect = source.getSourceOfDamage();
+                damager = ((net.minecraft.util.EntityDamageSourceIndirect) source).getProximateDamageSource();
                 // Cauldron start - vanilla compatibility
                 if (damager != null) {
                     if (damager.getBukkitEntity() instanceof ThrownPotion) {
@@ -459,7 +438,12 @@ public class CraftEventFactory {
                     }
                 }
                 if (indirect != null) {
-                    if (indirect instanceof EntityPlayer) { if (cause == null) { cause = DamageCause.ENTITY_ATTACK; damager = indirect; } }
+                    if (indirect instanceof EntityPlayer) {
+                        if (cause == null) {
+                            cause = DamageCause.ENTITY_ATTACK;
+                            damager = indirect;
+                        }
+                    }
                 }
                 // Cauldron end
             } else if ("thorns".equals(source.damageType)) {
@@ -485,7 +469,7 @@ public class CraftEventFactory {
             blockDamage = null;
             if (source == DamageSource.cactus) {
                 cause = DamageCause.CONTACT;
-            // Cauldron start - add more causes for mods
+                // Cauldron start - add more causes for mods
             } else if (source == DamageSource.fall) {
                 cause = DamageCause.FALL;
             } else if (source == DamageSource.anvil || source == DamageSource.fallingBlock) {
@@ -526,7 +510,7 @@ public class CraftEventFactory {
                 cause = DamageCause.LIGHTNING;
             } else if (source == DamageSource.fall) {
                 cause = DamageCause.FALL;
-            // Cauldron start - add more causes for mods
+                // Cauldron start - add more causes for mods
             } else if (source == DamageSource.cactus) {
                 cause = DamageCause.CONTACT;
             } else if (source == DamageSource.inFire) {
@@ -576,7 +560,7 @@ public class CraftEventFactory {
             cause = DamageCause.MAGIC;
         } else if (source == DamageSource.fall) {
             cause = DamageCause.FALL;
-        // Cauldron start - add more causes for mods
+            // Cauldron start - add more causes for mods
         } else if (source == DamageSource.cactus) {
             cause = DamageCause.CONTACT;
         } else if (source == DamageSource.lava) {
@@ -606,8 +590,6 @@ public class CraftEventFactory {
 
         return event;
     }
-
-    private static final Function<? super Double, Double> ZERO = Functions.constant(-0.0);
 
     public static EntityDamageEvent handleLivingEntityDamageEvent(Entity damagee, DamageSource source, double rawDamage, double hardHatModifier, double blockingModifier, double armorModifier, double resistanceModifier, double magicModifier, double absorptionModifier, Function<Double, Double> hardHat, Function<Double, Double> blocking, Function<Double, Double> armor, Function<Double, Double> resistance, Function<Double, Double> magic, Function<Double, Double> absorption) {
         Map<DamageModifier, Double> modifiers = new EnumMap<DamageModifier, Double>(DamageModifier.class);
@@ -762,7 +744,7 @@ public class CraftEventFactory {
 
     public static net.minecraft.inventory.Container callInventoryOpenEvent(net.minecraft.entity.player.EntityPlayerMP player, net.minecraft.inventory.Container container, boolean closeInv) {
         if (player.openContainer != player.inventoryContainer && closeInv) { // fire INVENTORY_CLOSE if one already open
-    // Cauldron end
+            // Cauldron end
             player.playerNetServerHandler.processCloseWindow(new net.minecraft.network.play.client.C0DPacketCloseWindow(player.openContainer.windowId));
         }
 
@@ -771,13 +753,13 @@ public class CraftEventFactory {
         // Cauldron start - vanilla compatibility
         try {
             player.openContainer.transferTo(container, craftPlayer);
-        }
-        catch (AbstractMethodError e) {
+        } catch (AbstractMethodError e) {
             // do nothing
         }
         // Cauldron end
         InventoryOpenEvent event = new InventoryOpenEvent(container.getBukkitView());
-        if (container.getBukkitView() != null) server.getPluginManager().callEvent(event); // Cauldron - allow vanilla mods to bypass
+        if (container.getBukkitView() != null)
+            server.getPluginManager().callEvent(event); // Cauldron - allow vanilla mods to bypass
 
         if (event.isCancelled()) {
             container.transferTo(player.openContainer, craftPlayer);
@@ -871,18 +853,18 @@ public class CraftEventFactory {
         org.bukkit.entity.Entity bukkitIgniter = igniter.getBukkitEntity();
         IgniteCause cause;
         switch (bukkitIgniter.getType()) {
-        case ENDER_CRYSTAL:
-            cause = IgniteCause.ENDER_CRYSTAL;
-            break;
-        case LIGHTNING:
-            cause = IgniteCause.LIGHTNING;
-            break;
-        case SMALL_FIREBALL:
-        case FIREBALL:
-            cause = IgniteCause.FIREBALL;
-            break;
-        default:
-            cause = IgniteCause.FLINT_AND_STEEL;
+            case ENDER_CRYSTAL:
+                cause = IgniteCause.ENDER_CRYSTAL;
+                break;
+            case LIGHTNING:
+                cause = IgniteCause.LIGHTNING;
+                break;
+            case SMALL_FIREBALL:
+            case FIREBALL:
+                cause = IgniteCause.FIREBALL;
+                break;
+            default:
+                cause = IgniteCause.FLINT_AND_STEEL;
         }
 
         BlockIgniteEvent event = new BlockIgniteEvent(bukkitWorld.getBlockAt(x, y, z), cause, bukkitIgniter);
@@ -907,7 +889,8 @@ public class CraftEventFactory {
 
     public static void handleInventoryCloseEvent(net.minecraft.entity.player.EntityPlayer human) {
         InventoryCloseEvent event = new InventoryCloseEvent(human.openContainer.getBukkitView());
-        if (human.openContainer.getBukkitView() != null) human.worldObj.getServer().getPluginManager().callEvent(event); // Cauldron - allow vanilla mods to bypass
+        if (human.openContainer.getBukkitView() != null)
+            human.worldObj.getServer().getPluginManager().callEvent(event); // Cauldron - allow vanilla mods to bypass
         human.openContainer.transferTo(human.inventoryContainer, human.getBukkitEntity());
     }
 
@@ -928,7 +911,7 @@ public class CraftEventFactory {
             }
 
             // Client will have updated its idea of the book item; we need to overwrite that
-            net.minecraft.inventory.Slot slot = player.openContainer.getSlotFromInventory((net.minecraft.inventory.IInventory) player.inventory, itemInHandIndex);
+            net.minecraft.inventory.Slot slot = player.openContainer.getSlotFromInventory(player.inventory, itemInHandIndex);
             player.playerNetServerHandler.sendPacket(new net.minecraft.network.play.server.S2FPacketSetSlot(player.openContainer.windowId, slot.slotNumber, itemInHand));
         }
     }
@@ -955,8 +938,7 @@ public class CraftEventFactory {
             event = new PlayerAchievementAwardedEvent(player, CraftStatistic.getBukkitAchievement((net.minecraft.stats.Achievement) statistic));
         } else {
             org.bukkit.Statistic stat = CraftStatistic.getBukkitStatistic(statistic);
-            if (stat == null)
-            {
+            if (stat == null) {
                 return null;
             }
             switch (stat) {
@@ -990,15 +972,12 @@ public class CraftEventFactory {
     }
 
     // Cauldron start
-    public static BlockBreakEvent callBlockBreakEvent(net.minecraft.world.World world, int x, int y, int z, net.minecraft.block.Block block, int blockMetadata, net.minecraft.entity.player.EntityPlayerMP player)
-    {
+    public static BlockBreakEvent callBlockBreakEvent(net.minecraft.world.World world, int x, int y, int z, net.minecraft.block.Block block, int blockMetadata, net.minecraft.entity.player.EntityPlayerMP player) {
         org.bukkit.block.Block bukkitBlock = world.getWorld().getBlockAt(x, y, z);
-        org.bukkit.event.block.BlockBreakEvent blockBreakEvent = new org.bukkit.event.block.BlockBreakEvent(bukkitBlock, ((EntityPlayerMP)player).getBukkitEntity());
-        EntityPlayerMP playermp = (EntityPlayerMP)player;
-        if (!(playermp instanceof FakePlayer))
-        {
-            if (!(playermp.theItemInWorldManager.getGameType().isAdventure() && !playermp.isCurrentToolAdventureModeExempt(x, y, z)) && !(playermp.theItemInWorldManager.getGameType().isCreative() && playermp.getHeldItem() != null && playermp.getHeldItem().getItem() instanceof ItemSword))
-            {
+        org.bukkit.event.block.BlockBreakEvent blockBreakEvent = new org.bukkit.event.block.BlockBreakEvent(bukkitBlock, player.getBukkitEntity());
+        EntityPlayerMP playermp = player;
+        if (!(playermp instanceof FakePlayer)) {
+            if (!(playermp.theItemInWorldManager.getGameType().isAdventure() && !playermp.isCurrentToolAdventureModeExempt(x, y, z)) && !(playermp.theItemInWorldManager.getGameType().isCreative() && playermp.getHeldItem() != null && playermp.getHeldItem().getItem() instanceof ItemSword)) {
                 int exp = 0;
                 if (!(block == null || !player.canHarvestBlock(block) || // Handle empty block or player unable to break block scenario
                         block.canSilkHarvest(world, player, x, y, z, blockMetadata) && EnchantmentHelper.getSilkTouchModifier(player))) // If the block is being silk harvested, the exp dropped is 0
@@ -1008,8 +987,7 @@ public class CraftEventFactory {
                     exp = block.getExpDrop(world, meta, bonusLevel);
                 }
                 blockBreakEvent.setExpToDrop(exp);
-            }
-            else blockBreakEvent.setCancelled(true);
+            } else blockBreakEvent.setCancelled(true);
         }
 
         world.getServer().getPluginManager().callEvent(blockBreakEvent);

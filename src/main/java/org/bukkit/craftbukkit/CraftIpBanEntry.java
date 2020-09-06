@@ -1,8 +1,8 @@
 package org.bukkit.craftbukkit;
 
-import net.minecraft.server.management.IPBanEntry;
-import net.minecraft.server.management.BanList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.BanList;
+import net.minecraft.server.management.IPBanEntry;
 
 import java.io.IOException;
 import java.util.Date;

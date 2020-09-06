@@ -1,12 +1,11 @@
 package org.bukkit.craftbukkit.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.block.CraftBlockState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockStateListPopulator {
     private final World world;
@@ -22,11 +21,12 @@ public class BlockStateListPopulator {
     }
 
     public void setTypeAndData(int x, int y, int z, net.minecraft.block.Block block, int data, int light) {
-        CraftBlockState state = (CraftBlockState)world.getBlockAt(x, y, z).getState();
+        CraftBlockState state = (CraftBlockState) world.getBlockAt(x, y, z).getState();
         state.setTypeId(net.minecraft.block.Block.getIdFromBlock(block));
         state.setRawData((byte) data);
         list.add(state);
     }
+
     public void setTypeId(int x, int y, int z, int type) {
         BlockState state = world.getBlockAt(x, y, z).getState();
         state.setTypeId(type);

@@ -1,10 +1,13 @@
 package org.bukkit.craftbukkit.block;
 
-import org.bukkit.Location;
-import org.bukkit.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.BlockSnapshot;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftChunk;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -13,14 +16,10 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
-
-// Cauldron start
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.BlockSnapshot;
 // Cauldron end
 
 public class CraftBlockState implements BlockState {
+    protected final byte light;
     private final CraftWorld world;
     private final CraftChunk chunk;
     private final int x;
@@ -30,7 +29,6 @@ public class CraftBlockState implements BlockState {
     protected int type;
     protected MaterialData data;
     protected int flag;
-    protected final byte light;
 
     public CraftBlockState(final Block block) {
         this.world = (CraftWorld) block.getWorld();
@@ -43,12 +41,10 @@ public class CraftBlockState implements BlockState {
         this.flag = 3;
         // Cauldron start - save TE data
         TileEntity te = world.getHandle().getTileEntity(x, y, z);
-        if (te != null)
-        {
+        if (te != null) {
             nbt = new NBTTagCompound();
             te.writeToNBT(nbt);
-        }
-        else nbt = null;
+        } else nbt = null;
         // Cauldron end
 
         createData(block.getData());
@@ -59,8 +55,7 @@ public class CraftBlockState implements BlockState {
         this.flag = flag;
     }
 
-    public CraftBlockState(BlockSnapshot blocksnapshot)
-    {
+    public CraftBlockState(BlockSnapshot blocksnapshot) {
         this.world = blocksnapshot.world.getWorld();
         this.x = blocksnapshot.x;
         this.y = blocksnapshot.y;
@@ -70,13 +65,10 @@ public class CraftBlockState implements BlockState {
         this.chunk = (CraftChunk) this.world.getBlockAt(this.x, this.y, this.z).getChunk();
         this.flag = 3;
         TileEntity te = this.world.getHandle().getTileEntity(this.x, this.y, this.z);
-        if (te != null)
-        {
+        if (te != null) {
             this.nbt = new NBTTagCompound();
             te.writeToNBT(this.nbt);
-        }
-        else
-        {
+        } else {
             this.nbt = null;
         }
 
@@ -111,6 +103,10 @@ public class CraftBlockState implements BlockState {
         return chunk;
     }
 
+    public MaterialData getData() {
+        return data;
+    }
+
     public void setData(final MaterialData data) {
         Material mat = getType();
 
@@ -126,14 +122,6 @@ public class CraftBlockState implements BlockState {
         }
     }
 
-    public MaterialData getData() {
-        return data;
-    }
-
-    public void setType(final Material type) {
-        setTypeId(type.getId());
-    }
-
     public boolean setTypeId(final int type) {
         if (this.type != type) {
             this.type = type;
@@ -147,12 +135,16 @@ public class CraftBlockState implements BlockState {
         return Material.getMaterial(getTypeId());
     }
 
-    public void setFlag(int flag) {
-        this.flag = flag;
+    public void setType(final Material type) {
+        setTypeId(type.getId());
     }
 
     public int getFlag() {
         return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 
     public int getTypeId() {
@@ -189,11 +181,9 @@ public class CraftBlockState implements BlockState {
         block.setData(getRawData(), applyPhysics);
         world.getHandle().markBlockForUpdate(x, y, z);
         // Cauldron start - restore TE data from snapshot
-        if (nbt != null)
-        {
+        if (nbt != null) {
             TileEntity te = world.getHandle().getTileEntity(x, y, z);
-            if (te != null)
-            {
+            if (te != null) {
                 te.readFromNBT(nbt);
             }
         }
@@ -215,6 +205,10 @@ public class CraftBlockState implements BlockState {
         return data.getData();
     }
 
+    public void setRawData(byte data) {
+        this.data.setData(data);
+    }
+
     public Location getLocation() {
         return new Location(world, x, y, z);
     }
@@ -230,10 +224,6 @@ public class CraftBlockState implements BlockState {
         }
 
         return loc;
-    }
-
-    public void setRawData(byte data) {
-        this.data.setData(data);
     }
 
     @Override
@@ -264,11 +254,8 @@ public class CraftBlockState implements BlockState {
             return false;
         }
         // Cauldron start
-        if (this.nbt != other.nbt && (this.nbt == null || !this.nbt.equals(other.nbt))) {
-            return false;
-        }
+        return this.nbt == other.nbt || (this.nbt != null && this.nbt.equals(other.nbt));
         // Cauldron end
-        return true;
     }
 
     @Override

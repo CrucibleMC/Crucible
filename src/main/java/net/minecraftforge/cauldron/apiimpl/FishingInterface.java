@@ -27,19 +27,6 @@ public class FishingInterface implements Fishing {
                 .withRandomEnchantments(nms.field_150710_d);
     }
 
-    private static class PredicateProxy implements Predicate<net.minecraft.util.WeightedRandomFishable> {
-        private Predicate<WeightedRandomFishable> bukkitPredicate;
-
-        public PredicateProxy(Predicate<WeightedRandomFishable> predicate) {
-            this.bukkitPredicate = predicate;
-        }
-
-        @Override
-        public boolean apply(net.minecraft.util.WeightedRandomFishable input) {
-            return bukkitPredicate.apply(toBukkit(input));
-        }
-    }
-
     private static PredicateProxy toNms(Predicate<WeightedRandomFishable> predicate) {
         return new PredicateProxy(predicate);
     }
@@ -77,5 +64,18 @@ public class FishingInterface implements Fishing {
     @Override
     public ItemStack getRandomFishable(Random rand, float baseChance, int fishingLuckEnchantmentLevel, int fishingSpeedEnchantmentLevel) {
         return CraftItemStack.asCraftMirror(FishingHooks.getRandomFishable(rand, baseChance, fishingLuckEnchantmentLevel, fishingSpeedEnchantmentLevel));
+    }
+
+    private static class PredicateProxy implements Predicate<net.minecraft.util.WeightedRandomFishable> {
+        private final Predicate<WeightedRandomFishable> bukkitPredicate;
+
+        public PredicateProxy(Predicate<WeightedRandomFishable> predicate) {
+            this.bukkitPredicate = predicate;
+        }
+
+        @Override
+        public boolean apply(net.minecraft.util.WeightedRandomFishable input) {
+            return bukkitPredicate.apply(toBukkit(input));
+        }
     }
 }

@@ -14,7 +14,7 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
 
     @Override
     public net.minecraft.entity.passive.EntityTameable getHandle() {
-        return (net.minecraft.entity.passive.EntityTameable)super.getHandle();
+        return (net.minecraft.entity.passive.EntityTameable) super.getHandle();
     }
 
     public UUID getOwnerUUID() {
@@ -46,10 +46,6 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
         return owner;
     }
 
-    public boolean isTamed() {
-        return getHandle().isTamed();
-    }
-
     public void setOwner(AnimalTamer tamer) {
         if (tamer != null) {
             setTamed(true);
@@ -58,7 +54,11 @@ public class CraftTameableAnimal extends CraftAnimals implements Tameable, Creat
         } else {
             setTamed(false);
             setOwnerUUID(null);
+        }
     }
+
+    public boolean isTamed() {
+        return getHandle().isTamed();
     }
 
     public void setTamed(boolean tame) {

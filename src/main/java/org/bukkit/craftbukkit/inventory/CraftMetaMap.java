@@ -1,14 +1,12 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.Map;
-
-
+import com.google.common.collect.ImmutableMap;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.MapMeta;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaMap extends CraftMetaItem implements MapMeta {

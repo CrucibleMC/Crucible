@@ -2,7 +2,6 @@ package net.md_5.bungee.api;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public enum ChatColor {
@@ -28,23 +27,28 @@ public enum ChatColor {
     UNDERLINE('n', "underline"),
     ITALIC('o', "italic"),
     RESET('r', "reset");
-    
+
     public static final char COLOR_CHAR = '\u00a7';
     public static final String ALL_CODES = "0123456789AaBbCcDdEeFfKkLlMmNnOoRr";
     public static final Pattern STRIP_COLOR_PATTERN;
     private static final Map<Character, ChatColor> BY_CHAR;
+
+    static {
+        STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + '\u00a7' + "[0-9A-FK-OR]");
+        BY_CHAR = new HashMap<Character, ChatColor>();
+        for (ChatColor colour : ChatColor.values()) {
+            BY_CHAR.put(Character.valueOf(colour.code), colour);
+        }
+    }
+
     private final char code;
     private final String toString;
     private final String name;
 
-    private ChatColor(char code, String name) {
+    ChatColor(char code, String name) {
         this.code = code;
         this.name = name;
         this.toString = new String(new char[]{'\u00a7', code});
-    }
-
-    public String toString() {
-        return this.toString;
     }
 
     public static String stripColor(String input) {
@@ -68,16 +72,12 @@ public enum ChatColor {
         return BY_CHAR.get(Character.valueOf(code));
     }
 
-    public String getName() {
-        return this.name;
+    public String toString() {
+        return this.toString;
     }
 
-    static {
-        STRIP_COLOR_PATTERN = Pattern.compile("(?i)" + String.valueOf('\u00a7') + "[0-9A-FK-OR]");
-        BY_CHAR = new HashMap<Character, ChatColor>();
-        for (ChatColor colour : ChatColor.values()) {
-            BY_CHAR.put(Character.valueOf(colour.code), colour);
-        }
+    public String getName() {
+        return this.name;
     }
 }
 

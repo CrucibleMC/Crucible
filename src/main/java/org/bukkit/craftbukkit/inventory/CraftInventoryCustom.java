@@ -1,13 +1,13 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class CraftInventoryCustom extends CraftInventory {
@@ -29,11 +29,11 @@ public class CraftInventoryCustom extends CraftInventory {
 
     static class MinecraftInventory implements net.minecraft.inventory.IInventory {
         private final net.minecraft.item.ItemStack[] items;
-        private int maxStack = MAX_STACK;
         private final List<HumanEntity> viewers;
         private final String title;
-        private InventoryType type;
         private final InventoryHolder owner;
+        private int maxStack = MAX_STACK;
+        private InventoryType type;
 
         public MinecraftInventory(InventoryHolder owner, InventoryType type) {
             this(owner, type.getDefaultSize(), type.getDefaultTitle());
@@ -115,7 +115,8 @@ public class CraftInventoryCustom extends CraftInventory {
             maxStack = size;
         }
 
-        public void markDirty() {}
+        public void markDirty() {
+        }
 
         public boolean isUseableByPlayer(net.minecraft.entity.player.EntityPlayer entityhuman) {
             return true;
@@ -141,13 +142,15 @@ public class CraftInventoryCustom extends CraftInventory {
             return type;
         }
 
-        public void closeInventory() {}
+        public void closeInventory() {
+        }
 
         public InventoryHolder getOwner() {
             return owner;
         }
 
-        public void openInventory() {}
+        public void openInventory() {
+        }
 
         public boolean hasCustomInventoryName() {
             return false;

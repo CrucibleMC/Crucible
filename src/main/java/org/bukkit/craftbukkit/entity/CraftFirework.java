@@ -1,9 +1,8 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.entity.item.EntityFireworkRocket;
-import net.minecraft.item.ItemStack;
 import net.minecraft.init.Items;
-
+import net.minecraft.item.ItemStack;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;

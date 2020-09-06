@@ -1,12 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
-import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS;
-import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_ID;
-import static org.bukkit.craftbukkit.inventory.CraftMetaItem.ENCHANTMENTS_LVL;
-
-import java.util.Map;
-
-
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
@@ -15,10 +9,37 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+
+import static org.bukkit.craftbukkit.inventory.CraftMetaItem.*;
 
 @DelegateDeserialization(ItemStack.class)
 public final class CraftItemStack extends ItemStack {
+
+    net.minecraft.item.ItemStack handle;
+
+    /**
+     * Mirror
+     */
+    private CraftItemStack(net.minecraft.item.ItemStack item) {
+        this.handle = item;
+    }
+
+    private CraftItemStack(ItemStack item) {
+        this(item.getTypeId(), item.getAmount(), item.getDurability(), item.hasItemMeta() ? item.getItemMeta() : null);
+    }
+
+    private CraftItemStack(Material type, int amount, short durability, ItemMeta itemMeta) {
+        setType(type);
+        setAmount(amount);
+        setDurability(durability);
+        setItemMeta(itemMeta);
+    }
+
+    private CraftItemStack(int typeId, int amount, short durability, ItemMeta itemMeta) {
+        this(Material.getMaterial(typeId), amount, durability, itemMeta);
+
+    }
 
     public static net.minecraft.item.ItemStack asNMSCopy(ItemStack original) {
         if (original instanceof CraftItemStack) {
@@ -89,29 +110,98 @@ public final class CraftItemStack extends ItemStack {
         return new CraftItemStack(CraftMagicNumbers.getMaterial(item), amount, (short) 0, null);
     }
 
-    net.minecraft.item.ItemStack handle;
+    static boolean makeTag(net.minecraft.item.ItemStack item) {
+        if (item == null) {
+            return false;
+        }
 
-    /**
-     * Mirror
-     */
-    private CraftItemStack(net.minecraft.item.ItemStack item) {
-        this.handle = item;
+        if (item.stackTagCompound == null) {
+            item.setTagCompound(new net.minecraft.nbt.NBTTagCompound());
+        }
+
+        return true;
     }
 
-    private CraftItemStack(ItemStack item) {
-        this(item.getTypeId(), item.getAmount(), item.getDurability(), item.hasItemMeta() ? item.getItemMeta() : null);
+    static Map<Enchantment, Integer> getEnchantments(net.minecraft.item.ItemStack item) {
+        net.minecraft.nbt.NBTTagList list = (item != null && item.isItemEnchanted()) ? item.getEnchantmentTagList() : null;
+
+        if (list == null || list.tagCount() == 0) {
+            return ImmutableMap.of();
+        }
+
+        ImmutableMap.Builder<Enchantment, Integer> result = ImmutableMap.builder();
+
+        for (int i = 0; i < list.tagCount(); i++) {
+            int id = 0xffff & list.getCompoundTagAt(i).getShort(ENCHANTMENTS_ID.NBT);
+            int level = 0xffff & list.getCompoundTagAt(i).getShort(ENCHANTMENTS_LVL.NBT);
+
+            result.put(Enchantment.getById(id), level);
+        }
+
+        return result.build();
     }
 
-    private CraftItemStack(Material type, int amount, short durability, ItemMeta itemMeta) {
-        setType(type);
-        setAmount(amount);
-        setDurability(durability);
-        setItemMeta(itemMeta);
+    static net.minecraft.nbt.NBTTagList getEnchantmentList(net.minecraft.item.ItemStack item) {
+        return (item != null && item.isItemEnchanted()) ? item.getEnchantmentTagList() : null;
     }
 
-    private CraftItemStack(int typeId, int amount, short durability, ItemMeta itemMeta) {
-        this(Material.getMaterial(typeId), amount, durability, itemMeta);
+    public static ItemMeta getItemMeta(net.minecraft.item.ItemStack item) {
+        if (!hasItemMeta(item)) {
+            return CraftItemFactory.instance().getItemMeta(getType(item));
+        }
+        switch (getType(item)) {
+            case WRITTEN_BOOK:
+            case BOOK_AND_QUILL:
+                return new CraftMetaBook(item.stackTagCompound);
+            case SKULL_ITEM:
+                return new CraftMetaSkull(item.stackTagCompound);
+            case LEATHER_HELMET:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_LEGGINGS:
+            case LEATHER_BOOTS:
+                return new CraftMetaLeatherArmor(item.stackTagCompound);
+            case POTION:
+                return new CraftMetaPotion(item.stackTagCompound);
+            case MAP:
+                return new CraftMetaMap(item.stackTagCompound);
+            case FIREWORK:
+                return new CraftMetaFirework(item.stackTagCompound);
+            case FIREWORK_CHARGE:
+                return new CraftMetaCharge(item.stackTagCompound);
+            case ENCHANTED_BOOK:
+                return new CraftMetaEnchantedBook(item.stackTagCompound);
+            default:
+                return new CraftMetaItem(item.stackTagCompound);
+        }
+    }
 
+    static Material getType(net.minecraft.item.ItemStack item) {
+        Material material = Material.getMaterial(item == null ? 0 : CraftMagicNumbers.getId(item.getItem()));
+        return material == null ? Material.AIR : material;
+    }
+
+    public static boolean setItemMeta(net.minecraft.item.ItemStack item, ItemMeta itemMeta) {
+        if (item == null) {
+            return false;
+        }
+        if (CraftItemFactory.instance().equals(itemMeta, null)) {
+            item.stackTagCompound = null;
+            return true;
+        }
+        if (!CraftItemFactory.instance().isApplicable(itemMeta, getType(item))) {
+            return false;
+        }
+
+        if (item.stackTagCompound == null) {
+            item.stackTagCompound = item.writeToNBT(new net.minecraft.nbt.NBTTagCompound());
+        }
+
+        ((CraftMetaItem) itemMeta).applyToItem(item.stackTagCompound);
+        return true;
+    }
+
+    static boolean hasItemMeta(net.minecraft.item.ItemStack item) {
+        return !(item == null || item.stackTagCompound == null || item.stackTagCompound.hasNoTags());
     }
 
     @Override
@@ -157,19 +247,19 @@ public final class CraftItemStack extends ItemStack {
     }
 
     @Override
-    public void setDurability(final short durability) {
-        // Ignore damage if item is null
-        if (handle != null) {
-            handle.setItemDamage(durability);
-        }
-    }
-
-    @Override
     public short getDurability() {
         if (handle != null) {
             return (short) handle.getItemDamage();
         } else {
             return -1;
+        }
+    }
+
+    @Override
+    public void setDurability(final short durability) {
+        // Ignore damage if item is null
+        if (handle != null) {
+            handle.setItemDamage(durability);
         }
     }
 
@@ -193,7 +283,7 @@ public final class CraftItemStack extends ItemStack {
         int size = list.tagCount();
 
         for (int i = 0; i < size; i++) {
-            net.minecraft.nbt.NBTTagCompound tag = (net.minecraft.nbt.NBTTagCompound) list.getCompoundTagAt(i);
+            net.minecraft.nbt.NBTTagCompound tag = list.getCompoundTagAt(i);
             short id = tag.getShort(ENCHANTMENTS_ID.NBT);
             if (id == ench.getId()) {
                 tag.setShort(ENCHANTMENTS_LVL.NBT, (short) level);
@@ -204,18 +294,6 @@ public final class CraftItemStack extends ItemStack {
         tag.setShort(ENCHANTMENTS_ID.NBT, (short) ench.getId());
         tag.setShort(ENCHANTMENTS_LVL.NBT, (short) level);
         list.appendTag(tag);
-    }
-
-    static boolean makeTag(net.minecraft.item.ItemStack item) {
-        if (item == null) {
-            return false;
-        }
-
-        if (item.stackTagCompound == null) {
-            item.setTagCompound(new net.minecraft.nbt.NBTTagCompound());
-        }
-
-        return true;
     }
 
     @Override
@@ -245,7 +323,7 @@ public final class CraftItemStack extends ItemStack {
         int size = list.tagCount();
 
         for (int i = 0; i < size; i++) {
-            net.minecraft.nbt.NBTTagCompound enchantment = (net.minecraft.nbt.NBTTagCompound) list.getCompoundTagAt(i);
+            net.minecraft.nbt.NBTTagCompound enchantment = list.getCompoundTagAt(i);
             int id = 0xffff & enchantment.getShort(ENCHANTMENTS_ID.NBT);
             if (id == ench.getId()) {
                 index = i;
@@ -282,29 +360,6 @@ public final class CraftItemStack extends ItemStack {
         return getEnchantments(handle);
     }
 
-    static Map<Enchantment, Integer> getEnchantments(net.minecraft.item.ItemStack item) {
-        net.minecraft.nbt.NBTTagList list = (item != null && item.isItemEnchanted()) ? item.getEnchantmentTagList() : null;
-
-        if (list == null || list.tagCount() == 0) {
-            return ImmutableMap.of();
-        }
-
-        ImmutableMap.Builder<Enchantment, Integer> result = ImmutableMap.builder();
-
-        for (int i = 0; i < list.tagCount(); i++) {
-            int id = 0xffff & ((net.minecraft.nbt.NBTTagCompound) list.getCompoundTagAt(i)).getShort(ENCHANTMENTS_ID.NBT);
-            int level = 0xffff & ((net.minecraft.nbt.NBTTagCompound) list.getCompoundTagAt(i)).getShort(ENCHANTMENTS_LVL.NBT);
-
-            result.put(Enchantment.getById(id), level);
-        }
-
-        return result.build();
-    }
-
-    static net.minecraft.nbt.NBTTagList getEnchantmentList(net.minecraft.item.ItemStack item) {
-        return (item != null && item.isItemEnchanted()) ? item.getEnchantmentTagList() : null;
-    }
-
     @Override
     public CraftItemStack clone() {
         CraftItemStack itemStack = (CraftItemStack) super.clone();
@@ -319,65 +374,9 @@ public final class CraftItemStack extends ItemStack {
         return getItemMeta(handle);
     }
 
-    public static ItemMeta getItemMeta(net.minecraft.item.ItemStack item) {
-        if (!hasItemMeta(item)) {
-            return CraftItemFactory.instance().getItemMeta(getType(item));
-        }
-        switch (getType(item)) {
-            case WRITTEN_BOOK:
-            case BOOK_AND_QUILL:
-                return new CraftMetaBook(item.stackTagCompound);
-            case SKULL_ITEM:
-                return new CraftMetaSkull(item.stackTagCompound);
-            case LEATHER_HELMET:
-            case LEATHER_CHESTPLATE:
-            case LEATHER_LEGGINGS:
-            case LEATHER_BOOTS:
-                return new CraftMetaLeatherArmor(item.stackTagCompound);
-            case POTION:
-                return new CraftMetaPotion(item.stackTagCompound);
-            case MAP:
-                return new CraftMetaMap(item.stackTagCompound);
-            case FIREWORK:
-                return new CraftMetaFirework(item.stackTagCompound);
-            case FIREWORK_CHARGE:
-                return new CraftMetaCharge(item.stackTagCompound);
-            case ENCHANTED_BOOK:
-                return new CraftMetaEnchantedBook(item.stackTagCompound);
-            default:
-                return new CraftMetaItem(item.stackTagCompound);
-        }
-    }
-
-    static Material getType(net.minecraft.item.ItemStack item) {
-        Material material = Material.getMaterial(item == null ? 0 : CraftMagicNumbers.getId(item.getItem()));
-        return material == null ? Material.AIR : material;
-    }
-
     @Override
     public boolean setItemMeta(ItemMeta itemMeta) {
         return setItemMeta(handle, itemMeta);
-    }
-
-    public static boolean setItemMeta(net.minecraft.item.ItemStack item, ItemMeta itemMeta) {
-        if (item == null) {
-            return false;
-        }
-        if (CraftItemFactory.instance().equals(itemMeta, null)) {
-            item.stackTagCompound = null;
-            return true;
-        }
-        if (!CraftItemFactory.instance().isApplicable(itemMeta, getType(item))) {
-            return false;
-        }
-
-        if (item.stackTagCompound == null)
-        {
-            item.stackTagCompound = item.writeToNBT(new net.minecraft.nbt.NBTTagCompound());
-        }
-
-        ((CraftMetaItem)itemMeta).applyToItem(item.stackTagCompound);
-        return true;
     }
 
     @Override
@@ -408,9 +407,5 @@ public final class CraftItemStack extends ItemStack {
     @Override
     public boolean hasItemMeta() {
         return hasItemMeta(handle);
-    }
-
-    static boolean hasItemMeta(net.minecraft.item.ItemStack item) {
-        return !(item == null || item.stackTagCompound == null || item.stackTagCompound.hasNoTags());
     }
 }

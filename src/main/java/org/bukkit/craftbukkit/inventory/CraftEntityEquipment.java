@@ -62,14 +62,14 @@ public class CraftEntityEquipment implements EntityEquipment {
 
     public ItemStack[] getArmorContents() {
         ItemStack[] armor = new ItemStack[INVENTORY_SLOTS - 1];
-        for(int slot = WEAPON_SLOT + 1; slot < INVENTORY_SLOTS; slot++) {
+        for (int slot = WEAPON_SLOT + 1; slot < INVENTORY_SLOTS; slot++) {
             armor[slot - 1] = getEquipment(slot);
         }
         return armor;
     }
 
     public void setArmorContents(ItemStack[] items) {
-        for(int slot = WEAPON_SLOT + 1; slot < INVENTORY_SLOTS; slot++) {
+        for (int slot = WEAPON_SLOT + 1; slot < INVENTORY_SLOTS; slot++) {
             ItemStack equipment = items != null && slot <= items.length ? items[slot - 1] : null;
             setEquipment(slot, equipment);
         }
@@ -84,7 +84,7 @@ public class CraftEntityEquipment implements EntityEquipment {
     }
 
     public void clear() {
-        for(int i = 0; i < INVENTORY_SLOTS; i++) {
+        for (int i = 0; i < INVENTORY_SLOTS; i++) {
             setEquipment(i, null);
         }
     }
@@ -94,7 +94,7 @@ public class CraftEntityEquipment implements EntityEquipment {
     }
 
     public float getItemInHandDropChance() {
-       return getDropChance(WEAPON_SLOT);
+        return getDropChance(WEAPON_SLOT);
     }
 
     public void setItemInHandDropChance(float chance) {

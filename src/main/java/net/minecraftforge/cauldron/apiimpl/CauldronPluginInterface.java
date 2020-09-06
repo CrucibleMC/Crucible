@@ -9,8 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 
 public class CauldronPluginInterface implements CauldronApi {
-    private BukkitOreDictionary oreDictionary = new OreDictionaryInterface();
-    private Fishing fishingInterface = new FishingInterface();
+    private final BukkitOreDictionary oreDictionary = new OreDictionaryInterface();
+    private final Fishing fishingInterface = new FishingInterface();
 
     public void install() {
         Cauldron.setInterface(this);

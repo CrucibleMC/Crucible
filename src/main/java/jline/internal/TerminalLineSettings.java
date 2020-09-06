@@ -7,11 +7,7 @@
 
 package jline.internal;
 
-import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,8 +21,7 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:jbonofre@apache.org">Jean-Baptiste Onofré</a>
  * @since 2.0
  */
-public final class TerminalLineSettings
-{
+public final class TerminalLineSettings {
     public static final String JLINE_STTY = "jline.stty";
 
     public static final String DEFAULT_STTY = "stty";
@@ -35,9 +30,9 @@ public final class TerminalLineSettings
 
     public static final String DEFAULT_SH = "sh";
 
-    private String sttyCommand;
+    private final String sttyCommand;
 
-    private String shCommand;
+    private final String shCommand;
 
     private String config;
 
@@ -55,53 +50,6 @@ public final class TerminalLineSettings
         if (config.length() == 0) {
             throw new IOException(MessageFormat.format("Unrecognized stty code: {0}", config));
         }
-    }
-
-    public String getConfig() {
-        return config;
-    }
-
-    public void restore() throws IOException, InterruptedException {
-        set("sane");
-    }
-
-    public String get(final String args) throws IOException, InterruptedException {
-        return stty(args);
-    }
-
-    public void set(final String args) throws IOException, InterruptedException {
-        stty(args);
-    }
-
-    /**
-     * <p>
-     * Get the value of a stty property, including the management of a cache.
-     * </p>
-     *
-     * @param name the stty property.
-     * @return the stty property value.                        
-     */
-    public int getProperty(String name) {
-        assert name != null;
-        // CraftBukkit start
-        long currentTime = System.currentTimeMillis();
-
-        try {
-            // tty properties are cached so we don't have to worry too much about getting term widht/height
-            if (config == null || currentTime - configLastFetched > 1000) {
-                config = get("-a");
-            }
-        } catch (Exception e) {
-            Log.debug("Failed to query stty ", name, "\n", e);
-        }
-
-        // always update the last fetched time and try to parse the output
-        if (currentTime - configLastFetched > 1000) {
-            configLastFetched = currentTime;
-        }
-
-        return this.getProperty(name, config);
-        // CraftBukkit end
     }
 
     /**
@@ -168,6 +116,63 @@ public final class TerminalLineSettings
         }
     }
 
+    private static void close(final Closeable... closeables) {
+        for (Closeable c : closeables) {
+            try {
+                c.close();
+            } catch (Exception e) {
+                // Ignore
+            }
+        }
+    }
+
+    public String getConfig() {
+        return config;
+    }
+
+    public void restore() throws IOException, InterruptedException {
+        set("sane");
+    }
+
+    public String get(final String args) throws IOException, InterruptedException {
+        return stty(args);
+    }
+
+    public void set(final String args) throws IOException, InterruptedException {
+        stty(args);
+    }
+
+    /**
+     * <p>
+     * Get the value of a stty property, including the management of a cache.
+     * </p>
+     *
+     * @param name the stty property.
+     * @return the stty property value.
+     */
+    public int getProperty(String name) {
+        assert name != null;
+        // CraftBukkit start
+        long currentTime = System.currentTimeMillis();
+
+        try {
+            // tty properties are cached so we don't have to worry too much about getting term widht/height
+            if (config == null || currentTime - configLastFetched > 1000) {
+                config = get("-a");
+            }
+        } catch (Exception e) {
+            Log.debug("Failed to query stty ", name, "\n", e);
+        }
+
+        // always update the last fetched time and try to parse the output
+        if (currentTime - configLastFetched > 1000) {
+            configLastFetched = currentTime;
+        }
+
+        return getProperty(name, config);
+        // CraftBukkit end
+    }
+
     private String stty(final String args) throws IOException, InterruptedException {
         assert args != null;
         return exec(String.format("%s %s < /dev/tty", sttyCommand, args));
@@ -202,8 +207,7 @@ public final class TerminalLineSettings
             }
             out = p.getOutputStream();
             p.waitFor();
-        }
-        finally {
+        } finally {
             close(in, out, err);
         }
 
@@ -212,16 +216,5 @@ public final class TerminalLineSettings
         Log.trace("Result: ", result);
 
         return result;
-    }
-
-    private static void close(final Closeable... closeables) {
-        for (Closeable c : closeables) {
-            try {
-                c.close();
-            }
-            catch (Exception e) {
-                // Ignore
-            }
-        }
     }
 }

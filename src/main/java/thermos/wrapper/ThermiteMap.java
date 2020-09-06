@@ -18,111 +18,110 @@
  */
 package thermos.wrapper;
 
-import java.util.*;
 import net.minecraft.world.ChunkPosition;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 /**
- *
  * @author Robotia
  */
-public class ThermiteMap implements Map
-{
-    private HashMap<Integer,Object[][]> map = new HashMap<Integer,Object[][]>();
-    private HashMap<Object,Object> original = new HashMap<Object,Object>();
+public class ThermiteMap implements Map {
+    private final HashMap<Integer, Object[][]> map = new HashMap<Integer, Object[][]>();
+    private final HashMap<Object, Object> original = new HashMap<Object, Object>();
     private int size = 0;
-    
-    public ThermiteMap()
-    {
-        for(int i = 0; i <= 256; i++)
-        {
+
+    public ThermiteMap() {
+        for (int i = 0; i <= 256; i++) {
             map.put(i, new Object[16][16]);
         }
     }
+
+    public static boolean isValid(Object o) {
+        return o instanceof ChunkPosition;
+    }
+
+    public static int[] getCoords(Object o) {
+        ChunkPosition cp = (ChunkPosition) o;
+        return new int[]{cp.chunkPosX, cp.chunkPosY, cp.chunkPosZ};
+    }
+
     @Override
-    public int size()
-    {
+    public int size() {
         return original.size();
     }
 
     @Override
-    public boolean isEmpty()
-    {
+    public boolean isEmpty() {
         return original.isEmpty();
     }
-    
-    public static boolean isValid(Object o) { return o instanceof ChunkPosition; }
-    public static int[] getCoords(Object o) { ChunkPosition cp = (ChunkPosition)o; return new int[]{cp.chunkPosX, cp.chunkPosY, cp.chunkPosZ}; }
+
     @Override
-    public boolean containsKey(Object key)
-    {
-        if(!isValid(key)) return false;
+    public boolean containsKey(Object key) {
+        if (!isValid(key)) return false;
         int[] coords = getCoords(key);
         return map.get(coords[1])[coords[0]][coords[2]] != null;
     }
 
     @Override
-    public boolean containsValue(Object value)
-    {
+    public boolean containsValue(Object value) {
         return original.containsValue(value);
     }
 
     @Override
-    public Object get(Object key)
-    {
-        if(!isValid(key)) return null;
+    public Object get(Object key) {
+        if (!isValid(key)) return null;
         int[] coords = getCoords(key);
         return map.get(coords[1])[coords[0]][coords[2]];
     }
 
     @Override
-    public Object put(Object key, Object value)
-    {
-        if(!isValid(key))return null;
+    public Object put(Object key, Object value) {
+        if (!isValid(key)) return null;
         int[] coords = getCoords(key);
 
-        Object instance = original.put(key,value);
-        map.get(coords[1])[coords[0]][coords[2]] = value; size++;
+        Object instance = original.put(key, value);
+        map.get(coords[1])[coords[0]][coords[2]] = value;
+        size++;
         return instance;
     }
 
     @Override
-    public Object remove(Object key)
-    {
-        if(!isValid(key))return null;
+    public Object remove(Object key) {
+        if (!isValid(key)) return null;
         int[] coords = getCoords(key);
-      
+
         Object instance = original.remove(key);
-        map.get(coords[1])[coords[0]][coords[2]] = null; size--;
+        map.get(coords[1])[coords[0]][coords[2]] = null;
+        size--;
         return instance;
     }
 
     @Override
-    public void putAll(Map m)
-    {
+    public void putAll(Map m) {
         this.original.putAll(m);
     }
 
     @Override
-    public void clear()
-    {
+    public void clear() {
         original.clear();
         map.clear();
     }
 
     @Override
-    public Set keySet()
-    {
+    public Set keySet() {
         return this.original.keySet();
     }
 
     @Override
-    public Collection values()
-    {
+    public Collection values() {
         return original.values();
     }
 
     @Override
-    public Set entrySet()
-    {
+    public Set entrySet() {
         return this.original.entrySet();
     }
 

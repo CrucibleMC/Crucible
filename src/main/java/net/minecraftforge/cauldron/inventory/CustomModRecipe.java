@@ -9,7 +9,7 @@ import org.bukkit.inventory.Recipe;
  * Bukkit API wrapper for non-vanilla IRecipe classes
  */
 public class CustomModRecipe implements Recipe {
-    private IRecipe iRecipe;
+    private final IRecipe iRecipe;
 
     public CustomModRecipe(IRecipe iRecipe) {
         this.iRecipe = iRecipe;

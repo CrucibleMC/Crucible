@@ -1,28 +1,21 @@
 package org.bukkit.craftbukkit;
 
-import java.io.File;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-
 import com.mojang.authlib.GameProfile;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-
-import org.bukkit.BanList;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
+import org.bukkit.*;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+
+import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @SerializableAs("Player")
 public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializable {
@@ -34,6 +27,15 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         this.server = server;
         this.profile = profile;
         this.storage = (net.minecraft.world.storage.SaveHandler) (server.console.worlds.get(0).getSaveHandler());
+    }
+
+    public static OfflinePlayer deserialize(Map<String, Object> args) {
+        // Backwards comparability
+        if (args.get("name") != null) {
+            return Bukkit.getServer().getOfflinePlayer((String) args.get("name"));
+        }
+
+        return Bukkit.getServer().getOfflinePlayer(UUID.fromString((String) args.get("UUID")));
     }
 
     public GameProfile getProfile() {
@@ -130,15 +132,6 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
         return result;
     }
 
-    public static OfflinePlayer deserialize(Map<String, Object> args) {
-        // Backwards comparability
-        if (args.get("name") != null) {
-        return Bukkit.getServer().getOfflinePlayer((String) args.get("name"));
-    }
-
-        return Bukkit.getServer().getOfflinePlayer(UUID.fromString((String) args.get("UUID")));
-    }
-
     @Override
     public String toString() {
         return getClass().getSimpleName() + "[UUID=" + profile.getId() + "]";
@@ -152,7 +145,7 @@ public class CraftOfflinePlayer implements OfflinePlayer, ConfigurationSerializa
             }
         }
         EntityPlayer player = net.minecraftforge.common.util.FakePlayerFactory.fakePlayers.get(profile);
-        return player != null ? (Player)player.getBukkitEntity() : null;
+        return player != null ? (Player) player.getBukkitEntity() : null;
     }
 
     @Override

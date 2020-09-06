@@ -22,6 +22,74 @@ public class CraftInventoryView extends InventoryView {
         this.container = container;
     }
 
+    public static SlotType getSlotType(InventoryView inventory, int slot) {
+        SlotType type = SlotType.CONTAINER;
+        if (inventory == null) return type; // Cauldron - modded inventories with no Bukkit wrapper
+        if (slot >= 0 && slot < inventory.getTopInventory().getSize()) {
+            switch (inventory.getType()) {
+                case FURNACE:
+                    if (slot == 2) {
+                        type = SlotType.RESULT;
+                    } else if (slot == 1) {
+                        type = SlotType.FUEL;
+                    } else {
+                        type = SlotType.CRAFTING;
+                    }
+                    break;
+                case BREWING:
+                    if (slot == 3) {
+                        type = SlotType.FUEL;
+                    } else {
+                        type = SlotType.CRAFTING;
+                    }
+                    break;
+                case ENCHANTING:
+                    type = SlotType.CRAFTING;
+                    break;
+                case WORKBENCH:
+                case CRAFTING:
+                    if (slot == 0) {
+                        type = SlotType.RESULT;
+                    } else {
+                        type = SlotType.CRAFTING;
+                    }
+                    break;
+                case MERCHANT:
+                    if (slot == 2) {
+                        type = SlotType.RESULT;
+                    } else {
+                        type = SlotType.CRAFTING;
+                    }
+                    break;
+                case BEACON:
+                    type = SlotType.CRAFTING;
+                    break;
+                case ANVIL:
+                    if (slot == 2) {
+                        type = SlotType.RESULT;
+                    } else {
+                        type = SlotType.CRAFTING;
+                    }
+                    break;
+                default:
+                    // Nothing to do, it's a CONTAINER slot
+            }
+        } else {
+            if (slot == -999) {
+                type = SlotType.OUTSIDE;
+            } else if (inventory.getType() == InventoryType.CRAFTING) {
+                if (slot < 9) {
+                    type = SlotType.ARMOR;
+                } else if (slot > 35) {
+                    type = SlotType.QUICKBAR;
+                }
+            } else if (slot >= (inventory.countSlots() - 9)) {
+                type = SlotType.QUICKBAR;
+            }
+        }
+        return type;
+    }
+
     @Override
     public Inventory getTopInventory() {
         return viewing;
@@ -71,73 +139,5 @@ public class CraftInventoryView extends InventoryView {
 
     public net.minecraft.inventory.Container getHandle() {
         return container;
-    }
-
-    public static SlotType getSlotType(InventoryView inventory, int slot) {
-        SlotType type = SlotType.CONTAINER;
-        if (inventory == null) return type; // Cauldron - modded inventories with no Bukkit wrapper
-        if (slot >= 0 && slot < inventory.getTopInventory().getSize()) {
-            switch(inventory.getType()) {
-            case FURNACE:
-                if (slot == 2) {
-                    type = SlotType.RESULT;
-                } else if(slot == 1) {
-                    type = SlotType.FUEL;
-                } else {
-                    type = SlotType.CRAFTING;
-                }
-                break;
-            case BREWING:
-                if (slot == 3) {
-                    type = SlotType.FUEL;
-                } else {
-                    type = SlotType.CRAFTING;
-                }
-                break;
-            case ENCHANTING:
-                type = SlotType.CRAFTING;
-                break;
-            case WORKBENCH:
-            case CRAFTING:
-                if (slot == 0) {
-                    type = SlotType.RESULT;
-                } else {
-                    type = SlotType.CRAFTING;
-                }
-                break;
-            case MERCHANT:
-                if (slot == 2) {
-                    type = SlotType.RESULT;
-                } else {
-                    type = SlotType.CRAFTING;
-                }
-                break;
-            case BEACON:
-                type = SlotType.CRAFTING;
-                break;
-            case ANVIL:
-                if (slot == 2) {
-                    type = SlotType.RESULT;
-                } else {
-                    type = SlotType.CRAFTING;
-                }
-                break;
-            default:
-                // Nothing to do, it's a CONTAINER slot
-            }
-        } else {
-            if (slot == -999) {
-                type = SlotType.OUTSIDE;
-            } else if (inventory.getType() == InventoryType.CRAFTING) {
-                if (slot < 9) {
-                type = SlotType.ARMOR;
-                } else if (slot > 35) {
-                    type = SlotType.QUICKBAR;
-                }
-            } else if (slot >= (inventory.countSlots() - 9)) {
-                type = SlotType.QUICKBAR;
-            }
-        }
-        return type;
     }
 }

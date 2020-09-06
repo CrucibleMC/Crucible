@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
 import net.minecraft.tileentity.TileEntityNote;
-
 import org.bukkit.Instrument;
 import org.bukkit.Material;
 import org.bukkit.Note;
@@ -25,12 +24,12 @@ public class CraftNoteBlock extends CraftBlockState implements NoteBlock {
         return new Note(note.note);
     }
 
-    public byte getRawNote() {
-        return note.note;
-    }
-
     public void setNote(Note n) {
         note.note = n.getId();
+    }
+
+    public byte getRawNote() {
+        return note.note;
     }
 
     public void setRawNote(byte n) {

@@ -1,19 +1,12 @@
 package org.bukkit.craftbukkit.scoreboard;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.craftbukkit.util.WeakCollection;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.ScoreboardManager;
+
+import java.util.*;
 
 public final class CraftScoreboardManager implements ScoreboardManager {
     private final CraftScoreboard mainScoreboard;
@@ -32,7 +25,8 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     }
 
     public CraftScoreboard getNewScoreboard() {
-        if (Thread.currentThread() != net.minecraft.server.MinecraftServer.getServer().primaryThread) throw new IllegalStateException("Asynchronous scoreboard creation"); // Spigot
+        if (Thread.currentThread() != net.minecraft.server.MinecraftServer.getServer().primaryThread)
+            throw new IllegalStateException("Asynchronous scoreboard creation"); // Spigot
         CraftScoreboard scoreboard = new CraftScoreboard(new net.minecraft.scoreboard.ServerScoreboard(server));
         scoreboards.add(scoreboard);
         return scoreboard;
@@ -41,7 +35,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
     // CraftBukkit method
     public CraftScoreboard getPlayerBoard(CraftPlayer player) {
         CraftScoreboard board = playerBoards.get(player);
-        return (CraftScoreboard) (board == null ? getMainScoreboard() : board);
+        return board == null ? getMainScoreboard() : board;
     }
 
     // CraftBukkit method
@@ -60,7 +54,7 @@ public final class CraftScoreboardManager implements ScoreboardManager {
         if (scoreboard == mainScoreboard) {
             playerBoards.remove(player);
         } else {
-            playerBoards.put(player, (CraftScoreboard) scoreboard);
+            playerBoards.put(player, scoreboard);
         }
 
         // Old objective tracking

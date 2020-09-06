@@ -1,19 +1,26 @@
 package thermos.updater;
 
-import java.lang.ref.Reference;
-import java.lang.ref.WeakReference;
-
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import thermos.Thermos;
 import thermos.updater.TVersionRetriever.IVersionCheckCallback;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 
 public class CommandSenderUpdateCallback implements IVersionCheckCallback {
-    private Reference<CommandSender> mSender;
+    private final Reference<CommandSender> mSender;
 
     public CommandSenderUpdateCallback(CommandSender sender) {
         mSender = new WeakReference<CommandSender>(sender);
+    }
+
+    public static void newVersion(CommandSender sender, String currentVersion,
+                                  String newVersion) {
+        sender.sendMessage(new String[]{
+                ChatColor.RED + "[Thermos] " + ChatColor.GRAY + "Found new version of Thermos: " + newVersion,
+                ChatColor.RED + "[Thermos] " + ChatColor.GRAY + "Current version is: " + currentVersion,
+                ChatColor.RED + "[Thermos] " + ChatColor.GREEN + "Download at: https://github.com/CyberdyneCC/Thermos/releases"});
     }
 
     protected CommandSender getSender() {
@@ -36,14 +43,6 @@ public class CommandSenderUpdateCallback implements IVersionCheckCallback {
             newVersion(sender, Thermos.getCurrentVersion(), newVersion);
         }
         DefaultUpdateCallback.INSTANCE.newVersion(newVersion);
-    }
-
-    public static void newVersion(CommandSender sender, String currentVersion,
-            String newVersion) {
-        sender.sendMessage(new String[] {
-                ChatColor.RED + "[Thermos] " + ChatColor.GRAY + "Found new version of Thermos: " + newVersion,
-                ChatColor.RED + "[Thermos] " + ChatColor.GRAY + "Current version is: " + currentVersion,
-                ChatColor.RED + "[Thermos] " + ChatColor.GREEN + "Download at: https://github.com/CyberdyneCC/Thermos/releases" });
     }
 
     @Override

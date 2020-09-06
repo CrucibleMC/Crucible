@@ -6,34 +6,28 @@ import org.bukkit.event.entity.EntityEvent;
 
 /**
  * Called when an entity stops riding another entity.
- *
  */
-public class EntityDismountEvent extends EntityEvent
-{
+public class EntityDismountEvent extends EntityEvent {
 
     private static final HandlerList handlers = new HandlerList();
-    private boolean cancelled;
     private final Entity dismounted;
+    private boolean cancelled;
 
-    public EntityDismountEvent(Entity what, Entity dismounted)
-    {
-        super( what );
+    public EntityDismountEvent(Entity what, Entity dismounted) {
+        super(what);
         this.dismounted = dismounted;
     }
 
-    public Entity getDismounted()
-    {
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
+    public Entity getDismounted() {
         return dismounted;
     }
 
     @Override
-    public HandlerList getHandlers()
-    {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList()
-    {
+    public HandlerList getHandlers() {
         return handlers;
     }
 }

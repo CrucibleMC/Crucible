@@ -1,9 +1,6 @@
 package org.bukkit.craftbukkit.scoreboard;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -12,7 +9,9 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Team;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     final net.minecraft.scoreboard.Scoreboard board;
@@ -59,7 +58,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     }
 
     public ImmutableSet<Objective> getObjectives() {
-        return ImmutableSet.copyOf((Collection<? extends Objective>) objectives.values());
+        return ImmutableSet.copyOf(objectives.values());
     }
 
     public Objective getObjective(DisplaySlot slot) throws IllegalArgumentException {
@@ -117,7 +116,7 @@ public final class CraftScoreboard implements org.bukkit.scoreboard.Scoreboard {
     }
 
     public ImmutableSet<Team> getTeams() {
-        return ImmutableSet.copyOf((Collection<? extends Team>) teams.values());
+        return ImmutableSet.copyOf(teams.values());
     }
 
     public Team registerNewTeam(String name) throws IllegalArgumentException {

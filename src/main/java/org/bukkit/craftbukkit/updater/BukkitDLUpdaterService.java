@@ -1,6 +1,8 @@
 package org.bukkit.craftbukkit.updater;
 
 import com.google.gson.*;
+import org.bukkit.Bukkit;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -11,9 +13,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
 
 public class BukkitDLUpdaterService {
     private static final String API_PREFIX_ARTIFACT = "/api/1.0/downloads/projects/craftbukkit/view/";
@@ -38,7 +37,7 @@ public class BukkitDLUpdaterService {
     }
 
     private String getUserAgent() {
-         return "CraftBukkit/" + BukkitDLUpdaterService.class.getPackage().getImplementationVersion() + "/" + System.getProperty("java.version");
+        return "CraftBukkit/" + BukkitDLUpdaterService.class.getPackage().getImplementationVersion() + "/" + System.getProperty("java.version");
     }
 
     public ArtifactDetails fetchArtifact(String slug) throws IOException {

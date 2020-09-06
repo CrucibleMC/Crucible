@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.generator;
 
+import net.minecraft.world.chunk.IChunkProvider;
+import org.bukkit.craftbukkit.CraftWorld;
+import org.bukkit.generator.BlockPopulator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import net.minecraft.world.chunk.IChunkProvider; // Cauldron
-
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.generator.BlockPopulator;
 
 public class NormalChunkGenerator extends InternalChunkGenerator {
     private final net.minecraft.world.chunk.IChunkProvider provider;
@@ -107,11 +106,11 @@ public class NormalChunkGenerator extends InternalChunkGenerator {
      * Save extra data not associated with any Chunk.  Not saved during autosave, only during world unload.  Currently
      * unimplemented.
      */
-    public void saveExtraData() {}
-    
+    public void saveExtraData() {
+    }
+
     // Cauldron start - return vanilla compatible IChunkProvider for forge
-    public IChunkProvider getForgeChunkProvider()
-    {
+    public IChunkProvider getForgeChunkProvider() {
         return this.provider;
     }
     // Cauldron end

@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.entity.EntityAgeable;
-
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.Ageable;
 
@@ -18,12 +17,12 @@ public class CraftAgeable extends CraftCreature implements Ageable {
         getHandle().setGrowingAge(age);
     }
 
-    public void setAgeLock(boolean lock) {
-        getHandle().ageLocked = lock;
-    }
-
     public boolean getAgeLock() {
         return getHandle().ageLocked;
+    }
+
+    public void setAgeLock(boolean lock) {
+        getHandle().ageLocked = lock;
     }
 
     public void setBaby() {

@@ -2,10 +2,10 @@ package net.minecraftforge.cauldron.configuration;
 
 public class StringSetting extends Setting<String> {
     private String value;
-    private ConfigBase config;
+    private final ConfigBase config;
 
     public StringSetting(ConfigBase config, String path, String def,
-            String description) {
+                         String description) {
         super(path, def, description);
         this.value = def;
         this.config = config;

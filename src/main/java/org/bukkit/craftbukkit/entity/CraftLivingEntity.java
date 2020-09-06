@@ -1,12 +1,6 @@
 package org.bukkit.craftbukkit.entity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-
-
+import cpw.mods.fml.common.registry.EntityRegistry;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,22 +9,7 @@ import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.craftbukkit.inventory.CraftEntityEquipment;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.EnderPearl;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Fish;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
-import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.entity.WitherSkull;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
@@ -40,13 +19,13 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
-import cpw.mods.fml.common.registry.EntityRegistry; // Cauldron
+import java.util.*;
 
 public class CraftLivingEntity extends CraftEntity implements LivingEntity {
-    private CraftEntityEquipment equipment;
     // Cauldron start
     public Class<? extends net.minecraft.entity.EntityLivingBase> entityClass;
     public String entityName;
+    private CraftEntityEquipment equipment;
     // Cauldron end
 
     public CraftLivingEntity(final CraftServer server, final net.minecraft.entity.EntityLivingBase entity) {
@@ -323,7 +302,7 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
                 launch = new net.minecraft.entity.projectile.EntityLargeFireball(world, getHandle(), direction.getX(), direction.getY(), direction.getZ());
             }
 
-            ((net.minecraft.entity.projectile.EntityFireball) launch).projectileSource = this;
+            launch.projectileSource = this;
             launch.setLocationAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
         }
 
@@ -364,14 +343,14 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         return equipment;
     }
 
+    public boolean getCanPickupItems() {
+        return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).canPickUpLoot;
+    }
+
     public void setCanPickupItems(boolean pickup) {
         if (getHandle() instanceof net.minecraft.entity.EntityLiving) {
             ((net.minecraft.entity.EntityLiving) getHandle()).canPickUpLoot = pickup;
         }
-    }
-
-    public boolean getCanPickupItems() {
-        return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).canPickUpLoot;
     }
 
     @Override
@@ -381,6 +360,20 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         }
 
         return super.teleport(location, cause);
+    }
+
+    public String getCustomName() {
+        if (!(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
+            return null;
+        }
+
+        String name = ((net.minecraft.entity.EntityLiving) getHandle()).getCustomNameTag();
+
+        if (name == null || name.length() == 0) {
+            return null;
+        }
+
+        return name;
     }
 
     public void setCustomName(String name) {
@@ -400,28 +393,14 @@ public class CraftLivingEntity extends CraftEntity implements LivingEntity {
         ((net.minecraft.entity.EntityLiving) getHandle()).setCustomNameTag(name);
     }
 
-    public String getCustomName() {
-        if (!(getHandle() instanceof net.minecraft.entity.EntityLiving)) {
-            return null;
-        }
-
-        String name = ((net.minecraft.entity.EntityLiving) getHandle()).getCustomNameTag();
-
-        if (name == null || name.length() == 0) {
-            return null;
-        }
-
-        return name;
+    public boolean isCustomNameVisible() {
+        return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).getAlwaysRenderNameTag();
     }
 
     public void setCustomNameVisible(boolean flag) {
         if (getHandle() instanceof net.minecraft.entity.EntityLiving) {
             ((net.minecraft.entity.EntityLiving) getHandle()).setAlwaysRenderNameTag(flag);
         }
-    }
-
-    public boolean isCustomNameVisible() {
-        return getHandle() instanceof net.minecraft.entity.EntityLiving && ((net.minecraft.entity.EntityLiving) getHandle()).getAlwaysRenderNameTag();
     }
 
     public boolean isLeashed() {

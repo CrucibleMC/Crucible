@@ -3,8 +3,8 @@ package net.minecraftforge.cauldron.api;
 import org.bukkit.inventory.ItemStack;
 
 public class WeightedRandomFishable {
-    private ItemStack itemStack;
-    private int weight;
+    private final ItemStack itemStack;
+    private final int weight;
     private boolean hasRandomEnchantments;
     private float damageFraction;
 
@@ -17,7 +17,7 @@ public class WeightedRandomFishable {
      * Setting this value results in fished items having random damage when fished. The damage is in a triangular
      * random distribution (think about rolling 2 dice), with the wide end at 100% and
      * the narrow end at (100% - damageFraction).
-     *
+     * <p>
      * For use in a chaining constructor.
      *
      * @param damageFraction low boundary for random distribution
@@ -30,6 +30,7 @@ public class WeightedRandomFishable {
 
     /**
      * Mark this WeightedRandomFishable as receiving random enchantments.
+     *
      * @return this WeightedRandomFishable, for chaining
      */
     public final WeightedRandomFishable withRandomEnchantments() {
@@ -40,6 +41,7 @@ public class WeightedRandomFishable {
     /**
      * Set whether this WeightedRandomFishable receives random enchantments.
      * (Use this method if loading from another source, such as a config file.)
+     *
      * @return this WeightedRandomFishable, for chaining
      */
     public final WeightedRandomFishable withRandomEnchantments(boolean hasEnchants) {

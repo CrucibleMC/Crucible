@@ -1,9 +1,8 @@
 package org.bukkit.craftbukkit.scoreboard;
 
 
-import org.bukkit.scoreboard.DisplaySlot;
-
 import com.google.common.collect.ImmutableBiMap;
+import org.bukkit.scoreboard.DisplaySlot;
 
 class CraftScoreboardTranslations {
     static final int MAX_DISPLAY_SLOT = 3;
@@ -12,7 +11,8 @@ class CraftScoreboardTranslations {
             DisplaySlot.PLAYER_LIST, "list",
             DisplaySlot.SIDEBAR, "sidebar");
 
-    private CraftScoreboardTranslations() {}
+    private CraftScoreboardTranslations() {
+    }
 
     static DisplaySlot toBukkitSlot(int i) {
         return SLOTS.inverse().get(net.minecraft.scoreboard.Scoreboard.getObjectiveDisplaySlot(i));

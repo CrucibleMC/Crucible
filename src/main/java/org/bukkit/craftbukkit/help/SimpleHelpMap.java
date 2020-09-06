@@ -3,7 +3,6 @@ package org.bukkit.craftbukkit.help;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-
 import org.bukkit.command.*;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.command.defaults.VanillaCommand;
@@ -18,10 +17,10 @@ import java.util.*;
  */
 public class SimpleHelpMap implements HelpMap {
 
-    private HelpTopic defaultTopic;
     private final Map<String, HelpTopic> helpTopics;
     private final Map<Class, HelpTopicFactory<Command>> topicFactoryMap;
     private final CraftServer server;
+    private HelpTopic defaultTopic;
     private HelpYamlReader yaml;
 
     @SuppressWarnings("unchecked")
@@ -106,7 +105,8 @@ public class SimpleHelpMap implements HelpMap {
         }
 
         // Initialize help topics from the server's command map
-        outer: for (Command command : server.getCommandMap().getCommands()) {
+        outer:
+        for (Command command : server.getCommandMap().getCommands()) {
             if (commandInIgnoredPlugin(command, ignoredPlugins)) {
                 continue;
             }
@@ -118,7 +118,7 @@ public class SimpleHelpMap implements HelpMap {
                     if (t != null) addTopic(t);
                     continue outer;
                 }
-                if (command instanceof PluginCommand && c.isAssignableFrom(((PluginCommand)command).getExecutor().getClass())) {
+                if (command instanceof PluginCommand && c.isAssignableFrom(((PluginCommand) command).getExecutor().getClass())) {
                     HelpTopic t = topicFactoryMap.get(c).createTopic(command);
                     if (t != null) addTopic(t);
                     continue outer;
@@ -188,7 +188,7 @@ public class SimpleHelpMap implements HelpMap {
             return "Bukkit";
         }
         if (command instanceof PluginIdentifiableCommand) {
-            return ((PluginIdentifiableCommand)command).getPlugin().getName();
+            return ((PluginIdentifiableCommand) command).getPlugin().getName();
         }
         return null;
     }
@@ -197,10 +197,7 @@ public class SimpleHelpMap implements HelpMap {
         if ((command instanceof BukkitCommand || command instanceof VanillaCommand) && ignoredPlugins.contains("Bukkit")) {
             return true;
         }
-        if (command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand)command).getPlugin().getName())) {
-            return true;
-        }
-        return false;
+        return command instanceof PluginIdentifiableCommand && ignoredPlugins.contains(((PluginIdentifiableCommand) command).getPlugin().getName());
     }
 
     public void registerHelpTopicFactory(Class commandClass, HelpTopicFactory factory) {

@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.util;
 
-import com.google.gson.Gson;
 import com.google.common.base.Charsets;
+import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

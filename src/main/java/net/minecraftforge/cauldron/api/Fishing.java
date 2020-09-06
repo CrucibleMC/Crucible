@@ -15,21 +15,21 @@ public interface Fishing {
      *
      * @param fish fishable item
      */
-    public void addFish(WeightedRandomFishable fish);
+    void addFish(WeightedRandomFishable fish);
 
     /**
      * Add a WeightedRandomFishable to the 'junk' results table.
      *
      * @param fish fishable item
      */
-    public void addJunk(WeightedRandomFishable fish);
+    void addJunk(WeightedRandomFishable fish);
 
     /**
      * Add a WeightedRandomFishable to the 'treasure' results table.
      *
      * @param fish fishable item
      */
-    public void addTreasure(WeightedRandomFishable fish);
+    void addTreasure(WeightedRandomFishable fish);
 
     /**
      * Remove WeightedRandomFishables from the 'fish' results table.
@@ -37,7 +37,7 @@ public interface Fishing {
      *
      * @param test a Predicate giving the removal condition
      */
-    public void removeMatchingFish(Predicate<WeightedRandomFishable> test);
+    void removeMatchingFish(Predicate<WeightedRandomFishable> test);
 
     /**
      * Remove WeightedRandomFishables from the 'junk' results table.
@@ -45,7 +45,7 @@ public interface Fishing {
      *
      * @param test a Predicate giving the removal condition
      */
-    public void removeMatchingJunk(Predicate<WeightedRandomFishable> test);
+    void removeMatchingJunk(Predicate<WeightedRandomFishable> test);
 
     /**
      * Remove WeightedRandomFishables from the 'treasure' results table.
@@ -53,7 +53,7 @@ public interface Fishing {
      *
      * @param test a Predicate giving the removal condition
      */
-    public void removeMatchingTreasure(Predicate<WeightedRandomFishable> test);
+    void removeMatchingTreasure(Predicate<WeightedRandomFishable> test);
 
     /**
      * Get the item pulled up from a simulated fishing attempt.
@@ -67,6 +67,6 @@ public interface Fishing {
      *                                     on the fishing rod
      * @return the item fished
      */
-    public ItemStack getRandomFishable(Random rand, float baseChance, int fishingLuckEnchantmentLevel, int fishingSpeedEnchantmentLevel);
+    ItemStack getRandomFishable(Random rand, float baseChance, int fishingLuckEnchantmentLevel, int fishingSpeedEnchantmentLevel);
 
 }

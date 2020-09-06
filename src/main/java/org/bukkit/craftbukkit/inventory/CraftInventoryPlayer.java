@@ -44,28 +44,28 @@ public class CraftInventoryPlayer extends CraftInventory implements org.bukkit.i
         return getItem(getSize() + 3);
     }
 
-    public ItemStack getChestplate() {
-        return getItem(getSize() + 2);
-    }
-
-    public ItemStack getLeggings() {
-        return getItem(getSize() + 1);
-    }
-
-    public ItemStack getBoots() {
-        return getItem(getSize() + 0);
-    }
-
     public void setHelmet(ItemStack helmet) {
         setItem(getSize() + 3, helmet);
+    }
+
+    public ItemStack getChestplate() {
+        return getItem(getSize() + 2);
     }
 
     public void setChestplate(ItemStack chestplate) {
         setItem(getSize() + 2, chestplate);
     }
 
+    public ItemStack getLeggings() {
+        return getItem(getSize() + 1);
+    }
+
     public void setLeggings(ItemStack leggings) {
         setItem(getSize() + 1, leggings);
+    }
+
+    public ItemStack getBoots() {
+        return getItem(getSize() + 0);
     }
 
     public void setBoots(ItemStack boots) {

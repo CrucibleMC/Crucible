@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.UserListBans;
 import net.minecraft.server.management.UserListBansEntry;
-
-import com.mojang.authlib.GameProfile;
 
 import java.io.IOException;
 import java.util.Date;

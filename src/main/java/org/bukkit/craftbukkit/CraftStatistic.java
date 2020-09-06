@@ -1,25 +1,23 @@
 package org.bukkit.craftbukkit;
 
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityList.EntityEggInfo;
-import net.minecraft.stats.StatList;
-
-import org.bukkit.Achievement;
-import org.bukkit.Statistic;
-import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
-
 import com.google.common.base.CaseFormat;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityList.EntityEggInfo;
+import net.minecraft.stats.StatList;
+import org.bukkit.Achievement;
+import org.bukkit.Material;
+import org.bukkit.Statistic;
+import org.bukkit.entity.EntityType;
 
 public class CraftStatistic {
     private static final BiMap<String, org.bukkit.Statistic> statistics;
     private static final BiMap<String, org.bukkit.Achievement> achievements;
 
     static {
-        ImmutableMap<String, org.bukkit.Achievement> specialCases = ImmutableMap.<String, org.bukkit.Achievement> builder()
+        ImmutableMap<String, org.bukkit.Achievement> specialCases = ImmutableMap.<String, org.bukkit.Achievement>builder()
                 .put("achievement.buildWorkBench", Achievement.BUILD_WORKBENCH)
                 .put("achievement.diamonds", Achievement.GET_DIAMONDS)
                 .put("achievement.portal", Achievement.NETHER_PORTAL)
@@ -29,8 +27,8 @@ public class CraftStatistic {
                 .put("achievement.blazeRod", Achievement.GET_BLAZE_ROD)
                 .put("achievement.potion", Achievement.BREW_POTION)
                 .build();
-        ImmutableBiMap.Builder<String, org.bukkit.Statistic> statisticBuilder = ImmutableBiMap.<String, org.bukkit.Statistic>builder();
-        ImmutableBiMap.Builder<String, org.bukkit.Achievement> achievementBuilder = ImmutableBiMap.<String, org.bukkit.Achievement>builder();
+        ImmutableBiMap.Builder<String, org.bukkit.Statistic> statisticBuilder = ImmutableBiMap.builder();
+        ImmutableBiMap.Builder<String, org.bukkit.Achievement> achievementBuilder = ImmutableBiMap.builder();
         for (Statistic statistic : Statistic.values()) {
             if (statistic == Statistic.PLAY_ONE_TICK) {
                 statisticBuilder.put("stat.playOneMinute", statistic);
@@ -39,7 +37,7 @@ public class CraftStatistic {
             }
         }
         for (Achievement achievement : Achievement.values()) {
-            if (specialCases.values().contains(achievement)) {
+            if (specialCases.containsValue(achievement)) {
                 continue;
             }
             achievementBuilder.put("achievement." + CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, achievement.name()), achievement);
@@ -51,7 +49,8 @@ public class CraftStatistic {
         achievements = achievementBuilder.build();
     }
 
-    private CraftStatistic() {}
+    private CraftStatistic() {
+    }
 
     public static org.bukkit.Achievement getBukkitAchievement(net.minecraft.stats.Achievement achievement) {
         return getBukkitAchievementByName(achievement.statId);

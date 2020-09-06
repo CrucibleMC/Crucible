@@ -30,8 +30,8 @@ public class TrigMath {
 
     private static double msatan(double arg) {
         return arg < sq2m1 ? mxatan(arg)
-             : arg > sq2p1 ? PIO2 - mxatan(1 / arg)
-             : PIO2 / 2 + mxatan((arg - 1) / (arg + 1));
+                : arg > sq2p1 ? PIO2 - mxatan(1 / arg)
+                : PIO2 / 2 + mxatan((arg - 1) / (arg + 1));
     }
 
     public static double atan(double arg) {

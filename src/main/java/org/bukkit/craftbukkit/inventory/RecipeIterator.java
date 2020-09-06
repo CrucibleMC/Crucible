@@ -1,10 +1,9 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.Iterator;
-
 import net.minecraftforge.cauldron.inventory.CustomModRecipe;
-
 import org.bukkit.inventory.Recipe;
+
+import java.util.Iterator;
 
 
 public class RecipeIterator implements Iterator<Recipe> {

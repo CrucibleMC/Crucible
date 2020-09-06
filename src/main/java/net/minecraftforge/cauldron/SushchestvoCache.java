@@ -11,8 +11,7 @@ public class SushchestvoCache {
     public String configPath;
     public String worldName;
 
-    public SushchestvoCache(Class<? extends Entity> entityClass, String worldName, String configPath, boolean tickNoPlayers, boolean neverEverTick, int tickInterval)
-    {
+    public SushchestvoCache(Class<? extends Entity> entityClass, String worldName, String configPath, boolean tickNoPlayers, boolean neverEverTick, int tickInterval) {
         this.entityClass = entityClass;
         this.worldName = worldName.intern();
         this.tickNoPlayers = tickNoPlayers;

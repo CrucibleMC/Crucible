@@ -1,12 +1,12 @@
 package org.bukkit.craftbukkit.scheduler;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-
 import org.apache.commons.lang.UnhandledException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitWorker;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 
 
 class CraftAsyncTask extends CraftTask {
@@ -27,26 +27,26 @@ class CraftAsyncTask extends CraftTask {
     @Override
     public void run() {
         final Thread thread = Thread.currentThread();
-        synchronized(workers) {
+        synchronized (workers) {
             if (getPeriod() == -2) {
                 // Never continue running after cancelled.
                 // Checking this with the lock is important!
                 return;
             }
             workers.add(
-                new BukkitWorker() {
-                    public Thread getThread() {
-                        return thread;
-                    }
+                    new BukkitWorker() {
+                        public Thread getThread() {
+                            return thread;
+                        }
 
-                    public int getTaskId() {
-                        return CraftAsyncTask.this.getTaskId();
-                    }
+                        public int getTaskId() {
+                            return CraftAsyncTask.this.getTaskId();
+                        }
 
-                    public Plugin getOwner() {
-                        return CraftAsyncTask.this.getOwner();
-                    }
-                });
+                        public Plugin getOwner() {
+                            return CraftAsyncTask.this.getOwner();
+                        }
+                    });
         }
         Throwable thrown = null;
         try {
@@ -55,13 +55,13 @@ class CraftAsyncTask extends CraftTask {
             thrown = t;
             throw new UnhandledException(
                     String.format(
-                        "Plugin %s generated an exception while executing task %s",
-                        getOwner().getDescription().getFullName(),
-                        getTaskId()),
+                            "Plugin %s generated an exception while executing task %s",
+                            getOwner().getDescription().getFullName(),
+                            getTaskId()),
                     thrown);
         } finally {
             // Cleanup is important for any async task, otherwise ghost tasks are everywhere
-            synchronized(workers) {
+            synchronized (workers) {
                 try {
                     final Iterator<BukkitWorker> workers = this.workers.iterator();
                     boolean removed = false;
@@ -75,10 +75,10 @@ class CraftAsyncTask extends CraftTask {
                     if (!removed) {
                         throw new IllegalStateException(
                                 String.format(
-                                    "Unable to remove worker %s on task %s for %s",
-                                    thread.getName(),
-                                    getTaskId(),
-                                    getOwner().getDescription().getFullName()),
+                                        "Unable to remove worker %s on task %s for %s",
+                                        thread.getName(),
+                                        getTaskId(),
+                                        getOwner().getDescription().getFullName()),
                                 thrown); // We don't want to lose the original exception, if any
                     }
                 } finally {

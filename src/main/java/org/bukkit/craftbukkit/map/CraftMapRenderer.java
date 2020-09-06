@@ -1,14 +1,14 @@
 package org.bukkit.craftbukkit.map;
 
-import java.util.UUID;
-
+import net.minecraftforge.cauldron.command.CauldronCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapCursorCollection;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
-import net.minecraftforge.cauldron.command.*;
+
+import java.util.UUID;
 
 public class CraftMapRenderer extends MapRenderer {
 
@@ -21,11 +21,12 @@ public class CraftMapRenderer extends MapRenderer {
 
     @Override
     public void render(MapView map, MapCanvas canvas, Player player) {
-        if(CauldronCommand.debug) {
-        System.out.println("Default Map Render called!");
-        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
-            System.out.println(ste);
-        } }
+        if (CauldronCommand.debug) {
+            System.out.println("Default Map Render called!");
+            for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+                System.out.println(ste);
+            }
+        }
 
 
         // Map
@@ -48,7 +49,7 @@ public class CraftMapRenderer extends MapRenderer {
                 continue;
             }
 
-            net.minecraft.world.storage.MapData.MapCoord decoration = (net.minecraft.world.storage.MapData.MapCoord) worldMap.playersVisibleOnMap.get(key);
+            net.minecraft.world.storage.MapData.MapCoord decoration = worldMap.playersVisibleOnMap.get(key);
             cursors.addCursor(decoration.centerX, decoration.centerZ, (byte) (decoration.iconRotation & 15), decoration.iconSize);
         }
     }

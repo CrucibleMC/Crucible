@@ -1,11 +1,7 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap.Builder;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -17,8 +13,10 @@ import org.bukkit.craftbukkit.inventory.CraftMetaItem.ItemMetaKey.Specific.To;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap.Builder;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
@@ -90,8 +88,20 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
         List<FireworkEffect> effects = this.effects = new ArrayList<FireworkEffect>(fireworkEffects.tagCount());
 
         for (int i = 0; i < fireworkEffects.tagCount(); i++) {
-            effects.add(getEffect((net.minecraft.nbt.NBTTagCompound) fireworkEffects.getCompoundTagAt(i)));
+            effects.add(getEffect(fireworkEffects.getCompoundTagAt(i)));
         }
+    }
+
+    CraftMetaFirework(Map<String, Object> map) {
+        super(map);
+
+        Integer power = SerializableMeta.getObject(Integer.class, map, FLIGHT.BUKKIT, true);
+        if (power != null) {
+            setPower(power);
+        }
+
+        Iterable<?> effects = SerializableMeta.getObject(Iterable.class, map, EXPLOSIONS.BUKKIT, true);
+        safelyAddEffects(effects);
     }
 
     static FireworkEffect getEffect(net.minecraft.nbt.NBTTagCompound explosion) {
@@ -164,16 +174,18 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
         }
     }
 
-    CraftMetaFirework(Map<String, Object> map) {
-        super(map);
-
-        Integer power = SerializableMeta.getObject(Integer.class, map, FLIGHT.BUKKIT, true);
-        if (power != null) {
-            setPower(power);
+    static void addColors(net.minecraft.nbt.NBTTagCompound compound, ItemMetaKey key, List<Color> colors) {
+        if (colors.isEmpty()) {
+            return;
         }
 
-        Iterable<?> effects = SerializableMeta.getObject(Iterable.class, map, EXPLOSIONS.BUKKIT, true);
-        safelyAddEffects(effects);
+        final int[] colorArray = new int[colors.size()];
+        int i = 0;
+        for (Color color : colors) {
+            colorArray[i++] = color.asRGB();
+        }
+
+        compound.setIntArray(key.NBT, colorArray);
     }
 
     public boolean hasEffects() {
@@ -225,23 +237,9 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
         }
     }
 
-    static void addColors(net.minecraft.nbt.NBTTagCompound compound, ItemMetaKey key, List<Color> colors) {
-        if (colors.isEmpty()) {
-            return;
-        }
-
-        final int[] colorArray = new int[colors.size()];
-        int i = 0;
-        for (Color color : colors) {
-            colorArray[i++] = color.asRGB();
-        }
-
-        compound.setIntArray(key.NBT, colorArray);
-    }
-
     @Override
     boolean applicableTo(Material type) {
-        switch(type) {
+        switch (type) {
             case FIREWORK:
                 return true;
             default:
@@ -255,7 +253,7 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
     }
 
     boolean isFireworkEmpty() {
-        return  !(hasEffects() || hasPower());
+        return !(hasEffects() || hasPower());
     }
 
     boolean hasPower() {
@@ -330,7 +328,7 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
         this.effects.add(effect);
     }
 
-    public void addEffects(FireworkEffect...effects) {
+    public void addEffects(FireworkEffect... effects) {
         Validate.notNull(effects, "Effects cannot be null");
         if (effects.length == 0) {
             return;
@@ -353,7 +351,7 @@ class CraftMetaFirework extends CraftMetaItem implements FireworkMeta {
     }
 
     public List<FireworkEffect> getEffects() {
-        return this.effects == null ? ImmutableList.<FireworkEffect>of() : ImmutableList.copyOf(this.effects);
+        return this.effects == null ? ImmutableList.of() : ImmutableList.copyOf(this.effects);
     }
 
     public int getEffectsSize() {

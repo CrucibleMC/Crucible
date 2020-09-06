@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.inventory;
 
 
 import net.minecraftforge.cauldron.inventory.CustomModRecipe;
-
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
@@ -31,22 +30,12 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
     }
 
     @Override
-    public void setContents(ItemStack[] items) {
-        int resultLen = getResultInventory().getContents().length;
-        int len = getMatrixInventory().getContents().length + resultLen;
-        if (len > items.length) {
-            throw new IllegalArgumentException("Invalid inventory size; expected " + len + " or less");
-        }
-        setContents(items[0], Java15Compat.Arrays_copyOfRange(items, 1, items.length));
-    }
-
-    @Override
     public ItemStack[] getContents() {
         ItemStack[] items = new ItemStack[getSize()];
         net.minecraft.item.ItemStack[] mcResultItems = getResultInventory().getContents();
 
         int i = 0;
-        for (i = 0; i < mcResultItems.length; i++ ) {
+        for (i = 0; i < mcResultItems.length; i++) {
             items[i] = CraftItemStack.asCraftMirror(mcResultItems[i]);
         }
 
@@ -57,6 +46,16 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
         }
 
         return items;
+    }
+
+    @Override
+    public void setContents(ItemStack[] items) {
+        int resultLen = getResultInventory().getContents().length;
+        int len = getMatrixInventory().getContents().length + resultLen;
+        if (len > items.length) {
+            throw new IllegalArgumentException("Invalid inventory size; expected " + len + " or less");
+        }
+        setContents(items[0], Java15Compat.Arrays_copyOfRange(items, 1, items.length));
     }
 
     public void setContents(ItemStack result, ItemStack[] contents) {
@@ -88,17 +87,11 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
         ItemStack[] items = new ItemStack[getSize()];
         net.minecraft.item.ItemStack[] matrix = getMatrixInventory().getContents();
 
-        for (int i = 0; i < matrix.length; i++ ) {
+        for (int i = 0; i < matrix.length; i++) {
             items[i] = CraftItemStack.asCraftMirror(matrix[i]);
         }
 
         return items;
-    }
-
-    public ItemStack getResult() {
-        net.minecraft.item.ItemStack item = getResultInventory().getStackInSlot(0);
-        if(item != null) return CraftItemStack.asCraftMirror(item);
-        return null;
     }
 
     public void setMatrix(ItemStack[] contents) {
@@ -108,7 +101,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
 
         net.minecraft.item.ItemStack[] mcItems = getMatrixInventory().getContents();
 
-        for (int i = 0; i < mcItems.length; i++ ) {
+        for (int i = 0; i < mcItems.length; i++) {
             if (i < contents.length) {
                 ItemStack item = contents[i];
                 if (item == null || item.getTypeId() <= 0) {
@@ -122,6 +115,12 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
         }
     }
 
+    public ItemStack getResult() {
+        net.minecraft.item.ItemStack item = getResultInventory().getStackInSlot(0);
+        if (item != null) return CraftItemStack.asCraftMirror(item);
+        return null;
+    }
+
     public void setResult(ItemStack item) {
         net.minecraft.item.ItemStack[] contents = getResultInventory().getContents();
         if (item == null || item.getTypeId() <= 0) {
@@ -132,7 +131,7 @@ public class CraftInventoryCrafting extends CraftInventory implements CraftingIn
     }
 
     public Recipe getRecipe() {
-        net.minecraft.item.crafting.IRecipe recipe = ((net.minecraft.inventory.InventoryCrafting)getInventory()).currentRecipe;
+        net.minecraft.item.crafting.IRecipe recipe = ((net.minecraft.inventory.InventoryCrafting) getInventory()).currentRecipe;
         // Cauldron start - handle custom recipe classes without Bukkit API equivalents
         try {
             return recipe == null ? null : recipe.toBukkitRecipe();

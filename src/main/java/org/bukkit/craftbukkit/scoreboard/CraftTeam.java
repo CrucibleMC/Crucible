@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.scoreboard;
 
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.scoreboard.Team;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Set;
 
 
 final class CraftTeam extends CraftScoreboardComponent implements Team {

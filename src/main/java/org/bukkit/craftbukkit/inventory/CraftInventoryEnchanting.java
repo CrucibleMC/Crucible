@@ -9,16 +9,16 @@ public class CraftInventoryEnchanting extends CraftInventory implements Enchanti
         super(inventory);
     }
 
-    public void setItem(ItemStack item) {
-        setItem(0,item);
-    }
-
     public ItemStack getItem() {
         return getItem(0);
     }
 
+    public void setItem(ItemStack item) {
+        setItem(0, item);
+    }
+
     @Override
     public net.minecraft.inventory.ContainerEnchantTableInventory getInventory() {
-        return (net.minecraft.inventory.ContainerEnchantTableInventory)inventory;
+        return (net.minecraft.inventory.ContainerEnchantTableInventory) inventory;
     }
 }

@@ -31,6 +31,10 @@ public class CraftJukebox extends CraftBlockState implements Jukebox {
         return CraftMagicNumbers.getMaterial(record.getItem());
     }
 
+    public boolean isPlaying() {
+        return getRawData() == 1;
+    }
+
     @Override
     public void setPlaying(Material record) {
         if (record == null || CraftMagicNumbers.getItem(record) == null) {
@@ -46,10 +50,6 @@ public class CraftJukebox extends CraftBlockState implements Jukebox {
             world.getHandle().setBlockMetadataWithNotify(getX(), getY(), getZ(), 1, 3);
         }
         world.playEffect(getLocation(), Effect.RECORD_PLAY, record.getId());
-    }
-
-    public boolean isPlaying() {
-        return getRawData() == 1;
     }
 
     public boolean eject() {

@@ -1,20 +1,14 @@
 package org.bukkit.craftbukkit;
 
-import com.google.common.collect.Maps;
-
 import net.minecraft.entity.Entity;
-import net.minecraft.server.*;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
+import org.bukkit.craftbukkit.scheduler.CraftTask;
 import org.bukkit.plugin.java.JavaPluginLoader;
-import org.spigotmc.CustomTimingsHandler;
 import org.bukkit.scheduler.BukkitTask;
+import org.spigotmc.CustomTimingsHandler;
 
 import java.util.HashMap;
-import java.util.Map;
-
-import org.bukkit.craftbukkit.scheduler.CraftTask;
 
 public class SpigotTimings {
 
@@ -53,6 +47,7 @@ public class SpigotTimings {
 
     /**
      * Gets a timer associated with a plugins tasks.
+     *
      * @param task
      * @param period
      * @return
@@ -75,7 +70,7 @@ public class SpigotTimings {
 
         String name = "Task: " + plugin + " Runnable: " + taskname;
         if (period > 0) {
-            name += "(interval:" + period +")";
+            name += "(interval:" + period + ")";
         } else {
             name += "(Single)";
         }
@@ -89,6 +84,7 @@ public class SpigotTimings {
 
     /**
      * Get a named timer for the specified entity type to track type specific timings.
+     *
      * @param entity
      * @return
      */
@@ -104,6 +100,7 @@ public class SpigotTimings {
 
     /**
      * Get a named timer for the specified tile entity type to track type specific timings.
+     *
      * @param entity
      * @return
      */
@@ -146,7 +143,7 @@ public class SpigotTimings {
         public final CustomTimingsHandler syncChunkLoadPostTimer;
 
         public WorldTimingsHandler(World server) {
-            String name = server.worldInfo.getWorldName() +" - ";
+            String name = server.worldInfo.getWorldName() + " - ";
 
             mobSpawn = new CustomTimingsHandler("** " + name + "mobSpawn");
             doChunkUnload = new CustomTimingsHandler("** " + name + "doChunkUnload");

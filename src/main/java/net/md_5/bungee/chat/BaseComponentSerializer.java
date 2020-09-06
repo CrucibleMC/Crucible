@@ -1,19 +1,16 @@
 package net.md_5.bungee.chat;
 
 import com.google.common.base.Preconditions;
-import java.lang.reflect.Type;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.chat.ComponentSerializer;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
+
+import java.util.Arrays;
+import java.util.HashSet;
 
 public class BaseComponentSerializer {
     protected void deserialize(JsonObject object, BaseComponent component, JsonDeserializationContext context) {
@@ -37,7 +34,7 @@ public class BaseComponentSerializer {
             component.setObfuscated(object.get("obfuscated").getAsBoolean());
         }
         if (object.has("extra")) {
-            component.setExtra(Arrays.<BaseComponent>asList((BaseComponent[]) context.deserialize(object.get("extra"), BaseComponent[].class)));
+            component.setExtra(Arrays.asList(context.deserialize(object.get("extra"), BaseComponent[].class)));
         }
         if (object.has("clickEvent")) {
             event = object.getAsJsonObject("clickEvent");
@@ -45,7 +42,7 @@ public class BaseComponentSerializer {
         }
         if (object.has("hoverEvent")) {
             event = object.getAsJsonObject("hoverEvent");
-            BaseComponent[] res = event.get("value").isJsonArray() ? (BaseComponent[])context.deserialize(event.get("value"), BaseComponent[].class) : new BaseComponent[]{(BaseComponent)context.deserialize(event.get("value"), BaseComponent.class)};
+            BaseComponent[] res = event.get("value").isJsonArray() ? (BaseComponent[]) context.deserialize(event.get("value"), BaseComponent[].class) : new BaseComponent[]{context.deserialize(event.get("value"), BaseComponent.class)};
             component.setHoverEvent(new HoverEvent(HoverEvent.Action.valueOf(event.get("action").getAsString().toUpperCase()), res));
         }
     }
@@ -92,8 +89,7 @@ public class BaseComponentSerializer {
                 hoverEvent.add("value", context.serialize(component.getHoverEvent().getValue()));
                 object.add("hoverEvent", hoverEvent);
             }
-        }
-        finally {
+        } finally {
             ComponentSerializer.serializedComponents.get().remove(component);
             if (first) {
                 ComponentSerializer.serializedComponents.set(null);

@@ -1,20 +1,14 @@
 package org.bukkit.craftbukkit.command;
 
-import static org.bukkit.util.Java15Compat.Arrays_copyOfRange;
+import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraft.command.ICommandSender;
+import org.bukkit.Server;
+import org.bukkit.command.*;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 
 import java.util.regex.Pattern;
 
-import net.minecraft.command.ICommandSender;
-
-import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandException;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.SimpleCommandMap;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
-
-import cpw.mods.fml.common.FMLCommonHandler;
+import static org.bukkit.util.Java15Compat.Arrays_copyOfRange;
 
 public class CraftSimpleCommandMap extends SimpleCommandMap {
 
@@ -43,17 +37,14 @@ public class CraftSimpleCommandMap extends SimpleCommandMap {
         }
         try {
             // Cauldron start - if command is a mod command, check permissions and route through vanilla
-            if (target instanceof ModCustomCommand)
-            {
+            if (target instanceof ModCustomCommand) {
                 if (!target.testPermission(sender)) return true;
-                if (sender instanceof ConsoleCommandSender)
-                {
+                if (sender instanceof ConsoleCommandSender) {
                     FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(this.vanillaConsoleSender, commandLine);
-                }
-                else FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(((CraftPlayer)sender).getHandle(), commandLine);
-            }
-            else {
-            // Cauldron end
+                } else
+                    FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(((CraftPlayer) sender).getHandle(), commandLine);
+            } else {
+                // Cauldron end
                 // Note: we don't return the result of target.execute as thats success / failure, we return handled (true) or not handled (false)
                 target.execute(sender, sentCommandLabel, Arrays_copyOfRange(args, 1, args.length));
             }
@@ -68,8 +59,7 @@ public class CraftSimpleCommandMap extends SimpleCommandMap {
     }
 
     // Cauldron start - sets the vanilla console sender
-    public void setVanillaConsoleSender(ICommandSender console)
-    {
+    public void setVanillaConsoleSender(ICommandSender console) {
         this.vanillaConsoleSender = console;
     }
     // Cauldron end

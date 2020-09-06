@@ -1,24 +1,15 @@
 package org.bukkit.craftbukkit.projectiles;
 
-import java.util.Random;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Egg;
-import org.bukkit.entity.EnderPearl;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.SmallFireball;
-import org.bukkit.entity.Snowball;
-import org.bukkit.entity.ThrownExpBottle;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.entity.WitherSkull;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.util.Vector;
+
+import java.util.Random;
 
 
 public class CraftBlockProjectileSource implements BlockProjectileSource {
@@ -63,7 +54,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
         } else if (Arrow.class.isAssignableFrom(projectile)) {
             launch = new net.minecraft.entity.projectile.EntityArrow(world, iposition.getX(), iposition.getY(), iposition.getZ());
             ((net.minecraft.entity.projectile.EntityArrow) launch).canBePickedUp = 1;
-            ((net.minecraft.entity.projectile.EntityArrow) launch).projectileSource = this;
+            launch.projectileSource = this;
         } else if (Fireball.class.isAssignableFrom(projectile)) {
             double d0 = iposition.getX() + (double) ((float) enumfacing.getFrontOffsetX() * 0.3F);
             double d1 = iposition.getY() + (double) ((float) enumfacing.getFrontOffsetX() * 0.3F);
@@ -78,7 +69,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
             } else if (WitherSkull.class.isAssignableFrom(projectile)) {
                 launch = new net.minecraft.entity.projectile.EntityWitherSkull(world);
                 launch.setPosition(d0, d1, d2);
-                double d6 = (double) net.minecraft.util.MathHelper.sqrt_double(d3 * d3 + d4 * d4 + d5 * d5);
+                double d6 = net.minecraft.util.MathHelper.sqrt_double(d3 * d3 + d4 * d4 + d5 * d5);
 
                 ((net.minecraft.entity.projectile.EntityFireball) launch).accelerationX = d3 / d6 * 0.1D;
                 ((net.minecraft.entity.projectile.EntityFireball) launch).accelerationY = d4 / d6 * 0.1D;
@@ -86,21 +77,21 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
             } else {
                 launch = new net.minecraft.entity.projectile.EntityLargeFireball(world);
                 launch.setPosition(d0, d1, d2);
-                double d6 = (double) net.minecraft.util.MathHelper.sqrt_double(d3 * d3 + d4 * d4 + d5 * d5);
+                double d6 = net.minecraft.util.MathHelper.sqrt_double(d3 * d3 + d4 * d4 + d5 * d5);
 
                 ((net.minecraft.entity.projectile.EntityFireball) launch).accelerationX = d3 / d6 * 0.1D;
                 ((net.minecraft.entity.projectile.EntityFireball) launch).accelerationY = d4 / d6 * 0.1D;
                 ((net.minecraft.entity.projectile.EntityFireball) launch).accelerationZ = d5 / d6 * 0.1D;
             }
-            
-            ((net.minecraft.entity.projectile.EntityFireball) launch).projectileSource = this;
+
+            launch.projectileSource = this;
         }
 
         Validate.notNull(launch, "Projectile not supported");
 
         if (launch instanceof net.minecraft.entity.IProjectile) {
             if (launch instanceof net.minecraft.entity.projectile.EntityThrowable) {
-                ((net.minecraft.entity.projectile.EntityThrowable) launch).projectileSource = this;
+                launch.projectileSource = this;
             }
             // Values from DispenseBehaviorProjectile
             float a = 6.0F;
@@ -111,7 +102,7 @@ public class CraftBlockProjectileSource implements BlockProjectileSource {
                 b *= 1.25F;
             }
             // Copied from DispenseBehaviorProjectile
-            ((net.minecraft.entity.IProjectile) launch).setThrowableHeading((double) enumfacing.getFrontOffsetX(), (double) ((float) enumfacing.getFrontOffsetY() + 0.1F), (double) enumfacing.getFrontOffsetZ(), b, a);
+            ((net.minecraft.entity.IProjectile) launch).setThrowableHeading(enumfacing.getFrontOffsetX(), (float) enumfacing.getFrontOffsetY() + 0.1F, enumfacing.getFrontOffsetZ(), b, a);
         }
 
         if (velocity != null) {

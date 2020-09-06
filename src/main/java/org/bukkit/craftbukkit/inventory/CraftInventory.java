@@ -1,19 +1,17 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-
-
 import net.minecraftforge.cauldron.CauldronUtils;
-
 import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.Material;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 
 
 public class CraftInventory implements Inventory {
@@ -22,7 +20,7 @@ public class CraftInventory implements Inventory {
     public CraftInventory(net.minecraft.inventory.IInventory inventory) {
         this.inventory = inventory;
     }
-    
+
     public net.minecraft.inventory.IInventory getInventory() {
         return inventory;
     }
@@ -466,9 +464,9 @@ public class CraftInventory implements Inventory {
             return inventory.getOwner();
         } catch (AbstractMethodError e) {
             if (inventory instanceof net.minecraft.tileentity.TileEntity) {
-                return CauldronUtils.getOwner((net.minecraft.tileentity.TileEntity)inventory);
+                return CauldronUtils.getOwner((net.minecraft.tileentity.TileEntity) inventory);
             } else {
-                return null;                
+                return null;
             }
         }
         // Cauldron end

@@ -10,7 +10,12 @@ import java.util.List;
  * Dictionary. This class has reference equality.
  */
 public class OreDictionaryEntry {
-    private static List<OreDictionaryEntry> oreDictionaryEntries = new ArrayList<OreDictionaryEntry>();
+    private static final List<OreDictionaryEntry> oreDictionaryEntries = new ArrayList<OreDictionaryEntry>();
+    private final int id;
+
+    private OreDictionaryEntry(int id) {
+        this.id = id;
+    }
 
     /**
      * Get an OreDictionaryEntry instance, using an instance cache to preserve
@@ -28,14 +33,9 @@ public class OreDictionaryEntry {
         return oreDictionaryEntries.get(id);
     }
 
-    private int id;
-    private OreDictionaryEntry(int id) {
-        this.id = id;
-    }
-
     /**
      * Get the opaque ID of this ore-dictionary entry.
-     *
+     * <p>
      * Plugins should not inspect the results of this call. Results may not be
      * the same across multiple server startups.
      *

@@ -17,12 +17,12 @@ public class CraftMinecart extends CraftVehicle implements Minecart { // Cauldro
     }
     // Cauldron end
 
-    public void setDamage(double damage) {
-        getHandle().setDamage((float) damage);
-    }
-
     public double getDamage() {
         return getHandle().getDamage();
+    }
+
+    public void setDamage(double damage) {
+        getHandle().setDamage((float) damage);
     }
 
     public double getMaxSpeed() {

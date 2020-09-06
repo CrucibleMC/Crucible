@@ -19,12 +19,12 @@ public class CraftPigZombie extends CraftZombie implements PigZombie {
         getHandle().angerLevel = level;
     }
 
-    public void setAngry(boolean angry) {
-        setAnger(angry ? 400 : 0);
-    }
-
     public boolean isAngry() {
         return getAnger() > 0;
+    }
+
+    public void setAngry(boolean angry) {
+        setAnger(angry ? 400 : 0);
     }
 
     @Override

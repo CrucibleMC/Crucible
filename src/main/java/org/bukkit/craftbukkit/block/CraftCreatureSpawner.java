@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
 import net.minecraft.tileentity.TileEntityMobSpawner;
-
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -22,13 +21,13 @@ public class CraftCreatureSpawner extends CraftBlockState implements CreatureSpa
         return CreatureType.fromName(spawner.func_145881_a().getEntityNameToSpawn());
     }
 
-    public EntityType getSpawnedType() {
-        return EntityType.fromName(spawner.func_145881_a().getEntityNameToSpawn());
-    }
-
     @Deprecated
     public void setCreatureType(CreatureType creatureType) {
         spawner.func_145881_a().setEntityName(creatureType.getName());
+    }
+
+    public EntityType getSpawnedType() {
+        return EntityType.fromName(spawner.func_145881_a().getEntityNameToSpawn());
     }
 
     public void setSpawnedType(EntityType entityType) {

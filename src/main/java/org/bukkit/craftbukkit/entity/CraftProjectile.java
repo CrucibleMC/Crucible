@@ -14,7 +14,7 @@ public class CraftProjectile extends AbstractProjectile implements Projectile { 
 
     public ProjectileSource getShooter() {
         return getHandle().projectileSource;
-        }
+    }
 
     public void setShooter(ProjectileSource shooter) {
         if (shooter instanceof CraftLivingEntity) {

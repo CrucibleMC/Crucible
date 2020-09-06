@@ -1,42 +1,33 @@
 package org.bukkit.craftbukkit.entity;
 
-import java.util.Set;
-
-
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.event.CraftEventFactory;
+import org.bukkit.craftbukkit.inventory.*;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.event.CraftEventFactory;
-import org.bukkit.craftbukkit.inventory.CraftContainer;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
-import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.*;
 import org.bukkit.permissions.PermissibleBase;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Set;
+
 public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
+    protected final PermissibleBase perm = new PermissibleBase(this);
     public CraftInventoryPlayer inventory;
     public CraftInventory enderChest;
-    protected final PermissibleBase perm = new PermissibleBase(this);
     private boolean op;
     private GameMode mode;
 
     public CraftHumanEntity(final CraftServer server, final net.minecraft.entity.player.EntityPlayer entity) {
         super(server, entity);
-        mode = server.getDefaultGameMode();        
+        mode = server.getDefaultGameMode();
     }
 
     public String getName() {
@@ -44,17 +35,20 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     public PlayerInventory getInventory() {
-        if (inventory == null) inventory = new CraftInventoryPlayer(((net.minecraft.entity.player.EntityPlayer) entity).inventory);
+        if (inventory == null)
+            inventory = new CraftInventoryPlayer(((net.minecraft.entity.player.EntityPlayer) entity).inventory);
         return inventory;
     }
 
     public EntityEquipment getEquipment() {
-        if (inventory == null) inventory = new CraftInventoryPlayer(((net.minecraft.entity.player.EntityPlayer) entity).inventory);
+        if (inventory == null)
+            inventory = new CraftInventoryPlayer(((net.minecraft.entity.player.EntityPlayer) entity).inventory);
         return inventory;
     }
 
     public Inventory getEnderChest() {
-        if (enderChest == null) enderChest = new CraftInventory(((net.minecraft.entity.player.EntityPlayer) entity).getInventoryEnderChest());
+        if (enderChest == null)
+            enderChest = new CraftInventory(((net.minecraft.entity.player.EntityPlayer) entity).getInventoryEnderChest());
         return enderChest;
     }
 
@@ -88,6 +82,11 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
 
     public boolean isOp() {
         return op;
+    }
+
+    public void setOp(boolean value) {
+        this.op = value;
+        perm.recalculatePermissions();
     }
 
     public boolean isPermissionSet(String name) {
@@ -130,11 +129,6 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         perm.recalculatePermissions();
     }
 
-    public void setOp(boolean value) {
-        this.op = value;
-        perm.recalculatePermissions();
-    }
-
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
         return perm.getEffectivePermissions();
     }
@@ -171,57 +165,57 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
     }
 
     public InventoryView openInventory(Inventory inventory) {
-        if(!(getHandle() instanceof net.minecraft.entity.player.EntityPlayerMP)) return null;
+        if (!(getHandle() instanceof net.minecraft.entity.player.EntityPlayerMP)) return null;
         net.minecraft.entity.player.EntityPlayerMP player = (net.minecraft.entity.player.EntityPlayerMP) getHandle();
         InventoryType type = inventory.getType();
         net.minecraft.inventory.Container formerContainer = getHandle().openContainer;
         // TODO: Should we check that it really IS a CraftInventory first?
         CraftInventory craftinv = (CraftInventory) inventory;
-        switch(type) {
-        case PLAYER:
-        case CHEST:
-        case ENDER_CHEST:
-            getHandle().displayGUIChest(craftinv.getInventory());
-            break;
-        case DISPENSER:
-            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityDispenser) {
-                getHandle().func_146102_a((net.minecraft.tileentity.TileEntityDispenser) craftinv.getInventory());
-            } else {
-                openCustomInventory(inventory, player, 3);
-            }
-            break;
-        case FURNACE:
-            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityFurnace) {
-                getHandle().func_146101_a((net.minecraft.tileentity.TileEntityFurnace) craftinv.getInventory());
-            } else {
-                openCustomInventory(inventory, player, 2);
-            }
-            break;
-        case WORKBENCH:
-            openCustomInventory(inventory, player, 1);
-            break;
-        case BREWING:
-            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityBrewingStand) {
-                getHandle().func_146098_a((net.minecraft.tileentity.TileEntityBrewingStand) craftinv.getInventory());
-            } else {
-                openCustomInventory(inventory, player, 5);
-            }
-            break;
-        case ENCHANTING:
-            openCustomInventory(inventory, player, 4);
-            break;
-        case HOPPER:
-            if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityHopper) {
-                getHandle().func_146093_a((net.minecraft.tileentity.TileEntityHopper) craftinv.getInventory());
-            } else if (craftinv.getInventory() instanceof net.minecraft.entity.item.EntityMinecartHopper) {
-                getHandle().displayGUIHopperMinecart((net.minecraft.entity.item.EntityMinecartHopper) craftinv.getInventory());
-            } else {
-                openCustomInventory(inventory, player, 9);
-            }
-            break;
-        case CREATIVE:
-        case CRAFTING:
-            throw new IllegalArgumentException("Can't open a " + type + " inventory!");
+        switch (type) {
+            case PLAYER:
+            case CHEST:
+            case ENDER_CHEST:
+                getHandle().displayGUIChest(craftinv.getInventory());
+                break;
+            case DISPENSER:
+                if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityDispenser) {
+                    getHandle().func_146102_a((net.minecraft.tileentity.TileEntityDispenser) craftinv.getInventory());
+                } else {
+                    openCustomInventory(inventory, player, 3);
+                }
+                break;
+            case FURNACE:
+                if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityFurnace) {
+                    getHandle().func_146101_a((net.minecraft.tileentity.TileEntityFurnace) craftinv.getInventory());
+                } else {
+                    openCustomInventory(inventory, player, 2);
+                }
+                break;
+            case WORKBENCH:
+                openCustomInventory(inventory, player, 1);
+                break;
+            case BREWING:
+                if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityBrewingStand) {
+                    getHandle().func_146098_a((net.minecraft.tileentity.TileEntityBrewingStand) craftinv.getInventory());
+                } else {
+                    openCustomInventory(inventory, player, 5);
+                }
+                break;
+            case ENCHANTING:
+                openCustomInventory(inventory, player, 4);
+                break;
+            case HOPPER:
+                if (craftinv.getInventory() instanceof net.minecraft.tileentity.TileEntityHopper) {
+                    getHandle().func_146093_a((net.minecraft.tileentity.TileEntityHopper) craftinv.getInventory());
+                } else if (craftinv.getInventory() instanceof net.minecraft.entity.item.EntityMinecartHopper) {
+                    getHandle().displayGUIHopperMinecart((net.minecraft.entity.item.EntityMinecartHopper) craftinv.getInventory());
+                } else {
+                    openCustomInventory(inventory, player, 9);
+                }
+                break;
+            case CREATIVE:
+            case CRAFTING:
+                throw new IllegalArgumentException("Can't open a " + type + " inventory!");
         }
         if (getHandle().openContainer == formerContainer) {
             return null;
@@ -235,7 +229,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         net.minecraft.inventory.Container container = new CraftContainer(inventory, this, player.nextContainerCounter());
 
         container = CraftEventFactory.callInventoryOpenEvent(player, container);
-        if(container == null) return;
+        if (container == null) return;
 
         String title = container.getBukkitView().getTitle();
         int size = container.getBukkitView().getTopInventory().getSize();
@@ -284,7 +278,7 @@ public class CraftHumanEntity extends CraftLivingEntity implements HumanEntity {
         if (((net.minecraft.entity.player.EntityPlayerMP) getHandle()).playerNetServerHandler == null) return;
         if (getHandle().openContainer != getHandle().inventoryContainer) {
             // fire INVENTORY_CLOSE if one already open
-            ((net.minecraft.entity.player.EntityPlayerMP)getHandle()).playerNetServerHandler.processCloseWindow(new net.minecraft.network.play.client.C0DPacketCloseWindow(getHandle().openContainer.windowId));
+            ((net.minecraft.entity.player.EntityPlayerMP) getHandle()).playerNetServerHandler.processCloseWindow(new net.minecraft.network.play.client.C0DPacketCloseWindow(getHandle().openContainer.windowId));
         }
         net.minecraft.entity.player.EntityPlayerMP player = (net.minecraft.entity.player.EntityPlayerMP) getHandle();
         net.minecraft.inventory.Container container;

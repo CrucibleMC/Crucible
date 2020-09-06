@@ -1,9 +1,8 @@
 package org.bukkit.craftbukkit.entity;
 
-import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.util.MathHelper;
-
 import org.apache.commons.lang.Validate;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
@@ -51,9 +50,9 @@ public class CraftFish extends AbstractProjectile implements Fish {
 
         if (this.biteChance == -1) {
             if (hook.worldObj.canLightningStrikeAt(MathHelper.floor_double(hook.posX), net.minecraft.util.MathHelper.floor_double(hook.posY) + 1, net.minecraft.util.MathHelper.floor_double(hook.posZ))) {
-                return 1/300.0;
+                return 1 / 300.0;
             }
-            return 1/500.0;
+            return 1 / 500.0;
         }
         return this.biteChance;
     }

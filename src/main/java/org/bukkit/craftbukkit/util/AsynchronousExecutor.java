@@ -1,18 +1,10 @@
 package org.bukkit.craftbukkit.util;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-
 import org.apache.commons.lang.Validate;
+
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 /**
  * Executes tasks using a multi-stage process executor. Synchronous executions are via {@link AsynchronousExecutor#finishActive()} or the {@link AsynchronousExecutor#get(Object)} methods.
@@ -28,7 +20,159 @@ import org.apache.commons.lang.Validate;
  */
 public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
 
-    public static interface CallBackProvider<P, T, C, E extends Throwable> extends ThreadFactory {
+    @SuppressWarnings("rawtypes")
+    static final AtomicIntegerFieldUpdater STATE_FIELD = AtomicIntegerFieldUpdater.newUpdater(AsynchronousExecutor.Task.class, "state");
+    final CallBackProvider<P, T, C, E> provider;
+    final Queue<Task> finished = new ConcurrentLinkedQueue<Task>();
+    final Map<P, Task> tasks = new HashMap<P, Task>();
+    final ThreadPoolExecutor pool;
+    /**
+     * Uses a thread pool to pass executions to the provider.
+     *
+     * @see AsynchronousExecutor
+     */
+    public AsynchronousExecutor(final CallBackProvider<P, T, C, E> provider, final int coreSize) {
+        Validate.notNull(provider, "Provider cannot be null");
+        this.provider = provider;
+
+        // We have an unbound queue size so do not need a max thread size
+        pool = new ThreadPoolExecutor(coreSize, Integer.MAX_VALUE, 60l, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), provider);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static boolean set(AsynchronousExecutor.Task $this, int expected, int value) {
+        return STATE_FIELD.compareAndSet($this, expected, value);
+    }
+
+    /**
+     * Adds a callback to the parameter provided, adding parameter to the queue if needed.
+     * <p>
+     * This should always be synchronous.
+     */
+    public void add(P parameter, C callback) {
+        Task task = tasks.get(parameter);
+        if (task == null) {
+            tasks.put(parameter, task = new Task(parameter));
+            pool.execute(task);
+        }
+        task.callbacks.add(callback);
+    }
+
+    /**
+     * This removes a particular callback from the specified parameter.
+     * <p>
+     * If no callbacks remain for a given parameter, then the {@link CallBackProvider CallBackProvider's} stages may be omitted from execution.
+     * Stage 3 will have no callbacks, stage 2 will be skipped unless a {@link #get(Object)} is used, and stage 1 will be avoided on a best-effort basis.
+     * <p>
+     * Subsequent calls to {@link #getSkipQueue(Object)} will always work.
+     * <p>
+     * Subsequent calls to {@link #get(Object)} might work.
+     * <p>
+     * This should always be synchronous
+     *
+     * @return true if no further execution for the parameter is possible, such that, no exceptions will be thrown in {@link #finishActive()} for the parameter, and {@link #get(Object)} will throw an {@link IllegalStateException}, false otherwise
+     * @throws IllegalStateException if parameter is not in the queue anymore
+     * @throws IllegalStateException if the callback was not specified for given parameter
+     */
+    public boolean drop(P parameter, C callback) throws IllegalStateException {
+        final Task task = tasks.get(parameter);
+        if (task == null) {
+            // Cauldron start - Print debug info for QueuedChunk and avoid crash
+            //throw new IllegalStateException("Unknown " + parameter);
+            System.out.println("Unknown " + parameter);
+            System.out.println("This should not happen. Please report this error to Cauldron dev team.");
+            return false;
+            // Cauldron end
+        }
+        if (!task.callbacks.remove(callback)) {
+            throw new IllegalStateException("Unknown " + callback + " for " + parameter);
+        }
+        if (task.callbacks.isEmpty()) {
+            return task.drop();
+        }
+        return false;
+    }
+
+    /**
+     * This method attempts to skip the waiting period for said parameter.
+     * <p>
+     * This should always be synchronous.
+     *
+     * @throws IllegalStateException if the parameter is not in the queue anymore, or sometimes if called from asynchronous thread
+     */
+    public T get(P parameter) throws E, IllegalStateException {
+        final Task task = tasks.get(parameter);
+        if (task == null) {
+            throw new IllegalStateException("Unknown " + parameter);
+        }
+        return task.get();
+    }
+
+    /**
+     * Processes a parameter as if it was in the queue, without ever passing to another thread.
+     */
+    public T getSkipQueue(P parameter) throws E {
+        return skipQueue(parameter);
+    }
+
+    /**
+     * Processes a parameter as if it was in the queue, without ever passing to another thread.
+     */
+    public T getSkipQueue(P parameter, C callback) throws E {
+        final T object = skipQueue(parameter);
+        provider.callStage3(parameter, object, callback);
+        return object;
+    }
+
+    /**
+     * Processes a parameter as if it was in the queue, without ever passing to another thread.
+     */
+    public T getSkipQueue(P parameter, C... callbacks) throws E {
+        final CallBackProvider<P, T, C, E> provider = this.provider;
+        final T object = skipQueue(parameter);
+        for (C callback : callbacks) {
+            provider.callStage3(parameter, object, callback);
+        }
+        return object;
+    }
+
+    /**
+     * Processes a parameter as if it was in the queue, without ever passing to another thread.
+     */
+    public T getSkipQueue(P parameter, Iterable<C> callbacks) throws E {
+        final CallBackProvider<P, T, C, E> provider = this.provider;
+        final T object = skipQueue(parameter);
+        for (C callback : callbacks) {
+            provider.callStage3(parameter, object, callback);
+        }
+        return object;
+    }
+
+    private T skipQueue(P parameter) throws E {
+        Task task = tasks.get(parameter);
+        if (task != null) {
+            return task.get();
+        }
+        T object = provider.callStage1(parameter);
+        provider.callStage2(parameter, object);
+        return object;
+    }
+
+    /**
+     * This is the 'heartbeat' that should be called synchronously to finish any pending tasks
+     */
+    public void finishActive() throws E {
+        final Queue<Task> finished = this.finished;
+        while (!finished.isEmpty()) {
+            finished.poll().finish();
+        }
+    }
+
+    public void setActiveThreads(final int coreSize) {
+        pool.setCorePoolSize(coreSize);
+    }
+
+    public interface CallBackProvider<P, T, C, E extends Throwable> extends ThreadFactory {
 
         /**
          * Normally an asynchronous call, but can be synchronous
@@ -56,25 +200,16 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
         void callStage3(P parameter, T object, C callback) throws E;
     }
 
-    @SuppressWarnings("rawtypes")
-    static final AtomicIntegerFieldUpdater STATE_FIELD = AtomicIntegerFieldUpdater.newUpdater(AsynchronousExecutor.Task.class, "state");
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static boolean set(AsynchronousExecutor.Task $this, int expected, int value) {
-        return STATE_FIELD.compareAndSet($this, expected, value);
-    }
-
     class Task implements Runnable {
         static final int PENDING = 0x0;
         static final int STAGE_1_ASYNC = PENDING + 1;
         static final int STAGE_1_SYNC = STAGE_1_ASYNC + 1;
         static final int STAGE_1_COMPLETE = STAGE_1_SYNC + 1;
         static final int FINISHED = STAGE_1_COMPLETE + 1;
-
-        volatile int state = PENDING;
         final P parameter;
-        T object;
         final List<C> callbacks = new LinkedList<C>();
+        volatile int state = PENDING;
+        T object;
         E t = null;
 
         Task(final P parameter) {
@@ -212,148 +347,5 @@ public final class AsynchronousExecutor<P, T, C, E extends Throwable> {
                 return false;
             }
         }
-    }
-
-    final CallBackProvider<P, T, C, E> provider;
-    final Queue<Task> finished = new ConcurrentLinkedQueue<Task>();
-    final Map<P, Task> tasks = new HashMap<P, Task>();
-    final ThreadPoolExecutor pool;
-
-    /**
-     * Uses a thread pool to pass executions to the provider.
-     * @see AsynchronousExecutor
-     */
-    public AsynchronousExecutor(final CallBackProvider<P, T, C, E> provider, final int coreSize) {
-        Validate.notNull(provider, "Provider cannot be null");
-        this.provider = provider;
-
-        // We have an unbound queue size so do not need a max thread size
-        pool = new ThreadPoolExecutor(coreSize, Integer.MAX_VALUE, 60l, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), provider);
-    }
-
-    /**
-     * Adds a callback to the parameter provided, adding parameter to the queue if needed.
-     * <p>
-     * This should always be synchronous.
-     */
-    public void add(P parameter, C callback) {
-        Task task = tasks.get(parameter);
-        if (task == null) {
-            tasks.put(parameter, task = new Task(parameter));
-            pool.execute(task);
-        }
-        task.callbacks.add(callback);
-    }
-
-    /**
-     * This removes a particular callback from the specified parameter.
-     * <p>
-     * If no callbacks remain for a given parameter, then the {@link CallBackProvider CallBackProvider's} stages may be omitted from execution.
-     * Stage 3 will have no callbacks, stage 2 will be skipped unless a {@link #get(Object)} is used, and stage 1 will be avoided on a best-effort basis.
-     * <p>
-     * Subsequent calls to {@link #getSkipQueue(Object)} will always work.
-     * <p>
-     * Subsequent calls to {@link #get(Object)} might work.
-     * <p>
-     * This should always be synchronous
-     * @return true if no further execution for the parameter is possible, such that, no exceptions will be thrown in {@link #finishActive()} for the parameter, and {@link #get(Object)} will throw an {@link IllegalStateException}, false otherwise
-     * @throws IllegalStateException if parameter is not in the queue anymore
-     * @throws IllegalStateException if the callback was not specified for given parameter
-     */
-    public boolean drop(P parameter, C callback) throws IllegalStateException {
-        final Task task = tasks.get(parameter);
-        if (task == null) {
-            // Cauldron start - Print debug info for QueuedChunk and avoid crash
-            //throw new IllegalStateException("Unknown " + parameter);
-            System.out.println("Unknown " + parameter);
-            System.out.println("This should not happen. Please report this error to Cauldron dev team.");
-            return false;
-            // Cauldron end
-        }
-        if (!task.callbacks.remove(callback)) {
-            throw new IllegalStateException("Unknown " + callback + " for " + parameter);
-        }
-        if (task.callbacks.isEmpty()) {
-            return task.drop();
-        }
-        return false;
-    }
-
-    /**
-     * This method attempts to skip the waiting period for said parameter.
-     * <p>
-     * This should always be synchronous.
-     * @throws IllegalStateException if the parameter is not in the queue anymore, or sometimes if called from asynchronous thread
-     */
-    public T get(P parameter) throws E, IllegalStateException {
-        final Task task = tasks.get(parameter);
-        if (task == null) {
-            throw new IllegalStateException("Unknown " + parameter);
-        }
-        return task.get();
-    }
-
-    /**
-     * Processes a parameter as if it was in the queue, without ever passing to another thread.
-     */
-    public T getSkipQueue(P parameter) throws E {
-        return skipQueue(parameter);
-    }
-
-    /**
-     * Processes a parameter as if it was in the queue, without ever passing to another thread.
-     */
-    public T getSkipQueue(P parameter, C callback) throws E {
-        final T object = skipQueue(parameter);
-        provider.callStage3(parameter, object, callback);
-        return object;
-    }
-
-    /**
-     * Processes a parameter as if it was in the queue, without ever passing to another thread.
-     */
-    public T getSkipQueue(P parameter, C...callbacks) throws E {
-        final CallBackProvider<P, T, C, E> provider = this.provider;
-        final T object = skipQueue(parameter);
-        for (C callback : callbacks) {
-            provider.callStage3(parameter, object, callback);
-        }
-        return object;
-    }
-
-    /**
-     * Processes a parameter as if it was in the queue, without ever passing to another thread.
-     */
-    public T getSkipQueue(P parameter, Iterable<C> callbacks) throws E {
-        final CallBackProvider<P, T, C, E> provider = this.provider;
-        final T object = skipQueue(parameter);
-        for (C callback : callbacks) {
-            provider.callStage3(parameter, object, callback);
-        }
-        return object;
-    }
-
-    private T skipQueue(P parameter) throws E {
-        Task task = tasks.get(parameter);
-        if (task != null) {
-            return task.get();
-        }
-        T object = provider.callStage1(parameter);
-        provider.callStage2(parameter, object);
-        return object;
-    }
-
-    /**
-     * This is the 'heartbeat' that should be called synchronously to finish any pending tasks
-     */
-    public void finishActive() throws E {
-        final Queue<Task> finished = this.finished;
-        while (!finished.isEmpty()) {
-            finished.poll().finish();
-        }
-    }
-
-    public void setActiveThreads(final int coreSize) {
-        pool.setCorePoolSize(coreSize);
     }
 }

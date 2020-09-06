@@ -1,17 +1,15 @@
 package org.bukkit.craftbukkit.inventory;
 
-import static org.bukkit.craftbukkit.inventory.CraftItemFactory.DEFAULT_LEATHER_COLOR;
-
-import java.util.Map;
-
-
+import com.google.common.collect.ImmutableMap.Builder;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.craftbukkit.inventory.CraftMetaItem.SerializableMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
-import com.google.common.collect.ImmutableMap.Builder;
+import java.util.Map;
+
+import static org.bukkit.craftbukkit.inventory.CraftItemFactory.DEFAULT_LEATHER_COLOR;
 
 @DelegateDeserialization(SerializableMeta.class)
 class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
@@ -64,7 +62,7 @@ class CraftMetaLeatherArmor extends CraftMetaItem implements LeatherArmorMeta {
 
     @Override
     boolean applicableTo(Material type) {
-        switch(type) {
+        switch (type) {
             case LEATHER_HELMET:
             case LEATHER_CHESTPLATE:
             case LEATHER_LEGGINGS:

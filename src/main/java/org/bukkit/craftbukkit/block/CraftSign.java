@@ -24,6 +24,20 @@ public class CraftSign extends CraftBlockState implements Sign {
         System.arraycopy(sign.signText, 0, lines, 0, lines.length);
     }
 
+    public static String[] sanitizeLines(String[] lines) {
+        String[] astring = new String[4];
+
+        for (int i = 0; i < 4; i++) {
+            if (i < lines.length && lines[i] != null) {
+                astring[i] = lines[i];
+            } else {
+                astring[i] = "";
+            }
+        }
+
+        return TileEntitySign.sanitizeLines(astring);
+    }
+
     public String[] getLines() {
         return lines;
     }
@@ -46,19 +60,5 @@ public class CraftSign extends CraftBlockState implements Sign {
         }
 
         return result;
-    }
-
-    public static String[] sanitizeLines(String[] lines) {
-        String[] astring = new String[4];
-
-            for(int i = 0; i < 4; i++) {
-            if (i < lines.length && lines[i] != null) {
-                astring[i] = lines[i];
-                } else {
-                astring[i] = "";
-            }
-        }
-
-        return TileEntitySign.sanitizeLines(astring);
     }
 }

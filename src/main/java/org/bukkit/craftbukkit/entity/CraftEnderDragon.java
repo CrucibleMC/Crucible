@@ -2,16 +2,14 @@ package org.bukkit.craftbukkit.entity;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-
-import java.util.Set;
-
-import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.boss.EntityDragon;
-
+import net.minecraft.entity.boss.EntityDragonPart;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.ComplexEntityPart;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
+
+import java.util.Set;
 
 public class CraftEnderDragon extends CraftComplexLivingEntity implements EnderDragon {
     public CraftEnderDragon(CraftServer server, EntityDragon entity) {

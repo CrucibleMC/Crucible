@@ -61,7 +61,7 @@ public abstract class LazyHashSet<E> implements Set<E> {
     }
 
     public Set<E> getReference() {
-        Set<E> reference = this.reference ;
+        Set<E> reference = this.reference;
         if (reference != null) {
             return reference;
         }

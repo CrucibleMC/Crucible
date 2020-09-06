@@ -1,25 +1,22 @@
 package org.bukkit.craftbukkit;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.UserListBans;
 import net.minecraft.server.management.UserListBansEntry;
 import net.minecraft.server.management.UserListEntry;
-
-import com.mojang.authlib.GameProfile;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
-import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
+import java.util.Date;
+import java.util.Set;
 
 public class CraftProfileBanList implements org.bukkit.BanList {
     private final UserListBans list;
 
-    public CraftProfileBanList(UserListBans list){
+    public CraftProfileBanList(UserListBans list) {
         this.list = list;
     }
 

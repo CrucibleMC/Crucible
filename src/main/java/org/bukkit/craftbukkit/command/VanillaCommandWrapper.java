@@ -1,23 +1,21 @@
 package org.bukkit.craftbukkit.command;
 
-import java.util.List;
-
-
 import net.minecraft.entity.EntityMinecartCommandBlockListener;
 import net.minecraft.tileentity.TileEntityCommandBlockListener;
-
 import org.apache.commons.lang.Validate;
 import org.apache.logging.log4j.Level;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.RemoteConsoleCommandSender;
-import org.bukkit.command.defaults.*;
+import org.bukkit.command.defaults.VanillaCommand;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftMinecartCommand;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.CommandMinecart;
+
+import java.util.List;
 
 public final class VanillaCommandWrapper extends VanillaCommand {
     protected final net.minecraft.command.CommandBase vanillaCommand;
@@ -47,7 +45,7 @@ public final class VanillaCommandWrapper extends VanillaCommand {
         try {
             vanillaCommand.processCommand(icommandlistener, args);
         } catch (net.minecraft.command.WrongUsageException exceptionusage) {
-            net.minecraft.util.ChatComponentTranslation chatmessage = new net.minecraft.util.ChatComponentTranslation("commands.generic.usage", new Object[] {new net.minecraft.util.ChatComponentTranslation(exceptionusage.getMessage(), exceptionusage.getErrorOjbects())});
+            net.minecraft.util.ChatComponentTranslation chatmessage = new net.minecraft.util.ChatComponentTranslation("commands.generic.usage", new net.minecraft.util.ChatComponentTranslation(exceptionusage.getMessage(), exceptionusage.getErrorOjbects()));
             chatmessage.getChatStyle().setColor(net.minecraft.util.EnumChatFormatting.RED);
             icommandlistener.addChatMessage(chatmessage);
         } catch (net.minecraft.command.CommandException commandexception) {
@@ -74,7 +72,7 @@ public final class VanillaCommandWrapper extends VanillaCommand {
         if (s.startsWith("/")) {
             s = s.substring(1);
         }
-        String as[] = s.split(" ");
+        String[] as = s.split(" ");
         as = dropFirstArgument(as);
         int i = getPlayerListSize(as);
         int j = 0;
@@ -85,11 +83,11 @@ public final class VanillaCommandWrapper extends VanillaCommand {
         try {
             if (vanillaCommand.canCommandSenderUseCommand(icommandlistener)) {
                 if (i > -1) {
-                    net.minecraft.entity.player.EntityPlayerMP aentityplayer[] = net.minecraft.command.PlayerSelector.matchPlayers(icommandlistener, as[i]);
+                    net.minecraft.entity.player.EntityPlayerMP[] aentityplayer = net.minecraft.command.PlayerSelector.matchPlayers(icommandlistener, as[i]);
                     String s2 = as[i];
-                    net.minecraft.entity.player.EntityPlayerMP aentityplayer1[] = aentityplayer;
+                    net.minecraft.entity.player.EntityPlayerMP[] aentityplayer1 = aentityplayer;
                     int k = aentityplayer1.length;
-                    for (int l = 0; l < k;) {
+                    for (int l = 0; l < k; ) {
                         net.minecraft.entity.player.EntityPlayerMP entityplayer = aentityplayer1[l];
                         as[i] = entityplayer.getCommandSenderName();
                         try {
@@ -110,12 +108,12 @@ public final class VanillaCommandWrapper extends VanillaCommand {
                     j++;
                 }
             } else {
-                net.minecraft.util.ChatComponentTranslation chatmessage = new net.minecraft.util.ChatComponentTranslation("commands.generic.permission", new Object[0]);
+                net.minecraft.util.ChatComponentTranslation chatmessage = new net.minecraft.util.ChatComponentTranslation("commands.generic.permission");
                 chatmessage.getChatStyle().setColor(net.minecraft.util.EnumChatFormatting.RED);
                 icommandlistener.addChatMessage(chatmessage);
             }
         } catch (net.minecraft.command.WrongUsageException exceptionusage) {
-            net.minecraft.util.ChatComponentTranslation chatmessage1 = new net.minecraft.util.ChatComponentTranslation("commands.generic.usage", new Object[] { new net.minecraft.util.ChatComponentTranslation(exceptionusage.getMessage(), exceptionusage.getErrorOjbects()) });
+            net.minecraft.util.ChatComponentTranslation chatmessage1 = new net.minecraft.util.ChatComponentTranslation("commands.generic.usage", new net.minecraft.util.ChatComponentTranslation(exceptionusage.getMessage(), exceptionusage.getErrorOjbects()));
             chatmessage1.getChatStyle().setColor(net.minecraft.util.EnumChatFormatting.RED);
             icommandlistener.addChatMessage(chatmessage1);
         } catch (net.minecraft.command.CommandException commandexception) {
@@ -123,10 +121,10 @@ public final class VanillaCommandWrapper extends VanillaCommand {
             chatmessage2.getChatStyle().setColor(net.minecraft.util.EnumChatFormatting.RED);
             icommandlistener.addChatMessage(chatmessage2);
         } catch (Throwable throwable) {
-            net.minecraft.util.ChatComponentTranslation chatmessage3 = new net.minecraft.util.ChatComponentTranslation("commands.generic.exception", new Object[0]);
+            net.minecraft.util.ChatComponentTranslation chatmessage3 = new net.minecraft.util.ChatComponentTranslation("commands.generic.exception");
             chatmessage3.getChatStyle().setColor(net.minecraft.util.EnumChatFormatting.RED);
             icommandlistener.addChatMessage(chatmessage3);
-            if(icommandlistener instanceof TileEntityCommandBlockListener) {
+            if (icommandlistener instanceof TileEntityCommandBlockListener) {
                 TileEntityCommandBlockListener listener = (TileEntityCommandBlockListener) icommandlistener;
                 net.minecraft.server.MinecraftServer.getLogger().log(Level.WARN, String.format("CommandBlock at (%d,%d,%d) failed to handle command", listener.getPlayerCoordinates().posX, listener.getPlayerCoordinates().posY, listener.getPlayerCoordinates().posZ), throwable);
             } else if (icommandlistener instanceof EntityMinecartCommandBlockListener) {
@@ -160,7 +158,7 @@ public final class VanillaCommandWrapper extends VanillaCommand {
         return null;
     }
 
-    private int getPlayerListSize(String as[]) {
+    private int getPlayerListSize(String[] as) {
         for (int i = 0; i < as.length; i++) {
             if (vanillaCommand.isUsernameIndex(as, i) && net.minecraft.command.PlayerSelector.matchesMultiplePlayers(as[i])) {
                 return i;
@@ -169,8 +167,8 @@ public final class VanillaCommandWrapper extends VanillaCommand {
         return -1;
     }
 
-    private String[] dropFirstArgument(String as[]) {
-        String as1[] = new String[as.length - 1];
+    private String[] dropFirstArgument(String[] as) {
+        String[] as1 = new String[as.length - 1];
         for (int i = 1; i < as.length; i++) {
             as1[i - 1] = as[i];
         }

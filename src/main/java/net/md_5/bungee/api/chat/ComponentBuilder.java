@@ -1,16 +1,13 @@
 package net.md_5.bungee.api.chat;
 
+import net.md_5.bungee.api.ChatColor;
+
 import java.util.ArrayList;
 import java.util.List;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public class ComponentBuilder {
-    private TextComponent current;
     private final List<BaseComponent> parts = new ArrayList<BaseComponent>();
+    private TextComponent current;
 
     public ComponentBuilder(ComponentBuilder original) {
         this.current = new TextComponent(original.current);
@@ -108,14 +105,14 @@ public class ComponentBuilder {
         return this.parts.toArray(new BaseComponent[this.parts.size()]);
     }
 
-    public static enum FormatRetention {
+    public enum FormatRetention {
         NONE,
         FORMATTING,
         EVENTS,
         ALL;
-        
 
-        private FormatRetention() {
+
+        FormatRetention() {
         }
     }
 

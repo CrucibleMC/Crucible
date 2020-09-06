@@ -1,13 +1,12 @@
 package org.bukkit.craftbukkit.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
 import org.bukkit.BlockChangeDelegate;
 import org.bukkit.block.BlockState;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.material.MaterialData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StructureGrowDelegate implements BlockChangeDelegate {
     private final CraftWorld world;

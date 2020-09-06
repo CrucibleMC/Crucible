@@ -1,12 +1,5 @@
 package org.bukkit.craftbukkit.map;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -14,13 +7,16 @@ import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
+import java.util.*;
+
 public final class CraftMapView implements MapView {
 
-    private final Map<CraftPlayer, RenderData> renderCache = new HashMap<CraftPlayer, RenderData>();
     public final List<MapRenderer> renderers = new ArrayList<MapRenderer>(); // Spigot
-    private final Map<MapRenderer, Map<CraftPlayer, CraftMapCanvas>> canvases = new HashMap<MapRenderer, Map<CraftPlayer, CraftMapCanvas>>();
     protected final net.minecraft.world.storage.MapData worldMap;
+    private final Map<CraftPlayer, RenderData> renderCache = new HashMap<CraftPlayer, RenderData>();
+    private final Map<MapRenderer, Map<CraftPlayer, CraftMapCanvas>> canvases = new HashMap<MapRenderer, Map<CraftPlayer, CraftMapCanvas>>();
     public MapRenderer defaultRenderer;
+
     public CraftMapView(net.minecraft.world.storage.MapData worldMap) {
         this.worldMap = worldMap;
         addRenderer(new CraftMapRenderer(this, worldMap));
@@ -31,8 +27,7 @@ public final class CraftMapView implements MapView {
         if (text.startsWith("map_")) {
             try {
                 return Short.parseShort(text.substring("map_".length()));
-            }
-            catch (NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 throw new IllegalStateException("Map has non-numeric ID");
             }
         } else {
@@ -70,12 +65,12 @@ public final class CraftMapView implements MapView {
         return worldMap.xCenter;
     }
 
-    public int getCenterZ() {
-        return worldMap.zCenter;
-    }
-
     public void setCenterX(int x) {
         worldMap.xCenter = x;
+    }
+
+    public int getCenterZ() {
+        return worldMap.zCenter;
     }
 
     public void setCenterZ(int z) {
@@ -127,7 +122,7 @@ public final class CraftMapView implements MapView {
             renderCache.put(context ? player : null, render);
         }
 
-        if (context && renderCache.containsKey(null)) {
+        if (context) {
             renderCache.remove(null);
         }
 

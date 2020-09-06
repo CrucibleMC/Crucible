@@ -1,27 +1,26 @@
 package org.bukkit.craftbukkit.inventory;
 
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.Slot;
-
 
 public class CraftContainer extends net.minecraft.inventory.Container {
     private final InventoryView view;
+    private final int cachedSize;
     private InventoryType cachedType;
     private String cachedTitle;
-    private final int cachedSize;
 
     public CraftContainer(InventoryView view, int id) {
         this.view = view;
         this.windowId = id;
         // TODO: Do we need to check that it really is a CraftInventory?
-        net.minecraft.inventory.IInventory top = ((CraftInventory)view.getTopInventory()).getInventory();
-        net.minecraft.inventory.IInventory bottom = ((CraftInventory)view.getBottomInventory()).getInventory();
+        net.minecraft.inventory.IInventory top = ((CraftInventory) view.getTopInventory()).getInventory();
+        net.minecraft.inventory.IInventory bottom = ((CraftInventory) view.getBottomInventory()).getInventory();
         cachedType = view.getType();
         cachedTitle = view.getTitle();
         cachedSize = getSize();
@@ -52,6 +51,40 @@ public class CraftContainer extends net.minecraft.inventory.Container {
         }, id);
     }
 
+    public static int getNotchInventoryType(InventoryType type) {
+        int typeID;
+        switch (type) {
+            case WORKBENCH:
+                typeID = 1;
+                break;
+            case FURNACE:
+                typeID = 2;
+                break;
+            case DISPENSER:
+                typeID = 3;
+                break;
+            case ENCHANTING:
+                typeID = 4;
+                break;
+            case BREWING:
+                typeID = 5;
+                break;
+            case BEACON:
+                typeID = 7;
+                break;
+            case ANVIL:
+                typeID = 8;
+                break;
+            case HOPPER:
+                typeID = 9;
+                break;
+            default:
+                typeID = 0;
+                break;
+        }
+        return typeID;
+    }
+
     @Override
     public InventoryView getBukkitView() {
         return view;
@@ -79,8 +112,8 @@ public class CraftContainer extends net.minecraft.inventory.Container {
         if (view.getPlayer() instanceof CraftPlayer) {
             CraftPlayer player = (CraftPlayer) view.getPlayer();
             int type = getNotchInventoryType(cachedType);
-            net.minecraft.inventory.IInventory top = ((CraftInventory)view.getTopInventory()).getInventory();
-            net.minecraft.inventory.IInventory bottom = ((CraftInventory)view.getBottomInventory()).getInventory();
+            net.minecraft.inventory.IInventory top = ((CraftInventory) view.getTopInventory()).getInventory();
+            net.minecraft.inventory.IInventory bottom = ((CraftInventory) view.getBottomInventory()).getInventory();
             this.inventoryItemStacks.clear();
             this.inventorySlots.clear();
             if (typeChanged) {
@@ -93,81 +126,46 @@ public class CraftContainer extends net.minecraft.inventory.Container {
         return true;
     }
 
-    public static int getNotchInventoryType(InventoryType type) {
-        int typeID;
-        switch(type) {
-        case WORKBENCH:
-            typeID = 1;
-            break;
-        case FURNACE:
-            typeID = 2;
-            break;
-        case DISPENSER:
-            typeID = 3;
-            break;
-        case ENCHANTING:
-            typeID = 4;
-            break;
-        case BREWING:
-            typeID = 5;
-            break;
-        case BEACON:
-            typeID = 7;
-            break;
-        case ANVIL:
-            typeID = 8;
-            break;
-        case HOPPER:
-            typeID = 9;
-            break;
-        default:
-            typeID = 0;
-            break;
-        }
-        return typeID;
-    }
-
-    private void setupSlots(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom, Container ... openContainer) {
-        switch(cachedType) {
-        case CREATIVE:
-            break; // TODO: This should be an error?
-        case PLAYER:
-        case CHEST:
-            setupChest(top, bottom);
-            break;
-        case DISPENSER:
-            setupDispenser(top, bottom);
-            break;
-        case FURNACE:
-            setupFurnace(top, bottom);
-            break;
-        case CRAFTING: // TODO: This should be an error?
-        case WORKBENCH:
-            setupWorkbench(top, bottom);
-            break;
-        case ENCHANTING:
-            setupEnchanting(top, bottom);
-            break;
-        case BREWING:
-            setupBrewing(top, bottom);
-            break;
-        case HOPPER:
-            setupHopper(top, bottom);
-            break;
-        default: // Thermos handle setup for custom inventories
-        	if(openContainer.length > 0)
-        		setupCustomInventory(top, bottom, openContainer[0]);
-        	break;
+    private void setupSlots(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom, Container... openContainer) {
+        switch (cachedType) {
+            case CREATIVE:
+                break; // TODO: This should be an error?
+            case PLAYER:
+            case CHEST:
+                setupChest(top, bottom);
+                break;
+            case DISPENSER:
+                setupDispenser(top, bottom);
+                break;
+            case FURNACE:
+                setupFurnace(top, bottom);
+                break;
+            case CRAFTING: // TODO: This should be an error?
+            case WORKBENCH:
+                setupWorkbench(top, bottom);
+                break;
+            case ENCHANTING:
+                setupEnchanting(top, bottom);
+                break;
+            case BREWING:
+                setupBrewing(top, bottom);
+                break;
+            case HOPPER:
+                setupHopper(top, bottom);
+                break;
+            default: // Thermos handle setup for custom inventories
+                if (openContainer.length > 0)
+                    setupCustomInventory(top, bottom, openContainer[0]);
+                break;
         }
     }
 
     private void setupCustomInventory(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom, Container openContainer) {
-        for (Slot s : openContainer.inventorySlots)
-        {
-        	this.addSlotToContainer(s);
+        for (Slot s : openContainer.inventorySlots) {
+            this.addSlotToContainer(s);
         }
     }
-    
+
     private void setupChest(net.minecraft.inventory.IInventory top, net.minecraft.inventory.IInventory bottom) {
         int rows = top.getSizeInventory() / 9;
         int row;

@@ -1,10 +1,5 @@
 package org.bukkit.craftbukkit.util;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-
 import org.bukkit.Achievement;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -14,11 +9,16 @@ import org.bukkit.craftbukkit.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 @SuppressWarnings("deprecation")
 public final class CraftMagicNumbers implements UnsafeValues {
     public static final UnsafeValues INSTANCE = new CraftMagicNumbers();
 
-    private CraftMagicNumbers() {}
+    private CraftMagicNumbers() {
+    }
 
     public static net.minecraft.block.Block getBlock(org.bukkit.block.Block block) {
         return getBlock(block.getType());
@@ -95,12 +95,9 @@ public final class CraftMagicNumbers implements UnsafeValues {
     public ItemStack modifyItemStack(ItemStack stack, String arguments) {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
-        try
-        {
+        try {
             nmsStack.setTagCompound((net.minecraft.nbt.NBTTagCompound) net.minecraft.nbt.JsonToNBT.func_150315_a(arguments));
-        }
-        catch (net.minecraft.nbt.NBTException e)
-        {
+        } catch (net.minecraft.nbt.NBTException e) {
             e.printStackTrace();
         }
 

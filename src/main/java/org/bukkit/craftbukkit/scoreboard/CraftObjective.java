@@ -55,6 +55,19 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
         return !criteria.criteria.isReadOnly();
     }
 
+    public DisplaySlot getDisplaySlot() throws IllegalStateException {
+        CraftScoreboard scoreboard = checkState();
+        net.minecraft.scoreboard.Scoreboard board = scoreboard.board;
+        net.minecraft.scoreboard.ScoreObjective objective = this.objective;
+
+        for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
+            if (board.func_96539_a(i) == objective) {
+                return CraftScoreboardTranslations.toBukkitSlot(i);
+            }
+        }
+        return null;
+    }
+
     public void setDisplaySlot(DisplaySlot slot) throws IllegalStateException {
         CraftScoreboard scoreboard = checkState();
         net.minecraft.scoreboard.Scoreboard board = scoreboard.board;
@@ -69,19 +82,6 @@ final class CraftObjective extends CraftScoreboardComponent implements Objective
             int slotNumber = CraftScoreboardTranslations.fromBukkitSlot(slot);
             board.func_96530_a(slotNumber, getHandle());
         }
-    }
-
-    public DisplaySlot getDisplaySlot() throws IllegalStateException {
-        CraftScoreboard scoreboard = checkState();
-        net.minecraft.scoreboard.Scoreboard board = scoreboard.board;
-        net.minecraft.scoreboard.ScoreObjective objective = this.objective;
-
-        for (int i = 0; i < CraftScoreboardTranslations.MAX_DISPLAY_SLOT; i++) {
-            if (board.func_96539_a(i) == objective) {
-                return CraftScoreboardTranslations.toBukkitSlot(i);
-            }
-        }
-        return null;
     }
 
     public Score getScore(OfflinePlayer player) throws IllegalArgumentException, IllegalStateException {

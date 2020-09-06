@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.block;
 
 import net.minecraft.tileentity.TileEntityChest;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
@@ -41,7 +40,7 @@ public class CraftChest extends CraftBlockState implements Chest {
         }
 
         if (world.getBlockTypeIdAt(x - 1, y, z) == id) {
-            CraftInventory left = new CraftInventory((TileEntityChest)world.getHandle().getTileEntity(x - 1, y, z));
+            CraftInventory left = new CraftInventory((TileEntityChest) world.getHandle().getTileEntity(x - 1, y, z));
             inventory = new CraftInventoryDoubleChest(left, inventory);
         }
         if (world.getBlockTypeIdAt(x + 1, y, z) == id) {

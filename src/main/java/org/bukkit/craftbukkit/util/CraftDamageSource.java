@@ -3,6 +3,10 @@ package org.bukkit.craftbukkit.util;
 
 // Util class to create custom DamageSources.
 public final class CraftDamageSource extends net.minecraft.util.DamageSource {
+    private CraftDamageSource(String identifier) {
+        super(identifier);
+    }
+
     public static net.minecraft.util.DamageSource copyOf(final net.minecraft.util.DamageSource original) {
         CraftDamageSource newSource = new CraftDamageSource(original.damageType);
 
@@ -22,9 +26,5 @@ public final class CraftDamageSource extends net.minecraft.util.DamageSource {
         }
 
         return newSource;
-    }
-
-    private CraftDamageSource(String identifier) {
-        super(identifier);
     }
 }

@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.entity;
 
 
 import org.apache.commons.lang.Validate;
-
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.CraftServer;
@@ -16,6 +15,22 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         super(server, entity);
     }
 
+    static int toInteger(Rotation rotation) {
+        // Translate Bukkit API rotation to NMS integer
+        switch (rotation) {
+            case NONE:
+                return 0;
+            case CLOCKWISE:
+                return 1;
+            case FLIPPED:
+                return 2;
+            case COUNTER_CLOCKWISE:
+                return 3;
+            default:
+                throw new IllegalArgumentException(rotation + " is not applicable to an ItemFrame");
+        }
+    }
+
     public boolean setFacingDirection(BlockFace face, boolean force) {
         if (!super.setFacingDirection(face, force)) {
             return false;
@@ -27,6 +42,10 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         return true;
     }
 
+    public org.bukkit.inventory.ItemStack getItem() {
+        return CraftItemStack.asBukkitCopy(getHandle().getDisplayedItem());
+    }
+
     public void setItem(org.bukkit.inventory.ItemStack item) {
         if (item == null || item.getTypeId() == 0) {
             getHandle().getDataWatcher().addObjectByDataType(2, 5);
@@ -36,28 +55,8 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         }
     }
 
-    public org.bukkit.inventory.ItemStack getItem() {
-        return CraftItemStack.asBukkitCopy(getHandle().getDisplayedItem());
-    }
-
     public Rotation getRotation() {
         return toBukkitRotation(getHandle().getRotation());
-    }
-
-    Rotation toBukkitRotation(int value) {
-        // Translate NMS rotation integer to Bukkit API
-        switch (value) {
-        case 0:
-            return Rotation.NONE;
-        case 1:
-            return Rotation.CLOCKWISE;
-        case 2:
-            return Rotation.FLIPPED;
-        case 3:
-            return Rotation.COUNTER_CLOCKWISE;
-        default:
-            throw new AssertionError("Unknown rotation " + value + " for " + getHandle());
-        }
     }
 
     public void setRotation(Rotation rotation) {
@@ -65,19 +64,19 @@ public class CraftItemFrame extends CraftHanging implements ItemFrame {
         getHandle().setItemRotation(toInteger(rotation));
     }
 
-    static int toInteger(Rotation rotation) {
-        // Translate Bukkit API rotation to NMS integer
-        switch (rotation) {
-        case NONE:
-            return 0;
-        case CLOCKWISE:
-            return 1;
-        case FLIPPED:
-            return 2;
-        case COUNTER_CLOCKWISE:
-            return 3;
-        default:
-            throw new IllegalArgumentException(rotation + " is not applicable to an ItemFrame");
+    Rotation toBukkitRotation(int value) {
+        // Translate NMS rotation integer to Bukkit API
+        switch (value) {
+            case 0:
+                return Rotation.NONE;
+            case 1:
+                return Rotation.CLOCKWISE;
+            case 2:
+                return Rotation.FLIPPED;
+            case 3:
+                return Rotation.COUNTER_CLOCKWISE;
+            default:
+                throw new AssertionError("Unknown rotation " + value + " for " + getHandle());
         }
     }
 

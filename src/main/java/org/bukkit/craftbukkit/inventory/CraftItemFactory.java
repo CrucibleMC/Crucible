@@ -1,7 +1,6 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.util.Collection;
-
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -10,7 +9,7 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 
 public final class CraftItemFactory implements ItemFactory {
     static final Color DEFAULT_LEATHER_COLOR = Color.fromRGB(0xA06540);
@@ -21,17 +20,21 @@ public final class CraftItemFactory implements ItemFactory {
         instance = new CraftItemFactory();
         ConfigurationSerialization.registerClass(CraftMetaItem.SerializableMeta.class);
         KNOWN_NBT_ATTRIBUTE_NAMES = ImmutableSet.<String>builder()
-            .add("generic.attackDamage")
-            .add("generic.followRange")
-            .add("generic.knockbackResistance")
-            .add("generic.maxHealth")
-            .add("generic.movementSpeed")
-            .add("horse.jumpStrength")
-            .add("zombie.spawnReinforcements")
-            .build();
+                .add("generic.attackDamage")
+                .add("generic.followRange")
+                .add("generic.knockbackResistance")
+                .add("generic.maxHealth")
+                .add("generic.movementSpeed")
+                .add("horse.jumpStrength")
+                .add("zombie.spawnReinforcements")
+                .build();
     }
 
     private CraftItemFactory() {
+    }
+
+    public static CraftItemFactory instance() {
+        return instance;
     }
 
     public boolean isApplicable(ItemMeta meta, ItemStack itemstack) {
@@ -59,30 +62,30 @@ public final class CraftItemFactory implements ItemFactory {
 
     private ItemMeta getItemMeta(Material material, CraftMetaItem meta) {
         switch (material) {
-        case AIR:
-            return null;
-        case WRITTEN_BOOK:
-        case BOOK_AND_QUILL:
-            return meta instanceof CraftMetaBook ? meta : new CraftMetaBook(meta);
-        case SKULL_ITEM:
-            return meta instanceof CraftMetaSkull ? meta : new CraftMetaSkull(meta);
-        case LEATHER_HELMET:
-        case LEATHER_CHESTPLATE:
-        case LEATHER_LEGGINGS:
-        case LEATHER_BOOTS:
-            return meta instanceof CraftMetaLeatherArmor ? meta : new CraftMetaLeatherArmor(meta);
-        case POTION:
-            return meta instanceof CraftMetaPotion ? meta : new CraftMetaPotion(meta);
-        case MAP:
-            return meta instanceof CraftMetaMap ? meta : new CraftMetaMap(meta);
-        case FIREWORK:
-            return meta instanceof CraftMetaFirework ? meta : new CraftMetaFirework(meta);
-        case FIREWORK_CHARGE:
-            return meta instanceof CraftMetaCharge ? meta : new CraftMetaCharge(meta);
-        case ENCHANTED_BOOK:
-            return meta instanceof CraftMetaEnchantedBook ? meta : new CraftMetaEnchantedBook(meta);
-        default:
-            return new CraftMetaItem(meta);
+            case AIR:
+                return null;
+            case WRITTEN_BOOK:
+            case BOOK_AND_QUILL:
+                return meta instanceof CraftMetaBook ? meta : new CraftMetaBook(meta);
+            case SKULL_ITEM:
+                return meta instanceof CraftMetaSkull ? meta : new CraftMetaSkull(meta);
+            case LEATHER_HELMET:
+            case LEATHER_CHESTPLATE:
+            case LEATHER_LEGGINGS:
+            case LEATHER_BOOTS:
+                return meta instanceof CraftMetaLeatherArmor ? meta : new CraftMetaLeatherArmor(meta);
+            case POTION:
+                return meta instanceof CraftMetaPotion ? meta : new CraftMetaPotion(meta);
+            case MAP:
+                return meta instanceof CraftMetaMap ? meta : new CraftMetaMap(meta);
+            case FIREWORK:
+                return meta instanceof CraftMetaFirework ? meta : new CraftMetaFirework(meta);
+            case FIREWORK_CHARGE:
+                return meta instanceof CraftMetaCharge ? meta : new CraftMetaCharge(meta);
+            case ENCHANTED_BOOK:
+                return meta instanceof CraftMetaEnchantedBook ? meta : new CraftMetaEnchantedBook(meta);
+            default:
+                return new CraftMetaItem(meta);
         }
     }
 
@@ -117,10 +120,6 @@ public final class CraftItemFactory implements ItemFactory {
          * Doing it this way fills all conditions of the .equals() method.
          */
         return meta1.equalsCommon(meta2) && meta1.notUncommon(meta2) && meta2.notUncommon(meta1);
-    }
-
-    public static CraftItemFactory instance() {
-        return instance;
     }
 
     public ItemMeta asMetaFor(ItemMeta meta, ItemStack stack) {

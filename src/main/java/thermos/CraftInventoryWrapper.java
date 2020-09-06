@@ -1,17 +1,16 @@
 package thermos;
 
-import java.util.Collections;
-import java.util.List;
-
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import org.bukkit.craftbukkit.entity.CraftHumanEntity;
 import org.bukkit.craftbukkit.inventory.CraftInventory;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
+import java.util.Collections;
+import java.util.List;
 
 public class CraftInventoryWrapper extends CraftInventory {
     public CraftInventoryWrapper(IInventory inventory) {

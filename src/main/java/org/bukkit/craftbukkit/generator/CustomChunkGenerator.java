@@ -1,31 +1,18 @@
 package org.bukkit.craftbukkit.generator;
 
-import java.util.List;
-import java.util.Random;
-
-
 import org.bukkit.block.Biome;
+import org.bukkit.craftbukkit.block.CraftBlock;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.craftbukkit.block.CraftBlock;
+
+import java.util.List;
+import java.util.Random;
 
 public class CustomChunkGenerator extends InternalChunkGenerator {
     private final ChunkGenerator generator;
     private final net.minecraft.world.WorldServer world;
     private final Random random;
     private final net.minecraft.world.gen.structure.MapGenStronghold strongholdGen = new net.minecraft.world.gen.structure.MapGenStronghold();
-
-    private static class CustomBiomeGrid implements BiomeGrid {
-        net.minecraft.world.biome.BiomeGenBase[] biome;
-
-        public Biome getBiome(int x, int z) {
-            return CraftBlock.biomeBaseToBiome(biome[(z << 4) | x]);
-        }
-
-        public void setBiome(int x, int z, Biome bio) {
-           biome[(z << 4) | x] = CraftBlock.biomeToBiomeBase(bio);
-        }
-    }
 
     public CustomChunkGenerator(net.minecraft.world.World world, long seed, ChunkGenerator generator) {
         this.world = (net.minecraft.world.WorldServer) world;
@@ -90,8 +77,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
                 // Build chunk section
                 csect[sec] = new net.minecraft.world.chunk.storage.ExtendedBlockStorage(sec << 4, true, secBlkID, secExtBlkID);
             }
-        }
-        else { // Else check for byte-per-block section data
+        } else { // Else check for byte-per-block section data
             byte[][] btypes = generator.generateBlockSections(this.world.getWorld(), this.random, x, z, biomegrid);
 
             if (btypes != null) {
@@ -106,8 +92,7 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
                     }
                     csect[sec] = new net.minecraft.world.chunk.storage.ExtendedBlockStorage(sec << 4, true, btypes[sec], null);
                 }
-            }
-            else { // Else, fall back to pre 1.2 method
+            } else { // Else, fall back to pre 1.2 method
                 @SuppressWarnings("deprecation")
                 byte[] types = generator.generate(this.world.getWorld(), this.random, x, z);
                 int ydim = types.length / 256;
@@ -229,7 +214,8 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
         return "Stronghold".equals(type) && this.strongholdGen != null ? this.strongholdGen.func_151545_a(world, x, y, z) : null;
     }
 
-    public void recreateStructures(int i, int j) {}
+    public void recreateStructures(int i, int j) {
+    }
 
     public int getLoadedChunkCount() {
         return 0;
@@ -246,5 +232,18 @@ public class CustomChunkGenerator extends InternalChunkGenerator {
      * Save extra data not associated with any Chunk.  Not saved during autosave, only during world unload.  Currently
      * unimplemented.
      */
-    public void saveExtraData() {}
+    public void saveExtraData() {
+    }
+
+    private static class CustomBiomeGrid implements BiomeGrid {
+        net.minecraft.world.biome.BiomeGenBase[] biome;
+
+        public Biome getBiome(int x, int z) {
+            return CraftBlock.biomeBaseToBiome(biome[(z << 4) | x]);
+        }
+
+        public void setBiome(int x, int z, Biome bio) {
+            biome[(z << 4) | x] = CraftBlock.biomeToBiomeBase(bio);
+        }
+    }
 }

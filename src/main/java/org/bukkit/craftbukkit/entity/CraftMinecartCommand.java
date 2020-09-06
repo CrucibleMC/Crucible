@@ -1,8 +1,5 @@
 package org.bukkit.craftbukkit.entity;
 
-import java.util.Set;
-
-
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.craftbukkit.CraftServer;
@@ -13,6 +10,8 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
+
+import java.util.Set;
 
 public class CraftMinecartCommand extends CraftMinecart implements CommandMinecart {
     private final PermissibleBase perm = new PermissibleBase(this);
@@ -32,11 +31,6 @@ public class CraftMinecartCommand extends CraftMinecart implements CommandMineca
     }
 
     @Override
-    public void setName(String name) {
-        ((net.minecraft.entity.EntityMinecartCommandBlock) getHandle()).func_145822_e().func_145754_b(name != null ? name : "@");
-    }
-
-    @Override
     public EntityType getType() {
         return EntityType.MINECART_COMMAND;
     }
@@ -52,6 +46,11 @@ public class CraftMinecartCommand extends CraftMinecart implements CommandMineca
     @Override
     public String getName() {
         return ((net.minecraft.entity.EntityMinecartCommandBlock) getHandle()).func_145822_e().getCommandSenderName();
+    }
+
+    @Override
+    public void setName(String name) {
+        ((net.minecraft.entity.EntityMinecartCommandBlock) getHandle()).func_145822_e().func_145754_b(name != null ? name : "@");
     }
 
     @Override

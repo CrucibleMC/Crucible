@@ -1,9 +1,8 @@
 package org.bukkit.craftbukkit.block;
 
+import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntitySkull;
-import com.mojang.authlib.GameProfile;
-
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -45,7 +44,7 @@ public class CraftSkull extends CraftBlockState implements Skull {
     }
 
     static int getSkullType(SkullType type) {
-        switch(type) {
+        switch (type) {
             case SKELETON:
                 return 0;
             case WITHER:
@@ -152,7 +151,7 @@ public class CraftSkull extends CraftBlockState implements Skull {
             return false;
         }
 
-        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a (name);
+        GameProfile profile = MinecraftServer.getServer().func_152358_ax().func_152655_a(name);
         if (profile == null) {
             return false;
         }

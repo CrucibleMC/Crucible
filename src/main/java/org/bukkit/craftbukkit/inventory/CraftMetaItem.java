@@ -1,19 +1,8 @@
 package org.bukkit.craftbukkit.inventory;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
-
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -25,9 +14,13 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.Repairable;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * Children must include the following:
@@ -54,116 +47,6 @@ import com.google.common.collect.ImmutableMap;
 @DelegateDeserialization(CraftMetaItem.SerializableMeta.class)
 class CraftMetaItem implements ItemMeta, Repairable {
 
-    static class ItemMetaKey {
-
-        @Retention(RetentionPolicy.SOURCE)
-        @Target(ElementType.FIELD)
-        @interface Specific {
-            enum To {
-                BUKKIT,
-                NBT,
-                ;
-            }
-            To value();
-        }
-
-        final String BUKKIT;
-        final String NBT;
-
-        ItemMetaKey(final String both) {
-            this(both, both);
-        }
-
-        ItemMetaKey(final String nbt, final String bukkit) {
-            this.NBT = nbt;
-            this.BUKKIT = bukkit;
-        }
-    }
-
-    @SerializableAs("ItemMeta")
-    public static class SerializableMeta implements ConfigurationSerializable {
-        static final String TYPE_FIELD = "meta-type";
-
-        static final ImmutableMap<Class<? extends CraftMetaItem>, String> classMap;
-        static final ImmutableMap<String, Constructor<? extends CraftMetaItem>> constructorMap;
-
-        static {
-            classMap = ImmutableMap.<Class<? extends CraftMetaItem>, String>builder()
-                    .put(CraftMetaBook.class, "BOOK")
-                    .put(CraftMetaSkull.class, "SKULL")
-                    .put(CraftMetaLeatherArmor.class, "LEATHER_ARMOR")
-                    .put(CraftMetaMap.class, "MAP")
-                    .put(CraftMetaPotion.class, "POTION")
-                    .put(CraftMetaEnchantedBook.class, "ENCHANTED")
-                    .put(CraftMetaFirework.class, "FIREWORK")
-                    .put(CraftMetaCharge.class, "FIREWORK_EFFECT")
-                    .put(CraftMetaItem.class, "UNSPECIFIC")
-                    .build();
-
-            final ImmutableMap.Builder<String, Constructor<? extends CraftMetaItem>> classConstructorBuilder = ImmutableMap.builder();
-            for (Map.Entry<Class<? extends CraftMetaItem>, String> mapping : classMap.entrySet()) {
-                try {
-                    classConstructorBuilder.put(mapping.getValue(), mapping.getKey().getDeclaredConstructor(Map.class));
-                } catch (NoSuchMethodException e) {
-                    throw new AssertionError(e);
-                }
-            }
-            constructorMap = classConstructorBuilder.build();
-        }
-
-        private SerializableMeta() {
-        }
-
-        public static ItemMeta deserialize(Map<String, Object> map) throws Throwable {
-            Validate.notNull(map, "Cannot deserialize null map");
-
-            String type = getString(map, TYPE_FIELD, false);
-            Constructor<? extends CraftMetaItem> constructor = constructorMap.get(type);
-
-            if (constructor == null) {
-                throw new IllegalArgumentException(type + " is not a valid " + TYPE_FIELD);
-            }
-
-            try {
-                return constructor.newInstance(map);
-            } catch (final InstantiationException e) {
-                throw new AssertionError(e);
-            } catch (final IllegalAccessException e) {
-                throw new AssertionError(e);
-            } catch (final InvocationTargetException e) {
-                throw e.getCause();
-            }
-        }
-
-        public Map<String, Object> serialize() {
-            throw new AssertionError();
-        }
-
-        static String getString(Map<?, ?> map, Object field, boolean nullable) {
-            return getObject(String.class, map, field, nullable);
-        }
-
-        static boolean getBoolean(Map<?, ?> map, Object field) {
-            Boolean value = getObject(Boolean.class, map, field, true);
-            return value != null && value;
-        }
-
-        static <T> T getObject(Class<T> clazz, Map<?, ?> map, Object field, boolean nullable) {
-            final Object object = map.get(field);
-
-            if (clazz.isInstance(object)) {
-                return clazz.cast(object);
-            }
-            if (object == null) {
-                if (!nullable) {
-                    throw new NoSuchElementException(map + " does not contain " + field);
-                }
-                return null;
-            }
-            throw new IllegalArgumentException(field + "(" + object + ") is not a valid " + clazz);
-        }
-    }
-
     static final ItemMetaKey NAME = new ItemMetaKey("Name", "display-name");
     @Specific(Specific.To.NBT)
     static final ItemMetaKey DISPLAY = new ItemMetaKey("display");
@@ -188,13 +71,11 @@ class CraftMetaItem implements ItemMeta, Repairable {
     static final ItemMetaKey ATTRIBUTES_UUID_HIGH = new ItemMetaKey("UUIDMost");
     @Specific(Specific.To.NBT)
     static final ItemMetaKey ATTRIBUTES_UUID_LOW = new ItemMetaKey("UUIDLeast");
-
+    private final net.minecraft.nbt.NBTTagList attributes;
     private String displayName;
     private List<String> lore;
     private Map<Enchantment, Integer> enchantments;
     private int repairCost;
-    private final net.minecraft.nbt.NBTTagList attributes;
-
     CraftMetaItem(CraftMetaItem meta) {
         if (meta == null) {
             attributes = null;
@@ -214,7 +95,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
         this.repairCost = meta.repairCost;
         this.attributes = meta.attributes;
     }
-
     CraftMetaItem(net.minecraft.nbt.NBTTagCompound tag) {
         if (tag.hasKey(DISPLAY.NBT)) {
             net.minecraft.nbt.NBTTagCompound display = tag.getCompoundTag(DISPLAY.NBT);
@@ -249,7 +129,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
                 if (!(nbttaglist.getCompoundTagAt(i) instanceof net.minecraft.nbt.NBTTagCompound)) {
                     continue;
                 }
-                net.minecraft.nbt.NBTTagCompound nbttagcompound = (net.minecraft.nbt.NBTTagCompound) nbttaglist.getCompoundTagAt(i);
+                net.minecraft.nbt.NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
 
                 if (!(nbttagcompound.getTag(ATTRIBUTES_UUID_HIGH.NBT) instanceof net.minecraft.nbt.NBTTagLong)) {
                     continue;
@@ -290,33 +170,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
         }
     }
 
-    static Map<Enchantment, Integer> buildEnchantments(net.minecraft.nbt.NBTTagCompound tag, ItemMetaKey key) {
-        if (!tag.hasKey(key.NBT)) {
-            return null;
-        }
-
-        net.minecraft.nbt.NBTTagList ench = tag.getTagList(key.NBT, 10);
-        Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>(ench.tagCount());
-
-        for (int i = 0; i < ench.tagCount(); i++) {
-            int id = 0xffff & ((net.minecraft.nbt.NBTTagCompound) ench.getCompoundTagAt(i)).getShort(ENCHANTMENTS_ID.NBT);
-            int level = 0xffff & ((net.minecraft.nbt.NBTTagCompound) ench.getCompoundTagAt(i)).getShort(ENCHANTMENTS_LVL.NBT);
-
-            // Spigot Start - skip invalid enchantments
-            /*
-             * Its a rare case but when loading a world from a modded server which added enchantments
-             * CraftMetaItem would add a null enchantment into the enchantment map which causes
-             * NullPointers later
-             */
-            Enchantment inch = Enchantment.getById(id);
-            if (inch == null) continue;
-            enchantments.put(inch, level);
-            // Spigot end
-        }
-
-        return enchantments;
-    }
-
     CraftMetaItem(Map<String, Object> map) {
         setDisplayName(SerializableMeta.getString(map, NAME.BUKKIT, true));
 
@@ -335,6 +188,33 @@ class CraftMetaItem implements ItemMeta, Repairable {
         attributes = null;
     }
 
+    static Map<Enchantment, Integer> buildEnchantments(net.minecraft.nbt.NBTTagCompound tag, ItemMetaKey key) {
+        if (!tag.hasKey(key.NBT)) {
+            return null;
+        }
+
+        net.minecraft.nbt.NBTTagList ench = tag.getTagList(key.NBT, 10);
+        Map<Enchantment, Integer> enchantments = new HashMap<Enchantment, Integer>(ench.tagCount());
+
+        for (int i = 0; i < ench.tagCount(); i++) {
+            int id = 0xffff & ench.getCompoundTagAt(i).getShort(ENCHANTMENTS_ID.NBT);
+            int level = 0xffff & ench.getCompoundTagAt(i).getShort(ENCHANTMENTS_LVL.NBT);
+
+            // Spigot Start - skip invalid enchantments
+            /*
+             * Its a rare case but when loading a world from a modded server which added enchantments
+             * CraftMetaItem would add a null enchantment into the enchantment map which causes
+             * NullPointers later
+             */
+            Enchantment inch = Enchantment.getById(id);
+            if (inch == null) continue;
+            enchantments.put(inch, level);
+            // Spigot end
+        }
+
+        return enchantments;
+    }
+
     static Map<Enchantment, Integer> buildEnchantments(Map<String, Object> map, ItemMetaKey key) {
         Map<?, ?> ench = SerializableMeta.getObject(Map.class, map, key.BUKKIT, true);
         if (ench == null) {
@@ -351,27 +231,6 @@ class CraftMetaItem implements ItemMeta, Repairable {
         }
 
         return enchantments;
-    }
-
-    @Overridden
-    void applyToItem(net.minecraft.nbt.NBTTagCompound itemTag) {
-        if (hasDisplayName()) {
-            setDisplayTag(itemTag, NAME.NBT, new net.minecraft.nbt.NBTTagString(displayName));
-        }
-
-        if (hasLore()) {
-            setDisplayTag(itemTag, LORE.NBT, createStringList(lore));
-        }
-
-        applyEnchantments(enchantments, itemTag, ENCHANTMENTS);
-
-        if (hasRepairCost()) {
-            itemTag.setInteger(REPAIR.NBT, repairCost);
-        }
-
-        if (attributes != null) {
-            itemTag.setTag(ATTRIBUTES.NBT, attributes);
-        }
     }
 
     static net.minecraft.nbt.NBTTagList createStringList(List<String> list) {
@@ -404,6 +263,78 @@ class CraftMetaItem implements ItemMeta, Repairable {
         }
 
         tag.setTag(key.NBT, list);
+    }
+
+    static void serializeEnchantments(Map<Enchantment, Integer> enchantments, ImmutableMap.Builder<String, Object> builder, ItemMetaKey key) {
+        if (enchantments == null || enchantments.isEmpty()) {
+            return;
+        }
+
+        ImmutableMap.Builder<String, Integer> enchants = ImmutableMap.builder();
+        for (Map.Entry<? extends Enchantment, Integer> enchant : enchantments.entrySet()) {
+            enchants.put(enchant.getKey().getName(), enchant.getValue());
+        }
+
+        builder.put(key.BUKKIT, enchants.build());
+    }
+
+    static void safelyAdd(Iterable<?> addFrom, Collection<String> addTo, int maxItemLength) {
+        if (addFrom == null) {
+            return;
+        }
+
+        for (Object object : addFrom) {
+            if (!(object instanceof String)) {
+                if (object != null) {
+                    throw new IllegalArgumentException(addFrom + " cannot contain non-string " + object.getClass().getName());
+                }
+
+                addTo.add("");
+            } else {
+                String page = object.toString();
+
+                if (page.length() > maxItemLength) {
+                    page = page.substring(0, maxItemLength);
+                }
+
+                addTo.add(page);
+            }
+        }
+    }
+
+    static boolean checkConflictingEnchants(Map<Enchantment, Integer> enchantments, Enchantment ench) {
+        if (enchantments == null || enchantments.isEmpty()) {
+            return false;
+        }
+
+        for (Enchantment enchant : enchantments.keySet()) {
+            if (enchant.conflictsWith(ench)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Overridden
+    void applyToItem(net.minecraft.nbt.NBTTagCompound itemTag) {
+        if (hasDisplayName()) {
+            setDisplayTag(itemTag, NAME.NBT, new net.minecraft.nbt.NBTTagString(displayName));
+        }
+
+        if (hasLore()) {
+            setDisplayTag(itemTag, LORE.NBT, createStringList(lore));
+        }
+
+        applyEnchantments(enchantments, itemTag, ENCHANTMENTS);
+
+        if (hasRepairCost()) {
+            itemTag.setInteger(REPAIR.NBT, repairCost);
+        }
+
+        if (attributes != null) {
+            itemTag.setTag(ATTRIBUTES.NBT, attributes);
+        }
     }
 
     void setDisplayTag(net.minecraft.nbt.NBTTagCompound tag, String key, net.minecraft.nbt.NBTBase value) {
@@ -463,7 +394,7 @@ class CraftMetaItem implements ItemMeta, Repairable {
     }
 
     public Map<Enchantment, Integer> getEnchants() {
-        return hasEnchants() ? ImmutableMap.copyOf(enchantments) : ImmutableMap.<Enchantment, Integer>of();
+        return hasEnchants() ? ImmutableMap.copyOf(enchantments) : ImmutableMap.of();
     }
 
     public boolean addEnchant(Enchantment ench, int level, boolean ignoreRestrictions) {
@@ -480,9 +411,8 @@ class CraftMetaItem implements ItemMeta, Repairable {
 
     public boolean removeEnchant(Enchantment ench) {
         // Spigot start
-        boolean b = hasEnchants() && enchantments.remove( ench ) != null;
-        if ( enchantments != null && enchantments.isEmpty() )
-        {
+        boolean b = hasEnchants() && enchantments.remove(ench) != null;
+        if (enchantments != null && enchantments.isEmpty()) {
             this.enchantments = null;
         }
         return b;
@@ -619,59 +549,118 @@ class CraftMetaItem implements ItemMeta, Repairable {
         return builder;
     }
 
-    static void serializeEnchantments(Map<Enchantment, Integer> enchantments, ImmutableMap.Builder<String, Object> builder, ItemMetaKey key) {
-        if (enchantments == null || enchantments.isEmpty()) {
-            return;
-        }
-
-        ImmutableMap.Builder<String, Integer> enchants = ImmutableMap.builder();
-        for (Map.Entry<? extends Enchantment, Integer> enchant : enchantments.entrySet()) {
-            enchants.put(enchant.getKey().getName(), enchant.getValue());
-        }
-
-        builder.put(key.BUKKIT, enchants.build());
-    }
-
-    static void safelyAdd(Iterable<?> addFrom, Collection<String> addTo, int maxItemLength) {
-        if (addFrom == null) {
-            return;
-        }
-
-        for (Object object : addFrom) {
-            if (!(object instanceof String)) {
-                if (object != null) {
-                    throw new IllegalArgumentException(addFrom + " cannot contain non-string " + object.getClass().getName());
-                }
-
-                addTo.add("");
-            } else {
-                String page = object.toString();
-
-                if (page.length() > maxItemLength) {
-                    page = page.substring(0, maxItemLength);
-                }
-
-                addTo.add(page);
-            }
-        }
-    }
-
-    static boolean checkConflictingEnchants(Map<Enchantment, Integer> enchantments, Enchantment ench) {
-        if (enchantments == null || enchantments.isEmpty()) {
-            return false;
-        }
-
-        for (Enchantment enchant : enchantments.keySet()) {
-            if (enchant.conflictsWith(ench)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     @Override
     public final String toString() {
         return SerializableMeta.classMap.get(getClass()) + "_META:" + serialize(); // TODO: cry
+    }
+
+    static class ItemMetaKey {
+
+        final String BUKKIT;
+        final String NBT;
+        ItemMetaKey(final String both) {
+            this(both, both);
+        }
+
+        ItemMetaKey(final String nbt, final String bukkit) {
+            this.NBT = nbt;
+            this.BUKKIT = bukkit;
+        }
+
+        @Retention(RetentionPolicy.SOURCE)
+        @Target(ElementType.FIELD)
+        @interface Specific {
+            To value();
+
+            enum To {
+                BUKKIT,
+                NBT,
+                ;
+            }
+        }
+    }
+
+    @SerializableAs("ItemMeta")
+    public static class SerializableMeta implements ConfigurationSerializable {
+        static final String TYPE_FIELD = "meta-type";
+
+        static final ImmutableMap<Class<? extends CraftMetaItem>, String> classMap;
+        static final ImmutableMap<String, Constructor<? extends CraftMetaItem>> constructorMap;
+
+        static {
+            classMap = ImmutableMap.<Class<? extends CraftMetaItem>, String>builder()
+                    .put(CraftMetaBook.class, "BOOK")
+                    .put(CraftMetaSkull.class, "SKULL")
+                    .put(CraftMetaLeatherArmor.class, "LEATHER_ARMOR")
+                    .put(CraftMetaMap.class, "MAP")
+                    .put(CraftMetaPotion.class, "POTION")
+                    .put(CraftMetaEnchantedBook.class, "ENCHANTED")
+                    .put(CraftMetaFirework.class, "FIREWORK")
+                    .put(CraftMetaCharge.class, "FIREWORK_EFFECT")
+                    .put(CraftMetaItem.class, "UNSPECIFIC")
+                    .build();
+
+            final ImmutableMap.Builder<String, Constructor<? extends CraftMetaItem>> classConstructorBuilder = ImmutableMap.builder();
+            for (Map.Entry<Class<? extends CraftMetaItem>, String> mapping : classMap.entrySet()) {
+                try {
+                    classConstructorBuilder.put(mapping.getValue(), mapping.getKey().getDeclaredConstructor(Map.class));
+                } catch (NoSuchMethodException e) {
+                    throw new AssertionError(e);
+                }
+            }
+            constructorMap = classConstructorBuilder.build();
+        }
+
+        private SerializableMeta() {
+        }
+
+        public static ItemMeta deserialize(Map<String, Object> map) throws Throwable {
+            Validate.notNull(map, "Cannot deserialize null map");
+
+            String type = getString(map, TYPE_FIELD, false);
+            Constructor<? extends CraftMetaItem> constructor = constructorMap.get(type);
+
+            if (constructor == null) {
+                throw new IllegalArgumentException(type + " is not a valid " + TYPE_FIELD);
+            }
+
+            try {
+                return constructor.newInstance(map);
+            } catch (final InstantiationException e) {
+                throw new AssertionError(e);
+            } catch (final IllegalAccessException e) {
+                throw new AssertionError(e);
+            } catch (final InvocationTargetException e) {
+                throw e.getCause();
+            }
+        }
+
+        static String getString(Map<?, ?> map, Object field, boolean nullable) {
+            return getObject(String.class, map, field, nullable);
+        }
+
+        static boolean getBoolean(Map<?, ?> map, Object field) {
+            Boolean value = getObject(Boolean.class, map, field, true);
+            return value != null && value;
+        }
+
+        static <T> T getObject(Class<T> clazz, Map<?, ?> map, Object field, boolean nullable) {
+            final Object object = map.get(field);
+
+            if (clazz.isInstance(object)) {
+                return clazz.cast(object);
+            }
+            if (object == null) {
+                if (!nullable) {
+                    throw new NoSuchElementException(map + " does not contain " + field);
+                }
+                return null;
+            }
+            throw new IllegalArgumentException(field + "(" + object + ") is not a valid " + clazz);
+        }
+
+        public Map<String, Object> serialize() {
+            throw new AssertionError();
+        }
     }
 }

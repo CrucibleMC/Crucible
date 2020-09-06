@@ -1,11 +1,9 @@
 package net.md_5.bungee.api.chat;
 
+import net.md_5.bungee.api.ChatColor;
+
 import java.util.ArrayList;
 import java.util.List;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 
 public abstract class BaseComponent {
     BaseComponent parent;
@@ -35,9 +33,10 @@ public abstract class BaseComponent {
         }
     }
 
-    public abstract BaseComponent duplicate();
+    public BaseComponent() {
+    }
 
-    public static /* varargs */ String toLegacyText(BaseComponent ... components) {
+    public static /* varargs */ String toLegacyText(BaseComponent... components) {
         StringBuilder builder = new StringBuilder();
         for (BaseComponent msg : components) {
             builder.append(msg.toLegacyText());
@@ -45,13 +44,15 @@ public abstract class BaseComponent {
         return builder.toString();
     }
 
-    public static /* varargs */ String toPlainText(BaseComponent ... components) {
+    public static /* varargs */ String toPlainText(BaseComponent... components) {
         StringBuilder builder = new StringBuilder();
         for (BaseComponent msg : components) {
             builder.append(msg.toPlainText());
         }
         return builder.toString();
     }
+
+    public abstract BaseComponent duplicate();
 
     public ChatColor getColor() {
         if (this.color == null) {
@@ -61,6 +62,10 @@ public abstract class BaseComponent {
             return this.parent.getColor();
         }
         return this.color;
+    }
+
+    public void setColor(ChatColor color) {
+        this.color = color;
     }
 
     public ChatColor getColorRaw() {
@@ -74,6 +79,10 @@ public abstract class BaseComponent {
         return this.bold;
     }
 
+    public void setBold(Boolean bold) {
+        this.bold = bold;
+    }
+
     public Boolean isBoldRaw() {
         return this.bold;
     }
@@ -83,6 +92,10 @@ public abstract class BaseComponent {
             return this.parent != null && this.parent.isItalic();
         }
         return this.italic;
+    }
+
+    public void setItalic(Boolean italic) {
+        this.italic = italic;
     }
 
     public Boolean isItalicRaw() {
@@ -96,6 +109,10 @@ public abstract class BaseComponent {
         return this.underlined;
     }
 
+    public void setUnderlined(Boolean underlined) {
+        this.underlined = underlined;
+    }
+
     public Boolean isUnderlinedRaw() {
         return this.underlined;
     }
@@ -105,6 +122,10 @@ public abstract class BaseComponent {
             return this.parent != null && this.parent.isStrikethrough();
         }
         return this.strikethrough;
+    }
+
+    public void setStrikethrough(Boolean strikethrough) {
+        this.strikethrough = strikethrough;
     }
 
     public Boolean isStrikethroughRaw() {
@@ -118,15 +139,12 @@ public abstract class BaseComponent {
         return this.obfuscated;
     }
 
-    public Boolean isObfuscatedRaw() {
-        return this.obfuscated;
+    public void setObfuscated(Boolean obfuscated) {
+        this.obfuscated = obfuscated;
     }
 
-    public void setExtra(List<BaseComponent> components) {
-        for (BaseComponent component : components) {
-            component.parent = this;
-        }
-        this.extra = components;
+    public Boolean isObfuscatedRaw() {
+        return this.obfuscated;
     }
 
     public void addExtra(String text) {
@@ -173,55 +191,35 @@ public abstract class BaseComponent {
         }
     }
 
-    public void setColor(ChatColor color) {
-        this.color = color;
-    }
-
-    public void setBold(Boolean bold) {
-        this.bold = bold;
-    }
-
-    public void setItalic(Boolean italic) {
-        this.italic = italic;
-    }
-
-    public void setUnderlined(Boolean underlined) {
-        this.underlined = underlined;
-    }
-
-    public void setStrikethrough(Boolean strikethrough) {
-        this.strikethrough = strikethrough;
-    }
-
-    public void setObfuscated(Boolean obfuscated) {
-        this.obfuscated = obfuscated;
-    }
-
-    public void setClickEvent(ClickEvent clickEvent) {
-        this.clickEvent = clickEvent;
-    }
-
-    public void setHoverEvent(HoverEvent hoverEvent) {
-        this.hoverEvent = hoverEvent;
-    }
-
     public String toString() {
-        return "BaseComponent(color=" + (Object)((Object)this.getColor()) + ", bold=" + this.bold + ", italic=" + this.italic + ", underlined=" + this.underlined + ", strikethrough=" + this.strikethrough + ", obfuscated=" + this.obfuscated + ", extra=" + this.getExtra() + ", clickEvent=" + this.getClickEvent() + ", hoverEvent=" + this.getHoverEvent() + ")";
-    }
-
-    public BaseComponent() {
+        return "BaseComponent(color=" + this.getColor() + ", bold=" + this.bold + ", italic=" + this.italic + ", underlined=" + this.underlined + ", strikethrough=" + this.strikethrough + ", obfuscated=" + this.obfuscated + ", extra=" + this.getExtra() + ", clickEvent=" + this.getClickEvent() + ", hoverEvent=" + this.getHoverEvent() + ")";
     }
 
     public List<BaseComponent> getExtra() {
         return this.extra;
     }
 
+    public void setExtra(List<BaseComponent> components) {
+        for (BaseComponent component : components) {
+            component.parent = this;
+        }
+        this.extra = components;
+    }
+
     public ClickEvent getClickEvent() {
         return this.clickEvent;
     }
 
+    public void setClickEvent(ClickEvent clickEvent) {
+        this.clickEvent = clickEvent;
+    }
+
     public HoverEvent getHoverEvent() {
         return this.hoverEvent;
+    }
+
+    public void setHoverEvent(HoverEvent hoverEvent) {
+        this.hoverEvent = hoverEvent;
     }
 }
 

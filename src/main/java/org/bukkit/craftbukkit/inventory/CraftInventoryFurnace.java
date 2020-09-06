@@ -14,24 +14,24 @@ public class CraftInventoryFurnace extends CraftInventory implements FurnaceInve
         return getItem(2);
     }
 
+    public void setResult(ItemStack stack) {
+        setItem(2, stack);
+    }
+
     public ItemStack getFuel() {
         return getItem(1);
+    }
+
+    public void setFuel(ItemStack stack) {
+        setItem(1, stack);
     }
 
     public ItemStack getSmelting() {
         return getItem(0);
     }
 
-    public void setFuel(ItemStack stack) {
-        setItem(1,stack);
-    }
-
-    public void setResult(ItemStack stack) {
-        setItem(2,stack);
-    }
-
     public void setSmelting(ItemStack stack) {
-        setItem(0,stack);
+        setItem(0, stack);
     }
 
     @Override
