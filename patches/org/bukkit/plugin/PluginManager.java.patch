@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/org/bukkit/plugin/PluginManager.java
++++ ../src-work/minecraft/org/bukkit/plugin/PluginManager.java
+@@ -291,4 +291,10 @@
+      * @return True if event timings are to be used
+      */
+     public boolean useTimings();
++
++    //Crucible start
++
++    public Plugin injectModPlugin(Plugin plugin); //Add a way to inject a mod plugin into the loaded plugins list.
++
++    //Crucible end
+ }
