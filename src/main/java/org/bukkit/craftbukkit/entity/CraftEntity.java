@@ -14,11 +14,13 @@ import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.permissions.*;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 // Cauldron end
 
@@ -786,4 +788,102 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         return spigot;
     }
     // Spigot end
+
+    //Crucible start
+    @Override
+    public void sendMessage(String message) { }
+
+    @Override
+    public void sendMessage(String[] messages) { }
+
+    @Override
+    public String getName() {
+        //return CraftChatMessage.fromComponent(getHandle().getDisplayName(), EnumChatFormat.WHITE);
+        return getHandle().getCommandSenderName();
+    }
+
+    @Override
+    public boolean isPermissionSet(String name) {
+        return getPermissibleBase().isPermissionSet(name);
+    }
+
+    @Override
+    public boolean isPermissionSet(Permission perm) {
+        return CraftEntity.getPermissibleBase().isPermissionSet(perm);
+    }
+
+    @Override
+    public boolean hasPermission(String name) {
+        return getPermissibleBase().hasPermission(name);
+    }
+
+    @Override
+    public boolean hasPermission(Permission perm) {
+        return getPermissibleBase().hasPermission(perm);
+    }
+
+    @Override
+    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value) {
+        return getPermissibleBase().addAttachment(plugin, name, value);
+    }
+
+    @Override
+    public PermissionAttachment addAttachment(Plugin plugin) {
+        return getPermissibleBase().addAttachment(plugin);
+    }
+
+    @Override
+    public PermissionAttachment addAttachment(Plugin plugin, String name, boolean value, int ticks) {
+        return getPermissibleBase().addAttachment(plugin, name, value, ticks);
+    }
+
+    @Override
+    public PermissionAttachment addAttachment(Plugin plugin, int ticks) {
+        return getPermissibleBase().addAttachment(plugin, ticks);
+    }
+
+    @Override
+    public void removeAttachment(PermissionAttachment attachment) {
+        getPermissibleBase().removeAttachment(attachment);
+    }
+
+    @Override
+    public void recalculatePermissions() {
+        getPermissibleBase().recalculatePermissions();
+    }
+
+    @Override
+    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
+        return getPermissibleBase().getEffectivePermissions();
+    }
+
+    @Override
+    public boolean isOp() {
+        return getPermissibleBase().isOp();
+    }
+
+    @Override
+    public void setOp(boolean value) {
+        getPermissibleBase().setOp(value);
+    }
+
+    private static PermissibleBase perm;
+    private static PermissibleBase getPermissibleBase() {
+        if (perm == null) {
+            perm = new PermissibleBase(new ServerOperator() {
+
+                @Override
+                public boolean isOp() {
+                    return false;
+                }
+
+                @Override
+                public void setOp(boolean value) {
+
+                }
+            });
+        }
+        return perm;
+    }
+    //crucible end
 }
