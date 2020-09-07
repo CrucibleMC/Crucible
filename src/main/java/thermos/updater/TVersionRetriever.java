@@ -51,9 +51,9 @@ public class TVersionRetriever implements Runnable, UncaughtExceptionHandler {
 
     public static void init(MinecraftServer server) {
         sServer = server;
-        if (MinecraftServer.thermosConfig.updatecheckerEnable.getValue()) {
-            startServer(DefaultUpdateCallback.INSTANCE, true);
-        }
+//        if (MinecraftServer.thermosConfig.updatecheckerEnable.getValue()) {
+//            startServer(DefaultUpdateCallback.INSTANCE, true);
+//        }
     }
 
     public static void startServer(IVersionCheckCallback callback, boolean loop) {

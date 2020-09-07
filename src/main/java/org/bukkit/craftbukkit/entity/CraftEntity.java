@@ -1,7 +1,7 @@
 package org.bukkit.craftbukkit.entity;
 
 import net.minecraft.entity.Entity;
-import net.minecraftforge.cauldron.entity.CraftCustomEntity;
+import io.github.crucible.entity.CraftCustomEntity;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -258,7 +258,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
         // Cauldron - used for custom entities that extend Entity directly
         else if (entity instanceof net.minecraft.entity.Entity) {
             if (entity instanceof net.minecraft.entity.IProjectile)
-                return new thermos.entity.CustomProjectileEntity(server, entity); // Thermos
+                return new io.github.crucible.entity.CustomProjectileEntity(server, entity); // Thermos
             return new CraftCustomEntity(server, entity);
         } else {
             return null;

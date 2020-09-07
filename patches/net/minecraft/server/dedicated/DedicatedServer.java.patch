@@ -150,10 +150,10 @@
 +            org.spigotmc.SpigotConfig.registerCommands();
 +            // Spigot end
 +            // Cauldron start
-+            thermosConfig.registerCommands();
-+            cauldronConfig.registerCommands();
-+            tileEntityConfig.registerCommands();
-+            sushchestvoConfig.registerCommands();
++            //thermosConfig.registerCommands();
++            //cauldronConfig.registerCommands();
++            //tileEntityConfig.registerCommands();
++            //sushchestvoConfig.registerCommands();
 +            // Cauldron end
 +
              field_155771_h.info("Generating keypair");

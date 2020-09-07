@@ -1,4 +1,4 @@
-package thermos.entity;
+package io.github.crucible.entity;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.Entity;
@@ -6,7 +6,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.cauldron.entity.CraftCustomEntity;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.craftbukkit.entity.CraftEntity;

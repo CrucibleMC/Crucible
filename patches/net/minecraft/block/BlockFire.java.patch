@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFire.java
-@@ -2,9 +2,13 @@
+@@ -2,10 +2,15 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -12,9 +12,11 @@
 +import java.util.WeakHashMap;
 +
  import com.google.common.collect.Maps;
++import io.github.crucible.CrucibleConfigs;
  import net.minecraft.block.material.MapColor;
  import net.minecraft.block.material.Material;
-@@ -17,6 +21,11 @@
+ import net.minecraft.client.renderer.texture.IIconRegister;
+@@ -17,6 +22,11 @@
  import net.minecraft.world.WorldProviderEnd;
  import net.minecraftforge.common.util.ForgeDirection;
  import static net.minecraftforge.common.util.ForgeDirection.*;
@@ -26,7 +28,7 @@
  
  public class BlockFire extends Block
  {
-@@ -105,12 +114,12 @@
+@@ -105,12 +115,12 @@
  
              if (!this.canPlaceBlockAt(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_))
              {
@@ -41,7 +43,7 @@
              }
              else
              {
-@@ -127,12 +136,12 @@
+@@ -127,12 +137,12 @@
                  {
                      if (!World.doesBlockHaveSolidTopSurface(p_149674_1_, p_149674_2_, p_149674_3_ - 1, p_149674_4_) || l > 3)
                      {
@@ -56,7 +58,7 @@
                  }
                  else
                  {
-@@ -186,7 +195,30 @@
+@@ -186,7 +196,30 @@
                                                  k2 = 15;
                                              }
  
@@ -88,7 +90,7 @@
                                          }
                                      }
                                  }
-@@ -209,14 +241,50 @@
+@@ -209,14 +242,50 @@
          this.tryCatchFire(p_149841_1_, p_149841_2_, p_149841_3_, p_149841_4_, p_149841_5_, p_149841_6_, p_149841_7_, UP);
      }
  
@@ -141,7 +143,7 @@
              if (p_149841_6_.nextInt(p_149841_7_ + 10) < 5 && !p_149841_1_.canLightningStrikeAt(p_149841_2_, p_149841_3_, p_149841_4_))
              {
                  int k1 = p_149841_7_ + p_149841_6_.nextInt(5) / 4;
-@@ -297,17 +365,17 @@
+@@ -297,17 +366,17 @@
      {
          if (!World.doesBlockHaveSolidTopSurface(p_149695_1_, p_149695_2_, p_149695_3_ - 1, p_149695_4_) && !this.canNeighborBurn(p_149695_1_, p_149695_2_, p_149695_3_, p_149695_4_))
          {
@@ -153,7 +155,7 @@
      public void onBlockAdded(World p_149726_1_, int p_149726_2_, int p_149726_3_, int p_149726_4_)
      {
 -        if (p_149726_1_.provider.dimensionId > 0 || !Blocks.portal.func_150000_e(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_))
-+        if (!net.minecraft.server.MinecraftServer.thermosConfig.commonAllowNetherPortal.getValue() && p_149726_1_.provider.dimensionId > 0 || !Blocks.portal.func_150000_e(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_))
++        if (!CrucibleConfigs.configs.thermos_allowNetherPortal && p_149726_1_.provider.dimensionId > 0 || !Blocks.portal.func_150000_e(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_))
          {
              if (!World.doesBlockHaveSolidTopSurface(p_149726_1_, p_149726_2_, p_149726_3_ - 1, p_149726_4_) && !this.canNeighborBurn(p_149726_1_, p_149726_2_, p_149726_3_, p_149726_4_))
              {
@@ -162,7 +164,7 @@
              }
              else
              {
-@@ -513,7 +581,8 @@
+@@ -513,7 +582,8 @@
       */
      public int getChanceToEncourageFire(IBlockAccess world, int x, int y, int z, int oldChance, ForgeDirection face)
      {

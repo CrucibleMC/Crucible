@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -18,11 +18,52 @@
+@@ -18,11 +18,53 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
@@ -13,6 +13,7 @@
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
 +import org.bukkit.inventory.Inventory;
++import io.github.crucible.wrapper.ModInventoryWrapper;
 +// CraftBukkit end
 +
  public class TileEntityHopper extends TileEntity implements IHopper
@@ -53,7 +54,7 @@
      private static final String __OBFID = "CL_00000359";
  
      public void readFromNBT(NBTTagCompound p_145839_1_)
-@@ -212,12 +253,18 @@
+@@ -212,12 +254,18 @@
  
                  if (flag)
                  {
@@ -73,7 +74,7 @@
              return false;
          }
          else
-@@ -285,18 +332,70 @@
+@@ -285,18 +333,70 @@
                      if (this.getStackInSlot(j) != null)
                      {
                          ItemStack itemstack = this.getStackInSlot(j).copy();
@@ -149,7 +150,7 @@
                  return false;
              }
          }
-@@ -427,11 +526,71 @@
+@@ -427,11 +527,71 @@
          if (itemstack != null && func_145890_b(p_145892_1_, itemstack, p_145892_2_, p_145892_3_))
          {
              ItemStack itemstack1 = itemstack.copy();
@@ -182,7 +183,7 @@
 +                {
 +                    sourceInventory = null;
 +                }
-+                finally { if (sourceInventory == null) { sourceInventory = new thermos.CraftInventoryWrapper(p_145892_1_); } }
++                finally { if (sourceInventory == null) { sourceInventory = new ModInventoryWrapper(p_145892_1_); } }
 +                // Cauldron end
 +            }
 +
@@ -223,7 +224,7 @@
                  return true;
              }
  
-@@ -451,6 +610,20 @@
+@@ -451,6 +611,20 @@
          }
          else
          {

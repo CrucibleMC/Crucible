@@ -10,7 +10,15 @@
  import java.util.HashMap;
  import java.util.HashSet;
  import java.util.Iterator;
-@@ -1036,4 +1038,56 @@
+@@ -24,6 +26,7 @@
+ import java.util.Map.Entry;
+ import java.util.Set;
+ 
++import io.github.crucible.CrucibleConfigs;
+ import net.minecraft.block.Block;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemBlock;
+@@ -1036,4 +1039,56 @@
              throw new RuntimeException("WHAT?");
          }
      }
@@ -36,7 +44,7 @@
 +            org.bukkit.Material material = org.bukkit.Material.addMaterial(id, itemRegistry.getNameForObject(item), false);
 +            if (material != null)
 +            {
-+                FMLLog.info("Injected new Forge item material %s with ID %d.", material.name(), material.getId());
++                if (CrucibleConfigs.configs.crucible_logging_logMaterialInjection) FMLLog.info("Injected new Forge item material %s with ID %d.", material.name(), material.getId());
 +            }
 +        }
 +    }
@@ -61,7 +69,7 @@
 +            org.bukkit.Material material = org.bukkit.Material.addMaterial(id, blockRegistry.getNameForObject(block), true);
 +            if (material != null)
 +            {
-+                FMLLog.info("Injected new Forge block material %s with ID %d.", material.name(), material.getId());
++                if (CrucibleConfigs.configs.crucible_logging_logMaterialInjection) FMLLog.info("Injected new Forge block material %s with ID %d.", material.name(), material.getId());
 +            }
 +        }
 +    }
