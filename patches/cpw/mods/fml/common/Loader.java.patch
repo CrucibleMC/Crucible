@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/Loader.java
++++ ../src-work/minecraft/cpw/mods/fml/common/Loader.java
+@@ -28,6 +28,7 @@
+ import java.util.Properties;
+ import java.util.Set;
+ 
++import io.github.crucible.CrucibleModContainer;
+ import org.apache.logging.log4j.Level;
+ 
+ import com.google.common.base.CharMatcher;
+@@ -332,6 +333,7 @@
+         FMLLog.fine("Building injected Mod Containers %s", injectedContainers);
+         // Add in the MCP mod container
+         mods.add(new InjectedModContainer(mcp,new File("minecraft.jar")));
++        mods.add(new InjectedModContainer(new CrucibleModContainer(),null)); // Crucible - inject the Crucible DummyMod.
+         for (String cont : injectedContainers)
+         {
+             ModContainer mc;
