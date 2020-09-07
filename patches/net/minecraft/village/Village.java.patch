@@ -9,3 +9,14 @@
                  ++this.numIronGolems;
              }
          }
+@@ -386,7 +386,9 @@
+ 
+     private boolean isBlockDoor(int p_75574_1_, int p_75574_2_, int p_75574_3_)
+     {
+-        return this.worldObj.getBlock(p_75574_1_, p_75574_2_, p_75574_3_) == Blocks.wooden_door;
++        if (worldObj.blockExists(p_75574_1_, p_75574_2_, p_75574_3_)) {
++            return this.worldObj.getBlock(p_75574_1_, p_75574_2_, p_75574_3_) == Blocks.wooden_door;
++        } else return false;
+     }
+ 
+     private void updateVillageRadiusAndCenter()

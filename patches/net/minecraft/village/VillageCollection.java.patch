@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/village/VillageCollection.java
++++ ../src-work/minecraft/net/minecraft/village/VillageCollection.java
+@@ -317,7 +317,9 @@
+ 
+     private boolean isWoodenDoorAt(int p_75541_1_, int p_75541_2_, int p_75541_3_)
+     {
+-        return this.worldObj.getBlock(p_75541_1_, p_75541_2_, p_75541_3_) == Blocks.wooden_door;
++        if (worldObj.blockExists(p_75541_1_, p_75541_2_, p_75541_3_)) {
++            return this.worldObj.getBlock(p_75541_1_, p_75541_2_, p_75541_3_) == Blocks.wooden_door;
++        } else return false;
+     }
+ 
+     public void readFromNBT(NBTTagCompound p_76184_1_)
