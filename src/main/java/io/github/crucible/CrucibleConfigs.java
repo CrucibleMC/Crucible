@@ -27,9 +27,6 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Log Material injections.")
     public boolean crucible_logging_logMaterialInjection = false;
 
-    @Comment("Dump all item registry to <minecraftDir>/itemStackRegistry.csv.")
-    public boolean crucible_logging_dumpRegistry = false;
-
     @Comment("Attempts to reduce console spam by removing \"useless\" logs.")
     public boolean crucible_logging_reduceSpam = false;
 
