@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandDebug.java
++++ ../src-work/minecraft/net/minecraft/command/CommandDebug.java
+@@ -7,6 +7,7 @@
+ import java.util.List;
+ import net.minecraft.profiler.Profiler;
+ import net.minecraft.server.MinecraftServer;
++import net.minecraft.util.ChatComponentText;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -34,6 +35,9 @@
+ 
+     public void processCommand(ICommandSender p_71515_1_, String[] p_71515_2_)
+     {
++        //Crucible start - Disable the /debug command.
++        p_71515_1_.addChatMessage(new ChatComponentText("§4This command has been disabled."));
++         /*
+         if (p_71515_2_.length == 1)
+         {
+             if (p_71515_2_[0].equals("start"))
+@@ -64,6 +68,8 @@
+         }
+ 
+         throw new WrongUsageException("commands.debug.usage", new Object[0]);
++          */
++        //Crucible end
+     }
+ 
+     private void func_147205_a(long p_147205_1_, int p_147205_3_)
