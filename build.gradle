@@ -142,7 +142,7 @@ dependencies {
     libraries 'org.scala-lang:scala-xml:2.11.0-M4'
     libraries 'net.sf.jopt-simple:jopt-simple:5.0.1'
     libraries 'lzma:lzma:0.0.1'
-    libraries 'org.yaml:snakeyaml:1.21'
+    libraries 'org.yaml:snakeyaml:1.9'
     libraries 'commons-lang:commons-lang:2.6'
     libraries 'org.avaje:ebean:2.7.3'
     libraries 'jline:jline:2.6'
