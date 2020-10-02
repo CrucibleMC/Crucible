@@ -1,8 +1,6 @@
 ![](https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-orange?style=flat-square)
 ![](https://img.shields.io/badge/Minecraft-1.7.10-orange?style=flat-square)
-![](https://img.shields.io/badge/Spigot-1.7.10--R0.1--SNAPSHOT-orange?style=flat-square)
-![](https://img.shields.io/badge/PaperMC-1.14.4--R0.1--SNAPSHOT-orange?style=flat-square)
-![](https://img.shields.io/badge/CrucibleAPI-Not%20Implemented%20Yet-orange?style=flat-square)
+![](https://img.shields.io/badge/Bukkit--1.7.9--R0.3--SNAPSHOT-orange?style=flat-square)
 ![](https://img.shields.io/badge/Java%20JDK-v1.8-blue?style=flat-square)
 ![](https://img.shields.io/github/v/release/CrucibleMC/Crucible?color=sucess&style=flat-square)
 ![](https://img.shields.io/discord/682358465175355393?color=blue&label=Discord&logo=Discord&style=flat-square)
@@ -16,6 +14,7 @@ Advantages over Thermos:
 + Fixed several bugs.
 + Performance Improvements.
 + Updated some libraries.
++ Works with luckperms out of the box. No need to replace files!
 + You can see more changes in the [releases](https://github.com/CrucibleMC/Crucible/releases) changelog.
 
 ## Build Requirements
@@ -39,12 +38,18 @@ Advantages over Thermos:
   * Recreate the workspace: `./gradlew clean setupCrucible`
 ## Know incompatibilities and bugs
 * Industrial Craft 2 has some problems with the crucible internal chunkmap, we have a fix via [Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) using [Grimoire](https://github.com/CrucibleMC/Grimoire).
+* Some coremods may crash with `java.lang.VerifyError: Expecting a stackmap frame`, we still don't know what causes that, but adding -noverify to your JVM arguments seems to fix the problem.
+
 ## Useful links
 + [Spark](https://github.com/lucko/spark) "Spark is a performance profiling plugin based on sk89q's WarmRoast profiler."
 + [Grimoire](https://github.com/CrucibleMC/Grimoire) "A core mod that [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) Modules use to be loaded up."
 + [Discord](https://discord.gg/jWSTJ4d) "Our support Discord."
+
 ## TODO List
 - [ ] Reapply patches
+- [ ] Fix chunks randomly resetting
+- [ ] Paper-like async chunk generation
+- [ ] Patch collection for problematic mods
 
 [forge]: https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-green.svg "Minecraft Forge v10.13.4.1614"
 [mc]: https://img.shields.io/badge/Minecraft-v1.7.10-green.svg "Minecraft 1.7.10"
