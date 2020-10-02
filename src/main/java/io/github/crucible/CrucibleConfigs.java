@@ -24,6 +24,12 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Allow nether portals in dimensions besides overworld")
     public boolean thermos_allowNetherPortal = false;
 
+    @Comment("Enable Oversized Chunk to be saved")
+    public boolean crucible_enableOversizedChunk = true;
+
+    @Comment("Size of cached chunk")
+    public int crucible_chunkCacheSize = 256;
+
     @Comment("Log Material injections.")
     public boolean crucible_logging_logMaterialInjection = false;
 
