@@ -37,7 +37,6 @@ Advantages over Thermos:
   * Update sources: `git pull origin master`
   * Recreate the workspace: `./gradlew clean setupCrucible`
 ## Know incompatibilities and bugs
-* Industrial Craft 2 has some problems with the crucible internal chunkmap, we have a fix via [Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) using [Grimoire](https://github.com/CrucibleMC/Grimoire).
 * Some coremods may crash with `java.lang.VerifyError: Expecting a stackmap frame`, we still don't know what causes that, but adding -noverify to your JVM arguments seems to fix the problem.
 
 ## Useful links
