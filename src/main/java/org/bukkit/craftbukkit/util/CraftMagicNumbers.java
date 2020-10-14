@@ -1,5 +1,6 @@
 package org.bukkit.craftbukkit.util;
 
+import io.github.crucible.CrucibleConfigs;
 import org.bukkit.Achievement;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -128,4 +129,12 @@ public final class CraftMagicNumbers implements UnsafeValues {
         }
         return matches;
     }
+
+    // Paper start
+    @Override
+    public String getTimingsServerName() {
+        //return com.destroystokyo.paper.PaperConfig.timingsServerName;
+        return CrucibleConfigs.configs.timings_serverName; //Crucible
+    }
+    // Paper end
 }

@@ -104,6 +104,13 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             CraftPlayer.this.getHandle().playerNetServerHandler.sendPacket(packet);
         }
 
+        // Paper start
+        @Override
+        public int getPing()
+        {
+            return getHandle().ping;
+        }
+        // Paper end
     };
     private boolean scaledHealth = false;
     private double healthScale = 20;

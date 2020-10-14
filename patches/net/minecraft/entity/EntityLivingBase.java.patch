@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
-@@ -50,14 +50,30 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity;
+ 
++import co.aikar.timings.MinecraftTimings;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.Collection;
+@@ -50,14 +51,29 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  import net.minecraftforge.common.ForgeHooks;
@@ -16,7 +23,6 @@
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
 +import org.bukkit.inventory.Inventory;
 +// CraftBukkit end
-+import org.bukkit.craftbukkit.SpigotTimings; // Spigot
 +import org.bukkit.craftbukkit.inventory.CraftItemStack; // Cauldron
 +
 +import com.google.common.base.Function;
@@ -619,7 +625,7 @@
      public void onUpdate()
      {
          if (ForgeHooks.onLivingUpdate(this)) return;
-+        SpigotTimings.timerEntityBaseTick.startTiming(); // Spigot
++        MinecraftTimings.timerEntityBaseTick.startTiming(); // Spigot
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
@@ -627,9 +633,9 @@
              }
          }
  
-+        SpigotTimings.timerEntityBaseTick.stopTiming(); // Spigot
++        MinecraftTimings.timerEntityBaseTick.stopTiming(); // Spigot
          this.onLivingUpdate();
-+        SpigotTimings.timerEntityTickRest.startTiming(); // Spigot
++        MinecraftTimings.timerEntityTickRest.startTiming(); // Spigot
          double d0 = this.posX - this.prevPosX;
          double d1 = this.posZ - this.prevPosZ;
          float f = (float)(d0 * d0 + d1 * d1);
@@ -647,7 +653,7 @@
  
          this.worldObj.theProfiler.endSection();
          this.field_70764_aw += f2;
-+        SpigotTimings.timerEntityTickRest.stopTiming(); // Spigot
++        MinecraftTimings.timerEntityTickRest.stopTiming(); // Spigot
      }
  
      protected float func_110146_f(float p_110146_1_, float p_110146_2_)
@@ -655,7 +661,7 @@
              this.motionZ = 0.0D;
          }
  
-+        SpigotTimings.timerEntityAI.startTiming(); // Spigot
++        MinecraftTimings.timerEntityAI.startTiming(); // Spigot
          this.worldObj.theProfiler.startSection("ai");
  
          if (this.isMovementBlocked())
@@ -663,7 +669,7 @@
              }
          }
  
-+        SpigotTimings.timerEntityAI.stopTiming(); // Spigot
++        MinecraftTimings.timerEntityAI.stopTiming(); // Spigot
          this.worldObj.theProfiler.endSection();
          this.worldObj.theProfiler.startSection("jump");
  
@@ -671,17 +677,17 @@
          this.moveStrafing *= 0.98F;
          this.moveForward *= 0.98F;
          this.randomYawVelocity *= 0.9F;
-+        SpigotTimings.timerEntityAIMove.startTiming(); // Spigot
++        MinecraftTimings.timerEntityAIMove.startTiming(); // Spigot
          this.moveEntityWithHeading(this.moveStrafing, this.moveForward);
-+        SpigotTimings.timerEntityAIMove.stopTiming(); // Spigot
++        MinecraftTimings.timerEntityAIMove.stopTiming(); // Spigot
          this.worldObj.theProfiler.endSection();
          this.worldObj.theProfiler.startSection("push");
  
          if (!this.worldObj.isRemote)
          {
-+            SpigotTimings.timerEntityAICollision.startTiming(); // Spigot
++            MinecraftTimings.timerEntityAICollision.startTiming(); // Spigot
              this.collideWithNearbyEntities();
-+            SpigotTimings.timerEntityAICollision.stopTiming(); // Spigot
++            MinecraftTimings.timerEntityAICollision.stopTiming(); // Spigot
          }
  
          this.worldObj.theProfiler.endSection();

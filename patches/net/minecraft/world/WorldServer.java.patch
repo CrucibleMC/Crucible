@@ -210,13 +210,13 @@
  
 +        timings.doChunkUnload.stopTiming(); // Spigot
          this.theProfiler.endStartSection("tickPending");
-+        timings.doTickPending.startTiming(); // Spigot
++        timings.chunkTicksBlocks.startTiming(); // Spigot
          this.tickUpdates(false);
-+        timings.doTickPending.stopTiming(); // Spigot
++        timings.chunkTicksBlocks.stopTiming(); // Spigot
          this.theProfiler.endStartSection("tickBlocks");
-+        timings.doTickTiles.startTiming(); // Spigot
++        timings.chunkTicksBlocks.startTiming(); // Spigot
          this.func_147456_g();
-+        timings.doTickTiles.stopTiming(); // Spigot
++        timings.chunkTicksBlocks.stopTiming(); // Spigot
          this.theProfiler.endStartSection("chunkMap");
 +        timings.doChunkMap.startTiming(); // Spigot
          this.thePlayerManager.updatePlayerInstances();
@@ -670,7 +670,26 @@
              if (chunkposition != null)
              {
                  i = chunkposition.chunkPosX;
-@@ -876,6 +1158,20 @@
+@@ -799,14 +1081,18 @@
+                 p_73044_2_.displayProgressMessage("Saving level");
+             }
+ 
++            timings.worldSaveLevel.startTiming(); //Crucible
+             this.saveLevel();
++            timings.worldSaveLevel.stopTiming(); //Crucible
+ 
+             if (p_73044_2_ != null)
+             {
+                 p_73044_2_.resetProgresAndWorkingMessage("Saving chunks");
+             }
+ 
++            timings.worldSaveChunks.startTiming(); //Crucible
+             this.chunkProvider.saveChunks(p_73044_1_, p_73044_2_);
++            timings.worldSaveChunks.stopTiming(); //Crucible
+             MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(this));
+             ArrayList arraylist = Lists.newArrayList(this.theChunkProviderServer.func_152380_a());
+             Iterator iterator = arraylist.iterator();
+@@ -876,6 +1162,20 @@
  
      public boolean addWeatherEffect(Entity p_72942_1_)
      {
@@ -691,7 +710,7 @@
          if (super.addWeatherEffect(p_72942_1_))
          {
              this.mcServer.getConfigurationManager().sendToAllNear(p_72942_1_.posX, p_72942_1_.posY, p_72942_1_.posZ, 512.0D, this.provider.dimensionId, new S2CPacketSpawnGlobalEntity(p_72942_1_));
-@@ -894,13 +1190,24 @@
+@@ -894,13 +1194,24 @@
  
      public Explosion newExplosion(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
@@ -717,7 +736,7 @@
          if (!p_72885_10_)
          {
              explosion.affectedBlockPositions.clear();
-@@ -977,7 +1284,8 @@
+@@ -977,7 +1288,8 @@
      {
          boolean flag = this.isRaining();
          super.updateWeather();
@@ -727,7 +746,7 @@
          if (this.prevRainingStrength != this.rainingStrength)
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
-@@ -987,11 +1295,9 @@
+@@ -987,11 +1299,9 @@
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -741,7 +760,7 @@
          if (flag != this.isRaining())
          {
              if (flag)
-@@ -1006,6 +1312,33 @@
+@@ -1006,6 +1316,33 @@
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -775,7 +794,7 @@
      }
  
      protected int func_152379_p()
-@@ -1069,4 +1402,53 @@
+@@ -1069,4 +1406,53 @@
                  this();
              }
          }

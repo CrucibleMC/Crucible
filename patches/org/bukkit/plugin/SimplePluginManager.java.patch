@@ -21,17 +21,31 @@
          while (!plugins.isEmpty()) {
              boolean missingDependency = true;
              Iterator<String> pluginIterator = plugins.keySet().iterator();
-@@ -295,6 +300,7 @@
-             }
+@@ -555,7 +560,8 @@
+             throw new IllegalPluginAccessException("Plugin attempted to register " + event + " while not enabled");
          }
  
-+        org.bukkit.command.defaults.TimingsCommand.timingStart = System.nanoTime(); // Spigot
-         return result.toArray(new Plugin[result.size()]);
+-        if (useTimings) {
++        executor = new co.aikar.timings.TimedEventExecutor(executor, plugin, null, event); // Paper
++        if (false) { // Spigot - RL handles useTimings check now // Paper
+             getEventListeners(event).register(new TimedRegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+         } else {
+             getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
+@@ -716,7 +722,7 @@
      }
  
-@@ -727,4 +733,17 @@
+     public boolean useTimings() {
+-        return useTimings;
++        return co.aikar.timings.Timings.isTimingsEnabled(); // Spigot
+     }
+ 
+     /**
+@@ -725,6 +731,19 @@
+      * @param use True if per event timing code should be used
+      */
      public void useTimings(boolean use) {
-         useTimings = use;
+-        useTimings = use;
++        co.aikar.timings.Timings.setTimingsEnabled(use); // Paper
      }
 +
 +    //Crucible start

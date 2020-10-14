@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -45,13 +45,51 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.entity;
+ 
++import co.aikar.timings.MinecraftTimings;
++import co.aikar.timings.Timing;
+ import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+@@ -45,13 +47,50 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
@@ -22,7 +30,6 @@
 +import org.bukkit.entity.LivingEntity;
 +import org.bukkit.entity.Painting;
 +import org.bukkit.entity.Vehicle;
-+import org.spigotmc.CustomTimingsHandler; // Spigot
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.painting.PaintingBreakByEntityEvent;
 +import org.bukkit.event.vehicle.VehicleBlockCollisionEvent;
@@ -52,7 +59,7 @@
      private static int nextEntityID;
      private int entityId;
      public double renderDistanceWeight;
-@@ -100,12 +138,12 @@
+@@ -100,12 +139,12 @@
      protected Random rand;
      public int ticksExisted;
      public int fireResistance;
@@ -68,7 +75,7 @@
      private double entityRiderPitchDelta;
      private double entityRiderYawDelta;
      public boolean addedToChunk;
-@@ -126,16 +164,27 @@
+@@ -126,16 +165,27 @@
      public int dimension;
      protected int teleportDirection;
      private boolean invulnerable;
@@ -87,7 +94,7 @@
  
 -    protected HashMap<String, IExtendedEntityProperties> extendedProperties;
 +    // Spigot start
-+    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getEntityTimings(this); // Spigot
++    public Timing tickTimer = MinecraftTimings.getEntityTimings(this); // Paper
 +    public final byte activationType = org.spigotmc.ActivationRange.initializeEntityActivationType(this);
 +    public final boolean defaultActivationState;
 +    public long activatedTick = 0;
@@ -99,7 +106,7 @@
  
      public int getEntityId()
      {
-@@ -159,7 +208,7 @@
+@@ -159,7 +209,7 @@
          this.rand = new Random();
          this.fireResistance = 1;
          this.firstUpdate = true;
@@ -108,7 +115,7 @@
          this.myEntitySize = Entity.EnumEntitySize.SIZE_2;
          this.worldObj = p_i1582_1_;
          this.setPosition(0.0D, 0.0D, 0.0D);
-@@ -167,8 +216,15 @@
+@@ -167,8 +217,15 @@
          if (p_i1582_1_ != null)
          {
              this.dimension = p_i1582_1_.provider.dimensionId;
@@ -124,7 +131,7 @@
          this.dataWatcher = new DataWatcher(this);
          this.dataWatcher.addObject(0, Byte.valueOf((byte)0));
          this.dataWatcher.addObject(1, Short.valueOf((short)300));
-@@ -186,6 +242,14 @@
+@@ -186,6 +243,14 @@
  
      protected abstract void entityInit();
  
@@ -139,7 +146,7 @@
      public DataWatcher getDataWatcher()
      {
          return this.dataWatcher;
-@@ -277,6 +341,41 @@
+@@ -277,6 +342,41 @@
  
      protected void setRotation(float p_70101_1_, float p_70101_2_)
      {
@@ -181,7 +188,7 @@
          this.rotationYaw = p_70101_1_ % 360.0F;
          this.rotationPitch = p_70101_2_ % 360.0F;
      }
-@@ -343,7 +442,7 @@
+@@ -343,7 +443,7 @@
  
              if (this.inPortal)
              {
@@ -190,7 +197,7 @@
                  {
                      if (this.ridingEntity == null && this.portalCounter++ >= i)
                      {
-@@ -457,7 +556,35 @@
+@@ -457,7 +557,35 @@
      {
          if (!this.isImmuneToFire)
          {
@@ -227,7 +234,7 @@
              this.setFire(15);
          }
      }
-@@ -492,6 +619,30 @@
+@@ -492,6 +620,30 @@
  
      public void moveEntity(double p_70091_1_, double p_70091_3_, double p_70091_5_)
      {
@@ -253,12 +260,12 @@
 +
 +        // CraftBukkit end
 +        if (!CauldronHooks.checkEntitySpeed(this, p_70091_1_, p_70091_3_, p_70091_5_)) return; // Check for entities violating the speed limit
-+        org.bukkit.craftbukkit.SpigotTimings.entityMoveTimer.startTiming(); // Spigot
++        MinecraftTimings.entityMoveTimer.startTiming(); // Spigot
 +
          if (this.noClip)
          {
              this.boundingBox.offset(p_70091_1_, p_70091_3_, p_70091_5_);
-@@ -756,6 +907,34 @@
+@@ -756,6 +908,34 @@
              d10 = this.posY - d4;
              d11 = this.posZ - d5;
  
@@ -293,7 +300,7 @@
              if (this.canTriggerWalking() && !flag && this.ridingEntity == null)
              {
                  int j1 = MathHelper.floor_double(this.posX);
-@@ -798,6 +977,8 @@
+@@ -798,6 +978,8 @@
                  }
              }
  
@@ -302,7 +309,7 @@
              try
              {
                  this.func_145775_I();
-@@ -809,7 +990,8 @@
+@@ -809,7 +991,8 @@
                  this.addEntityCrashInfo(crashreportcategory);
                  throw new ReportedException(crashreport);
              }
@@ -312,7 +319,7 @@
              boolean flag2 = this.isWet();
  
              if (this.worldObj.func_147470_e(this.boundingBox.contract(0.001D, 0.001D, 0.001D)))
-@@ -820,8 +1002,20 @@
+@@ -820,8 +1003,20 @@
                  {
                      ++this.fire;
  
@@ -334,16 +341,16 @@
                          this.setFire(8);
                      }
                  }
-@@ -839,6 +1033,8 @@
+@@ -839,6 +1034,8 @@
  
              this.worldObj.theProfiler.endSection();
          }
 +
-+        org.bukkit.craftbukkit.SpigotTimings.entityMoveTimer.stopTiming(); // Spigot
++        MinecraftTimings.entityMoveTimer.stopTiming(); // Spigot
      }
  
      protected String getSwimSound()
-@@ -867,7 +1063,18 @@
+@@ -867,7 +1064,18 @@
  
                          try
                          {
@@ -363,7 +370,7 @@
                          }
                          catch (Throwable throwable)
                          {
-@@ -928,6 +1135,7 @@
+@@ -928,6 +1136,7 @@
          return null;
      }
  
@@ -371,7 +378,7 @@
      protected void dealFireDamage(int p_70081_1_)
      {
          if (!this.isImmuneToFire)
-@@ -935,7 +1143,16 @@
+@@ -935,7 +1144,16 @@
              this.attackEntityFrom(DamageSource.inFire, (float)p_70081_1_);
          }
      }
@@ -388,7 +395,7 @@
      public final boolean isImmuneToFire()
      {
          return this.isImmuneToFire;
-@@ -1184,6 +1401,8 @@
+@@ -1184,6 +1402,8 @@
  
      public void onCollideWithPlayer(EntityPlayer p_70100_1_) {}
  
@@ -397,7 +404,7 @@
      public void applyEntityCollision(Entity p_70108_1_)
      {
          if (p_70108_1_.riddenByEntity != this && p_70108_1_.ridingEntity != this)
-@@ -1310,6 +1529,20 @@
+@@ -1310,6 +1530,20 @@
          {
              p_70109_1_.setTag("Pos", this.newDoubleNBTList(new double[] {this.posX, this.posY + (double)this.ySize, this.posZ}));
              p_70109_1_.setTag("Motion", this.newDoubleNBTList(new double[] {this.motionX, this.motionY, this.motionZ}));
@@ -418,7 +425,7 @@
              p_70109_1_.setTag("Rotation", this.newFloatNBTList(new float[] {this.rotationYaw, this.rotationPitch}));
              p_70109_1_.setFloat("FallDistance", this.fallDistance);
              p_70109_1_.setShort("Fire", (short)this.fire);
-@@ -1320,6 +1553,12 @@
+@@ -1320,6 +1554,12 @@
              p_70109_1_.setInteger("PortalCooldown", this.timeUntilPortal);
              p_70109_1_.setLong("UUIDMost", this.getUniqueID().getMostSignificantBits());
              p_70109_1_.setLong("UUIDLeast", this.getUniqueID().getLeastSignificantBits());
@@ -431,7 +438,7 @@
              if (customEntityData != null)
              {
                  p_70109_1_.setTag("ForgeData", customEntityData);
-@@ -1370,7 +1609,7 @@
+@@ -1370,7 +1610,7 @@
              this.motionX = nbttaglist1.func_150309_d(0);
              this.motionY = nbttaglist1.func_150309_d(1);
              this.motionZ = nbttaglist1.func_150309_d(2);
@@ -440,7 +447,7 @@
              if (Math.abs(this.motionX) > 10.0D)
              {
                  this.motionX = 0.0D;
-@@ -1385,7 +1624,7 @@
+@@ -1385,7 +1625,7 @@
              {
                  this.motionZ = 0.0D;
              }
@@ -449,7 +456,7 @@
              this.prevPosX = this.lastTickPosX = this.posX = nbttaglist.func_150309_d(0);
              this.prevPosY = this.lastTickPosY = this.posY = nbttaglist.func_150309_d(1);
              this.prevPosZ = this.lastTickPosZ = this.posZ = nbttaglist.func_150309_d(2);
-@@ -1436,6 +1675,76 @@
+@@ -1436,6 +1676,76 @@
              {
                  this.setPosition(this.posX, this.posY, this.posZ);
              }
@@ -526,7 +533,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1653,6 +1962,31 @@
+@@ -1653,6 +1963,31 @@
  
      public void mountEntity(Entity p_70078_1_)
      {
@@ -558,7 +565,7 @@
          this.entityRiderPitchDelta = 0.0D;
          this.entityRiderYawDelta = 0.0D;
  
-@@ -1660,6 +1994,20 @@
+@@ -1660,6 +1995,20 @@
          {
              if (this.ridingEntity != null)
              {
@@ -579,7 +586,7 @@
                  this.setLocationAndAngles(this.ridingEntity.posX, this.ridingEntity.boundingBox.minY + (double)this.ridingEntity.height, this.ridingEntity.posZ, this.rotationYaw, this.rotationPitch);
                  this.ridingEntity.riddenByEntity = null;
              }
-@@ -1668,22 +2016,61 @@
+@@ -1668,22 +2017,61 @@
          }
          else
          {
@@ -648,7 +655,7 @@
              this.ridingEntity = p_70078_1_;
              p_70078_1_.riddenByEntity = this;
          }
-@@ -1860,12 +2247,59 @@
+@@ -1860,12 +2248,59 @@
  
      public void onStruckByLightning(EntityLightningBolt p_70077_1_)
      {
@@ -710,7 +717,7 @@
          }
      }
  
-@@ -2038,46 +2472,83 @@
+@@ -2038,46 +2473,83 @@
          {
              this.worldObj.theProfiler.startSection("changeDimension");
              MinecraftServer minecraftserver = MinecraftServer.getServer();
@@ -811,7 +818,7 @@
      public float func_145772_a(Explosion p_145772_1_, World p_145772_2_, int p_145772_3_, int p_145772_4_, int p_145772_5_, Block p_145772_6_)
      {
          return p_145772_6_.getExplosionResistance(this, p_145772_2_, p_145772_3_, p_145772_4_, p_145772_5_, posX, posY + getEyeHeight(), posZ);
-@@ -2474,4 +2945,14 @@
+@@ -2474,4 +2946,14 @@
                  }
              }
          }

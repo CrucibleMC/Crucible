@@ -16,15 +16,24 @@
  import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.common.util.ForgeDirection;
  import net.minecraftforge.common.util.RotationHelper;
-@@ -122,6 +124,7 @@
+@@ -122,6 +124,16 @@
      private String unlocalizedName;
      @SideOnly(Side.CLIENT)
      protected IIcon blockIcon;
 +    public boolean isForgeBlock; // Cauldron
++    // Paper start
++    public co.aikar.timings.Timing timing;
++    public co.aikar.timings.Timing getTiming() {
++        if (timing == null) {
++            timing = co.aikar.timings.MinecraftTimings.getBlockTiming(this);
++        }
++        return timing;
++    }
++    // Paper end
      private static final String __OBFID = "CL_00000199";
  
      public final cpw.mods.fml.common.registry.RegistryDelegate<Block> delegate = 
-@@ -133,6 +136,8 @@
+@@ -133,6 +145,8 @@
  
      public static Block getBlockById(int p_149729_0_)
      {
@@ -33,7 +42,7 @@
          Block ret = (Block)blockRegistry.getObjectById(p_149729_0_);
          return ret == null ? Blocks.air : ret;
      }
-@@ -564,6 +569,10 @@
+@@ -564,6 +578,10 @@
  
      public void addCollisionBoxesToList(World p_149743_1_, int p_149743_2_, int p_149743_3_, int p_149743_4_, AxisAlignedBB p_149743_5_, List p_149743_6_, Entity p_149743_7_)
      {
@@ -44,7 +53,7 @@
          AxisAlignedBB axisalignedbb1 = this.getCollisionBoundingBoxFromPool(p_149743_1_, p_149743_2_, p_149743_3_, p_149743_4_);
  
          if (axisalignedbb1 != null && p_149743_5_.intersectsWith(axisalignedbb1))
-@@ -954,13 +963,18 @@
+@@ -954,13 +972,18 @@
          if (this.canSilkHarvest(p_149636_1_, p_149636_2_, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_) && EnchantmentHelper.getSilkTouchModifier(p_149636_2_))
          {
              ArrayList<ItemStack> items = new ArrayList<ItemStack>();
@@ -67,7 +76,7 @@
              ForgeEventFactory.fireBlockHarvesting(items, p_149636_1_, this, p_149636_3_, p_149636_4_, p_149636_5_, p_149636_6_, 0, 1.0f, true, p_149636_2_);
              for (ItemStack is : items)
              {
-@@ -1131,6 +1145,23 @@
+@@ -1131,6 +1154,23 @@
          return this;
      }
  

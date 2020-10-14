@@ -1,6 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -34,9 +34,19 @@
+@@ -1,12 +1,12 @@
+ package net.minecraft.server.dedicated;
+ 
++import co.aikar.timings.MinecraftTimings;
+ import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+-import java.io.BufferedReader;
++
+ import java.io.File;
+ import java.io.IOException;
+-import java.io.InputStreamReader;
+ import java.net.InetAddress;
+ import java.net.Proxy;
+ import java.util.ArrayList;
+@@ -34,9 +34,18 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldSettings;
  import net.minecraft.world.WorldType;
@@ -13,14 +28,13 @@
 +import org.apache.logging.log4j.Level;
 +
 +import org.bukkit.craftbukkit.LoggerOutputStream;
-+import org.bukkit.craftbukkit.SpigotTimings; // Spigot
 +import org.bukkit.event.server.ServerCommandEvent;
 +// CraftBukkit end
 +
  @SideOnly(Side.SERVER)
  public class DedicatedServer extends MinecraftServer implements IServer
  {
-@@ -44,7 +54,7 @@
+@@ -44,7 +53,7 @@
      public final List pendingCommandList = Collections.synchronizedList(new ArrayList());
      private RConThreadQuery theRConThreadQuery;
      private RConThreadMain theRConThreadMain;
@@ -29,7 +43,7 @@
      private ServerEula field_154332_n;
      private boolean canSpawnStructures;
      private WorldSettings.GameType gameType;
-@@ -52,10 +62,13 @@
+@@ -52,10 +61,13 @@
      public static boolean allowPlayerLogins = false;
      private static final String __OBFID = "CL_00001784";
  
@@ -46,7 +60,7 @@
          {
              private static final String __OBFID = "CL_00001787";
              {
-@@ -82,31 +95,77 @@
+@@ -82,31 +94,77 @@
          };
      }
  
@@ -131,7 +145,7 @@
          field_155771_h.info("Starting minecraft server version 1.7.10");
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
-@@ -117,7 +176,7 @@
+@@ -117,7 +175,7 @@
          FMLCommonHandler.instance().onServerStart(this);
  
          field_155771_h.info("Loading properties");
@@ -140,7 +154,7 @@
          this.field_154332_n = new ServerEula(new File("eula.txt"));
  
          if (!this.field_154332_n.func_154346_a())
-@@ -172,6 +231,18 @@
+@@ -172,6 +230,18 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
@@ -159,7 +173,7 @@
              field_155771_h.info("Generating keypair");
              this.setKeyPair(CryptManager.createNewKeyPair());
              field_155771_h.info("Starting Minecraft server on " + (this.getServerHostname().length() == 0 ? "*" : this.getServerHostname()) + ":" + this.getServerPort());
-@@ -180,7 +251,7 @@
+@@ -180,7 +250,7 @@
              {
                  this.func_147137_ag().addLanEndpoint(inetaddress, this.getServerPort());
              }
@@ -168,7 +182,7 @@
              {
                  field_155771_h.warn("**** FAILED TO BIND TO PORT!");
                  field_155771_h.warn("The exception was: {}", new Object[] {ioexception.toString()});
-@@ -196,10 +267,17 @@
+@@ -196,10 +266,17 @@
                  field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
              }
  
@@ -188,7 +202,7 @@
  
              if (!PreYggdrasilConverter.func_152714_a(this.settings))
              {
-@@ -208,7 +286,8 @@
+@@ -208,7 +285,8 @@
              else
              {
                  FMLCommonHandler.instance().onServerStarted();
@@ -198,7 +212,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -274,11 +353,30 @@
+@@ -274,11 +352,30 @@
                      this.theRConThreadMain.startThread();
                  }
  
@@ -229,11 +243,11 @@
      public boolean canStructuresSpawn()
      {
          return this.canSpawnStructures;
-@@ -364,11 +462,19 @@
+@@ -364,11 +461,19 @@
  
      public void executePendingCommands()
      {
-+        SpigotTimings.serverCommandTimer.startTiming(); // Spigot
++        MinecraftTimings.serverCommandTimer.startTiming(); // Spigot
          while (!this.pendingCommandList.isEmpty())
          {
 -            ServerCommand servercommand = (ServerCommand)this.pendingCommandList.remove(0);
@@ -247,7 +261,7 @@
 +            this.server.dispatchServerCommand(this.console, servercommand);
 +            // CraftBukkit end
          }
-+        SpigotTimings.serverCommandTimer.stopTiming(); // Spigot
++        MinecraftTimings.serverCommandTimer.stopTiming(); // Spigot
      }
  
      public boolean isDedicatedServer()

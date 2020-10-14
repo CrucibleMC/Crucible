@@ -180,15 +180,16 @@
      }
  
      private Chunk readChunkFromNBT(World p_75823_1_, NBTTagCompound p_75823_2_)
-@@ -455,6 +476,7 @@
+@@ -455,6 +476,8 @@
  
      public void loadEntities(World p_75823_1_, NBTTagCompound p_75823_2_, Chunk chunk)
      {
-+        p_75823_1_.timings.syncChunkLoadEntitiesTimer.startTiming(); // Spigot
++        //TODO add those timings?
++        //p_75823_1_.timings.syncChunkLoadEntitiesTimer.startTiming(); // Spigot
          NBTTagList nbttaglist1 = p_75823_2_.getTagList("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -468,24 +490,31 @@
+@@ -468,24 +491,31 @@
                  if (entity2 != null)
                  {
                      chunk.addEntity(entity2);
@@ -224,12 +225,12 @@
              }
          }
  
-+        p_75823_1_.timings.syncChunkLoadEntitiesTimer.stopTiming(); // Spigot
-+        p_75823_1_.timings.syncChunkLoadTileEntitiesTimer.startTiming(); // Spigot
++        //p_75823_1_.timings.syncChunkLoadEntitiesTimer.stopTiming(); // Spigot
++        //p_75823_1_.timings.syncChunkLoadTileEntitiesTimer.startTiming(); // Spigot
          NBTTagList nbttaglist2 = p_75823_2_.getTagList("TileEntities", 10);
  
          if (nbttaglist2 != null)
-@@ -497,11 +526,35 @@
+@@ -497,11 +527,35 @@
  
                  if (tileentity != null)
                  {
@@ -260,16 +261,16 @@
              }
          }
  
-+        p_75823_1_.timings.syncChunkLoadTileEntitiesTimer.stopTiming(); // Spigot
-+        p_75823_1_.timings.syncChunkLoadTileTicksTimer.startTiming(); // Spigot
++       // p_75823_1_.timings.syncChunkLoadTileEntitiesTimer.stopTiming(); // Spigot
++       // p_75823_1_.timings.syncChunkLoadTileTicksTimer.startTiming(); // Spigot
          if (p_75823_2_.hasKey("TileTicks", 9))
          {
              NBTTagList nbttaglist3 = p_75823_2_.getTagList("TileTicks", 10);
-@@ -515,6 +568,7 @@
+@@ -515,6 +569,7 @@
                  }
              }
          }
-+        p_75823_1_.timings.syncChunkLoadTileTicksTimer.stopTiming(); // Spigot
++        //p_75823_1_.timings.syncChunkLoadTileTicksTimer.stopTiming(); // Spigot
  
          // return chunk;
      }

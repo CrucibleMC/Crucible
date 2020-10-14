@@ -36,15 +36,7 @@
  /**
   * Represents a Java plugin loader, allowing plugins in the form of .jar
   */
-@@ -49,6 +63,7 @@
-     private final Pattern[] fileFilters = new Pattern[] { Pattern.compile("\\.jar$"), };
-     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
-     private final Map<String, PluginClassLoader> loaders = new LinkedHashMap<String, PluginClassLoader>();
-+    public static final CustomTimingsHandler pluginParentTimer = new CustomTimingsHandler("** Plugins"); // Spigot
- 
-     /**
-      * This class was not meant to be constructed explicitly
-@@ -59,43 +74,41 @@
+@@ -59,43 +73,41 @@
          server = instance;
      }
  
@@ -98,7 +90,7 @@
                  file,
                  oldDataFolder,
                  dataFolder
-@@ -104,14 +117,19 @@
+@@ -104,14 +116,19 @@
  
          if (dataFolder.exists() && !dataFolder.isDirectory()) {
              throw new InvalidPluginException(String.format(
@@ -121,7 +113,7 @@
              if (loaders == null) {
                  throw new UnknownDependencyException(pluginName);
              }
-@@ -122,7 +140,7 @@
+@@ -122,7 +139,7 @@
              }
          }
  
@@ -130,7 +122,7 @@
          try {
              loader = new PluginClassLoader(this, getClass().getClassLoader(), description, dataFolder, file);
          } catch (InvalidPluginException ex) {
-@@ -136,6 +154,26 @@
+@@ -136,6 +153,26 @@
          return loader.plugin;
      }
  
@@ -157,36 +149,30 @@
      public PluginDescriptionFile getPluginDescription(File file) throws InvalidDescriptionException {
          Validate.notNull(file, "File cannot be null");
  
-@@ -283,13 +321,19 @@
+@@ -283,8 +320,9 @@
                  }
              }
  
-+            final CustomTimingsHandler timings = new CustomTimingsHandler("Plugin: " + plugin.getDescription().getFullName() + " Event: " + listener.getClass().getName() + "::" + method.getName()+"("+eventClass.getSimpleName()+")", pluginParentTimer); // Spigot
-             EventExecutor executor = new EventExecutor() {
-                 public void execute(Listener listener, Event event) throws EventException {
+-            EventExecutor executor = new EventExecutor() {
+-                public void execute(Listener listener, Event event) throws EventException {
++
++            EventExecutor executor = new co.aikar.timings.TimedEventExecutor(new EventExecutor() { // Paper
++                public void execute(Listener listener, Event event) throws EventException { // Paper
                      try {
                          if (!eventClass.isAssignableFrom(event.getClass())) {
                              return;
-                         }
-+                        // Spigot start
-+                        boolean isAsync = event.isAsynchronous();
-+                        if (!isAsync) timings.startTiming();
-                         method.invoke(listener, event);
-+                        if (!isAsync) timings.stopTiming();
-+                        // Spigot end
-                     } catch (InvocationTargetException ex) {
-                         throw new EventException(ex.getCause());
-                     } catch (Throwable t) {
-@@ -297,7 +341,7 @@
+@@ -296,8 +334,8 @@
+                         throw new EventException(t);
                      }
                  }
-             };
+-            };
 -            if (useTimings) {
++            }, plugin, method, eventClass);
 +            if (false) { // Spigot - RL handles useTimings check now
                  eventSet.add(new TimedRegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
              } else {
                  eventSet.add(new RegisteredListener(listener, executor, eh.priority(), plugin, eh.ignoreCancelled()));
-@@ -362,4 +406,44 @@
+@@ -362,4 +400,44 @@
              }
          }
      }

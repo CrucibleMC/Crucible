@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -22,20 +22,32 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.tileentity;
+ 
++import co.aikar.timings.MinecraftTimings;
++import co.aikar.timings.Timing;
+ import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+@@ -22,20 +24,32 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -23,7 +31,7 @@
      protected boolean tileEntityInvalid;
      public int blockMetadata = -1;
      public Block blockType;
-+    public CustomTimingsHandler tickTimer = org.bukkit.craftbukkit.SpigotTimings.getTileEntityTimings(this); // Spigot
++    public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Paper
      private static final String __OBFID = "CL_00000340";
  
 +    @Override
@@ -35,7 +43,7 @@
      public static void addMapping(Class p_145826_0_, String p_145826_1_)
      {
          if (nameToClassMap.containsKey(p_145826_1_))
-@@ -106,7 +118,11 @@
+@@ -106,7 +120,11 @@
          }
          catch (Exception exception)
          {
@@ -48,7 +56,7 @@
          }
  
          if (tileentity != null)
-@@ -282,6 +298,31 @@
+@@ -282,6 +300,31 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
  

@@ -1,5 +1,6 @@
 package org.spigotmc;
 
+import co.aikar.timings.MinecraftTimings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
@@ -29,7 +30,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
-import org.bukkit.craftbukkit.SpigotTimings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,7 +127,7 @@ public class ActivationRange {
      * @param world
      */
     public static void activateEntities(World world) {
-        SpigotTimings.entityActivationCheckTimer.startTiming();
+        MinecraftTimings.entityActivationCheckTimer.startTiming();
         // Cauldron start - proxy world support
         final int miscActivationRange = world.getSpigotConfig().miscActivationRange;
         final int animalActivationRange = world.getSpigotConfig().animalActivationRange;
@@ -159,7 +159,7 @@ public class ActivationRange {
                 }
             }
         }
-        SpigotTimings.entityActivationCheckTimer.stopTiming();
+        MinecraftTimings.entityActivationCheckTimer.stopTiming();
     }
 
     /**
@@ -247,7 +247,8 @@ public class ActivationRange {
      * @return
      */
     public static boolean checkIfActive(Entity entity) {
-        SpigotTimings.checkIfActiveTimer.startTiming();
+        //TODO add those timings back?
+        //SpigotTimings.checkIfActiveTimer.startTiming();
 
         boolean isActive = entity.activatedTick >= MinecraftServer.currentTick || entity.defaultActivationState;
 
@@ -279,7 +280,7 @@ public class ActivationRange {
         {
             isActive = true;
         }
-        SpigotTimings.checkIfActiveTimer.stopTiming();
+        //SpigotTimings.checkIfActiveTimer.stopTiming();
         return isActive;
     }
 }

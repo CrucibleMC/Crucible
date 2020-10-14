@@ -24,12 +24,13 @@
  import java.io.File;
  import java.net.MalformedURLException;
  import java.net.URL;
-@@ -15,16 +33,40 @@
+@@ -15,16 +33,41 @@
  /**
   * A ClassLoader for plugins, to allow shared classes across multiple plugins
   */
 -final class PluginClassLoader extends URLClassLoader {
 +public class PluginClassLoader extends URLClassLoader {
++    public JavaPlugin getPlugin() { return plugin; } // Spigot
      private final JavaPluginLoader loader;
 -    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
 +    private final ConcurrentMap<String, Class<?>> classes = new ConcurrentHashMap<String, Class<?>>(); // Cauldron - Threadsafe classloading
@@ -68,7 +69,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +76,113 @@
+@@ -34,6 +77,113 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -182,7 +183,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +207,336 @@
+@@ -58,34 +208,336 @@
      }
  
      @Override

@@ -15,6 +15,7 @@ Advantages over Thermos:
 + Performance Improvements.
 + Updated some libraries.
 + Works with luckperms out of the box. No need to replace files!
++ TimingsV2 implemented.
 + You can see more changes in the [releases](https://github.com/CrucibleMC/Crucible/releases) changelog.
 
 ## Build Requirements

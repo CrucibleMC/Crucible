@@ -1,12 +1,14 @@
 package org.spigotmc;
 
+import co.aikar.timings.MinecraftTimings;
+import co.aikar.timings.Timing;
 import gnu.trove.set.TByteSet;
 import gnu.trove.set.hash.TByteHashSet;
 
 public class AntiXray {
 
-    private static final CustomTimingsHandler update = new CustomTimingsHandler("xray - update");
-    private static final CustomTimingsHandler obfuscate = new CustomTimingsHandler("xray - obfuscate");
+    private static final Timing update = MinecraftTimings.antiXrayUpdateTimer;
+    private static final Timing obfuscate = MinecraftTimings.antiXrayObfuscateTimer;
     /*========================================================================*/
     // Used to keep track of which blocks to obfuscate
     private final boolean[] obfuscateBlocks = new boolean[Short.MAX_VALUE];
