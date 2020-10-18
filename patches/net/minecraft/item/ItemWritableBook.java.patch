@@ -8,7 +8,7 @@
  import net.minecraft.world.World;
  
  public class ItemWritableBook extends Item
-@@ -25,6 +26,49 @@
+@@ -25,6 +26,51 @@
          return true;
      }
  
@@ -16,10 +16,12 @@
 +    {
 +        if (isSigning)
 +        {
-+            if(push.getTagCompound().hasKey("title"))
++            //if(push.getTagCompound().hasKey("title"))
++            if(push.getTagCompound().hasKey("title", 8))
 +                stack.setTagInfo("title", new NBTTagString(push.getTagCompound().getString("title")));
 +        }
-+        if (push.getTagCompound().hasKey("pages",8))
++        //if (push.getTagCompound().hasKey("pages",8))
++        if (push.getTagCompound().hasKey("pages",9))
 +            stack.setTagInfo("pages", push.getTagCompound().getTagList("pages", 8));
 +        return true;
 +        /*if (this.hasTagCompound() && par1.hasTagCompound())
@@ -58,7 +60,7 @@
      public static boolean func_150930_a(NBTTagCompound p_150930_0_)
      {
          if (p_150930_0_ == null)
-@@ -43,15 +87,10 @@
+@@ -43,15 +89,10 @@
              {
                  String s = nbttaglist.getStringTagAt(i);
  
