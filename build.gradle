@@ -105,7 +105,8 @@ ext.mcVersion = "1.7.10"
 ext.forgeVersion = "1614"
 ext.revision = "1.0.7"
 ext.crucibleVersion = "4.1"
-version = "${mcVersion}-${crucibleVersion}"
+version = "${mcVersion}-${crucibleVersion}-${gitInfo('branch')}-${gitInfo('hash')}"
+System.setProperty("file.encoding", "UTF-8")
 
 launch4j {
     jreMinVersion = '1.8.0'
@@ -209,7 +210,23 @@ tasks.packageUniversal {
     manifest.attributes(generateManifest(true))
 }
 
-task jar(type: Jar, dependsOn: packageUniversal) {
+task copyLibraries(type: Copy) {
+    into(buildDir)
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect {
+        def moduleVersion = it.moduleVersion
+        from (it.file) {
+            into ("libraries/${moduleVersion.id.group.replace('.', '/')}/${moduleVersion.id.name}/${moduleVersion.id.version}/")
+        }
+    }
+}
+
+task packageLibraries(type: Zip, dependsOn: copyLibraries) {
+    setArchiveName("libraries.zip")
+    setDestinationDir(file("$buildDir/distributions"))
+    from("$buildDir/libraries")
+}
+
+task jar(type: Jar, dependsOn: [packageUniversal, packageLibraries]) {
     destinationDir file("${buildDir}/distributions")
     from zipTree(tasks.packageUniversal.archivePath)
     manifest.attributes(generateManifest())
