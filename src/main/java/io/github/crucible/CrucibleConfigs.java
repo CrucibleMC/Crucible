@@ -39,17 +39,11 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Attempts to reduce console spam by removing \"useless\" logs.")
     public boolean crucible_logging_reduceSpam = false;
 
-    @Comment("If true, all entities and tiles in forced chunks will be ticked even without nearby players, experimental, it will cause a lot of lag!")
-    public boolean crucible_tickHandler_forcedChunkTick = false;
-
     @Comment("Sets the server max tps, experimental, can cause problems!")
     public int crucible_tickHandler_serverTickRate = 20;
 
     @Comment("Sets the server max tick time, experimental, can cause problems!")
     public int crucible_tickHandler_serverTickTime = 1000000000;
-
-    @Comment("List of dimension IDs that should never be unloaded.")
-    public List<Integer> crucible_misc_worldUnloadBlacklist = Collections.singletonList(0);
 
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
