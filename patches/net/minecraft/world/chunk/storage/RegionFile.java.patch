@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
-@@ -1,373 +1,314 @@
+@@ -1,373 +1,303 @@
  package net.minecraft.world.chunk.storage;
  
 -import java.io.BufferedInputStream;
@@ -226,7 +226,6 @@
 -                if (k == 0)
 -                {
 +                if (offset == 0) {
-+                    CrucibleModContainer.logger.info("Chunk with offset 0, returning null");
                      return null;
 -                }
 -                else
@@ -243,13 +242,10 @@
 +                    if (sectorCount == 255) {
 +                        this.dataFile.seek(sector * SECTOR_LENGTH);
 +                        sectorCount = (this.dataFile.readInt() + 4) / 4096 + 1;
-+						CrucibleModContainer.logger.info("Loading oversized chunk with {} sectors", sectorCount);
 +                    } else {
-+						CrucibleModContainer.logger.info("Loading chunk with {} sectors", sectorCount);
 +					}
 +                    // Spigot end
 +                    if (sector + sectorCount > this.sectorFree.size()) {
-+						CrucibleModContainer.logger.error("Tried to read a chunk from invalid sector at {}", sector);
                          return null;
 -                    }
 -                    else
@@ -263,13 +259,11 @@
 -                        if (j1 > 4096 * i1)
 -                        {
 +                        if (length > 4096 * sectorCount) {
-+							CrucibleModContainer.logger.error("Invalid length {} for {} sectors", length, sectorCount);
                              return null;
 -                        }
 -                        else if (j1 <= 0)
 -                        {
 +                        } else if (length <= 0) {
-+							CrucibleModContainer.logger.error("Invalid length {}", length);
                              return null;
 -                        }
 -                        else
@@ -303,7 +297,6 @@
 +                                this.dataFile.read(compressedData);
 +                                return new DataInputStream(new BufferedInputStream(new InflaterInputStream(new ByteArrayInputStream(compressedData))));
 +                            } else {
-+								CrucibleModContainer.logger.error("Invalid compression type.");
                                  return null;
                              }
                          }
@@ -355,9 +348,8 @@
 -            {
 -                this.write(i1, p_76706_3_, p_76706_4_);
 +            if (sectorsNeeded >= 256) { //crucible - info: chunk has a limit of 255 sectors
-+                CrucibleModContainer.logger.warn("Oversized Chunk at ({}, {})", x, z);
++                CrucibleModContainer.logger.warn("[Crucible] Oversized Chunk at ({}, {})", x, z);
 +                if (!FORGE_ENABLE_EXTENDED_SAVE) {
-+                    CrucibleModContainer.logger.warn("Skipping chunk save.");
 +                    return;
 +                }
              }
@@ -429,7 +421,6 @@
 -                    this.setOffset(p_76706_1_, p_76706_2_, l1 << 8 | k1);
 +                if (sectorLength >= sectorsNeeded) {
 +					//crucible - info: space found.
-+					CrucibleModContainer.logger.info("Found {} free sectors at sector {}", sectorLength, sectorStart);
 +                    sector = sectorStart;
 +                    this.setOffset(x, z, sector << 8 | (sectorsNeeded > 255 ? 255 : sectorsNeeded)); // Spigot
  
@@ -446,7 +437,6 @@
 -                {
 +                    this.write(sector, data, length);
 +                } else {
-+					CrucibleModContainer.logger.info("No free space found, growing file");
 +					//crucible - info: space nof found, grow the file.
                      this.dataFile.seek(this.dataFile.length());
 -                    i1 = this.sectorFree.size();
@@ -485,7 +475,6 @@
 -        this.dataFile.seek((long)(p_76712_1_ * 4096));
 -        this.dataFile.writeInt(p_76712_3_ + 1);
 +    private void write(int sectorNumber, byte[] data, int length) throws IOException {
-+		CrucibleModContainer.logger.info("Saving chunk with size {} at {}", length, sectorNumber);
 +        this.dataFile.seek(sectorNumber * SECTOR_LENGTH);
 +        this.dataFile.writeInt(length + 1);
          this.dataFile.writeByte(2);
