@@ -28,7 +28,7 @@ public class CauldronConfig extends ConfigBase {
     public final BoolSetting logEntityCollisionChecks = new BoolSetting(this, "logging.entity-collision-checks", false, "Whether to log entity collision/count checks");
     public final BoolSetting logEntitySpeedRemoval = new BoolSetting(this, "logging.entity-speed-removal", false, "Whether to log entity removals due to speed");
     public final IntSetting largeCollisionLogSize = new IntSetting(this, "logging.collision-warn-size", 200, "Number of colliding entities in one spot before logging a warning. Set to 0 to disable");
-    public final IntSetting largeEntityCountLogSize = new IntSetting(this, "logging.entity-count-warn-size", 0, "Number of entities in one dimension logging a warning. Set to 0 to disable");
+    //public final IntSetting largeEntityCountLogSize = new IntSetting(this, "logging.entity-count-warn-size", 0, "Number of entities in one dimension logging a warning. Set to 0 to disable");
     public final BoolSetting userLogin = new BoolSetting(this, "logging.user-login", false, "Set true to enable debuggin user's login process");
     // General settings
     public final BoolSetting loadChunkOnRequest = new BoolSetting(this, "settings.load-chunk-on-request", true, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded");
@@ -44,7 +44,7 @@ public class CauldronConfig extends ConfigBase {
     public final BoolSetting infiniteWaterSource = new BoolSetting(this, "world-settings.default.infinite-water-source", true, "Vanilla water source behavior - is infinite");
     public final BoolSetting flowingLavaDecay = new BoolSetting(this, "world-settings.default.flowing-lava-decay", false, "Lava behaves like vanilla water when source block is removed");
     public final BoolSetting allowTntPunishment = new BoolSetting(this, "world-settings.default.allow-tnt-punishment", true, "TNT ability to push other entities (including other TNTs)");
-    public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, "Raise login events for fake players");
+    //public final BoolSetting fakePlayerLogin = new BoolSetting(this, "fake-players.do-login", false, "Raise login events for fake players");
     public final IntSetting maxPlayersVisible = new IntSetting(this, "world-settings.max-players-visible", -1, "How many players will visible in the tab list");
     // Thermos caterings
     public final BoolSetting realNames = new BoolSetting(this, "world-settings.use-real-names", false, "Instead of DIM##, use the world name prescribed by the mod! Be careful with this one, could create incompat with existing setups!");
