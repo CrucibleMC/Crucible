@@ -1,4 +1,4 @@
-package thermos;
+package io.github.crucible.util;
 
 public class BlockCoords {
     public final int x, y, z;

@@ -191,7 +191,7 @@ def generateManifest(boolean legacy = false) {
             'Thermos-Channel'       : project.name,
             'Thermos-Version'       : project.version,
             'Thermos-Legacy'        : legacy,
-            'Implementation-Vendor' : 'CyberdyneCC',
+            'Implementation-Vendor' : 'CrucibleMC Team',
             'Implementation-Title'  : project.name,
             'Implementation-Version': project.version,
             'Specification-Vendor'  : 'Bukkit Team',

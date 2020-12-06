@@ -1,4 +1,4 @@
-package thermos.chaud;
+package io.github.crucible.util;
 
 import java.util.*;
 

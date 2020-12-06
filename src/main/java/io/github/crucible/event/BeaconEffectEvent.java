@@ -1,4 +1,4 @@
-package thermos.event;
+package io.github.crucible.event;
 /**
  * Add new event from PaperSpigot, BeaconEffectEvent.
  * Called when an effect is being applied to a player.
