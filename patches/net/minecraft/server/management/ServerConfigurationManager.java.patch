@@ -183,7 +183,7 @@
      protected void writePlayerData(EntityPlayerMP p_72391_1_)
      {
          if (p_72391_1_.playerNetServerHandler == null) return;
-@@ -294,18 +359,61 @@
+@@ -294,18 +359,60 @@
  
      public void playerLoggedIn(EntityPlayerMP p_72377_1_)
      {
@@ -245,11 +245,10 @@
 +            p_72377_1_.playerNetServerHandler.sendPacket(new S38PacketPlayerListItem(entityplayermp1.listName, true, entityplayermp1.ping));
 +        }
 +        // CraftBukkit end
-+        thermos.updater.DefaultUpdateCallback.INSTANCE.onPlayerJoin(playerJoinEvent);
      }
  
      public void updatePlayerPertinentChunks(EntityPlayerMP p_72358_1_)
-@@ -313,14 +421,33 @@
+@@ -313,14 +420,33 @@
          p_72358_1_.getServerForPlayer().getPlayerManager().updatePlayerPertinentChunks(p_72358_1_);
      }
  
@@ -285,7 +284,7 @@
          {
              worldserver.removePlayerEntityDangerously(p_72367_1_.ridingEntity);
              logger.debug("removing player mount");
-@@ -329,9 +456,35 @@
+@@ -329,9 +455,35 @@
          worldserver.removeEntity(p_72367_1_);
          worldserver.getPlayerManager().removePlayer(p_72367_1_);
          this.playerEntityList.remove(p_72367_1_);
@@ -324,7 +323,7 @@
      }
  
      public String allowUserToConnect(SocketAddress p_148542_1_, GameProfile p_148542_2_)
-@@ -352,7 +505,7 @@
+@@ -352,7 +504,7 @@
          }
          else if (!this.func_152607_e(p_148542_2_))
          {
@@ -333,7 +332,7 @@
          }
          else if (this.bannedIPs.func_152708_a(p_148542_1_))
          {
-@@ -368,10 +521,77 @@
+@@ -368,10 +520,77 @@
          }
          else
          {
@@ -412,7 +411,7 @@
      public EntityPlayerMP createPlayerForUser(GameProfile p_148545_1_)
      {
          UUID uuid = EntityPlayer.func_146094_a(p_148545_1_);
-@@ -410,80 +630,307 @@
+@@ -410,80 +629,307 @@
          return new EntityPlayerMP(this.mcServer, this.mcServer.worldServerForDimension(0), p_148545_1_, (ItemInWorldManager)object);
      }
  
@@ -758,7 +757,7 @@
          return entityplayermp1;
      }
  
-@@ -492,34 +939,112 @@
+@@ -492,34 +938,112 @@
          transferPlayerToDimension(p_72356_1_, p_72356_2_, mcServer.worldServerForDimension(p_72356_2_).getDefaultTeleporter());
      }
  
@@ -891,7 +890,7 @@
      }
  
      public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, Teleporter teleporter)
-@@ -605,6 +1130,109 @@
+@@ -605,6 +1129,109 @@
          p_82448_1_.setWorld(p_82448_4_);
      }
  
@@ -1001,7 +1000,7 @@
      public void sendPlayerInfoToAllPlayers()
      {
          if (++this.playerPingIndex > 600)
-@@ -612,11 +1240,13 @@
+@@ -612,11 +1239,13 @@
              this.playerPingIndex = 0;
          }
  
@@ -1015,7 +1014,7 @@
      }
  
      public void sendPacketToAllPlayers(Packet p_148540_1_)
-@@ -877,13 +1507,24 @@
+@@ -877,13 +1506,24 @@
          for (int j = 0; j < this.playerEntityList.size(); ++j)
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
@@ -1042,7 +1041,7 @@
                  if (d4 * d4 + d5 * d5 + d6 * d6 < p_148543_8_ * p_148543_8_)
                  {
                      entityplayermp.playerNetServerHandler.sendPacket(p_148543_11_);
-@@ -941,13 +1582,16 @@
+@@ -941,13 +1581,16 @@
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(1, 0.0F));
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(7, p_72354_2_.getRainStrength(1.0F)));
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(8, p_72354_2_.getWeightedThunderStrength(1.0F)));
@@ -1060,7 +1059,7 @@
          p_72385_1_.playerNetServerHandler.sendPacket(new S09PacketHeldItemChange(p_72385_1_.inventory.currentItem));
      }
  
-@@ -961,9 +1605,17 @@
+@@ -961,9 +1604,17 @@
          return this.maxPlayers;
      }
  
@@ -1079,7 +1078,7 @@
      }
  
      public void setWhiteListEnabled(boolean p_72371_1_)
-@@ -1032,12 +1684,30 @@
+@@ -1032,12 +1683,30 @@
  
      public void removeAllPlayers()
      {
