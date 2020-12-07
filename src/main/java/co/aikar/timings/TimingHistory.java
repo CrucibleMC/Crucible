@@ -50,7 +50,7 @@ import static co.aikar.util.JSONUtil.*;
 public class TimingHistory {
     public static long lastMinuteTime;
     public static long timedTicks;
-    public static long playerTicks;
+    public static long playerTicks = 1;
     public static long entityTicks;
     public static long tileEntityTicks;
     public static long activatedEntityTicks;
@@ -249,7 +249,7 @@ public class TimingHistory {
             timedTicks = 0;
         }
         lastMinuteTime = System.nanoTime();
-        playerTicks = 0;
+        playerTicks = 1;
         tileEntityTicks = 0;
         entityTicks = 0;
         activatedEntityTicks = 0;
