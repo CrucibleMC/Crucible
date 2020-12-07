@@ -10,26 +10,26 @@ import java.lang.reflect.Modifier;
 public class CauldronConfig extends ConfigBase {
     public static CauldronConfig instance;
     // Logging options
-    public final BoolSetting dumpMaterials = new BoolSetting(this, "settings.dump-materials", false, "Dumps all materials with their corresponding id's");
+    //public final BoolSetting dumpMaterials = new BoolSetting(this, "settings.dump-materials", false, "Dumps all materials with their corresponding id's");
     /* ======================================================================== */
-    public final BoolSetting disableWarnings = new BoolSetting(this, "logging.disabled-warnings", false, "Disable warning messages to server admins");
-    public final BoolSetting worldLeakDebug = new BoolSetting(this, "logging.world-leak-debug", false, "Log worlds that appear to be leaking (buggy)");
-    public final BoolSetting connectionLogging = new BoolSetting(this, "logging.connection", false, "Log connections");
-    public final BoolSetting tickIntervalLogging = new BoolSetting(this, "logging.tick-intervals", false, "Log when skip interval handlers are ticked");
-    public final BoolSetting chunkLoadLogging = new BoolSetting(this, "logging.chunk-load", false, "Log when chunks are loaded (dev)");
-    public final BoolSetting chunkUnloadLogging = new BoolSetting(this, "logging.chunk-unload", false, "Log when chunks are unloaded (dev)");
-    public final BoolSetting entitySpawnLogging = new BoolSetting(this, "logging.entity-spawn", false, "Log when living entities are spawned (dev)");
-    public final BoolSetting entityDespawnLogging = new BoolSetting(this, "logging.entity-despawn", false, "Log when living entities are despawned (dev)");
-    public final BoolSetting entityDeathLogging = new BoolSetting(this, "logging.entity-death", false, "Log when an entity is destroyed (dev)");
-    public final BoolSetting logWithStackTraces = new BoolSetting(this, "logging.detailed-logging", false, "Add stack traces to dev logging");
-    public final BoolSetting dumpChunksOnDeadlock = new BoolSetting(this, "logging.dump-chunks-on-deadlock", false, "Dump chunks in the event of a deadlock (helps to debug the deadlock)");
-    public final BoolSetting dumpHeapOnDeadlock = new BoolSetting(this, "logging.dump-heap-on-deadlock", false, "Dump the heap in the event of a deadlock (helps to debug the deadlock)");
-    public final BoolSetting dumpThreadsOnWarn = new BoolSetting(this, "logging.dump-threads-on-warn", false, "Dump the the server thread on deadlock warning (delps to debug the deadlock)");
-    public final BoolSetting logEntityCollisionChecks = new BoolSetting(this, "logging.entity-collision-checks", false, "Whether to log entity collision/count checks");
-    public final BoolSetting logEntitySpeedRemoval = new BoolSetting(this, "logging.entity-speed-removal", false, "Whether to log entity removals due to speed");
-    public final IntSetting largeCollisionLogSize = new IntSetting(this, "logging.collision-warn-size", 200, "Number of colliding entities in one spot before logging a warning. Set to 0 to disable");
+    //public final BoolSetting disableWarnings = new BoolSetting(this, "logging.disabled-warnings", false, "Disable warning messages to server admins");
+    //public final BoolSetting worldLeakDebug = new BoolSetting(this, "logging.world-leak-debug", false, "Log worlds that appear to be leaking (buggy)");
+    //public final BoolSetting connectionLogging = new BoolSetting(this, "logging.connection", false, "Log connections");
+    //public final BoolSetting tickIntervalLogging = new BoolSetting(this, "logging.tick-intervals", false, "Log when skip interval handlers are ticked");
+    //public final BoolSetting chunkLoadLogging = new BoolSetting(this, "logging.chunk-load", false, "Log when chunks are loaded (dev)");
+    //public final BoolSetting chunkUnloadLogging = new BoolSetting(this, "logging.chunk-unload", false, "Log when chunks are unloaded (dev)");
+    //public final BoolSetting entitySpawnLogging = new BoolSetting(this, "logging.entity-spawn", false, "Log when living entities are spawned (dev)");
+    //public final BoolSetting entityDespawnLogging = new BoolSetting(this, "logging.entity-despawn", false, "Log when living entities are despawned (dev)");
+    //public final BoolSetting entityDeathLogging = new BoolSetting(this, "logging.entity-death", false, "Log when an entity is destroyed (dev)");
+    //public final BoolSetting logWithStackTraces = new BoolSetting(this, "logging.detailed-logging", false, "Add stack traces to dev logging");
+    //public final BoolSetting dumpChunksOnDeadlock = new BoolSetting(this, "logging.dump-chunks-on-deadlock", false, "Dump chunks in the event of a deadlock (helps to debug the deadlock)");
+    //public final BoolSetting dumpHeapOnDeadlock = new BoolSetting(this, "logging.dump-heap-on-deadlock", false, "Dump the heap in the event of a deadlock (helps to debug the deadlock)");
+    //public final BoolSetting dumpThreadsOnWarn = new BoolSetting(this, "logging.dump-threads-on-warn", false, "Dump the the server thread on deadlock warning (delps to debug the deadlock)");
+    //public final BoolSetting logEntityCollisionChecks = new BoolSetting(this, "logging.entity-collision-checks", false, "Whether to log entity collision/count checks");
+    //public final BoolSetting logEntitySpeedRemoval = new BoolSetting(this, "logging.entity-speed-removal", false, "Whether to log entity removals due to speed");
+    //public final IntSetting largeCollisionLogSize = new IntSetting(this, "logging.collision-warn-size", 200, "Number of colliding entities in one spot before logging a warning. Set to 0 to disable");
     //public final IntSetting largeEntityCountLogSize = new IntSetting(this, "logging.entity-count-warn-size", 0, "Number of entities in one dimension logging a warning. Set to 0 to disable");
-    public final BoolSetting userLogin = new BoolSetting(this, "logging.user-login", false, "Set true to enable debuggin user's login process");
+    //public final BoolSetting userLogin = new BoolSetting(this, "logging.user-login", false, "Set true to enable debuggin user's login process");
     // General settings
     public final BoolSetting loadChunkOnRequest = new BoolSetting(this, "settings.load-chunk-on-request", true, "Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded");
     public final BoolSetting loadChunkOnForgeTick = new BoolSetting(this, "settings.load-chunk-on-forge-tick", false, "Forces Chunk Loading during Forge Server Tick events");
@@ -52,7 +52,7 @@ public class CauldronConfig extends ConfigBase {
     public final IntSetting repeaterL = new IntSetting(this, "optimized.redstone-repeater-update-speed", -1, "how many milliseconds the server must ignore before trying repeater updates");
     public final IntSetting redstoneTorchL = new IntSetting(this, "optimized.redstone-redstoneTorch-update-speed", -1, "how many milliseconds the server must ignore before trying redstoneTorch updates");
     public final BoolSetting affinity = new BoolSetting(this, "optimized.affinity-locking", false, "Whether to enable affinity locking. Very technical usage, recommended for dedicated hosts only. Ask on Discord or GitHub for info on how to set this up properly.");
-    public final BoolSetting ramChunks = new BoolSetting(this, "optimized.ram-load-chunks", false, "Loads chunks into the system RAM (experimental). WARNING! ENABLING THIS WILL INCREASE RAM USAGE BY OVER 1GB.");
+    //public final BoolSetting ramChunks = new BoolSetting(this, "optimized.ram-load-chunks", false, "Loads chunks into the system RAM (experimental). WARNING! ENABLING THIS WILL INCREASE RAM USAGE BY OVER 1GB.");
     //Protection options
     public final BoolSetting protectSP = new BoolSetting(this, "protection.spawn-protect", true, "Whether to enable Thermos' all-seeing protection in the spawn world");
     public final IntArraySetting instantRemove = new IntArraySetting(this, "protection.instant-removal", "", "Contains Block IDs that you want to NEVER exist in the world i.e. world anchors (just in case) (e.g. instant-removal: 1,93,56,24 ");

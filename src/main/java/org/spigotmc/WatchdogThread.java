@@ -1,5 +1,6 @@
 package org.spigotmc;
 
+import io.github.crucible.CrucibleConfigs;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.cauldron.CauldronHooks;
 import org.bukkit.Bukkit;
@@ -115,7 +116,7 @@ public class WatchdogThread extends Thread {
 
                 log.log(Level.SEVERE, "------------------------------");
 
-                if (MinecraftServer.cauldronConfig.dumpChunksOnDeadlock.getValue()) {
+                if (CrucibleConfigs.configs.cauldron_logging_dumpChunksOnDeadlock) {
                     // Dump detailed world info to a watchdog report log
                     File file = new File(new File(new File("."), "crash-reports"), "watchdog-chunks-"
                             + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
@@ -125,7 +126,7 @@ public class WatchdogThread extends Thread {
                     log.log(Level.SEVERE, "Writing complete");
                     log.log(Level.SEVERE, "------------------------------");
                 }
-                if (MinecraftServer.cauldronConfig.dumpHeapOnDeadlock.getValue()) {
+                if (CrucibleConfigs.configs.cauldron_logging_dumpHeapOnDeadlock) {
                     // Dump detailed world info to a watchdog report log
                     File file = new File(new File(new File("."), "crash-reports"), "watchdog-heap-"
                             + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.bin");
@@ -172,7 +173,7 @@ public class WatchdogThread extends Thread {
                     log.log(Level.WARNING, "  Entities Last Tick: " + world.entitiesTicked);
                     log.log(Level.WARNING, "  Tiles Last Tick: " + world.tilesTicked);
                 }
-                if (MinecraftServer.cauldronConfig.dumpThreadsOnWarn.getValue()) {
+                if (CrucibleConfigs.configs.cauldron_logging_dumpThreadsOnWarn) {
                     log.log(Level.WARNING, "Server thread dump (Look for mods or plugins here before reporting to Cauldron!):");
                     dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(MinecraftServer.getServer().primaryThread.getId(), Integer.MAX_VALUE), log,
                             Level.WARNING);

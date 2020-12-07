@@ -9,11 +9,52 @@ import net.cubespace.Yamler.Config.YamlConfig;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class CrucibleConfigs extends YamlConfig {
     public static final CrucibleConfigs configs = new CrucibleConfigs();
+
+    @Comment("Dumps all materials with their corresponding id's")
+    public boolean cauldron_settings_dumpMaterials = false;
+
+    @Comment("Log worlds that appear to be leaking (buggy)")
+    public boolean cauldron_logging_worldLeakDebug = false;
+
+    @Comment("Log when chunks are loaded (dev)")
+    public boolean cauldron_logging_chunkLoad = false;
+
+    @Comment("Log when chunks are unloaded (dev)")
+    public boolean cauldron_logging_chunkUnload = false;
+
+    @Comment("Log when living entities are spawned (dev)")
+    public boolean cauldron_logging_entitySpawn = false;
+
+    @Comment("Log when living entities are despawned (dev)")
+    public boolean cauldron_logging_entityDespawn = false;
+
+    @Comment("Add stack traces to dev logging")
+    public boolean cauldron_logging_logWithStackTraces = false;
+
+    @Comment("Dump chunks in the event of a deadlock (helps to debug the deadlock)")
+    public boolean cauldron_logging_dumpChunksOnDeadlock = false;
+
+    @Comment("Dump the heap in the event of a deadlock (helps to debug the deadlock)")
+    public boolean cauldron_logging_dumpHeapOnDeadlock = false;
+
+    @Comment("Dump the the server thread on deadlock warning (delps to debug the deadlock)")
+    public boolean cauldron_logging_dumpThreadsOnWarn = false;
+
+    @Comment("Whether to log entity collision/count checks")
+    public boolean cauldron_logging_entityCollisionChecks = false;
+
+    @Comment("Whether to log entity removals due to speed")
+    public boolean cauldron_logging_entitySpeedRemoval = false;
+
+    @Comment("Number of colliding entities in one spot before logging a warning. Set to 0 to disable")
+    public int cauldron_logging_largeCollisionWarnSize = 200;
+
+    @Comment("Set true to enable debuggin user's login process")
+    public boolean cauldron_logging_userLogin = false;
 
     @Comment("Set the OP command to only be allowed to run in console")
     public boolean thermos_opConsoleOnly = false;

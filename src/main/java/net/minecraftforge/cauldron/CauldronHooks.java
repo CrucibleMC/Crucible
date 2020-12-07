@@ -3,6 +3,7 @@ package net.minecraftforge.cauldron;
 import com.google.gson.stream.JsonWriter;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.map.hash.TObjectLongHashMap;
+import io.github.crucible.CrucibleConfigs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityMultiPart;
@@ -52,22 +53,23 @@ public class CauldronHooks {
     }
 
     public static void logStack() {
-        if (MinecraftServer.cauldronConfig.logWithStackTraces.getValue()) {
+        if (CrucibleConfigs.configs.cauldron_logging_logWithStackTraces) {
             Throwable ex = new Throwable();
             ex.fillInStackTrace();
             ex.printStackTrace();
         }
     }
 
-    public static void logEntityDeath(Entity entity) {
-        if (MinecraftServer.cauldronConfig.entityDeathLogging.getValue()) {
-            logInfo("Dim: {0} setDead(): {1}", entity.worldObj.provider.dimensionId, entity);
-            logStack();
-        }
-    }
+//TODO-crucible: possible code removal
+//    public static void logEntityDeath(Entity entity) {
+//        if (CrucibleConfigs.configs.cauldron_logging_entityDeath) {
+//            logInfo("Dim: {0} setDead(): {1}", entity.worldObj.provider.dimensionId, entity);
+//            logStack();
+//        }
+//    }
 
     public static void logEntityDespawn(Entity entity, String reason) {
-        if (MinecraftServer.cauldronConfig.entityDespawnLogging.getValue()) {
+        if (CrucibleConfigs.configs.cauldron_logging_entityDespawn) {
             logInfo("Dim: {0} Despawning ({1}): {2}", entity.worldObj.provider.dimensionId, reason, entity);
             //logInfo("Chunk Is Active: {0}", entity.worldObj.inActiveChunk(entity));
             logStack();
@@ -75,7 +77,7 @@ public class CauldronHooks {
     }
 
     public static void logEntitySpawn(World world, Entity entity, SpawnReason spawnReason) {
-        if (MinecraftServer.cauldronConfig.entitySpawnLogging.getValue()) {
+        if (CrucibleConfigs.configs.cauldron_logging_entitySpawn) {
             logInfo("Dim: {0} Spawning ({1}): {2}", world.provider.dimensionId, spawnReason, entity);
             logInfo("Dim: {0} Entities Last Tick: {1}", world.provider.dimensionId, world.entitiesTicked);
             logInfo("Dim: {0} Tiles Last Tick: {1}", world.provider.dimensionId, world.tilesTicked);
@@ -85,7 +87,7 @@ public class CauldronHooks {
     }
 
     public static void logChunkLoad(ChunkProviderServer provider, String msg, int x, int z, boolean logLoadOnRequest) {
-        if (MinecraftServer.cauldronConfig.chunkLoadLogging.getValue()) {
+        if (CrucibleConfigs.configs.cauldron_logging_chunkLoad) {
             logInfo("{0} Chunk At [{1}] ({2}, {3})", msg, provider.worldObj.provider.dimensionId, x, z);
             if (logLoadOnRequest) {
                 logLoadOnRequest(provider, x, z);
@@ -95,7 +97,7 @@ public class CauldronHooks {
     }
 
     public static void logChunkUnload(ChunkProviderServer provider, int x, int z, String msg) {
-        if (MinecraftServer.cauldronConfig.chunkUnloadLogging.getValue()) {
+        if (CrucibleConfigs.configs.cauldron_logging_chunkUnload) {
             logInfo("{0} [{1}] ({2}, {3})", msg, provider.worldObj.provider.dimensionId, x, z);
             long currentTick = MinecraftServer.getServer().getTickCounter();
             long lastAccessed = provider.lastAccessed(x, z);
@@ -156,14 +158,14 @@ public class CauldronHooks {
         if (maxSpeed > 0 && MinecraftServer.cauldronConfig.checkEntityMaxSpeeds.getValue()) {
             double distance = x * x + z * z;
             if (distance > maxSpeed) {
-                if (MinecraftServer.cauldronConfig.logEntitySpeedRemoval.getValue()) {
+                if (CrucibleConfigs.configs.cauldron_logging_entitySpeedRemoval) {
                     logInfo("Speed violation: {0} was over {1} - Removing Entity: {2}", distance, maxSpeed, entity);
                     if (entity instanceof EntityLivingBase) {
                         EntityLivingBase livingBase = (EntityLivingBase) entity;
                         logInfo("Entity Motion: ({0}, {1}, {2}) Move Strafing: {3} Move Forward: {4}", entity.motionX, entity.motionY, entity.motionZ, livingBase.moveStrafing, livingBase.moveForward);
                     }
 
-                    if (MinecraftServer.cauldronConfig.logWithStackTraces.getValue()) {
+                    if (CrucibleConfigs.configs.cauldron_logging_logWithStackTraces) {
                         logInfo("Move offset: ({0}, {1}, {2})", x, y, z);
                         logInfo("Motion: ({0}, {1}, {2})", entity.motionX, entity.motionY, entity.motionZ);
                         logInfo("Entity: {0}", entity);
@@ -189,13 +191,13 @@ public class CauldronHooks {
     }
 
     public static void logEntitySize(World world, Entity entity, List list) {
-        if (!MinecraftServer.cauldronConfig.logEntityCollisionChecks.getValue()) return;
-        long largeCountLogSize = MinecraftServer.cauldronConfig.largeCollisionLogSize.getValue();
+        if (!CrucibleConfigs.configs.cauldron_logging_entityCollisionChecks) return;
+        long largeCountLogSize = CrucibleConfigs.configs.cauldron_logging_largeCollisionWarnSize;
         if (largeCountLogSize > 0 && world.entitiesTicked > largeCountLogSize) {
             logWarning("Entity size > {0, number} at: {1}", largeCountLogSize, entity);
         }
         if (list == null) return;
-        long largeCollisionLogSize = MinecraftServer.cauldronConfig.largeCollisionLogSize.getValue();
+        long largeCollisionLogSize = CrucibleConfigs.configs.cauldron_logging_largeCollisionWarnSize;
         if (largeCollisionLogSize > 0 &&
                 (MinecraftServer.getServer().getTickCounter() % 10) == 0 &&
                 list.size() >= largeCollisionLogSize) {
