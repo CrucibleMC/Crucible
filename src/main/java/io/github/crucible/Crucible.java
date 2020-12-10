@@ -14,7 +14,7 @@ public class Crucible {
         int forgeBuild = 0;
         try {
             Properties manifest = new Properties();
-            manifest.load(Crucible.class.getResourceAsStream("META-INF/MANIFEST.MF"));
+            manifest.load(Crucible.class.getResourceAsStream("/META-INF/MANIFEST.MF"));
             parsedVersion = manifest.getProperty("Implementation-Version");
             parsedIsDevBuild = parsedVersion.contains("dev");
             Properties fmlversion = new Properties();
