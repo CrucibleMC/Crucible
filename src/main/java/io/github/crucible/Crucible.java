@@ -1,6 +1,8 @@
 package io.github.crucible;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Properties;
 
@@ -31,5 +33,10 @@ public class Crucible {
     }
 
     private Crucible() {
+    }
+
+    public static boolean isModPlugin(Plugin plugin) {
+        return plugin.getClass().getClassLoader().equals(Loader.instance().getModClassLoader()) ||
+                plugin.getClass().getClassLoader().equals(Crucible.class.getClassLoader());
     }
 }

@@ -3,7 +3,6 @@ package io.github.crucible;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.cauldron.CauldronHooks;
 import net.minecraftforge.common.DimensionManager;
@@ -28,29 +27,30 @@ public class CrucibleCommand extends Command {
 
     protected CrucibleCommand(MinecraftServer server) {
         super("crucible");
-
         serveReference = new WeakReference<>(server);
 
-        StringBuilder b = new StringBuilder();
-        b.append("-------------------[" + ChatColor.BLUE + "Crucible" + ChatColor.RESET + "]-------------------\n");
-        b.append("/crucible tps - Show tps statistics.\n");
-        b.append("/crucible restart - Restart the server.\n");
-        b.append("/crucible info - Print some information about the server.\n");
-        b.append("/crucible chunks - Print some information about loaded chunks.\n");
-        b.append("/crucible heap - Dump the server heap.\n");
-        setUsage(b.toString());
+        StringBuilder usage = new StringBuilder();
+        usage.append("&7&m-------------------&7[&bCrucible&7]&m-------------------\n");
+        usage.append("&b  >&e crucible tps &7-&a Show tps statistics.\n");
+        usage.append("&b  >&e crucible restart &7-&a Restart the server.\n");
+        usage.append("&b  >&e crucible info &7-&a Print some information about the server.\n");
+        usage.append("&b  >&e crucible chunks &7-&a Print some information about loaded chunks.\n");
+        usage.append("&b  >&e crucible heap &7-&a Dump the server heap.\n");
+        usage.append("&b  >&e crucible plugins &7-&a Shows all your loaded plugins and mod plugins.\n");
+        usage.append("&b  >&e crucible mods &7-&a Shows all your loaded mods.\n");
+        setUsage(ChatColor.translateAlternateColorCodes('&', usage.toString()));
         setPermission("crucible");
-
     }
 
     public static String generateInfo() {
-        StringBuilder b = new StringBuilder();
-        b.append("This server is running &3Crucible&r [" + CrucibleModContainer.instance.getVersion() + "] (Thermos fork by CrucibleMC Team).\n");
-        b.append("&9https://github.com/CrucibleMC/Crucible\n&r");
-        b.append("Bukkit API implemented: 1.7.9-R0.3-SNAPSHOT\n");
-        b.append("Plugins " + getPluginList() + "\n&r");
-        b.append("Mods " + getModList() + "\n&r");
-        return b.toString().replace("&", "\u00a7");
+        StringBuilder info = new StringBuilder();
+        info.append("This server is running &3Crucible&r [").append(CrucibleModContainer.instance.getVersion()).append("] (Thermos fork by CrucibleMC Team).\n");
+        info.append("&9https://github.com/CrucibleMC/Crucible\n&r");
+        info.append("Bukkit API implemented: 1.7.9-R0.3-SNAPSHOT\n");
+        info.append("Plugins: ").append(Bukkit.getPluginManager().getPlugins().length).append("\n&r");
+        info.append("Mods: ").append(Loader.instance().getActiveModList().size())
+                .append(" &r| Loaded: ").append(Loader.instance().getModList().size()).append("\n&r");
+        return ChatColor.translateAlternateColorCodes('&' ,info.toString());
     }
 
     private static String getPluginList() {
@@ -63,8 +63,12 @@ public class CrucibleCommand extends Command {
                 pluginList.append(", ");
             }
 
-            pluginList.append(plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED);
-            pluginList.append(plugin.getDescription().getName() + "@" + plugin.getDescription().getVersion());
+            if (Crucible.isModPlugin(plugin))
+                pluginList.append(ChatColor.AQUA);
+            else
+                pluginList.append(plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED);
+
+            pluginList.append(plugin.getDescription().getName()).append("@").append(plugin.getDescription().getVersion());
         }
 
         return "(" + plugins.length + "): " + pluginList.toString();
@@ -73,7 +77,7 @@ public class CrucibleCommand extends Command {
     private static String getModList() {
         StringBuilder modList = new StringBuilder();
 
-        List<ModContainer> mods = Loader.instance().getActiveModList();
+        List<ModContainer> mods = Loader.instance().getModList();
 
         for (ModContainer mod : mods) {
             if (modList.length() > 0) {
@@ -81,7 +85,7 @@ public class CrucibleCommand extends Command {
                 modList.append(", ");
             }
 
-            modList.append(ChatColor.GREEN + mod.getName() + "@" + mod.getVersion());
+            modList.append(ChatColor.GREEN).append(mod.getName()).append("@").append(mod.getVersion());
         }
 
         return "(" + mods.size() + "): " + modList.toString();
@@ -98,36 +102,40 @@ public class CrucibleCommand extends Command {
         }
 
         double meanTickTime = mean(getServer().tickTimeArray) * 1.0E-6D;
-        tps.append("\n&r&8[&e&l\u26a1&r&8]&7 Mean tick time: &l" + timeFormat.format(meanTickTime) + "&r&7ms&r\n");
+        tps.append("\n&r&8[&e&l\u26a1&r&8]&7 Mean tick time: &l").append(timeFormat.format(meanTickTime)).append("&r&7ms&r\n");
 
         for (Integer dimId : DimensionManager.getIDs()) {
             double worldTickTime = mean(getServer().worldTickTimes.get(dimId)) * 1.0E-6D;
             double worldTPS = Math.min(1000.0 / worldTickTime, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate);
             WorldProvider worldProvider = DimensionManager.getProvider(dimId);
             String name = worldProvider.getDimensionName();
-            if (name.equals("Overworld")){
+            if (name.equals("Overworld")) {
                 name = worldProvider.worldObj.getSaveHandler().getWorldDirectoryName();
             }
-            tps.append("&8(&2&l" + dimId + " &r&7&o\u279c &r&b" + name + "&r&8) &7Time: &l" + timeFormat.format(worldTickTime) + "&r&7ms TPS: " + parseTps(worldTPS) + "&r\n");
+            tps.append("&8(&2&l")
+                    .append(dimId)
+                    .append(" &r&7&o\u279c &r&b")
+                    .append(name).append("&r&8) &7Time: &l")
+                    .append(timeFormat.format(worldTickTime))
+                    .append("&r&7ms TPS: ")
+                    .append(parseTps(worldTPS))
+                    .append("&r\n");
         }
 
-        tps.append("&r");
-        return tps.toString().replace("&", "\u00a7");
+        return ChatColor.translateAlternateColorCodes('&', tps.toString());
     }
 
     private static String parseTps(double tps) {
+        StringBuilder parsedTps = new StringBuilder();
+        if (tps <= 10)
+            parsedTps.append("&c&l");
+        else if (tps <= 15)
+            parsedTps.append("&e&l");
+        else
+            parsedTps.append("&a&l");
 
-        StringBuilder t = new StringBuilder();
-
-        if (tps <= 10) {
-            t.append("&c&l" + String.format("%.2f", Math.min(Math.round(tps * 100.0) / 100.0, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate)) + "&r ");
-        } else if (tps <= 15) {
-            t.append("&e&l" + String.format("%.2f", Math.min(Math.round(tps * 100.0) / 100.0, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate)) + "&r ");
-        } else {
-            t.append("&a&l" + String.format("%.2f", Math.min(Math.round(tps * 100.0) / 100.0, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate)) + "&r ");
-        }
-
-        return t.toString();
+        parsedTps.append(String.format("%.2f", Math.min(Math.round(tps * 100.0) / 100.0, CrucibleConfigs.configs.crucible_tickHandler_serverTickRate))).append("&r ");
+        return parsedTps.toString();
     }
 
     /*
@@ -181,9 +189,11 @@ public class CrucibleCommand extends Command {
         } else if (args[0].equalsIgnoreCase("mods")) {
             if (!testPermission(sender, "crucible.mods"))
                 return true;
+            sender.sendMessage("Mods " + getModList());
         } else if (args[0].equalsIgnoreCase("plugins")) {
             if (!testPermission(sender, "crucible.plugins"))
                 return true;
+            sender.sendMessage("Plugins " + getPluginList());
         } else if (args[0].equalsIgnoreCase("")) {
             if (!testPermission(sender, "crucible."))
                 return true;
