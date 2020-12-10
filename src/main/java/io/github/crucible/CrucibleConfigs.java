@@ -6,9 +6,14 @@ import net.cubespace.Yamler.Config.Comment;
 import net.cubespace.Yamler.Config.ConfigMode;
 import net.cubespace.Yamler.Config.InvalidConfigurationException;
 import net.cubespace.Yamler.Config.YamlConfig;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CrucibleConfigs extends YamlConfig {
@@ -16,6 +21,51 @@ public class CrucibleConfigs extends YamlConfig {
 
     @Comment("Dumps all materials with their corresponding id's")
     public boolean cauldron_settings_dumpMaterials = false;
+
+    @Comment("Forces Chunk Loading on 'Provide' requests (speedup for mods that don't check if a chunk is loaded)")
+    public boolean cauldron_settings_loadChunkOnRequest = true;
+
+    @Comment("Forces Chunk Loading during Forge Server Tick events")
+    public boolean cauldron_settings_loadChunkOnForgeTick = false;
+
+    @Comment("Removes a living entity that exceeds the max bounding box size.")
+    public boolean cauldron_settings_checkEntityBoundingBoxes = true;
+
+    @Comment("Removes any entity that exceeds max speed.")
+    public boolean cauldron_settings_checkEntityMaxSpeeds = false;
+
+    @Comment("Max size of an entity's bounding box before removing it (either being too large or bugged and 'moving' too fast)")
+    public int cauldron_settings_largeBoundingBoxLogSize = 1000;
+
+    @Comment("Square of the max speed of an entity before removing it")
+    public int cauldron_settings_entityMaxSpeed = 100;
+
+    @Comment("Grace period of no-ticks before unload")
+    public int cauldron_settings_chunkGCGracePeriod = 0;
+
+    @Comment("Vanilla water source behavior - is infinite")
+    public boolean cauldron_settings_infiniteWaterSource = true;
+
+    @Comment("Lava behaves like vanilla water when source block is removed")
+    public boolean cauldron_settings_flowingLavaDecay = false;
+
+    @Comment("TNT ability to push other entities (including other TNTs)")
+    public boolean cauldron_settings_allowTntPushing = true;
+
+    @Comment("How many players will visible in the tab list (negative to use server's max players)")
+    public int cauldron_settings_maxPlayersVisible = -1;
+
+    @Comment("Instead of DIM##, use the world name prescribed by the mod! Be careful with this one, could create incompatibilities with existing setups!")
+    public boolean cauldron_settings_useWorldRealNames = false;
+
+    @Comment("How many milliseconds the server must ignore before trying repeater updates")
+    public int caudron_optimization_redstoneRepeaterUpdateSpeed = -1;
+
+    @Comment("How many milliseconds the server must ignore before trying redstone torch updates")
+    public int caudron_optimization_redstoneTorchUpdateSpeed = -1;
+
+    @Comment("Whether to enable affinity locking. Very technical usage, recommended for dedicated hosts only. Ask on Discord or GitHub for info on how to set this up properly.")
+    public boolean caudron_optimization_affinityLocking = false;
 
     @Comment("Log worlds that appear to be leaking (buggy)")
     public boolean cauldron_logging_worldLeakDebug = false;
@@ -56,6 +106,21 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Set true to enable debuggin user's login process")
     public boolean cauldron_logging_userLogin = false;
 
+    @Comment("Set true to enable Java's thread contention monitoring for thread dumps")
+    public boolean cauldron_debug_enableThreadContentionMonitoring = false;
+
+    //TODO: Deprecate this option and change to something like <modid:item:meta>
+    @Comment("Contains Block IDs that you want to NEVER exist in the world i.e. world anchors (just in case) (e.g. instantRemoval: 1,93,56,24)")
+    public List<Integer> cauldron_protection_instantRemoval = Collections.emptyList();
+
+    //TODO: Deprecate this option and let a plugin do the work of filtering commands.
+    @Comment("Contains commands you want to block from being used in-game, you must also include command aliases (e.g. blockedCommands: /op,/deop,/stop,/restart .")
+    public List<String> cauldron_protection_blockedCommands = Collections.emptyList();
+
+    //TODO: Deprecate this option and let a plugin do the work of filtering commands.
+    @Comment("Don't allow commands of the format plugin:cmd, the plugin: will be removed (recommended to keep at true)")
+    public boolean cauldron_protection_noFallbackAlias = true;
+
     @Comment("Set the OP command to only be allowed to run in console")
     public boolean thermos_opConsoleOnly = false;
 
@@ -76,6 +141,9 @@ public class CrucibleConfigs extends YamlConfig {
 
     @Comment("Log Material injections.")
     public boolean crucible_logging_logMaterialInjection = false;
+
+    @Comment("List of world names where the usage of modded itens and blocks will be disabled for ")
+    public List<String> crucible_protectedWorld = Collections.singletonList("spawn");
 
     @Comment("Attempts to reduce console spam by removing \"useless\" logs.")
     public boolean crucible_logging_reduceSpam = false;
@@ -140,5 +208,27 @@ public class CrucibleConfigs extends YamlConfig {
         Timings.setHistoryInterval(timings_historyInterval * 20);
         Timings.setHistoryLength(timings_historyLength * 20);
         Timings.setTimingsEnabled(timings_enabledSinceServerStartup);
+    }
+
+    @Override
+    public void reload() {
+        try {
+            super.reload();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Mimics cauldron toggle behavior setting all fields fields that are not updated with the configs with the new values.
+    public void reapplyConfigs() {
+        for (WorldServer world : MinecraftServer.getServer().worlds) {
+            world.theChunkProviderServer.loadChunkOnProvideRequest = cauldron_settings_loadChunkOnRequest;
+        }
+
+        ThreadMXBean mbean = ManagementFactory.getThreadMXBean();
+        if (mbean.isThreadContentionMonitoringSupported())
+            mbean.setThreadContentionMonitoringEnabled(cauldron_debug_enableThreadContentionMonitoring);
+        else
+            CrucibleModContainer.logger.warn("Thread monitoring is not supported!");
     }
 }

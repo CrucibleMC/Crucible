@@ -114,7 +114,7 @@ public class CauldronHooks {
         logInfo(" Finding Spawn Point: {0}", provider.worldObj.findingSpawnPoint);
         logInfo(" Load chunk on request: {0}", provider.loadChunkOnProvideRequest);
         logInfo(" Calling Forge Tick: {0}", MinecraftServer.callingForgeTick);
-        logInfo(" Load chunk on forge tick: {0}", MinecraftServer.cauldronConfig.loadChunkOnForgeTick.getValue());
+        logInfo(" Load chunk on forge tick: {0}", CrucibleConfigs.configs.cauldron_settings_loadChunkOnForgeTick);
         long providerTickDiff = currentTick - provider.initialTick;
         if (providerTickDiff <= 100) {
             logInfo(" Current Tick - Initial Tick: {0, number}", providerTickDiff);
@@ -124,8 +124,8 @@ public class CauldronHooks {
     public static boolean checkBoundingBoxSize(Entity entity, AxisAlignedBB aabb) {
         if (entity instanceof EntityLivingBase && (!(entity instanceof IBossDisplayData) || !(entity instanceof IEntityMultiPart))
                 && !(entity instanceof EntityPlayer)) {
-            int logSize = MinecraftServer.cauldronConfig.largeBoundingBoxLogSize.getValue();
-            if (logSize <= 0 || !MinecraftServer.cauldronConfig.checkEntityBoundingBoxes.getValue()) return false;
+            int logSize = CrucibleConfigs.configs.cauldron_settings_largeBoundingBoxLogSize;
+            if (logSize <= 0 || !CrucibleConfigs.configs.cauldron_settings_checkEntityBoundingBoxes) return false;
             int x = MathHelper.floor_double(aabb.minX);
             int x1 = MathHelper.floor_double(aabb.maxX + 1.0D);
             int y = MathHelper.floor_double(aabb.minY);
@@ -134,7 +134,7 @@ public class CauldronHooks {
             int z1 = MathHelper.floor_double(aabb.maxZ + 1.0D);
 
             int size = Math.abs(x1 - x) * Math.abs(y1 - y) * Math.abs(z1 - z);
-            if (size > MinecraftServer.cauldronConfig.largeBoundingBoxLogSize.getValue()) {
+            if (size > CrucibleConfigs.configs.cauldron_settings_largeBoundingBoxLogSize) {
                 logWarning("Entity being removed for bounding box restrictions");
                 logWarning("BB Size: {0} > {1} avg edge: {2}", size, logSize, aabb.getAverageEdgeLength());
                 logWarning("Motion: ({0}, {1}, {2})", entity.motionX, entity.motionY, entity.motionZ);
@@ -154,8 +154,8 @@ public class CauldronHooks {
     }
 
     public static boolean checkEntitySpeed(Entity entity, double x, double y, double z) {
-        int maxSpeed = MinecraftServer.cauldronConfig.entityMaxSpeed.getValue();
-        if (maxSpeed > 0 && MinecraftServer.cauldronConfig.checkEntityMaxSpeeds.getValue()) {
+        int maxSpeed = CrucibleConfigs.configs.cauldron_settings_entityMaxSpeed;
+        if (maxSpeed > 0 && CrucibleConfigs.configs.cauldron_settings_checkEntityMaxSpeeds) {
             double distance = x * x + z * z;
             if (distance > maxSpeed) {
                 if (CrucibleConfigs.configs.cauldron_logging_entitySpeedRemoval) {
@@ -436,9 +436,11 @@ public class CauldronHooks {
     }
 
     public static void enableThreadContentionMonitoring() {
-        if (!MinecraftServer.cauldronConfig.enableThreadContentionMonitoring.getValue()) return;
+        if (!CrucibleConfigs.configs.cauldron_debug_enableThreadContentionMonitoring) return;
         java.lang.management.ThreadMXBean mbean = java.lang.management.ManagementFactory.getThreadMXBean();
-        mbean.setThreadContentionMonitoringEnabled(true);
+        if (mbean.isThreadContentionMonitoringSupported())
+            mbean.setThreadContentionMonitoringEnabled(true);
+        else System.err.println("Thread monitoring is not supported!");
     }
 
     private static class CollisionWarning {

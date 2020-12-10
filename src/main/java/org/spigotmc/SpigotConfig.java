@@ -44,10 +44,11 @@ public class SpigotConfig {
     public static String restartScript = "./start.sh";
     public static String restartMessage;
     public static boolean bungee;
-    public static boolean lateBind;
-    public static boolean disableStatSaving;
-    public static TObjectIntHashMap<String> forcedStats = new TObjectIntHashMap<String>();
-    public static int playerSample;
+    //Crucible note: removed unused config
+    //public static boolean lateBind;
+    //public static boolean disableStatSaving;
+    //public static TObjectIntHashMap<String> forcedStats = new TObjectIntHashMap<String>();
+    //public static int playerSample;
     public static int playerShuffle;
     public static int fullMatchRate;
     /*========================================================================*/
@@ -196,39 +197,42 @@ public class SpigotConfig {
         Bukkit.getLogger().log(Level.INFO, "Using {0} threads for Netty based IO", count);
     }
 
-    private static void lateBind() {
-        lateBind = getBoolean("settings.late-bind", false);
-    }
+    //Crucible note: removed unused config
+//    private static void lateBind() {
+//        lateBind = getBoolean("settings.late-bind", false);
+//    }
 
-    private static void stats() {
-        disableStatSaving = getBoolean("stats.disable-saving", false);
-
-        if (!config.contains("stats.forced-stats")) {
-            config.createSection("stats.forced-stats");
-        }
-
-        ConfigurationSection section = config.getConfigurationSection("stats.forced-stats");
-        for (String name : section.getKeys(true)) {
-            if (section.isInt(name)) {
-                forcedStats.put(name, section.getInt(name));
-            }
-        }
-
-        if (disableStatSaving && section.getInt("achievement.openInventory", 0) < 1) {
-            Bukkit.getLogger().warning("*** WARNING *** stats.disable-saving is true but stats.forced-stats.achievement.openInventory" +
-                    " isn't set to 1. Disabling stat saving without forcing the achievement may cause it to get stuck on the player's " +
-                    "screen.");
-        }
-    }
+    //Crucible note: removed unused config
+//    private static void stats() {
+//        disableStatSaving = getBoolean("stats.disable-saving", false);
+//
+//        if (!config.contains("stats.forced-stats")) {
+//            config.createSection("stats.forced-stats");
+//        }
+//
+//        ConfigurationSection section = config.getConfigurationSection("stats.forced-stats");
+//        for (String name : section.getKeys(true)) {
+//            if (section.isInt(name)) {
+//                forcedStats.put(name, section.getInt(name));
+//            }
+//        }
+//
+//        if (disableStatSaving && section.getInt("achievement.openInventory", 0) < 1) {
+//            Bukkit.getLogger().warning("*** WARNING *** stats.disable-saving is true but stats.forced-stats.achievement.openInventory" +
+//                    " isn't set to 1. Disabling stat saving without forcing the achievement may cause it to get stuck on the player's " +
+//                    "screen.");
+//        }
+//    }
 
     private static void tpsCommand() {
         commands.put("tps", new TicksPerSecondCommand("tps"));
     }
 
-    private static void playerSample() {
-        playerSample = getInt("settings.sample-count", 12);
-        System.out.println("Server Ping Player Sample Count: " + playerSample);
-    }
+    //Crucible note: removed unused config
+//    private static void playerSample() {
+//        playerSample = getInt("settings.sample-count", 12);
+//        System.out.println("Server Ping Player Sample Count: " + playerSample);
+//    }
 
     private static void playerShuffle() {
         playerShuffle = getInt("settings.player-shuffle", 0);
