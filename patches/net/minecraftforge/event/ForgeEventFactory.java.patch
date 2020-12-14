@@ -133,7 +133,7 @@
 +                if(CauldronCommand.debug)System.out.println("Item getItem() is null");
 +                        return false;
 +                }
-+                if( outsideOfVanillaRange(Item.getIdFromItem(ep.getHeldItem().getItem()))) {
++                if( outsideOfVanillaRange(Item.getIdFromItem(ep.getHeldItem().getItem())) && !CrucibleConfigs.configs.crucible_protectedWorldWhitelist.contains(Item.getIdFromItem(ep.getHeldItem().getItem()))) {
 +                        if(ep instanceof EntityPlayerMP) {
 +                                EntityPlayerMP mp = (EntityPlayerMP)ep;
 +                                mp.addChatComponentMessage(new ChatComponentText("You cannot use that item here."));
