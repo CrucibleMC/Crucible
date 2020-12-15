@@ -115,7 +115,7 @@
 +        }
 +        
 +        public static boolean isItemIdAllowed(int itemId) {
-+                return CrucibleConfigs.configs.crucible_protectedWorldWhitelist_invert ^ CrucibleConfigs.configs.crucible_protectedWorldWhitelist.contains(itemId);
++                return CrucibleConfigs.configs.crucible_protectedWorldWhitelistInvert ^ CrucibleConfigs.configs.crucible_protectedWorldWhitelist.contains(itemId);
 +        }
 +
 +        public static boolean nonVanilla(EntityPlayer ep)
@@ -138,7 +138,7 @@
 +                        return false;
 +                }
 +                int itemId = Item.getIdFromItem(ep.getHeldItem().getItem());
-+                if (outsideOfVanillaRange(itemId) && !isItemIdAllowed(itemId)))) {
++                if (outsideOfVanillaRange(itemId) && !isItemIdAllowed(itemId)) {
 +                        if(ep instanceof EntityPlayerMP) {
 +                                EntityPlayerMP mp = (EntityPlayerMP)ep;
 +                                mp.addChatComponentMessage(new ChatComponentText("You cannot use that item here."));
