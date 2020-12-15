@@ -148,6 +148,9 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("List of numeric item IDs for modded items that can be used in protected worlds")
     public List<Integer> crucible_protectedWorldWhitelist = Collections.emptyList();
 
+    @Comment("Invert the protection whitelist and use it as a blacklist.")
+    public boolean crucible_protectedWorldWhitelistInvert = false;
+
     @Comment("Attempts to reduce console spam by removing \"useless\" logs.")
     public boolean crucible_logging_reduceSpam = false;
 
