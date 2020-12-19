@@ -67,7 +67,7 @@
          PlayerEvent.HarvestCheck event = new PlayerEvent.HarvestCheck(player, block, success);
          MinecraftForge.EVENT_BUS.post(event);
          return event.success;
-@@ -80,27 +105,219 @@
+@@ -80,27 +105,224 @@
      @Deprecated // Location version below
      public static float getBreakSpeed(EntityPlayer player, Block block, int metadata, float original)
      {
@@ -113,15 +113,19 @@
 +        {
 +                 return MinecraftServer.getServer().getConfigurationManager().func_152596_g(ep.getGameProfile());
 +        }
++        
++        public static boolean isItemIdAllowed(int itemId) {
++                return CrucibleConfigs.configs.crucible_protectedWorldWhitelistInvert ^ CrucibleConfigs.configs.crucible_protectedWorldWhitelist.contains(itemId);
++        }
 +
 +        public static boolean nonVanilla(EntityPlayer ep)
 +        {
 +                if (ep == null)
 +                {
-+                if(CauldronCommand.debug)System.out.println("EntityPlayer is null");
++                if (CauldronCommand.debug)System.out.println("EntityPlayer is null");
 +                        return false;
 +                }
-+                if(isOp(ep)) return false;
++                if (isOp(ep)) return false;
 +                if (ep.getHeldItem() == null)
 +                {
 +                        if (CauldronCommand.debug)
@@ -130,10 +134,11 @@
 +                }
 +                if (ep.getHeldItem().getItem() == null)
 +                {
-+                if(CauldronCommand.debug)System.out.println("Item getItem() is null");
++                if (CauldronCommand.debug)System.out.println("Item getItem() is null");
 +                        return false;
 +                }
-+                if( outsideOfVanillaRange(Item.getIdFromItem(ep.getHeldItem().getItem()))) {
++                int itemId = Item.getIdFromItem(ep.getHeldItem().getItem());
++                if (outsideOfVanillaRange(itemId) && !isItemIdAllowed(itemId)) {
 +                        if(ep instanceof EntityPlayerMP) {
 +                                EntityPlayerMP mp = (EntityPlayerMP)ep;
 +                                mp.addChatComponentMessage(new ChatComponentText("You cannot use that item here."));
@@ -291,7 +296,7 @@
      public static void onPlayerDestroyItem(EntityPlayer player, ItemStack stack)
      {
          MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack));
-@@ -182,30 +399,64 @@
+@@ -182,30 +404,64 @@
          return MinecraftForge.EVENT_BUS.post(new EntityStruckByLightningEvent(entity, bolt));
      }
  
