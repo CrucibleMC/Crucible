@@ -103,7 +103,7 @@
 -            byte[] deflated = new byte[data.length];
 -            this.field_149261_g = deflater.deflate(deflated);
 -            this.field_149263_e = deflated;
-+                this.world.spigotConfig.antiXrayInstance.obfuscate(this.field_149266_a[i], this.field_149264_b[i], field_149265_c[i], this.field_149268_i, this.world);
++                this.world.spigotConfig.antiXrayInstance.obfuscate(this.field_149266_a[i], this.field_149264_b[i], field_149265_c[i], this.field_149260_f[i], this.world);
          }
 -        finally
 -        {
