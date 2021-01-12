@@ -59,13 +59,13 @@ public class CrucibleConfigs extends YamlConfig {
     public boolean cauldron_settings_useWorldRealNames = false;
 
     @Comment("How many milliseconds the server must ignore before trying repeater updates")
-    public int caudron_optimization_redstoneRepeaterUpdateSpeed = -1;
+    public int cauldron_optimization_redstoneRepeaterUpdateSpeed = -1;
 
     @Comment("How many milliseconds the server must ignore before trying redstone torch updates")
-    public int caudron_optimization_redstoneTorchUpdateSpeed = -1;
+    public int cauldron_optimization_redstoneTorchUpdateSpeed = -1;
 
     @Comment("Whether to enable affinity locking. Very technical usage, recommended for dedicated hosts only. Ask on Discord or GitHub for info on how to set this up properly.")
-    public boolean caudron_optimization_affinityLocking = false;
+    public boolean cauldron_optimization_affinityLocking = false;
 
     @Comment("Log worlds that appear to be leaking (buggy)")
     public boolean cauldron_logging_worldLeakDebug = false;
