@@ -145,6 +145,7 @@ dependencies {
     libraries 'lzma:lzma:0.0.1'
     libraries 'org.yaml:snakeyaml:1.9'
     libraries 'commons-lang:commons-lang:2.6'
+    libraries 'commons-lang:commons-lang:3.3.2'
     libraries 'org.avaje:ebean:2.7.3'
     libraries 'jline:jline:2.6'
     libraries 'net.md-5:SpecialSource:1.7.4'
