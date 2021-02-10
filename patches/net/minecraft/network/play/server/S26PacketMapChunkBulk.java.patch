@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/S26PacketMapChunkBulk.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/S26PacketMapChunkBulk.java
-@@ -24,10 +24,18 @@
+@@ -12,6 +12,7 @@
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.INetHandlerPlayClient;
++import net.minecraft.world.World;
+ import net.minecraft.world.chunk.Chunk;
+ 
+ public class S26PacketMapChunkBulk extends Packet
+@@ -24,11 +25,21 @@
      private byte[][] field_149260_f;
      private int field_149261_g;
      private boolean field_149267_h;
@@ -10,6 +18,8 @@
 -    private Semaphore deflateGate;
 +    private byte[] field_149268_i = new byte[0]; // CraftBukkit - remove static
 +    // CraftBukkit start
+ 
++    private World world;
 +    static final ThreadLocal<Deflater> localDeflater = new ThreadLocal<Deflater>()
 +    {
 +        @Override
@@ -20,10 +30,20 @@
 +        }
 +    };
 +    // CraftBukkit end
- 
++    
      public S26PacketMapChunkBulk() {}
  
-@@ -46,6 +54,15 @@
+     public S26PacketMapChunkBulk(List p_i45197_1_)
+@@ -41,11 +52,24 @@
+         this.field_149260_f = new byte[i][];
+         this.field_149267_h = !p_i45197_1_.isEmpty() && !((Chunk)p_i45197_1_.get(0)).worldObj.provider.hasNoSky;
+         int j = 0;
++        
++        if (i > 0) {
++        	this.world = ((Chunk)p_i45197_1_.get(0)).worldObj;
++        }
+ 
+         for (int k = 0; k < i; ++k)
          {
              Chunk chunk = (Chunk)p_i45197_1_.get(k);
              S21PacketChunkData.Extracted extracted = S21PacketChunkData.func_149269_a(chunk, true, 65535);
@@ -39,51 +59,60 @@
              j += extracted.field_150282_a.length;
              this.field_149266_a[k] = chunk.xPosition;
              this.field_149264_b[k] = chunk.zPosition;
-@@ -53,34 +70,36 @@
+@@ -53,34 +77,47 @@
              this.field_149262_d[k] = extracted.field_150281_c;
              this.field_149260_f[k] = extracted.field_150282_a;
          }
 -        this.deflateGate = new Semaphore(1);
 -        maxLen = j;
--    }
--
--    private void deflate()
--    {
--        byte[] data = new byte[maxLen];
--        int offset = 0;
--        for (int x = 0; x < field_149260_f.length; x++)
--        {
--            System.arraycopy(field_149260_f[x], 0, data, offset, field_149260_f[x].length);
--            offset += field_149260_f[x].length;
--        }
 +        /* CraftBukkit start - Moved to compress()
-         Deflater deflater = new Deflater(-1);
- 
--        try
--        {
--            deflater.setInput(data, 0, data.length);
++        Deflater deflater = new Deflater(-1);
++
 +        try {
 +            deflater.setInput(buildBuffer, 0, j);
-             deflater.finish();
--            byte[] deflated = new byte[data.length];
--            this.field_149261_g = deflater.deflate(deflated);
--            this.field_149263_e = deflated;
++            deflater.finish();
 +            this.buffer = new byte[j];
 +            this.size = deflater.deflate(this.buffer);
 +        } finally {
 +            deflater.end();
-         }
--        finally
++        }
 +        */
-+    }
-+
+     }
+ 
+-    private void deflate()
 +    // Add compression method
 +    public void compress()
-+    {
+     {
+-        byte[] data = new byte[maxLen];
+-        int offset = 0;
+-        for (int x = 0; x < field_149260_f.length; x++)
 +        if (this.field_149263_e != null)
          {
--            deflater.end();
+-            System.arraycopy(field_149260_f[x], 0, data, offset, field_149260_f[x].length);
+-            offset += field_149260_f[x].length;
 +            return;
+         }
+-        Deflater deflater = new Deflater(-1);
+-
+-        try
++        
++        for (int i = 0; i < this.field_149266_a.length; ++i)
+         {
+-            deflater.setInput(data, 0, data.length);
+-            deflater.finish();
+-            byte[] deflated = new byte[data.length];
+-            this.field_149261_g = deflater.deflate(deflated);
+-            this.field_149263_e = deflated;
++                this.world.spigotConfig.antiXrayInstance.obfuscate(this.field_149266_a[i], this.field_149264_b[i], field_149265_c[i], this.field_149260_f[i], this.world);
+         }
+-        finally
+-        {
+-            deflater.end();
++
++        int bufferLocation = 0;
++        for (int j = 0; j < this.field_149266_a.length; j++) {
++            System.arraycopy(this.field_149260_f[j], 0, this.field_149268_i, bufferLocation, (this.field_149260_f[j]).length);
++            bufferLocation += (this.field_149260_f[j]).length;
          }
 +
 +        Deflater deflater = localDeflater.get();
@@ -97,7 +126,7 @@
  
      public static int func_149258_c()
      {
-@@ -155,16 +174,7 @@
+@@ -155,16 +192,7 @@
  
      public void writePacketData(PacketBuffer p_148840_1_) throws IOException
      {

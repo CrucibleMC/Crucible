@@ -123,7 +123,15 @@
              iterator = this.affectedBlockPositions.iterator();
  
              while (iterator.hasNext())
-@@ -209,7 +274,8 @@
+@@ -183,6 +248,7 @@
+                 j = chunkposition.chunkPosY;
+                 k = chunkposition.chunkPosZ;
+                 block = this.worldObj.getBlock(i, j, k);
++                this.worldObj.spigotConfig.antiXrayInstance.updateNearbyBlocks(this.worldObj, i, j, k);
+ 
+                 if (p_77279_1_)
+                 {
+@@ -209,7 +275,8 @@
                  {
                      if (block.canDropFromExplosion(this))
                      {
@@ -133,7 +141,7 @@
                      }
  
                      block.onBlockExploded(this.worldObj, i, j, k, this);
-@@ -232,7 +298,12 @@
+@@ -232,7 +299,12 @@
  
                  if (block.getMaterial() == Material.air && block1.func_149730_j() && this.explosionRNG.nextInt(3) == 0)
                  {

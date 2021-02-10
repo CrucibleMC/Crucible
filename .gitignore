@@ -5,6 +5,10 @@
 .gradle
 .idea
 
+# Eclipse
+.classpath
+.project
+
 # Compiled class file
 *.class
 
@@ -39,3 +43,4 @@ hs_err_pid*
 **/build
 **/.gradle
 /Sourcetrail/
+/bin/

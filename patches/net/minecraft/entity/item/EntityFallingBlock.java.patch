@@ -24,7 +24,7 @@
      public int field_145814_a;
      public int field_145812_b;
      public boolean field_145813_c;
-@@ -103,7 +107,8 @@
+@@ -103,13 +107,15 @@
  
                  if (this.field_145812_b == 1)
                  {
@@ -34,7 +34,14 @@
                      {
                          this.setDead();
                          return;
-@@ -122,8 +127,17 @@
+                     }
+ 
+                     this.worldObj.setBlockToAir(i, j, k);
++                    this.worldObj.spigotConfig.antiXrayInstance.updateNearbyBlocks(this.worldObj, i, j, k);
+                 }
+ 
+                 if (this.onGround)
+@@ -122,8 +128,17 @@
                      {
                          this.setDead();
  
@@ -53,7 +60,7 @@
                              if (this.field_145811_e instanceof BlockFalling)
                              {
                                  ((BlockFalling)this.field_145811_e).func_149828_a(this.worldObj, i, j, k, this.field_145814_a);
-@@ -189,8 +203,10 @@
+@@ -189,8 +204,10 @@
  
                  while (iterator.hasNext())
                  {
@@ -66,7 +73,7 @@
                  }
  
                  if (flag && (double)this.rand.nextFloat() < 0.05000000074505806D + (double)i * 0.05D)
-@@ -304,4 +320,11 @@
+@@ -304,4 +321,11 @@
      {
          return this.field_145811_e;
      }
