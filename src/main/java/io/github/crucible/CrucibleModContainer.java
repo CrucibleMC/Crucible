@@ -90,8 +90,10 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
     public List<String> getOwnedPackages() {
         return ImmutableList.of(
                 "io.github.crucible.entity",
-                "io.github.crucible.wrapper",
                 "io.github.crucible.event",
+                "io.github.crucible.patch",
+                "io.github.crucible.util",
+                "io.github.crucible.wrapper",
                 "io.github.crucible"
         );
     }

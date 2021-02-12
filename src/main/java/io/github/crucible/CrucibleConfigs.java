@@ -160,6 +160,12 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Sets the server max tick time, experimental, can cause problems!")
     public int crucible_tickHandler_serverTickTime = 1000000000;
 
+    @Comment("Tries to free up memory for long running servers by trimming arrays and cleaning up unused things.")
+    public boolean crucible_performance_cleanUpTask = true;
+
+    @Comment("Delay in ticks between each cleanup.")
+    public int crucible_performance_cleanUpTaskDelay = 36000;
+
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
 

@@ -1,4 +1,4 @@
-package thermos;
+package io.github.crucible.patches;
 
 import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
@@ -12,7 +12,7 @@ import pw.prok.imagine.asm.Transformer;
 import static org.objectweb.asm.Opcodes.*;
 
 @Transformer.RegisterTransformer
-public class ThermosClassTransformer implements Transformer {
+public class ClimateControlTransformer implements Transformer {
     @Override
     public void transform(final ImagineASM asm) {
         if (asm.is("climateControl.utils.ChunkGeneratorExtractor")) {
