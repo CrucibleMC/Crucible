@@ -141,7 +141,7 @@ dependencies {
     libraries 'org.scala-lang:scala-reflect:2.11.7'
     libraries 'org.scala-lang:scala-swing:2.11.0-M7'
     libraries 'org.scala-lang:scala-xml:2.11.0-M4'
-    libraries 'net.sf.jopt-simple:jopt-simple:4.7'
+    libraries 'net.sf.jopt-simple:jopt-simple:5.0.1'
     libraries 'lzma:lzma:0.0.1'
     libraries 'org.yaml:snakeyaml:1.9'
     libraries 'commons-lang:commons-lang:2.6'
