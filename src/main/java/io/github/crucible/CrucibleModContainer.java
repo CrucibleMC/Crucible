@@ -11,6 +11,7 @@ import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.server.MinecraftServer;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -24,14 +25,12 @@ import org.bukkit.plugin.*;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("UnstableApiUsage")
 public class CrucibleModContainer extends DummyModContainer implements Plugin {
-    public static Logger logger;
+    public static Logger logger = LogManager.getLogger("Crucible");  //Crucible - note: use it only after forge configured the logger!
     public static CrucibleModContainer instance;
     public static Metrics metrics;
     private PluginLoader dummyPluginLoader;
@@ -44,7 +43,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
         ModMetadata meta = getMetadata();
         meta.modId = "Crucible";
         meta.name = "Crucible Server";
-        meta.version = "4.1";
+        meta.version = Crucible.CRUCIBLE_VERSION;
         meta.credits = "TODO: Add credits";
         meta.authorList = Arrays.asList("juanmuscaria", "brunoxkk0", "evernife");
         meta.description = "Pure black magic and gambiarras!";
@@ -61,20 +60,22 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
     @Subscribe
     public void modConstruction(FMLConstructionEvent evt) {
         NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
-        System.out.println("[Crucible]-Crucible DummyMod injected successfully!");
+        logger.info("Crucible DummyMod injected successfully!");
     }
 
     @Subscribe
     public void preInit(FMLPreInitializationEvent evt) {
-        logger = evt.getModLog();
+        //No usage needed for now.
     }
 
     @Subscribe
     public void postInit(FMLPostInitializationEvent evt) {
+        //No usage needed for now.
     }
 
     @Subscribe
     public void onAvailable(FMLLoadCompleteEvent evt) {
+        //No usage needed for now.
     }
 
     @Subscribe
@@ -90,6 +91,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
         return ImmutableList.of(
                 "io.github.crucible.entity",
                 "io.github.crucible.wrapper",
+                "io.github.crucible.event",
                 "io.github.crucible"
         );
     }
@@ -119,22 +121,22 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
 
     @Override
     public void saveConfig() {
-
+        //Dummy plugin.
     }
 
     @Override
     public void saveDefaultConfig() {
-
+        //Dummy plugin.
     }
 
     @Override
     public void saveResource(String resourcePath, boolean replace) {
-
+        //Dummy plugin.
     }
 
     @Override
     public void reloadConfig() {
-
+        //Dummy plugin.
     }
 
     @Override
@@ -195,6 +197,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
 
     @Override
     public void onDisable() {
+        //Dummy plugin.
     }
 
     @Override
@@ -239,6 +242,6 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return null;
+        return Collections.emptyList();
     }
 }

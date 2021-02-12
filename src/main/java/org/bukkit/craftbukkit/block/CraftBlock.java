@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.block;
 
 import cpw.mods.fml.common.FMLLog;
+import io.github.crucible.CrucibleConfigs;
 import net.minecraft.block.BlockCocoa;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.init.Blocks;
@@ -203,7 +204,7 @@ public class CraftBlock implements Block {
 
     // Cauldron start - if cauldron.dump-materials is true, dump all materials with their corresponding id's
     public static void dumpMaterials() {
-        if (MinecraftServer.cauldronConfig.dumpMaterials.getValue()) {
+        if (CrucibleConfigs.configs.cauldron_settings_dumpMaterials) {
             FMLLog.info("Cauldron Dump Materials is ENABLED. Starting dump...");
             for (int i = 0; i < 32000; i++) {
                 Material material = Material.getMaterial(i);

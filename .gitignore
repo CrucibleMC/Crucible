@@ -38,3 +38,4 @@ hs_err_pid*
 **/eclipse
 **/build
 **/.gradle
+/Sourcetrail/

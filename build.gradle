@@ -141,7 +141,7 @@ dependencies {
     libraries 'org.scala-lang:scala-reflect:2.11.7'
     libraries 'org.scala-lang:scala-swing:2.11.0-M7'
     libraries 'org.scala-lang:scala-xml:2.11.0-M4'
-    libraries 'net.sf.jopt-simple:jopt-simple:5.0.1'
+    libraries 'net.sf.jopt-simple:jopt-simple:4.7'
     libraries 'lzma:lzma:0.0.1'
     libraries 'org.yaml:snakeyaml:1.9'
     libraries 'commons-lang:commons-lang:2.6'
@@ -191,7 +191,7 @@ def generateManifest(boolean legacy = false) {
             'Thermos-Channel'       : project.name,
             'Thermos-Version'       : project.version,
             'Thermos-Legacy'        : legacy,
-            'Implementation-Vendor' : 'CyberdyneCC',
+            'Implementation-Vendor' : 'CrucibleMC Team',
             'Implementation-Title'  : project.name,
             'Implementation-Version': project.version,
             'Specification-Vendor'  : 'Bukkit Team',

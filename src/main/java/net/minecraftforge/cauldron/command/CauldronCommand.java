@@ -181,11 +181,11 @@ public class CauldronCommand extends Command {
             String option = (Boolean.TRUE.equals(value) ? ChatColor.GREEN : ChatColor.RED) + " " + value;
             sender.sendMessage(ChatColor.GOLD + args[1] + " " + option);
             // Special case for load-on-request
-            if (toggle == MinecraftServer.cauldronConfig.loadChunkOnRequest) {
-                for (net.minecraft.world.WorldServer world : MinecraftServer.getServer().worlds) {
-                    world.theChunkProviderServer.loadChunkOnProvideRequest = MinecraftServer.cauldronConfig.loadChunkOnRequest.getValue();
-                }
-            }
+//            if (toggle == MinecraftServer.cauldronConfig.loadChunkOnRequest) {
+//                for (net.minecraft.world.WorldServer world : MinecraftServer.getServer().worlds) {
+//                    world.theChunkProviderServer.loadChunkOnProvideRequest = MinecraftServer.cauldronConfig.loadChunkOnRequest.getValue();
+//                }
+//            }
             MinecraftServer.cauldronConfig.save();
         } catch (Exception ex) {
             sender.sendMessage(ChatColor.RED + "Usage: " + usageMessage);

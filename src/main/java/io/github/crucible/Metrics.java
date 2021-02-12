@@ -244,7 +244,6 @@ public class Metrics {
     public JsonObject getPluginData() {
         JsonObject data = new JsonObject();
 
-        String pluginName = plugin.getDescription().getName();
         String pluginVersion = plugin.getDescription().getVersion();
 
         data.addProperty("pluginName", "Crucible Server"); // Append the name of the plugin

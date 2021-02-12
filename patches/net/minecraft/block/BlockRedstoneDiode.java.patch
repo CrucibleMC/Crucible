@@ -1,12 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneDiode.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneDiode.java
-@@ -13,16 +13,22 @@
+@@ -3,6 +3,8 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.util.Random;
++
++import io.github.crucible.CrucibleConfigs;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.init.Blocks;
+@@ -13,16 +15,21 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
 +
-+import net.minecraftforge.cauldron.configuration.CauldronConfig;
 +
  public abstract class BlockRedstoneDiode extends BlockDirectional
  {
@@ -23,14 +31,14 @@
      }
  
      public boolean renderAsNormalBlock()
-@@ -40,22 +46,37 @@
+@@ -40,22 +47,37 @@
          return !World.doesBlockHaveSolidTopSurface(p_149718_1_, p_149718_2_, p_149718_3_ - 1, p_149718_4_) ? false : super.canBlockStay(p_149718_1_, p_149718_2_, p_149718_3_, p_149718_4_);
      }
  
 +    private long last = 0L;
      public void updateTick(World p_149674_1_, int p_149674_2_, int p_149674_3_, int p_149674_4_, Random p_149674_5_)
      {
-+        if (System.currentTimeMillis() - last <= CauldronConfig.instance.repeaterL.getValue()) { return; }
++        if (System.currentTimeMillis() - last <= CrucibleConfigs.configs.cauldron_optimization_redstoneRepeaterUpdateSpeed) { return; }
 +        last = System.currentTimeMillis();
          int l = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
  

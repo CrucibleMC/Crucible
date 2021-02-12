@@ -497,7 +497,7 @@
 +                Arrays.fill(recentTps, 20);
 +                long lastTick = 0, catchupTime = 0, curTime, wait;
 +                AffinityLock al = null;
-+                if(CauldronConfig.instance.affinity.getValue())
++                if(CrucibleConfigs.configs.cauldron_optimization_affinityLocking)
 +                {
 +                	al = AffinityLock.acquireCore();
 +                	if(al.isAllocated())
@@ -506,7 +506,7 @@
 +                }
 +                else
 +                {
-+                	logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] Refusing to lock affinity, disabled in cauldron.yml");
++                	logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] Refusing to lock affinity, disabled in Crucible.yml");
 +                }
 +                try {
 +                    serverStarted = true; //Crucible
