@@ -2,10 +2,7 @@ package io.github.crucible;
 
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
-import net.cubespace.Yamler.Config.Comment;
-import net.cubespace.Yamler.Config.ConfigMode;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import net.cubespace.Yamler.Config.YamlConfig;
+import net.cubespace.Yamler.Config.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 
@@ -162,6 +159,12 @@ public class CrucibleConfigs extends YamlConfig {
 
     @Comment("Tries to free up memory for long running servers by trimming arrays and cleaning up unused things.")
     public boolean crucible_performance_cleanUpTask = true;
+
+    @Comments({"Removes some restrictions and safety checks, we will not offer support for this setting and it may cause problems.",
+            "Use it at your own risk!",
+            "Currently disabled checks by this:",
+            " * Server Icon max size check"})
+    public boolean crucible_unsafe = false;
 
     @Comment("Delay in ticks between each cleanup.")
     public int crucible_performance_cleanUpTaskDelay = 36000;
