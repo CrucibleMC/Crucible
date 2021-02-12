@@ -2,10 +2,7 @@ package io.github.crucible;
 
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
-import net.cubespace.Yamler.Config.Comment;
-import net.cubespace.Yamler.Config.ConfigMode;
-import net.cubespace.Yamler.Config.InvalidConfigurationException;
-import net.cubespace.Yamler.Config.YamlConfig;
+import net.cubespace.Yamler.Config.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 
@@ -159,6 +156,12 @@ public class CrucibleConfigs extends YamlConfig {
 
     @Comment("Sets the server max tick time, experimental, can cause problems!")
     public int crucible_tickHandler_serverTickTime = 1000000000;
+
+    @Comments({"Removes some restrictions and safety checks, we will not offer support for this setting and it may cause problems.",
+            "Use it at your own risk!",
+            "Currently disabled checks by this:",
+            " * Server Icon max size check"})
+    public boolean crucible_unsafe = false;
 
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;

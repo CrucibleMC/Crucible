@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapMaker;
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.FMLLog;
+import io.github.crucible.CrucibleConfigs;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -259,8 +260,10 @@ public final class CraftServer implements Server {
     static CraftIconCache loadServerIcon0(BufferedImage image) throws Exception {
         ByteBuf bytebuf = Unpooled.buffer();
 
-        Validate.isTrue(image.getWidth() == 64, "Must be 64 pixels wide");
-        Validate.isTrue(image.getHeight() == 64, "Must be 64 pixels high");
+        if (!CrucibleConfigs.configs.crucible_unsafe) {
+            Validate.isTrue(image.getWidth() == 64, "Must be 64 pixels wide");
+            Validate.isTrue(image.getHeight() == 64, "Must be 64 pixels high");
+        }
         ImageIO.write(image, "PNG", new ByteBufOutputStream(bytebuf));
         ByteBuf bytebuf1 = Base64.encode(bytebuf);
 
