@@ -38,6 +38,7 @@ public class CrucibleCommand extends Command {
         usage.append("&b  >&e crucible heap &7-&a Dump the server heap.\n");
         usage.append("&b  >&e crucible plugins &7-&a Shows all your loaded plugins and mod plugins.\n");
         usage.append("&b  >&e crucible mods &7-&a Shows all your loaded mods.\n");
+        usage.append("&b  >&e crucible lag &7-&a Shows the current status of the tick skip system\n");
         setUsage(ChatColor.translateAlternateColorCodes('&', usage.toString()));
         setPermission("crucible");
     }
@@ -194,6 +195,10 @@ public class CrucibleCommand extends Command {
             if (!testPermission(sender, "crucible.plugins"))
                 return true;
             sender.sendMessage("Plugins " + getPluginList());
+        } else if (args[0].equalsIgnoreCase("lag")) {
+            if (!testPermission(sender, "crucible.lag"))
+                return true;
+            sender.sendMessage(ChatColor.AQUA + "Is Laggy:" + (CrucibleTickManager.isLaggy() ? ChatColor.RED + "true": ChatColor.GREEN + "false"));
         } else if (args[0].equalsIgnoreCase("")) {
             if (!testPermission(sender, "crucible."))
                 return true;

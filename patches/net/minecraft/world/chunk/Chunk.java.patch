@@ -215,10 +215,11 @@
      }
  
      public boolean canBlockSeeTheSky(int p_76619_1_, int p_76619_2_, int p_76619_3_)
-@@ -874,9 +981,23 @@
+@@ -874,9 +981,24 @@
          p_150812_4_.xCoord = this.xPosition * 16 + p_150812_1_;
          p_150812_4_.yCoord = p_150812_2_;
          p_150812_4_.zCoord = this.zPosition * 16 + p_150812_3_;
++        p_150812_4_.myStopwatch = worldObj.myManager.of(p_150812_4_);
 +        // Cauldron start - validate TE for corrupted data
 +        Block block = null;
 +        try
@@ -240,7 +241,7 @@
          {
              if (this.chunkTileEntityMap.containsKey(chunkposition))
              {
-@@ -886,6 +1007,16 @@
+@@ -886,6 +1008,16 @@
              p_150812_4_.validate();
              this.chunkTileEntityMap.put(chunkposition, p_150812_4_);
          }
@@ -257,7 +258,7 @@
      }
  
      public void removeTileEntity(int p_150805_1_, int p_150805_2_, int p_150805_3_)
-@@ -936,6 +1067,21 @@
+@@ -936,6 +1068,21 @@
  
          for (int i = 0; i < this.entityLists.length; ++i)
          {
@@ -279,7 +280,7 @@
              this.worldObj.unloadEntities(this.entityLists[i]);
          }
          MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(this));
-@@ -952,11 +1098,15 @@
+@@ -952,11 +1099,15 @@
          int j = MathHelper.floor_double((p_76588_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
          i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
          j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
@@ -297,7 +298,7 @@
              for (int l = 0; l < list1.size(); ++l)
              {
                  Entity entity1 = (Entity)list1.get(l);
-@@ -1015,7 +1165,7 @@
+@@ -1015,7 +1166,7 @@
                  return true;
              }
          }
@@ -306,7 +307,7 @@
          {
              return true;
          }
-@@ -1025,7 +1175,7 @@
+@@ -1025,7 +1176,7 @@
  
      public Random getRandomWithSeed(long p_76617_1_)
      {
@@ -315,7 +316,7 @@
      }
  
      public boolean isEmpty()
-@@ -1035,6 +1185,7 @@
+@@ -1035,6 +1186,7 @@
  
      public void populateChunk(IChunkProvider p_76624_1_, IChunkProvider p_76624_2_, int p_76624_3_, int p_76624_4_)
      {
@@ -323,7 +324,7 @@
          if (!this.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
          {
              p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_);
-@@ -1054,6 +1205,7 @@
+@@ -1054,6 +1206,7 @@
          {
              p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_ - 1);
          }
@@ -331,7 +332,7 @@
      }
  
      public int getPrecipitationHeight(int p_76626_1_, int p_76626_2_)
-@@ -1091,7 +1243,7 @@
+@@ -1091,7 +1244,7 @@
      {
          if (this.isGapLightingUpdated && !this.worldObj.provider.hasNoSky && !p_150804_1_)
          {
@@ -340,7 +341,7 @@
          }
  
          this.field_150815_m = true;
-@@ -1104,7 +1256,8 @@
+@@ -1104,7 +1257,8 @@
  
      public boolean func_150802_k()
      {
@@ -350,7 +351,7 @@
      }
  
      public ChunkCoordIntPair getChunkCoordIntPair()
-@@ -1184,8 +1337,10 @@
+@@ -1184,8 +1338,10 @@
              if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
              {
                  nibblearray = this.storageArrays[l].getMetadataArray();
@@ -363,7 +364,7 @@
              }
          }
  
-@@ -1194,8 +1349,10 @@
+@@ -1194,8 +1350,10 @@
              if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
              {
                  nibblearray = this.storageArrays[l].getBlocklightArray();
@@ -376,7 +377,7 @@
              }
          }
  
-@@ -1206,8 +1363,10 @@
+@@ -1206,8 +1364,10 @@
                  if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
                  {
                      nibblearray = this.storageArrays[l].getSkylightArray();
@@ -389,7 +390,7 @@
                  }
              }
          }
-@@ -1229,8 +1388,8 @@
+@@ -1229,8 +1389,8 @@
                          nibblearray = this.storageArrays[l].createBlockMSBArray();
                      }
  
@@ -400,7 +401,7 @@
                  }
              }
              else if (p_76607_4_ && this.storageArrays[l] != null && this.storageArrays[l].getBlockMSBArray() != null)
-@@ -1523,4 +1682,22 @@
+@@ -1523,4 +1683,22 @@
              }
          }
      }

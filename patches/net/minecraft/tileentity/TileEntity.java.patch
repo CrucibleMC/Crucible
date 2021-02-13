@@ -8,7 +8,15 @@
  import cpw.mods.fml.common.FMLLog;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-@@ -22,20 +24,32 @@
+@@ -7,6 +9,7 @@
+ import java.util.Map;
+ import java.util.concurrent.Callable;
+ 
++import io.github.crucible.CrucibleTickManager;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockJukebox;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -22,20 +25,33 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -33,6 +41,7 @@
      public Block blockType;
 +    public Timing tickTimer = MinecraftTimings.getTileEntityTimings(this); // Paper
      private static final String __OBFID = "CL_00000340";
++    public CrucibleTickManager.TileStopwatch myStopwatch;
  
 +    @Override
 +    public int hashCode()
@@ -43,7 +52,7 @@
      public static void addMapping(Class p_145826_0_, String p_145826_1_)
      {
          if (nameToClassMap.containsKey(p_145826_1_))
-@@ -106,7 +120,11 @@
+@@ -106,7 +122,11 @@
          }
          catch (Exception exception)
          {
@@ -56,7 +65,7 @@
          }
  
          if (tileentity != null)
-@@ -282,6 +300,31 @@
+@@ -282,6 +302,31 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
  

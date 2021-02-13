@@ -151,23 +151,32 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Attempts to reduce console spam by removing \"useless\" logs.")
     public boolean crucible_logging_reduceSpam = false;
 
-    @Comment("Sets the server max tps, experimental, can cause problems!")
+    @Comment("Sets the server max tps, it will break plugins and other things that requires a normal tickrate!")
     public int crucible_tickHandler_serverTickRate = 20;
 
-    @Comment("Sets the server max tick time, experimental, can cause problems!")
+    @Comment("Sets the server max tick time, it will break plugins and other things that requires a normal tickrate!")
     public int crucible_tickHandler_serverTickTime = 1000000000;
+
+    @Comment("If true, crucible will try to limit the ticking of tiles to prevent massive server lag.")
+    public boolean crucible_tickHandler_tickSkip = false;
+
+    @Comment("Maximum time a region can spend ticking in ms. When a region reaches this threshold all other tiles will be skipped.")
+    public int crucible_tickHandler_regionMeanTime = 3;
+
+    @Comment("The minimum time the server must be spending between ticks to enable the tick skip. Value must be in ms")
+    public int crucible_tickHandler_meantimeThreshold = 40;
 
     @Comment("Tries to free up memory for long running servers by trimming arrays and cleaning up unused things.")
     public boolean crucible_performance_cleanUpTask = true;
+
+    @Comment("Delay in ticks between each cleanup.")
+    public int crucible_performance_cleanUpTaskDelay = 36000;
 
     @Comments({"Removes some restrictions and safety checks, we will not offer support for this setting and it may cause problems.",
             "Use it at your own risk!",
             "Currently disabled checks by this:",
             " * Server Icon max size check"})
     public boolean crucible_unsafe = false;
-
-    @Comment("Delay in ticks between each cleanup.")
-    public int crucible_performance_cleanUpTaskDelay = 36000;
 
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
