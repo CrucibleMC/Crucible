@@ -4,7 +4,6 @@ import co.aikar.timings.MinecraftTimings;
 import co.aikar.timings.Timing;
 import gnu.trove.set.TByteSet;
 import gnu.trove.set.hash.TByteHashSet;
-import net.minecraft.block.Block;
 
 public class AntiXray {
 
@@ -18,18 +17,19 @@ public class AntiXray {
 
     public AntiXray(SpigotWorldConfig config) {
         // Set all listed blocks as true to be obfuscated
-        for (int id : config.hiddenBlocks) {
+        for (int id : (config.engineMode == 1) ? config.hiddenBlocks : config.replaceBlocks) {
             obfuscateBlocks[id] = true;
         }
 
         // For every block
         TByteSet blocks = new TByteHashSet();
-        for (Integer i : config.replaceBlocks) {
-        	Block block = Block.getBlockById(i);
-        	if (!block.hasTileEntity(0)) {
-        		// Add it to the set of replacement blocks
-        		blocks.add((byte) (int) i);
-        	}
+        for (Integer i : config.hiddenBlocks) {
+            net.minecraft.block.Block block = net.minecraft.block.Block.getBlockById(i);
+            // Check it exists and is not a tile entity
+            if (block != null && !block.hasTileEntity()) {
+                // Add it to the set of replacement blocks
+                blocks.add((byte) (int) i);
+            }
         }
         // Bake it to a flat array of replacements
         replacementOres = blocks.toArray();
