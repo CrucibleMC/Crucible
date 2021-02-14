@@ -65,6 +65,14 @@ public class ListSet<E> extends ArrayList<E> {
     }
 
     @Override
+    public boolean remove(Object element) {
+        boolean flag;
+        if (flag = backend.remove(element))
+            super.remove(element);
+        return flag;
+    }
+
+    @Override
     public boolean addAll(Collection<? extends E> elements) {
         Set<E> internal = new HashSet<>(elements);
         backend.addAll(internal);

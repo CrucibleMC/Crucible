@@ -5,6 +5,16 @@ import net.minecraft.tileentity.TileEntity;
 import java.util.Collection;
 
 public class TileList extends ListSet<TileEntity> {
+    public TileList(int size) {
+        super(size);
+    }
+
+    public TileList() {
+    }
+
+    public TileList(Collection<? extends TileEntity> collection) {
+        super(collection);
+    }
 
     @Override
     public boolean add(TileEntity element) {

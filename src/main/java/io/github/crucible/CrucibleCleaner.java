@@ -1,6 +1,7 @@
 package io.github.crucible;
 
 import io.github.crucible.util.ListSet;
+import io.github.crucible.util.TileList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -13,8 +14,8 @@ public class CrucibleCleaner extends BukkitRunnable {
             if (world != null) {
                 world.loadedEntityList = new ListSet<>(world.loadedEntityList);
                 world.unloadedEntityList = new ListSet<>(world.unloadedEntityList);
-                world.loadedTileEntityList = new ListSet<>(world.loadedTileEntityList);
-                world.addedTileEntityList = new ListSet<>(world.addedTileEntityList);
+                world.loadedTileEntityList = new TileList(world.loadedTileEntityList);
+                world.addedTileEntityList = new TileList(world.addedTileEntityList);
             }
         }
     }
