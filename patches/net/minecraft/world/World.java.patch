@@ -736,7 +736,7 @@
          this.notifyBlockOfNeighborChange(p_147459_1_, p_147459_2_ + 1, p_147459_3_, p_147459_4_);
          this.notifyBlockOfNeighborChange(p_147459_1_, p_147459_2_, p_147459_3_ - 1, p_147459_4_);
          this.notifyBlockOfNeighborChange(p_147459_1_, p_147459_2_, p_147459_3_ + 1, p_147459_4_);
-+        //this.spigotConfig.antiXrayInstance.updateNearbyBlocks(this, p_147459_1_, p_147459_2_, p_147459_3_);
++        this.spigotConfig.antiXrayInstance.updateNearbyBlocks(this, p_147459_1_, p_147459_2_, p_147459_3_);
      }
  
      public void notifyBlocksOfNeighborChange(int p_147441_1_, int p_147441_2_, int p_147441_3_, Block p_147441_4_, int p_147441_5_)
