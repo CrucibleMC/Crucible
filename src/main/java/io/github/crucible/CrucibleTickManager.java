@@ -20,19 +20,19 @@ public class CrucibleTickManager {
 
     }
 
-    public int hashTilePosition(int x, int z) {
+    public long hashTilePosition(int x, int z) {
         x = x >> 4; // to chunk coord
         x = x >> 5; // to region coord
         z = z >> 4;
         z = z >> 5;
-        int hash = 17;
+        long hash = 17;
         hash = hash * 31 + x;
         hash = hash * 31 + z;
         return hash;
     }
 
     public TileStopwatch of(TileEntity tile) {
-        int hash = hashTilePosition(tile.xCoord,tile.zCoord);
+        long hash = hashTilePosition(tile.xCoord,tile.zCoord);
         return stopwatches.computeIfAbsent(hash, (key) -> new TileStopwatch());
     }
 

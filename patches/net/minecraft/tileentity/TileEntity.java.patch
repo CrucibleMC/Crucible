@@ -1,14 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -1,5 +1,7 @@
+@@ -1,12 +1,16 @@
  package net.minecraft.tileentity;
  
 +import co.aikar.timings.MinecraftTimings;
 +import co.aikar.timings.Timing;
  import cpw.mods.fml.common.FMLLog;
++import cpw.mods.fml.common.registry.GameRegistry;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-@@ -7,6 +9,7 @@
+ import java.util.HashMap;
  import java.util.Map;
  import java.util.concurrent.Callable;
  
@@ -16,7 +17,7 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockJukebox;
  import net.minecraft.crash.CrashReportCategory;
-@@ -22,20 +25,33 @@
+@@ -22,20 +26,33 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -52,7 +53,7 @@
      public static void addMapping(Class p_145826_0_, String p_145826_1_)
      {
          if (nameToClassMap.containsKey(p_145826_1_))
-@@ -106,7 +122,11 @@
+@@ -106,7 +123,11 @@
          }
          catch (Exception exception)
          {
@@ -65,7 +66,7 @@
          }
  
          if (tileentity != null)
-@@ -282,6 +302,31 @@
+@@ -282,6 +303,31 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
  
@@ -97,3 +98,24 @@
      // -- BEGIN FORGE PATCHES --
      /**
       * Determines if this TileEntity requires update calls.
+@@ -370,4 +416,20 @@
+         }
+         return bb;
+     }
++
++    //Crucible - Let's make easier to identify a tile when it's printed
++    @Override
++    public String toString() {
++        return "TileEntity{" +
++                "worldObj=" + worldObj +
++                ", GC=" + GC +
++                ", xCoord=" + xCoord +
++                ", yCoord=" + yCoord +
++                ", zCoord=" + zCoord +
++                ", tileEntityInvalid=" + tileEntityInvalid +
++                ", blockMetadata=" + blockMetadata +
++                ", blockType=" + GameRegistry.findUniqueIdentifierFor(blockType).toString() +
++                ", isVanilla=" + isVanilla +
++                '}';
++    }
+ }
