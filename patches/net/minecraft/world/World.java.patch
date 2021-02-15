@@ -138,8 +138,8 @@
 -    private List field_147483_b = new ArrayList();
 +    public List<Entity> loadedEntityList = new ListSet<>();
 +    public List<Entity> unloadedEntityList = new ListSet<>(); // Cauldron
-+    public List<TileEntity> loadedTileEntityList = new TileList();
-+    public List<TileEntity> addedTileEntityList = new TileList(); // Crucible private > public
++    public List<TileEntity> loadedTileEntityList = new TileList(this);
++    public List<TileEntity> addedTileEntityList = new TileList(this); // Crucible private > public
 +    public List field_147483_b = new ArrayList(); // Cauldron
      public List playerEntities = new ArrayList();
      public List weatherEffects = new ArrayList();

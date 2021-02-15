@@ -14,8 +14,8 @@ public class CrucibleCleaner extends BukkitRunnable {
             if (world != null) {
                 world.loadedEntityList = new ListSet<>(world.loadedEntityList);
                 world.unloadedEntityList = new ListSet<>(world.unloadedEntityList);
-                world.loadedTileEntityList = new TileList(world.loadedTileEntityList);
-                world.addedTileEntityList = new TileList(world.addedTileEntityList);
+                world.loadedTileEntityList = new TileList(world.loadedTileEntityList, world);
+                world.addedTileEntityList = new TileList(world.addedTileEntityList, world);
             }
         }
     }
