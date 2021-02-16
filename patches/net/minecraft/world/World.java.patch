@@ -1163,7 +1163,7 @@
 -                    tileentity.updateEntity();
 +                    if (CrucibleConfigs.configs.crucible_tickHandler_tickSkip && CrucibleTickManager.isLaggy()){
 +                        if (tileentity.myStopwatch == null) {
-+                            CrucibleModContainer.logger.warn("[Crucible] Tile '{}' with null stopwatch, this is a bug in crucible!", tileentity);
++                            CrucibleModContainer.logger.warn("[Crucible] Tile '{}' with null stopwatch, this is a bug in crucible!", tileentity.toStringButDifferent());
 +                            tileentity.myStopwatch = myManager.of(tileentity);
 +                        }
 +                        if (tileentity.myStopwatch.canTick()) {

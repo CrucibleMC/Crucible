@@ -104,8 +104,8 @@
      }
 +
 +    //Crucible - Let's make easier to identify a tile when it's printed
-+    @Override
-+    public String toString() {
++    public String toStringButDifferent() {
++        GameRegistry.UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(blockType);
 +        return "TileEntity{" +
 +                "worldObj=" + worldObj +
 +                ", GC=" + GC +
@@ -114,7 +114,7 @@
 +                ", zCoord=" + zCoord +
 +                ", tileEntityInvalid=" + tileEntityInvalid +
 +                ", blockMetadata=" + blockMetadata +
-+                ", blockType=" + GameRegistry.findUniqueIdentifierFor(blockType).toString() +
++                (", blockType=" + id == null ? "null":id.toString()) +
 +                ", isVanilla=" + isVanilla +
 +                '}';
 +    }
