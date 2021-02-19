@@ -172,6 +172,12 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Delay in ticks between each cleanup.")
     public int crucible_performance_cleanUpTaskDelay = 36000;
 
+    @Comments({"Allow Crucible to serialize NBT of ItemStacks on Bukkit YML Serialization!",
+            "This might help some plugins work properly with Modded Items when they have important NBT data.",
+            "This might as well break some other plugins that suppose there is no NBT Data being loaded on the default Bukkit deserialization"
+    })
+    public boolean crucible_itemStackNBTSerialize = false; //Disabled by default until https://github.com/CrucibleMC/Crucible/issues/56 is fixed
+
     @Comments({"Removes some restrictions and safety checks, we will not offer support for this setting and it may cause problems.",
             "Use it at your own risk!",
             "Currently disabled checks by this:",

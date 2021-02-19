@@ -204,6 +204,10 @@ public final class CraftItemStack extends ItemStack {
         return !(item == null || item.stackTagCompound == null || item.stackTagCompound.hasNoTags());
     }
 
+    public net.minecraft.item.ItemStack getHandle() {
+        return handle;
+    }
+
     @Override
     public int getTypeId() {
         return handle != null ? CraftMagicNumbers.getId(handle.getItem()) : 0;

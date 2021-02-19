@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/org/bukkit/inventory/ItemStack.java
++++ ../src-work/minecraft/org/bukkit/inventory/ItemStack.java
+@@ -4,6 +4,8 @@
+ import java.util.LinkedHashMap;
+ import java.util.Map;
+ 
++import io.github.crucible.CrucibleConfigs;
++import io.github.crucible.util.ItemUtil;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Material;
+@@ -502,6 +504,13 @@
+             result.put("meta", meta);
+         }
+ 
++        if (CrucibleConfigs.configs.crucible_itemStackNBTSerialize){
++            String nbt = ItemUtil.getItemStackNBTAsString(this);
++            if (nbt != null){
++                result.put("nbt", nbt);
++            }
++        }
++
+         return result;
+     }
+ 
+@@ -527,7 +536,9 @@
+ 
+         ItemStack result = new ItemStack(type, amount, damage);
+ 
+-        if (args.containsKey("enchantments")) { // Backward compatiblity, @deprecated
++        if (CrucibleConfigs.configs.crucible_itemStackNBTSerialize && args.containsKey("nbt")){ //If we have an NBT, we don't need to check anything else
++            result = ItemUtil.setItemStackNBTFromString(result, (String) (args.get("nbt")));
++        } else if (args.containsKey("enchantments")) { // Backward compatiblity, @deprecated
+             Object raw = args.get("enchantments");
+ 
+             if (raw instanceof Map) {
