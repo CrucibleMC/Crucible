@@ -1,7 +1,7 @@
 package io.github.crucible.util;
 
 import cpw.mods.fml.common.FMLLog;
-import net.minecraft.nbt.JsonToNBT;
+import io.github.crucible.nbt.Crucible_JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import org.bukkit.craftbukkit.inventory.CraftItemStack;
@@ -26,7 +26,7 @@ public class ItemUtil {
         }
         CraftItemStack craftItemStack = (CraftItemStack) itemStack;
         try {
-            NBTTagCompound nbtTagCompound = (NBTTagCompound) JsonToNBT.func_150315_a(nbt); //equivalent  MojangsonParser.parse()
+            NBTTagCompound nbtTagCompound = (NBTTagCompound) Crucible_JsonToNBT.getTagFromJson(nbt); //equivalent  MojangsonParser.parse()
             craftItemStack.getHandle().setTagCompound(nbtTagCompound);
             return craftItemStack;
         } catch (NBTException e) {

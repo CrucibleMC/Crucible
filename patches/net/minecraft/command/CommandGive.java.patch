@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandGive.java
++++ ../src-work/minecraft/net/minecraft/command/CommandGive.java
+@@ -1,11 +1,12 @@
+ package net.minecraft.command;
+ 
+ import java.util.List;
++
++import io.github.crucible.nbt.Crucible_JsonToNBT;
+ import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+-import net.minecraft.nbt.JsonToNBT;
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTException;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -61,7 +62,7 @@
+ 
+                 try
+                 {
+-                    NBTBase nbtbase = JsonToNBT.func_150315_a(s);
++                    NBTBase nbtbase = Crucible_JsonToNBT.getTagFromJson(s);
+ 
+                     if (!(nbtbase instanceof NBTTagCompound))
+                     {

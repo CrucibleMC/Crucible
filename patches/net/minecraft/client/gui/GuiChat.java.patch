@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiChat.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiChat.java
+@@ -12,11 +12,12 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
++
++import io.github.crucible.nbt.Crucible_JsonToNBT;
+ import net.minecraft.client.gui.stream.GuiTwitchUserMode;
+ import net.minecraft.event.ClickEvent;
+ import net.minecraft.event.HoverEvent;
+ import net.minecraft.item.ItemStack;
+-import net.minecraft.nbt.JsonToNBT;
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTException;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -395,7 +396,7 @@
+ 
+                 try
+                 {
+-                    NBTBase nbtbase = JsonToNBT.func_150315_a(hoverevent.getValue().getUnformattedText());
++                    NBTBase nbtbase = Crucible_JsonToNBT.getTagFromJson(hoverevent.getValue().getUnformattedText());
+ 
+                     if (nbtbase != null && nbtbase instanceof NBTTagCompound)
+                     {

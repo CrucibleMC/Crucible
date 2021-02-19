@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.util;
 
 import io.github.crucible.CrucibleConfigs;
+import io.github.crucible.nbt.Crucible_JsonToNBT;
 import org.bukkit.Achievement;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
@@ -97,7 +98,7 @@ public final class CraftMagicNumbers implements UnsafeValues {
         net.minecraft.item.ItemStack nmsStack = CraftItemStack.asNMSCopy(stack);
 
         try {
-            nmsStack.setTagCompound((net.minecraft.nbt.NBTTagCompound) net.minecraft.nbt.JsonToNBT.func_150315_a(arguments));
+            nmsStack.setTagCompound((net.minecraft.nbt.NBTTagCompound) Crucible_JsonToNBT.getTagFromJson(arguments));
         } catch (net.minecraft.nbt.NBTException e) {
             e.printStackTrace();
         }

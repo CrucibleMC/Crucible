@@ -1,0 +1,29 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagIntArray.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagIntArray.java
+@@ -47,17 +47,19 @@
+ 
+     public String toString()
+     {
+-        String s = "[";
+-        int[] aint = this.intArray;
+-        int i = aint.length;
++        StringBuilder stringbuilder = new StringBuilder("[I;");
+ 
+-        for (int j = 0; j < i; ++j)
++        for (int i = 0; i < this.intArray.length; ++i)
+         {
+-            int k = aint[j];
+-            s = s + k + ",";
++            if (i != 0)
++            {
++                stringbuilder.append(',');
++            }
++
++            stringbuilder.append(this.intArray[i]);
+         }
+ 
+-        return s + "]";
++        return stringbuilder.append(']').toString();
+     }
+ 
+     public NBTBase copy()

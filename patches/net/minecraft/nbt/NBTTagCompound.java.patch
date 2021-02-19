@@ -1,5 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagCompound.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
+@@ -3,11 +3,11 @@
+ import java.io.DataInput;
+ import java.io.DataOutput;
+ import java.io.IOException;
+-import java.util.HashMap;
+-import java.util.Iterator;
+-import java.util.Map;
+-import java.util.Set;
++import java.util.*;
+ import java.util.concurrent.Callable;
++import java.util.regex.Pattern;
++
++import com.google.common.collect.Lists;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.util.ReportedException;
 @@ -17,9 +17,22 @@
  public class NBTTagCompound extends NBTBase
  {
@@ -24,7 +40,33 @@
      void write(DataOutput p_74734_1_) throws IOException
      {
          Iterator iterator = this.tagMap.keySet().iterator();
-@@ -336,15 +349,12 @@
+@@ -294,15 +307,20 @@
+ 
+     public String toString()
+     {
+-        String s = "{";
+-        String s1;
++        StringBuilder stringbuilder = new StringBuilder("{");
++        Collection<String> collection = this.tagMap.keySet();
+ 
+-        for (Iterator iterator = this.tagMap.keySet().iterator(); iterator.hasNext(); s = s + s1 + ':' + this.tagMap.get(s1) + ',')
++        for (String s : collection)
+         {
+-            s1 = (String)iterator.next();
++            if (stringbuilder.length() != 1)
++            {
++                stringbuilder.append(',');
++            }
++
++            stringbuilder.append(handleEscape(s)).append(':').append(this.tagMap.get(s));
+         }
+ 
+-        return s + "}";
++        return stringbuilder.append('}').toString();
+     }
+ 
+     public boolean hasNoTags()
+@@ -336,15 +354,12 @@
  
      public NBTBase copy()
      {
@@ -45,3 +87,14 @@
          return nbttagcompound;
      }
  
+@@ -407,4 +422,10 @@
+             throw new ReportedException(crashreport);
+         }
+     }
++
++    private static final Pattern SIMPLE_VALUE = Pattern.compile("[A-Za-z0-9._+-]+");
++    protected static String handleEscape(String p_193582_0_)
++    {
++        return SIMPLE_VALUE.matcher(p_193582_0_).matches() ? p_193582_0_ : NBTTagString.quoteAndEscape(p_193582_0_);
++    }
+ }

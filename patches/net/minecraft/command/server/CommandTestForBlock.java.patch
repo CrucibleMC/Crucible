@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandTestForBlock.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandTestForBlock.java
+@@ -2,13 +2,14 @@
+ 
+ import java.util.Iterator;
+ import java.util.List;
++
++import io.github.crucible.nbt.Crucible_JsonToNBT;
+ import net.minecraft.block.Block;
+ import net.minecraft.command.CommandBase;
+ import net.minecraft.command.CommandException;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.command.NumberInvalidException;
+ import net.minecraft.command.WrongUsageException;
+-import net.minecraft.nbt.JsonToNBT;
+ import net.minecraft.nbt.NBTBase;
+ import net.minecraft.nbt.NBTException;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -78,7 +79,7 @@
+ 
+                         try
+                         {
+-                            NBTBase nbtbase = JsonToNBT.func_150315_a(s);
++                            NBTBase nbtbase = Crucible_JsonToNBT.getTagFromJson(s);
+ 
+                             if (!(nbtbase instanceof NBTTagCompound))
+                             {
