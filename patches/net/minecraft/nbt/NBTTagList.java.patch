@@ -9,33 +9,7 @@
      private byte tagType = 0;
      private static final String __OBFID = "CL_00001224";
  
-@@ -64,16 +64,19 @@
- 
-     public String toString()
-     {
--        String s = "[";
--        int i = 0;
-+        StringBuilder stringbuilder = new StringBuilder("[");
- 
--        for (Iterator iterator = this.tagList.iterator(); iterator.hasNext(); ++i)
-+        for (int i = 0; i < this.tagList.size(); ++i)
-         {
--            NBTBase nbtbase = (NBTBase)iterator.next();
--            s = s + "" + i + ':' + nbtbase + ',';
-+            if (i != 0)
-+            {
-+                stringbuilder.append(',');
-+            }
-+
-+            stringbuilder.append(this.tagList.get(i));
-         }
- 
--        return s + "]";
-+        return stringbuilder.append(']').toString();
-     }
- 
-     public void appendTag(NBTBase p_74742_1_)
-@@ -192,11 +195,11 @@
+@@ -192,11 +192,11 @@
      {
          NBTTagList nbttaglist = new NBTTagList();
          nbttaglist.tagType = this.tagType;
