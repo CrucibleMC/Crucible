@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagLong.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagLong.java
+@@ -89,4 +89,9 @@
+     {
+         return (float)this.data;
+     }
++
++    @Override
++    public String crucible_toString(){
++        return this.toString();
++    }
+ }

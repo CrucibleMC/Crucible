@@ -14,7 +14,7 @@ public class ItemUtil {
         if (itemStack instanceof CraftItemStack){ //Dummy items do not have any nbt
             CraftItemStack craftItemStack = (CraftItemStack) itemStack;
             if (craftItemStack.getHandle() != null && craftItemStack.getHandle().hasTagCompound()){
-                return craftItemStack.getHandle().getTagCompound().toString();
+                return craftItemStack.getHandle().getTagCompound().crucible_toString();
             }
         }
         return null;

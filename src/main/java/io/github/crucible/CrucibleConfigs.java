@@ -176,7 +176,7 @@ public class CrucibleConfigs extends YamlConfig {
             "This might help some plugins work properly with Modded Items when they have important NBT data.",
             "This might as well break some other plugins that suppose there is no NBT Data being loaded on the default Bukkit deserialization"
     })
-    public boolean crucible_itemStackNBTSerialize = false; //Disabled by default until https://github.com/CrucibleMC/Crucible/issues/56 is fixed
+    public boolean crucible_itemStackNBTSerialize = true;
 
     @Comments({"Removes some restrictions and safety checks, we will not offer support for this setting and it may cause problems.",
             "Use it at your own risk!",
