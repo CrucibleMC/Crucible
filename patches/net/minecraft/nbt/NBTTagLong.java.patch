@@ -1,6 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagLong.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagLong.java
-@@ -89,4 +89,9 @@
+@@ -1,10 +1,12 @@
+ package net.minecraft.nbt;
+ 
++import io.github.crucible.nbt.ICrucibleString;
++
+ import java.io.DataInput;
+ import java.io.DataOutput;
+ import java.io.IOException;
+ 
+-public class NBTTagLong extends NBTBase.NBTPrimitive
++public class NBTTagLong extends NBTBase.NBTPrimitive implements ICrucibleString
+ {
+     private long data;
+     private static final String __OBFID = "CL_00001225";
+@@ -89,4 +91,9 @@
      {
          return (float)this.data;
      }

@@ -1,6 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTBase.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTBase.java
-@@ -4,7 +4,7 @@
+@@ -1,10 +1,12 @@
+ package net.minecraft.nbt;
+ 
++import io.github.crucible.nbt.ICrucibleString;
++
+ import java.io.DataInput;
  import java.io.DataOutput;
  import java.io.IOException;
  

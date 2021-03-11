@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagCompound.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
-@@ -3,11 +3,10 @@
+@@ -3,23 +3,36 @@
  import java.io.DataInput;
  import java.io.DataOutput;
  import java.io.IOException;
@@ -12,11 +12,15 @@
  import java.util.concurrent.Callable;
 +import java.util.regex.Pattern;
 +
++import io.github.crucible.nbt.ICrucibleString;
  import net.minecraft.crash.CrashReport;
  import net.minecraft.crash.CrashReportCategory;
  import net.minecraft.util.ReportedException;
-@@ -17,9 +16,22 @@
- public class NBTTagCompound extends NBTBase
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class NBTTagCompound extends NBTBase
++public class NBTTagCompound extends NBTBase implements ICrucibleString
  {
      private static final Logger logger = LogManager.getLogger();
 -    private Map tagMap = new HashMap();
@@ -39,7 +43,7 @@
      void write(DataOutput p_74734_1_) throws IOException
      {
          Iterator iterator = this.tagMap.keySet().iterator();
-@@ -336,15 +348,12 @@
+@@ -336,15 +349,12 @@
  
      public NBTBase copy()
      {
@@ -60,7 +64,7 @@
          return nbttagcompound;
      }
  
-@@ -407,4 +416,29 @@
+@@ -407,4 +417,29 @@
              throw new ReportedException(crashreport);
          }
      }

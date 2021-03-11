@@ -1,6 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagDouble.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagDouble.java
-@@ -91,4 +91,9 @@
+@@ -3,9 +3,11 @@
+ import java.io.DataInput;
+ import java.io.DataOutput;
+ import java.io.IOException;
++
++import io.github.crucible.nbt.ICrucibleString;
+ import net.minecraft.util.MathHelper;
+ 
+-public class NBTTagDouble extends NBTBase.NBTPrimitive
++public class NBTTagDouble extends NBTBase.NBTPrimitive implements ICrucibleString
+ {
+     private double data;
+     private static final String __OBFID = "CL_00001218";
+@@ -91,4 +93,9 @@
      {
          return (float)this.data;
      }

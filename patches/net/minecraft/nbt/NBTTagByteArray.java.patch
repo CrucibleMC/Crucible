@@ -1,6 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagByteArray.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagByteArray.java
-@@ -63,4 +63,22 @@
+@@ -1,11 +1,13 @@
+ package net.minecraft.nbt;
+ 
++import io.github.crucible.nbt.ICrucibleString;
++
+ import java.io.DataInput;
+ import java.io.DataOutput;
+ import java.io.IOException;
+ import java.util.Arrays;
+ 
+-public class NBTTagByteArray extends NBTBase
++public class NBTTagByteArray extends NBTBase implements ICrucibleString
+ {
+     private byte[] byteArray;
+     private static final String __OBFID = "CL_00001213";
+@@ -63,4 +65,22 @@
      {
          return this.byteArray;
      }
