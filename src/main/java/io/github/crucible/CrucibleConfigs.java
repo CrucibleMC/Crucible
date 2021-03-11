@@ -184,6 +184,9 @@ public class CrucibleConfigs extends YamlConfig {
             " * Server Icon max size check"})
     public boolean crucible_unsafe = false;
 
+    @Comment("Prevents grass tick from loading Chunks!")
+    public boolean crucible_noGrassChunkLoading = true;
+
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
 
