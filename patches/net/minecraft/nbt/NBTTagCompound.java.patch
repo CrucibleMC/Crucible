@@ -45,3 +45,35 @@
          return nbttagcompound;
      }
  
+@@ -407,4 +417,31 @@
+             throw new ReportedException(crashreport);
+         }
+     }
++
++    /**
++     * Merges copies of data contained in {@code other} into this compound tag.
++     */
++    public void merge(NBTTagCompound other)
++    {
++        for (String key : other.tagMap.keySet())
++        {
++            NBTBase otherValue = other.tagMap.get(key);
++            if (otherValue.getId() == 10)
++            {
++                if (this.hasKey(key, 10))
++                {
++                    NBTTagCompound value = this.getCompoundTag(key);
++                    value.merge((NBTTagCompound)otherValue);
++                }
++                else
++                {
++                    this.setTag(key, otherValue.copy());
++                }
++            }
++            else
++            {
++                this.setTag(key, otherValue.copy());
++            }
++        }
++    }
+ }
