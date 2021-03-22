@@ -25,6 +25,9 @@ package co.aikar.timings;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
+import io.github.crucible.Crucible;
 import io.github.crucible.CrucibleConfigs;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
@@ -35,6 +38,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.craftbukkit.CraftServer;
 import org.bukkit.entity.EntityType;
+import org.bukkit.plugin.Plugin;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -103,7 +107,7 @@ public class TimingsExport extends Thread {
         lastReport = now;
         Map parent = createObject(
             // Get some basic system details about the server
-            pair("version", Bukkit.getVersion()),
+            pair("version", "Crucible@" + Crucible.CRUCIBLE_VERSION),
             pair("maxplayers", Bukkit.getMaxPlayers()),
             pair("start", TimingsManager.timingStart / 1000),
             pair("end", System.currentTimeMillis() / 1000),
@@ -228,13 +232,21 @@ public class TimingsExport extends Thread {
         ));
 
         // Information about loaded plugins
-
-        parent.put("plugins", toObjectMapper(Bukkit.getPluginManager().getPlugins(),
-                plugin -> pair(plugin.getName(), createObject(
-                    pair("version", plugin.getDescription().getVersion()),
-                    pair("description", String.valueOf(plugin.getDescription().getDescription()).trim()),
-                    pair("website", plugin.getDescription().getWebsite()),
-                    pair("authors", StringUtils.join(plugin.getDescription().getAuthors(), ", "))
+        List<Object> pluginsAndMods = new ArrayList<>(Arrays.asList(Bukkit.getPluginManager().getPlugins()));
+        pluginsAndMods.addAll(Loader.instance().getModList());
+        //(pluginOrMod instanceof Plugin) ? ((Plugin) pluginOrMod) : ((ModContainer) pluginOrMod)
+        parent.put("plugins", toObjectMapper(pluginsAndMods,
+                pluginOrMod -> pair((pluginOrMod instanceof Plugin) ? ((Plugin) pluginOrMod).getName() : ((ModContainer) pluginOrMod).getName()
+                        , createObject(
+                        pair("version", (pluginOrMod instanceof Plugin) ?
+                                ((Plugin) pluginOrMod).getDescription().getVersion() : ((ModContainer) pluginOrMod).getVersion()),
+                        pair("description", String.valueOf((pluginOrMod instanceof Plugin) ?
+                                ((Plugin) pluginOrMod).getDescription() : "Forge Mod").trim()),
+                        pair("website", (pluginOrMod instanceof Plugin) ?
+                                ((Plugin) pluginOrMod).getDescription().getWebsite() : ((ModContainer) pluginOrMod).getMetadata().url),
+                        pair("authors", StringUtils.join((pluginOrMod instanceof Plugin) ?
+                                ((Plugin) pluginOrMod).getDescription().getAuthors() :
+                                ((ModContainer) pluginOrMod).getMetadata().authorList, ", "))
                 ))));
 
 
