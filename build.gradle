@@ -211,6 +211,7 @@ tasks.packageUniversal {
 }
 
 task copyLibraries(type: Copy) {
+    outputs.upToDateWhen { false }
     into(buildDir)
     configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect {
         def moduleVersion = it.moduleVersion
@@ -221,6 +222,7 @@ task copyLibraries(type: Copy) {
 }
 
 task packageLibraries(type: Zip, dependsOn: copyLibraries) {
+    outputs.upToDateWhen { false }
     setArchiveName("libraries.zip")
     setDestinationDir(file("$buildDir/distributions"))
     from("$buildDir/libraries")
