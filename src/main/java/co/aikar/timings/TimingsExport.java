@@ -25,6 +25,7 @@ package co.aikar.timings;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import io.github.crucible.CrucibleConfigs;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -320,7 +321,7 @@ public class TimingsExport extends Thread {
         String response = null;
         String timingsURL = null;
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL("http://timings.aikar.co/post").openConnection();
+            HttpURLConnection con = (HttpURLConnection) new URL(CrucibleConfigs.configs.timings_url + "post").openConnection();
             con.setDoOutput(true);
             String hostName = "BrokenHost";
             try {

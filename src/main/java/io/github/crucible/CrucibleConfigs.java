@@ -187,6 +187,13 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Prevents grass tick from loading Chunks!")
     public boolean crucible_noGrassChunkLoading = true;
 
+    @Comments({"Let you change what timings frontend to use.",
+            "Available frontends:",
+            " - https://timin.gs/",
+            " - http://timings.aikar.co/"
+    })
+    public String timings_url = "https://timin.gs/";
+
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
 
