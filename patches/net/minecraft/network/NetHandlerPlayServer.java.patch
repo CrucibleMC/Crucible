@@ -518,19 +518,26 @@
          }
          else if (p_147346_1_.func_149571_d() >= this.serverController.getBuildLimit() - 1 && (p_147346_1_.func_149568_f() == 1 || p_147346_1_.func_149571_d() >= this.serverController.getBuildLimit()))
          {
-@@ -548,17 +849,24 @@
+@@ -548,17 +849,33 @@
          }
          else
          {
--            double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
--            dist *= dist;
--            if (this.hasMoved && this.playerEntity.getDistanceSq((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < dist && !this.serverController.isBlockProtected(worldserver, i, j, k, this.playerEntity))
 +            // CraftBukkit start - Check if we can actually do something over this large a distance
 +            Location eyeLoc = this.getPlayerB().getEyeLocation();
 +            double reachDistance = NumberConversions.square(eyeLoc.getX() - i) + NumberConversions.square(eyeLoc.getY() - j)
 +                    + NumberConversions.square(eyeLoc.getZ() - k);
 +
-+            if (reachDistance > (this.getPlayerB().getGameMode() == org.bukkit.GameMode.CREATIVE ? CREATIVE_PLACE_DISTANCE_SQUARED : SURVIVAL_PLACE_DISTANCE_SQUARED))
++            //Old thermos check using hardcoded values
++//            if (reachDistance > (this.getPlayerB().getGameMode() == org.bukkit.GameMode.CREATIVE ? CREATIVE_PLACE_DISTANCE_SQUARED : SURVIVAL_PLACE_DISTANCE_SQUARED))
++//            {
++//                return;
++//            }
++
++            //New check respecting the reach distance
+             double dist = playerEntity.theItemInWorldManager.getBlockReachDistance() + 1;
+             dist *= dist;
+-            if (this.hasMoved && this.playerEntity.getDistanceSq((double)i + 0.5D, (double)j + 0.5D, (double)k + 0.5D) < dist && !this.serverController.isBlockProtected(worldserver, i, j, k, this.playerEntity))
++            if (reachDistance > dist)
              {
 -                // record block place result so we can update client itemstack size if place event was cancelled.
 -                if (!this.playerEntity.theItemInWorldManager.activateBlockOrUseItem(this.playerEntity, worldserver, itemstack, i, j, k, l, p_147346_1_.func_149573_h(), p_147346_1_.func_149569_i(), p_147346_1_.func_149575_j()))
@@ -551,7 +558,7 @@
              flag = true;
          }
  
-@@ -615,7 +923,7 @@
+@@ -615,7 +932,7 @@
              this.playerEntity.openContainer.detectAndSendChanges();
              this.playerEntity.isChangingQuantityOnly = false;
  
@@ -560,7 +567,7 @@
              {
                  this.sendPacket(new S2FPacketSetSlot(this.playerEntity.openContainer.windowId, slot.slotNumber, this.playerEntity.inventory.getCurrentItem()));
              }
-@@ -624,14 +932,34 @@
+@@ -624,14 +941,34 @@
  
      public void onDisconnect(IChatComponent p_147231_1_)
      {
@@ -600,7 +607,7 @@
          if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
          {
              logger.info("Stopping singleplayer server as player logged out");
-@@ -657,6 +985,18 @@
+@@ -657,6 +994,18 @@
              }
          }
  
@@ -619,7 +626,7 @@
          try
          {
              this.netManager.scheduleOutboundPacket(p_147359_1_, new GenericFutureListener[0]);
-@@ -679,20 +1019,37 @@
+@@ -679,20 +1028,37 @@
  
      public void processHeldItemChange(C09PacketHeldItemChange p_147355_1_)
      {
@@ -658,7 +665,7 @@
          {
              ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("chat.cannotSend", new Object[0]);
              chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
-@@ -708,51 +1065,430 @@
+@@ -708,51 +1074,430 @@
              {
                  if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                  {
@@ -1101,7 +1108,7 @@
          if (p_147357_1_.func_149513_d() == 1)
          {
              this.playerEntity.setSneaking(true);
-@@ -772,7 +1508,7 @@
+@@ -772,7 +1517,7 @@
          else if (p_147357_1_.func_149513_d() == 3)
          {
              this.playerEntity.wakeUpPlayer(false, true, true);
@@ -1110,7 +1117,7 @@
          }
          else if (p_147357_1_.func_149513_d() == 6)
          {
-@@ -789,8 +1525,20 @@
+@@ -789,8 +1534,20 @@
  
      public void processUseEntity(C02PacketUseEntity p_147340_1_)
      {
@@ -1132,7 +1139,7 @@
          this.playerEntity.func_143004_u();
  
          if (entity != null)
-@@ -805,9 +1553,53 @@
+@@ -805,9 +1562,53 @@
  
              if (this.playerEntity.getDistanceSqToEntity(entity) < d0)
              {
@@ -1186,7 +1193,7 @@
                  }
                  else if (p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.ATTACK)
                  {
-@@ -819,6 +1611,13 @@
+@@ -819,6 +1620,13 @@
                      }
  
                      this.playerEntity.attackTargetEntityWithCurrentItem(entity);
@@ -1200,7 +1207,7 @@
                  }
              }
          }
-@@ -828,14 +1627,26 @@
+@@ -828,14 +1636,26 @@
      {
          this.playerEntity.func_143004_u();
          C16PacketClientStatus.EnumState enumstate = p_147342_1_.func_149435_c();
@@ -1229,7 +1236,7 @@
                  else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
                  {
                      if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
-@@ -857,7 +1668,7 @@
+@@ -857,7 +1677,7 @@
                          return;
                      }
  
@@ -1238,7 +1245,7 @@
                  }
  
                  break;
-@@ -871,17 +1682,461 @@
+@@ -871,17 +1691,461 @@
  
      public void processCloseWindow(C0DPacketCloseWindow p_147356_1_)
      {
@@ -1701,7 +1708,7 @@
              if (ItemStack.areItemStacksEqual(p_147351_1_.func_149546_g(), itemstack))
              {
                  this.playerEntity.playerNetServerHandler.sendPacket(new S32PacketConfirmTransaction(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
-@@ -903,6 +2158,12 @@
+@@ -903,6 +2167,12 @@
                  }
  
                  this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
@@ -1714,7 +1721,7 @@
              }
          }
      }
-@@ -925,9 +2186,61 @@
+@@ -925,9 +2195,61 @@
              boolean flag = p_147344_1_.func_149627_c() < 0;
              ItemStack itemstack = p_147344_1_.func_149625_d();
              boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() < 36 + InventoryPlayer.getHotbarSize();
@@ -1777,7 +1784,7 @@
              if (flag1 && flag2 && flag3)
              {
                  if (itemstack == null)
-@@ -956,6 +2269,11 @@
+@@ -956,6 +2278,11 @@
  
      public void processConfirmTransaction(C0FPacketConfirmTransaction p_147339_1_)
      {
@@ -1789,7 +1796,7 @@
          Short oshort = (Short)this.field_147372_n.lookup(this.playerEntity.openContainer.windowId);
  
          if (oshort != null && p_147339_1_.func_149533_d() == oshort.shortValue() && this.playerEntity.openContainer.windowId == p_147339_1_.func_149532_c() && !this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
-@@ -966,6 +2284,11 @@
+@@ -966,6 +2293,11 @@
  
      public void processUpdateSign(C12PacketUpdateSign p_147343_1_)
      {
@@ -1801,7 +1808,7 @@
          this.playerEntity.func_143004_u();
          WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
  
-@@ -980,6 +2303,7 @@
+@@ -980,6 +2312,7 @@
                  if (!tileentitysign.func_145914_a() || tileentitysign.func_145911_b() != this.playerEntity)
                  {
                      this.serverController.logWarning("Player " + this.playerEntity.getCommandSenderName() + " just tried to change non-editable sign");
@@ -1809,7 +1816,7 @@
                      return;
                  }
              }
-@@ -990,6 +2314,7 @@
+@@ -990,6 +2323,7 @@
              for (j = 0; j < 4; ++j)
              {
                  boolean flag = true;
@@ -1817,7 +1824,7 @@
  
                  if (p_147343_1_.func_149589_f()[j].length() > 15)
                  {
-@@ -1018,7 +2343,29 @@
+@@ -1018,7 +2352,29 @@
                  int k = p_147343_1_.func_149586_d();
                  i = p_147343_1_.func_149585_e();
                  TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
@@ -1848,7 +1855,7 @@
                  tileentitysign1.markDirty();
                  worldserver.markBlockForUpdate(j, k, i);
              }
-@@ -1041,7 +2388,22 @@
+@@ -1041,7 +2397,22 @@
  
      public void processPlayerAbilities(C13PacketPlayerAbilities p_147348_1_)
      {
@@ -1872,7 +1879,7 @@
      }
  
      public void processTabComplete(C14PacketTabComplete p_147341_1_)
-@@ -1066,8 +2428,9 @@
+@@ -1066,8 +2437,9 @@
      public void processVanilla250Packet(C17PacketCustomPayload p_147349_1_)
      {
          PacketBuffer packetbuffer;
@@ -1884,7 +1891,7 @@
  
          if ("MC|BEdit".equals(p_147349_1_.func_149559_c()))
          {
-@@ -1075,34 +2438,52 @@
+@@ -1075,34 +2447,52 @@
  
              try
              {
@@ -1947,7 +1954,7 @@
              }
              finally
              {
-@@ -1117,37 +2498,48 @@
+@@ -1117,37 +2507,48 @@
  
              try
              {
@@ -2009,7 +2016,7 @@
              }
              finally
              {
-@@ -1174,9 +2566,12 @@
+@@ -1174,9 +2575,12 @@
                          ((ContainerMerchant)container).setCurrentRecipeIndex(i);
                      }
                  }
@@ -2023,7 +2030,7 @@
                  }
              }
              else if ("MC|AdvCdm".equals(p_147349_1_.func_149559_c()))
-@@ -1222,9 +2617,12 @@
+@@ -1222,9 +2626,12 @@
                              this.playerEntity.addChatMessage(new ChatComponentTranslation("advMode.setCommand.success", new Object[] {s1}));
                          }
                      }
@@ -2038,7 +2045,7 @@
                      }
                      finally
                      {
-@@ -1257,9 +2655,12 @@
+@@ -1257,9 +2664,12 @@
                              tileentitybeacon.markDirty();
                          }
                      }
@@ -2053,7 +2060,7 @@
                      }
                  }
              }
-@@ -1281,6 +2682,13 @@
+@@ -1281,6 +2691,13 @@
                      containerrepair.updateItemName("");
                  }
              }
@@ -2067,7 +2074,7 @@
          }
      }
  
-@@ -1292,6 +2700,21 @@
+@@ -1292,6 +2709,21 @@
          }
      }
  
