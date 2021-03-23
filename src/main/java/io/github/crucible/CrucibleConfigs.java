@@ -88,7 +88,7 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Dump the heap in the event of a deadlock (helps to debug the deadlock)")
     public boolean cauldron_logging_dumpHeapOnDeadlock = false;
 
-    @Comment("Dump the the server thread on deadlock warning (delps to debug the deadlock)")
+    @Comment("Dump the the server thread on deadlock warning (helps to debug the deadlock)")
     public boolean cauldron_logging_dumpThreadsOnWarn = false;
 
     @Comment("Whether to log entity collision/count checks")
