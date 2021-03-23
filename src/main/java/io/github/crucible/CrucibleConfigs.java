@@ -130,7 +130,14 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Allow nether portals in dimensions besides overworld")
     public boolean thermos_allowNetherPortal = false;
 
-    @Comment("Enable Oversized Chunk to be saved")
+    @Comments({"Enable Oversized Chunk to be saved",
+            "What is an oversized chunk?",
+            " - Oversized chunks are chunks over 1 mb (exceeding the 255 sections limit) which by default is just",
+            "   discarted by vanilla mc rolling back the chunk to the previous valid disk version.",
+            "Why is it enabled by default?",
+            " - Oversized chunks are abused by dupers to possibly damage your server and economy, having it enabled by default",
+            "   will prevent the headache of having to deal with duped items later plus it's warned in the console when",
+            "   a oversized chunk is saved helping you to find it later, it also might save some player base with a big applied energistics system."})
     public boolean crucible_enableOversizedChunk = true;
 
     @Comment("Size of cached chunk")
