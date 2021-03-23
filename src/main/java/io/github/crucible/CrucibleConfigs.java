@@ -155,7 +155,10 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Invert the protection whitelist and use it as a blacklist.")
     public boolean crucible_protectedWorldWhitelistInvert = false;
 
-    @Comment("Attempts to reduce console spam by removing \"useless\" logs.")
+    @Comments({"Attempts to reduce console spam by removing \"useless\" logs.",
+            "What is removed?",
+            " - \"The mcmod.info file in modfile cannot be parsed as valid JSON. It will be ignored\" spam",
+            " - FileNotFoundException spam when some core user list (like whitelist.json) does not exist."})
     public boolean crucible_logging_reduceSpam = false;
 
     @Comment("Sets the server max tps, it will break plugins and other things that requires a normal tickrate!")
