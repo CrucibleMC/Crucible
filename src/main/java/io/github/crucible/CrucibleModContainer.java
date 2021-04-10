@@ -91,6 +91,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
         return ImmutableList.of(
                 "io.github.crucible.entity",
                 "io.github.crucible.event",
+                "io.github.crucible.nbt",
                 "io.github.crucible.patch",
                 "io.github.crucible.util",
                 "io.github.crucible.wrapper",
