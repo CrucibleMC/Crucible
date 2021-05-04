@@ -210,6 +210,9 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
 
     @Override
     public void onEnable() {
+        if (CrucibleConfigs.configs.crucible_performance_cleanUpTask) {
+            Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CrucibleCleaner(),10, CrucibleConfigs.configs.crucible_performance_cleanUpTaskDelay);
+        }
     }
 
     @Override
