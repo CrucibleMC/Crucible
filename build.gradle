@@ -7,7 +7,11 @@ buildscript {
         }
         maven {
             name 'forge'
-            url 'http://files.minecraftforge.net/maven/'
+            url 'http://maven.minecraftforge.net/'
+        }
+        maven {
+            name = "juanmuscaria"
+            url = "https://github.com/juanmuscaria/maven/raw/master"
         }
         maven {
             name 'sonatype'
@@ -46,6 +50,10 @@ repositories {
     maven {
         name 'prok'
         url 'https://github.com/juanmuscaria/maven/raw/master/ThermosLibs'
+    }
+    maven {
+        name = "juanmuscaria"
+        url = "https://github.com/juanmuscaria/maven/raw/master"
     }
     maven {
         name 'forge'
