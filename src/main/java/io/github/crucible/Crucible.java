@@ -5,7 +5,9 @@ import cpw.mods.fml.common.Loader;
 import org.bukkit.plugin.Plugin;
 
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 public class Crucible {
@@ -53,5 +55,27 @@ public class Crucible {
     public static boolean isModPlugin(Plugin plugin) {
         return plugin.getClass().getClassLoader().equals(Loader.instance().getModClassLoader()) ||
                 plugin.getClass().getClassLoader().equals(Crucible.class.getClassLoader());
+    }
+
+    public static String deduplicate(String original) {
+        return (CrucibleConfigs.configs.crucible_performance_deduplicateStrings && original != null) ? original.intern() : original;
+    }
+
+    public static <T extends List<String>> T deduplicate (T list) {
+        if (CrucibleConfigs.configs.crucible_performance_deduplicateStrings) {
+            for (int i = 0; i < list.size(); i++) {
+                list.set(i, deduplicate(list.get(i)));
+            }
+        }
+        return list;
+    }
+
+    public static String[] deduplicate(String[] array) {
+        if (CrucibleConfigs.configs.crucible_performance_deduplicateStrings) {
+            for (int i = 0; i < array.length; i++) {
+                array[i] = deduplicate(array[i]);
+            }
+        }
+        return array;
     }
 }

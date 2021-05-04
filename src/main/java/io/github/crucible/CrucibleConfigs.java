@@ -179,6 +179,9 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Tries to free up memory for long running servers by trimming arrays and cleaning up unused things.")
     public boolean crucible_performance_cleanUpTask = true;
 
+    @Comment("Tries to free up memory by preventing duplicated strings when possible.")
+    public boolean crucible_performance_deduplicateStrings = true;
+
     @Comment("Delay in ticks between each cleanup.")
     public int crucible_performance_cleanUpTaskDelay = 36000;
 

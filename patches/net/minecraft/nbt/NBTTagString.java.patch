@@ -1,8 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagString.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagString.java
-@@ -1,10 +1,12 @@
+@@ -1,10 +1,13 @@
  package net.minecraft.nbt;
  
++import io.github.crucible.Crucible;
 +import io.github.crucible.nbt.ICrucibleString;
 +
  import java.io.DataInput;
@@ -14,7 +15,16 @@
  {
      private String data;
      private static final String __OBFID = "CL_00001228";
-@@ -72,4 +74,29 @@
+@@ -16,7 +19,7 @@
+ 
+     public NBTTagString(String p_i1389_1_)
+     {
+-        this.data = p_i1389_1_;
++        this.data = Crucible.deduplicate(p_i1389_1_);
+ 
+         if (p_i1389_1_ == null)
+         {
+@@ -72,4 +75,29 @@
      {
          return this.data;
      }

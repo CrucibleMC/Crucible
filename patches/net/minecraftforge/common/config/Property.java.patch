@@ -1,0 +1,124 @@
+--- ../src-base/minecraft/net/minecraftforge/common/config/Property.java
++++ ../src-work/minecraft/net/minecraftforge/common/config/Property.java
+@@ -11,6 +11,7 @@
+ 
+ import cpw.mods.fml.client.config.GuiConfigEntries.IConfigEntry;
+ import cpw.mods.fml.client.config.GuiEditArrayEntries.IArrayEntry;
++import io.github.crucible.Crucible;
+ 
+ public class Property
+ {
+@@ -100,20 +101,20 @@
+     Property(String name, String value, Type type, boolean read, String[] validValues, String langKey)
+     {
+         setName(name);
+-        this.value = value;
++        this.value = Crucible.deduplicate(value);
+         this.values = new String[0];
+         this.type  = type;
+         wasRead    = read;
+         isList     = false;
+-        this.defaultValue = value;
++        this.defaultValue = Crucible.deduplicate(value);
+         this.defaultValues = new String[0];
+-        this.validValues = validValues;
++        this.validValues = Crucible.deduplicate(validValues);
+         this.isListLengthFixed = false;
+         this.maxListLength = -1;
+-        this.minValue = String.valueOf(Integer.MIN_VALUE);
+-        this.maxValue = String.valueOf(Integer.MAX_VALUE);
+-        this.langKey = langKey;
+-        this.comment = "";
++        this.minValue = Crucible.deduplicate(String.valueOf(Integer.MIN_VALUE));
++        this.maxValue = Crucible.deduplicate(String.valueOf(Integer.MAX_VALUE));
++        this.langKey = Crucible.deduplicate(langKey);
++        this.comment = Crucible.deduplicate("");
+     }
+ 
+     public Property(String name, String[] values, Type type)
+@@ -140,22 +141,22 @@
+     {
+         setName(name);
+         this.type   = type;
+-        this.values = Arrays.copyOf(values, values.length);
++        this.values = Crucible.deduplicate(Arrays.copyOf(values, values.length));
+         wasRead     = read;
+         isList      = true;
+-        this.value = "";
+-        this.defaultValue = "";
++        this.value = Crucible.deduplicate("");
++        this.defaultValue = Crucible.deduplicate("");
+         for (String s : values)
+             this.defaultValue += ", [" + s + "]";
+-        this.defaultValue = this.defaultValue.replaceFirst(", ", "");
+-        this.defaultValues = Arrays.copyOf(values, values.length);
+-        this.validValues = validValues;
++        this.defaultValue = Crucible.deduplicate(this.defaultValue.replaceFirst(", ", ""));
++        this.defaultValues = Crucible.deduplicate(Arrays.copyOf(values, values.length));
++        this.validValues = Crucible.deduplicate(validValues);
+         this.isListLengthFixed = false;
+         this.maxListLength = -1;
+-        this.minValue = String.valueOf(Integer.MIN_VALUE);
+-        this.maxValue = String.valueOf(Integer.MAX_VALUE);
+-        this.langKey = langKey;
+-        this.comment = "";
++        this.minValue = Crucible.deduplicate(String.valueOf(Integer.MIN_VALUE));
++        this.maxValue = Crucible.deduplicate(String.valueOf(Integer.MAX_VALUE));
++        this.langKey = Crucible.deduplicate(langKey);
++        this.comment = Crucible.deduplicate("");
+     }
+ 
+     /**
+@@ -804,7 +805,6 @@
+     /**
+      * Returns the value in this property as a double, if the value is not a valid double, it will return the provided default.
+      *
+-     * @param _default The default to provide if the current value is not a valid double
+      * @return The value
+      */
+     public double getDouble()
+@@ -1035,7 +1035,7 @@
+      */
+     public Property setValue(String value)
+     {
+-        this.value = value;
++        this.value = Crucible.deduplicate(value);
+         changed = true;
+         return this;
+     }
+@@ -1050,7 +1050,7 @@
+      */
+     public Property setValues(String[] values)
+     {
+-        this.values = Arrays.copyOf(values, values.length);
++        this.values = Crucible.deduplicate(Arrays.copyOf(values, values.length));
+         changed = true;
+         return this;
+     }
+@@ -1094,7 +1094,7 @@
+     {
+         this.values = new String[values.length];
+         for (int i = 0; i < values.length; i++)
+-            this.values[i] = String.valueOf(values[i]);
++            this.values[i] = Crucible.deduplicate(String.valueOf(values[i]));
+         changed = true;
+         return this;
+     }
+@@ -1111,7 +1111,7 @@
+     {
+         this.values = new String[values.length];
+         for (int i = 0; i < values.length; i++)
+-            this.values[i] = String.valueOf(values[i]);
++            this.values[i] = Crucible.deduplicate(String.valueOf(values[i]));
+         changed = true;
+         return this;
+     }
+@@ -1128,7 +1128,7 @@
+     {
+         this.values = new String[values.length];
+         for (int i = 0; i < values.length; i++)
+-            this.values[i] = String.valueOf(values[i]);
++            this.values[i] = Crucible.deduplicate(String.valueOf(values[i]));
+         changed = true;
+         return this;
+     }
