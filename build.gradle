@@ -26,17 +26,17 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-        classpath files('CrucibleGradle-1.0.jar')
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.3.3-SNAPSHOT'
+        //classpath files('CrucibleGradle-1.0.jar')
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.8'
-}
+//task wrapper(type: Wrapper) {
+//    gradleVersion = '2.8'
+//}
 
 apply plugin: 'maven'
-apply plugin: 'crucible'
+apply plugin: 'cauldron'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 apply plugin: 'base'
@@ -244,18 +244,23 @@ task jar(type: Jar, dependsOn: [packageUniversal, packageLibraries]) {
 
 tasks.packageInstaller.onlyIf { false }
 
-tasks.generateProjectCauldron << {
-    def file = new File('eclipse/cauldron/build.gradle')
-    file.append('''
+tasks.getByName("generateProjectCauldron") {
+    doLast {
+        def file = new File('eclipse/cauldron/build.gradle')
+        file.append('''
 repositories {
     clear()
     maven {
-        name 'prok'
-        url 'https://github.com/juanmuscaria/maven/raw/master/ThermosLibs'
+        name "prok"
+        url "https://github.com/juanmuscaria/maven/raw/master/ThermosLibs"
+    }
+    maven {
+        name = "juanmuscaria"
+        url = "https://github.com/juanmuscaria/maven/raw/master"
     }
     maven {
         name 'forge'
-        url 'http://files.minecraftforge.net/maven/'
+        url 'https://maven.minecraftforge.net/'
     }
     maven {
         name 'minecraft'
@@ -268,13 +273,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 dependencies {
 ''')
-    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
-        if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
-            return
+        configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
+            if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
+                return
+            }
+            file.append("    compile '${module}'\n")
         }
-        file.append("    compile '${module}'\n")
+        file.append('}')
     }
-    file.append('}')
 }
 
 task resolveAllDependencies {
