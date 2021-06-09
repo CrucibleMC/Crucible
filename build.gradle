@@ -215,7 +215,18 @@ tasks.packageInstaller.onlyIf { false }
 tasks.getByName("generateProjectCauldron") {
     doLast {
         def file = new File('eclipse/cauldron/build.gradle')
-        file.append('''
+        writeToBuildFile(file)
+    }
+}
+tasks.getByName("generateProjectClean") {
+    doLast {
+        def file = new File('eclipse/Clean/build.gradle')
+        writeToBuildFile(file)
+    }
+}
+
+def writeToBuildFile(file) {
+    file.append('''
 repositories {
     clear()
      maven {
@@ -239,14 +250,13 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 dependencies {
 ''')
-        configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
-            if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
-                return
-            }
-            file.append("    compile '${module}'\n")
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
+        if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
+            return
         }
-        file.append('}')
+        file.append("    compile '${module}'\n")
     }
+    file.append('}')
 }
 
 task resolveAllDependencies {
