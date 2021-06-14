@@ -83,7 +83,7 @@ def gitInfo(String key) {
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "1614"
 ext.revision = "1.0.7"
-ext.crucibleVersion = "4.1"
+ext.crucibleVersion = "5.0"
 version = "${mcVersion}-${crucibleVersion}-${gitInfo('branch')}-${gitInfo('hash')}"
 System.setProperty("file.encoding", "UTF-8")
 
