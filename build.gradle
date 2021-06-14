@@ -143,7 +143,11 @@ dependencies {
 }
 
 packageUniversal {
-    from { configurations.exported.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.exported.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }
 
 def String repeat(String string, int times) {
