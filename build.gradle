@@ -84,7 +84,12 @@ ext.mcVersion = "1.7.10"
 ext.forgeVersion = "1614"
 ext.revision = "1.0.7"
 ext.crucibleVersion = "5.1"
-version = "${mcVersion}-${crucibleVersion}-${gitInfo('branch')}-${gitInfo('hash')}"
+if (gitInfo('branch') != "master") {
+    version = "${mcVersion}-${gitInfo('branch')}-${gitInfo('hash')}"
+    ext.crucibleVersion = "${gitInfo('branch')}-${gitInfo('hash')}"
+} else {
+    version = "${mcVersion}-${crucibleVersion}}"
+}
 System.setProperty("file.encoding", "UTF-8")
 
 launch4j {
@@ -143,7 +148,11 @@ dependencies {
 }
 
 packageUniversal {
-    from { configurations.exported.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.exported.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }
 
 def String repeat(String string, int times) {
@@ -189,6 +198,7 @@ tasks.packageUniversal {
 }
 
 task copyLibraries(type: Copy) {
+    outputs.upToDateWhen { false }
     into(buildDir)
     configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect {
         def moduleVersion = it.moduleVersion
@@ -199,6 +209,7 @@ task copyLibraries(type: Copy) {
 }
 
 task packageLibraries(type: Zip, dependsOn: copyLibraries) {
+    outputs.upToDateWhen { false }
     setArchiveName("libraries.zip")
     setDestinationDir(file("$buildDir/distributions"))
     from("$buildDir/libraries")
