@@ -197,8 +197,17 @@ public class CrucibleConfigs extends YamlConfig {
             " * Server Icon max size check"})
     public boolean crucible_unsafe = false;
 
+    @Comments({"Configures what strategy crucible should use when deduplicating tile entities.",
+            "Available strategies (if provided an invalid one it will fallback to default)",
+            " 0 - Use the tile entity instance to prevent duplication (default)",
+            " 1 - Use the tile entity position to prevent duplication"})
+    public int crucible_fix_tileEntityDeduplicationStrategy = 0;
+
+    @Comment("When true it will replace the duplicated tile with the tile that is being added (might cause performance problems)")
+    public boolean crucible_fix_replaceDuplicatedTile = false;
+
     @Comment("Prevents grass tick from loading Chunks!")
-    public boolean crucible_noGrassChunkLoading = true;
+    public boolean crucible_tweaks_noGrassChunkLoading = true;
 
     @Comments({"Let you change what timings frontend to use.",
             "Available frontends:",
