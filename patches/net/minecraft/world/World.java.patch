@@ -140,7 +140,7 @@
 +    public List<Entity> unloadedEntityList = new ListSet<>(); // Cauldron
 +    public List<TileEntity> loadedTileEntityList = new TileList(this);
 +    public List<TileEntity> addedTileEntityList = new TileList(this); // Crucible private > public
-+    public List field_147483_b = new ArrayList(); // Cauldron
++    public List<TileEntity> field_147483_b = new TileList(this); // Cauldron
      public List playerEntities = new ArrayList();
      public List weatherEffects = new ArrayList();
      private long cloudColour = 16777215L;
@@ -1114,7 +1114,7 @@
 +            List temporary_tile_entity_list = new TileList(this.loadedTileEntityList.size(),this);
 +            for(Object tile : loadedTileEntityList)
 +            {
-+                boolean marker = false;
++                boolean marker;
 +                try {
 +                    marker = !((TileEntity)tile).isGC();
 +                } catch (Exception e) {

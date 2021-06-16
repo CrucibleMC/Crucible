@@ -2,107 +2,76 @@ package io.github.crucible.util;
 
 import io.github.crucible.CrucibleConfigs;
 import io.github.crucible.CrucibleModContainer;
-import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class TileList extends ArrayList<TileEntity> {
     private final World myWorld;
-    private final HashMap<Long, TileEntity> backend;
+    //private final HashMap<Long, TileEntity> backend;
+    private final Set<Hashable> backend;
 
     public TileList(int size, World myWorld) {
         super(size);
         this.myWorld = myWorld;
-        backend = new HashMap<>(size);
+        backend = new HashSet<>(size);
     }
 
     public TileList(World myWorld) {
         super();
         this.myWorld = myWorld;
-        backend = new HashMap<>();
+        backend = new HashSet<>();
     }
 
     public TileList(Collection<? extends TileEntity> collection, World myWorld) {
         super();
         this.myWorld = myWorld;
-        backend = new HashMap<>();
+        backend = new HashSet<>();
         this.addAll(collection);
     }
 
     @Override
     public boolean add(TileEntity element) {
         element.myStopwatch = myWorld.myManager.of(element);
-        TileEntity old = backend.put(hash(element), element);
-        if (old == null) {
-            return super.add(element);
-        } else {
-            warn(element, old);
-            if (CrucibleConfigs.configs.crucible_fix_replaceDuplicatedTile) {
-                super.remove(old);
-                return super.add(element);
-            } else {
-                backend.put(hash(old), old);
-                return false;
-            }
-        }
+        boolean flag;
+        if (flag = backend.add(new Hashable(element)))
+            super.add(element);
+        return flag;
     }
 
     @Override
     public TileEntity set(int index, TileEntity element) {
         element.myStopwatch = myWorld.myManager.of(element);
-        TileEntity old = backend.put(hash(element), element);
         TileEntity internal = super.get(index);
-        if (old == null) {
-            if (internal != null)
-                backend.remove(hash(internal));
+        if (internal != null)
+            backend.remove(new Hashable(internal));
+        if (backend.add(new Hashable(element)))
             super.set(index, element);
-        } else {
-            warn(element, old);
-            int dupeIndex = super.indexOf(old);
-            if (dupeIndex == index) {
-                // lucky index
-                super.set(index, element);
-            } else {
-                super.set(index, element);
-                CrucibleModContainer.logger.warn("The tile entity list had to keep a duplicated tile, your server is leaking ram!");
-                new Exception().printStackTrace();
-            }
-        }
         return internal;
     }
 
     @Override
     public void add(int index, TileEntity element) {
         element.myStopwatch = myWorld.myManager.of(element);
-        TileEntity old = backend.put(hash(element), element);
-        if (old == null) {
+        if (!backend.contains(new Hashable(element))) {
             super.add(index, element);
-        } else {
-            warn(element, old);
-            if (CrucibleConfigs.configs.crucible_fix_replaceDuplicatedTile) {
-                super.remove(old);
-                super.add(index, element);
-            } else {
-                backend.put(hash(old), old);
-            }
+            backend.add(new Hashable(element));
         }
     }
 
     @Override
     public TileEntity remove(int index) {
         TileEntity internal = super.remove(index);
-        backend.remove(hash(internal));
+        backend.remove(new Hashable(internal));
         return internal;
     }
 
     @Override
     public boolean remove(Object element) {
-        boolean flag;
-        if (flag = (backend.remove(hash((TileEntity) element)) !=null))
+        boolean flag = false;
+        if (element instanceof TileEntity && (flag = backend.remove(new Hashable((TileEntity) element))))
             super.remove(element);
         return flag;
     }
@@ -135,7 +104,7 @@ public class TileList extends ArrayList<TileEntity> {
         while(iterator.hasNext()) {
             if (!elements.contains(tile = iterator.next())) {
                 iterator.remove();
-                backend.remove(hash(tile));
+                backend.remove(new Hashable(tile));
                 flag = true;
             }
         }
@@ -150,9 +119,9 @@ public class TileList extends ArrayList<TileEntity> {
             TileEntity oldValue = iterator.next();
             TileEntity valueToAdd = operator.apply(oldValue);
             if (hash(oldValue) != hash(valueToAdd)) {
-                backend.remove(hash(oldValue));
+                backend.remove(new Hashable(oldValue));
                 valueToAdd.myStopwatch = myWorld.myManager.of(valueToAdd);
-                backend.put(hash(valueToAdd),valueToAdd);
+                backend.add(new Hashable(valueToAdd));
             }
             iterator.set(valueToAdd);
         }
@@ -170,17 +139,17 @@ public class TileList extends ArrayList<TileEntity> {
         List<TileEntity> internal = new ArrayList<>(elements.size());
         for (TileEntity element : elements) {
             element.myStopwatch = myWorld.myManager.of(element);
-            TileEntity old = backend.put(hash(element),element);
-            if (old == null) {
+            boolean flag = backend.add(new Hashable(element));
+            if (flag) {
                 internal.add(element);
             } else {
-                warn(element, old);
-                if (CrucibleConfigs.configs.crucible_fix_replaceDuplicatedTile) {
-                    super.remove(old);
-                    internal.add(element);
-                } else {
-                    backend.put(hash(old), old);
-                }
+                //warn(element, backend);
+//                if (CrucibleConfigs.configs.crucible_fix_replaceDuplicatedTile) {
+//                    super.remove(old);
+//                    internal.add(element);
+//                } else {
+//                    backend.put(hash(old), old);
+//                }
             }
         }
         return super.addAll(index, internal);
@@ -189,7 +158,7 @@ public class TileList extends ArrayList<TileEntity> {
     @Override
     public boolean contains(Object element) {
         if (element instanceof TileEntity) {
-            return backend.containsValue(element);
+            return backend.contains(new Hashable((TileEntity) element));
         } else {
             return false;
         }
@@ -205,7 +174,7 @@ public class TileList extends ArrayList<TileEntity> {
         return myWorld;
     }
 
-    public long hash(TileEntity object) {
+    public static int hash(TileEntity object) {
         switch (CrucibleConfigs.configs.crucible_fix_tileEntityDeduplicationStrategy) {
             case 1:
                 return hashTilePosition(object.xCoord, object.yCoord, object.zCoord);
@@ -215,8 +184,8 @@ public class TileList extends ArrayList<TileEntity> {
         }
     }
 
-    public long hashTilePosition(int x,int y, int z) {
-        long hash = 17;
+    public static int hashTilePosition(int x,int y, int z) {
+        int hash = 17;
         hash = hash * 31 + x;
         hash = hash * 31 + y;
         hash = hash * 31 + z;
@@ -227,5 +196,29 @@ public class TileList extends ArrayList<TileEntity> {
 //        CrucibleModContainer.logger.warn("Tried to add an already existing tile\nNew: {}\nOld:{}",
 //                newTile.toStringButDifferent(),
 //                oldTile.toStringButDifferent());
+    }
+}
+class Hashable {
+    final TileEntity myTile;
+    final int hash;
+
+    Hashable(TileEntity myTile) {
+        this.myTile = myTile;
+        hash = TileList.hash(myTile);
+    }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Hashable hashable = (Hashable) o;
+        return myTile.xCoord == hashable.myTile.xCoord &&
+                myTile.yCoord == hashable.myTile.yCoord &&
+                myTile.zCoord == hashable.myTile.zCoord;
     }
 }
