@@ -39,7 +39,7 @@
 +    // Cauldron start
 +    public static Biome addBukkitBiome(String name) 
 +    {
-+        return (Biome)addEnum(Biome.class, name, new Class[0], new Object[0]);
++        return (Biome)addEnum(Biome.class, org.bukkit.Material.normalizeName(name), new Class[0], new Object[0]);
 +    }
 +
 +    public static World.Environment addBukkitEnvironment(int id, String name)
