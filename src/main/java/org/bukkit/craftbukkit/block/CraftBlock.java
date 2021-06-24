@@ -188,7 +188,7 @@ public class CraftBlock implements Block {
             if ((BiomeGenBase.getBiome(i) != null) && (BIOME_MAPPING[i] == null)) {
                 // Cauldron start - add support for mod biomes
                 //throw new IllegalArgumentException("Missing Biome mapping for BiomeBase[" + i + "]");
-                String name = BiomeGenBase.getBiome(i).biomeName;
+                String name = org.bukkit.Material.normalizeName(BiomeGenBase.getBiome(i).biomeName);
                 int id = BiomeGenBase.getBiome(i).biomeID;
 
                 System.out.println("Adding biome mapping " + BiomeGenBase.getBiome(i).biomeID + " " + name + " at BiomeBase[" + i + "]");
