@@ -186,6 +186,7 @@ public final class TimingsManager {
             PluginClassLoader pluginClassLoader = (PluginClassLoader) classLoader;
             return pluginClassLoader.getPlugin();
         }
+        // TODO: Support for mod plugins.
         return null;
     }
 }

@@ -505,12 +505,12 @@
 +                		logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] We're locked in! " + AffinityLock.dumpLocks());
 +                	else logger.log(org.apache.logging.log4j.Level.WARN, "[Thermos] Couldn't bind to a CPU core!");
 +                }
-+                else
-+                {
++                else {
 +                	logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] Refusing to lock affinity, disabled in Crucible.yml");
 +                }
 +                try {
 +                    serverStarted = true; //Crucible
++                    CrucibleConfigs.configs.configureTimings();
                  while (this.serverRunning)
                  {
 -                    long j = getSystemTimeMillis();

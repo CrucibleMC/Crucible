@@ -200,7 +200,7 @@ public class CrucibleConfigs extends YamlConfig {
     @Comments({"Configures what strategy crucible should use when deduplicating tile entities.",
             "Available strategies (if provided an invalid one it will fallback to default)",
             " 0 - Use the tile entity instance to prevent duplication (default)",
-            " 1 - Use the tile entity position to prevent duplication"})
+            " 1 - Use the tile entity position to prevent duplication (Breaks Mekanism and EnderIO)"})
     public int crucible_fix_tileEntityDeduplicationStrategy = 0;
 
     @Comment("When true it will replace the duplicated tile with the tile that is being added (might cause performance problems)")
@@ -248,7 +248,6 @@ public class CrucibleConfigs extends YamlConfig {
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
-        configureTimings();
     }
 
     public void save() {
@@ -263,7 +262,7 @@ public class CrucibleConfigs extends YamlConfig {
         return crucible_tickHandler_serverTickTime / crucible_tickHandler_serverTickRate;
     }
 
-    private void configureTimings() {
+    public void configureTimings() {
         TimingsManager.privacy = timings_serverNamePrivacy;
         TimingsManager.hiddenConfigs = timings_hiddenConfigEntries;
         Timings.setVerboseTimingsEnabled(timings_verbose);
