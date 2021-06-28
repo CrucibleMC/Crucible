@@ -474,82 +474,92 @@
  
                  for (int i = 0; i < this.worldServers.length; ++i)
                  {
-@@ -380,6 +628,13 @@
+@@ -380,112 +628,119 @@
          this.serverRunning = false;
      }
  
+-    public void run()
 +    // Spigot Start
 +    private static double calcTps(double avg, double exp, double tps)
-+    {
+     {
+-        try
+-        {
+-            if (this.startServer())
+-            {
 +        return (avg * exp) + (tps * (1 - exp));
 +    }
 +    // Spigot End
 +
-     public void run()
-     {
-         try
-@@ -392,45 +647,56 @@
++    public void run() {
++        try {
++            if (this.startServer()) {
+                 FMLCommonHandler.instance().handleServerStarted();
+                 long i = getSystemTimeMillis();
+                 long l = 0L;
                  this.field_147147_p.func_151315_a(new ChatComponentText(this.motd));
                  this.field_147147_p.func_151321_a(new ServerStatusResponse.MinecraftProtocolVersionIdentifier("1.7.10", 5));
                  this.func_147138_a(this.field_147147_p);
--
 +                DedicatedServer.allowPlayerLogins = true; // Cauldron - server is ready, allow player logins
 +                // Spigot start
 +                Arrays.fill(recentTps, 20);
 +                long lastTick = 0, catchupTime = 0, curTime, wait;
 +                AffinityLock al = null;
-+                if(CrucibleConfigs.configs.cauldron_optimization_affinityLocking)
-+                {
-+                	al = AffinityLock.acquireCore();
-+                	if(al.isAllocated())
-+                		logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] We're locked in! " + AffinityLock.dumpLocks());
-+                	else logger.log(org.apache.logging.log4j.Level.WARN, "[Thermos] Couldn't bind to a CPU core!");
-+                }
-+                else {
-+                	logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] Refusing to lock affinity, disabled in Crucible.yml");
++                if (CrucibleConfigs.configs.cauldron_optimization_affinityLocking) {
++                    al = AffinityLock.acquireCore();
++                    if (al.isAllocated())
++                        logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] We're locked in! " + AffinityLock.dumpLocks());
++                    else logger.log(org.apache.logging.log4j.Level.WARN, "[Thermos] Couldn't bind to a CPU core!");
++                } else {
++                    logger.log(org.apache.logging.log4j.Level.INFO, "[Thermos] Refusing to lock affinity, disabled in Crucible.yml");
 +                }
 +                try {
 +                    serverStarted = true; //Crucible
 +                    CrucibleConfigs.configs.configureTimings();
-                 while (this.serverRunning)
-                 {
++                    while (this.serverRunning) {
++                        curTime = System.nanoTime();
++                        wait = CrucibleConfigs.configs.getTickTime() - (curTime - lastTick) - catchupTime;
++                        if (wait > 0) {
++                            //noinspection BusyWait
++                            Thread.sleep(wait / 1000000);
++                            catchupTime = 0;
++                            continue;
++                        } else {
++                            catchupTime = Math.min(1000000000, Math.abs(wait));
++                        }
+ 
+-                while (this.serverRunning)
+-                {
 -                    long j = getSystemTimeMillis();
 -                    long k = j - i;
--
++                        if (MinecraftServer.currentTick++ % 100 == 0) {
++                            currentTps = 1E9 / (curTime - lastTick);
++                            recentTps[0] = calcTps(recentTps[0], 0.92, currentTps);   // 1/exp(5sec/1min)
++                            recentTps[1] = calcTps(recentTps[1], 0.9835, currentTps);   // 1/exp(5sec/5min)
++                            recentTps[2] = calcTps(recentTps[2], 0.9945, currentTps);   // 1/exp(5sec/15min)
++                        }
+ 
 -                    if (k > 2000L && i - this.timeOfLastWarning >= 15000L)
-+                    curTime = System.nanoTime();
-+                    //wait = TICK_TIME - (curTime - lastTick) - catchupTime;
-+                    wait = CrucibleConfigs.configs.getTickTime() - (curTime - lastTick) - catchupTime;
-+                    if (wait > 0)
-                     {
+-                    {
 -                        logger.warn("Can\'t keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)", new Object[] {Long.valueOf(k), Long.valueOf(k / 50L)});
 -                        k = 2000L;
 -                        this.timeOfLastWarning = i;
-+                        Thread.sleep(wait / 1000000);
-+                        catchupTime = 0;
-+                        continue;
-                     }
+-                    }
 -
 -                    if (k < 0L)
-+                    else
-                     {
+-                    {
 -                        logger.warn("Time ran backwards! Did the system time change?");
 -                        k = 0L;
-+                        catchupTime = Math.min(1000000000, Math.abs(wait));
-                     }
- 
+-                    }
+-
 -                    l += k;
 -                    i = j;
 -
 -                    if (this.worldServers[0].areAllPlayersAsleep())
-+                    if (MinecraftServer.currentTick++ % 100 == 0)
-                     {
--                        this.tick();
+-                    {
++                        lastTick = curTime;
+                         this.tick();
 -                        l = 0L;
-+                        currentTps = 1E9 / (curTime - lastTick);
-+                        recentTps[0] = calcTps(recentTps[0], 0.92, currentTps);   // 1/exp(5sec/1min)
-+                        recentTps[1] = calcTps(recentTps[1], 0.9835, currentTps);   // 1/exp(5sec/5min)
-+                        recentTps[2] = calcTps(recentTps[2], 0.9945, currentTps);   // 1/exp(5sec/15min)
++                        this.serverIsRunning = true;
                      }
 -                    else
 -                    {
@@ -558,73 +568,103 @@
 -                            l -= 50L;
 -                            this.tick();
 -                        }
--                    }
- 
++                } finally {
++                    if (al != null) {
++                        al.release();
+                     }
+-
 -                    Thread.sleep(Math.max(1L, 50L - l));
-+                    lastTick = curTime;
-+                    this.tick();
-                     this.serverIsRunning = true;
+-                    this.serverIsRunning = true;
                  }
-+                }
-+                finally { if(al != null) { al.release(); } }
 +
 +                // Spigot end
                  FMLCommonHandler.instance().handleServerStopping();
                  FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+-            }
+-            else
+-            {
++            } else {
+                 FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+-                this.finalTick((CrashReport)null);
++                this.finalTick(null);
              }
-@@ -448,6 +714,14 @@
-         catch (Throwable throwable1)
-         {
+-        }
+-        catch (StartupQuery.AbortedException e)
+-        {
++        } catch (StartupQuery.AbortedException e) {
+             // ignore silently
+             FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+-        }
+-        catch (Throwable throwable1)
+-        {
++        } catch (Throwable throwable1) {
              logger.error("Encountered an unexpected exception", throwable1);
-+
+-            CrashReport crashreport = null;
+ 
+-            if (throwable1 instanceof ReportedException)
+-            {
+-                crashreport = this.addServerInfoToCrashReport(((ReportedException)throwable1).getCrashReport());
 +            // Spigot Start
-+            if (throwable1.getCause() != null)
-+            {
++            if (throwable1.getCause() != null) {
 +                logger.error("\tCause of unexpected exception was", throwable1.getCause());
-+            }
+             }
+-            else
+-            {
 +
 +            // Spigot End
-             CrashReport crashreport = null;
++            CrashReport crashreport = null;
++
++            if (throwable1 instanceof ReportedException) {
++                crashreport = this.addServerInfoToCrashReport(((ReportedException) throwable1).getCrashReport());
++            } else {
+                 crashreport = this.addServerInfoToCrashReport(new CrashReport("Exception in server tick loop", throwable1));
+             }
  
-             if (throwable1 instanceof ReportedException)
-@@ -477,6 +751,7 @@
-         {
-             try
-             {
+             File file1 = new File(new File(this.getDataDirectory(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
+ 
+-            if (crashreport.saveToFile(file1))
+-            {
++            if (crashreport.saveToFile(file1)) {
+                 logger.error("This crash report has been saved to: " + file1.getAbsolutePath());
+-            }
+-            else
+-            {
++            } else {
+                 logger.error("We were unable to save this crash report to disk.");
+             }
+ 
+             FMLCommonHandler.instance().expectServerStopped(); // has to come before finalTick to avoid race conditions
+             this.finalTick(crashreport);
+-        }
+-        finally
+-        {
+-            try
+-            {
++        } finally {
++            try {
 +                org.spigotmc.WatchdogThread.doStop(); // Spigot
                  this.stopServer();
                  this.serverStopped = true;
-             }
-@@ -486,6 +761,16 @@
-             }
-             finally
-             {
+-            }
+-            catch (Throwable throwable)
+-            {
++            } catch (Throwable throwable) {
+                 logger.error("Exception stopping the server", throwable);
+-            }
+-            finally
+-            {
++            } finally {
 +                // CraftBukkit start - Restore terminal to original settings
-+                try
-+                {
++                try {
 +                    this.reader.getTerminal().restore();
-+                }
-+                catch (Exception e)
-+                {
++                } catch (Exception ignored) {
 +                }
 +
 +                // CraftBukkit end
                  FMLCommonHandler.instance().handleServerStopped();
                  this.serverStopped = true;
                  this.systemExitNow();
-@@ -497,6 +782,11 @@
-     {
-         File file1 = this.getFile("server-icon.png");
- 
-+        if (!file1.isFile())
-+        {
-+        	System.out.println("Hey, you don't have a server icon! Try out one of Thermos' Icon Generators at https://github.com/CyberdyneCC/ThermosIconGenerators !");
-+        }
-+
-         if (file1.isFile())
-         {
-             ByteBuf bytebuf = Unpooled.buffer();
-@@ -532,8 +822,14 @@
+@@ -532,8 +787,14 @@
  
      public void tick()
      {
@@ -639,7 +679,7 @@
          ++this.tickCounter;
  
          if (this.startProfiling)
-@@ -562,11 +858,18 @@
+@@ -562,11 +823,18 @@
              this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
          }
  
@@ -660,7 +700,7 @@
              this.theProfiler.endSection();
          }
  
-@@ -575,25 +878,59 @@
+@@ -575,25 +843,59 @@
          this.theProfiler.endSection();
          this.theProfiler.startSection("snooper");
  
@@ -722,7 +762,7 @@
          int i;
  
          Integer[] ids = DimensionManager.getIDs(this.tickCounter % 200 == 0);
-@@ -602,19 +939,21 @@
+@@ -602,19 +904,21 @@
              int id = ids[x];
              long j = System.nanoTime();
  
@@ -747,7 +787,7 @@
  
                  this.theProfiler.startSection("tick");
                  FMLCommonHandler.instance().onPreWorldTick(worldserver);
-@@ -622,22 +961,46 @@
+@@ -622,22 +926,46 @@
  
                  try
                  {
@@ -796,7 +836,7 @@
                      worldserver.addWorldInfoToCrashReport(crashreport);
                      throw new ReportedException(crashreport);
                  }
-@@ -645,10 +1008,12 @@
+@@ -645,10 +973,12 @@
                  FMLCommonHandler.instance().onPostWorldTick(worldserver);
                  this.theProfiler.endSection();
                  this.theProfiler.startSection("tracker");
@@ -810,7 +850,7 @@
  
              worldTickTimes.get(id)[this.tickCounter % 100] = System.nanoTime() - j;
          }
-@@ -656,15 +1021,21 @@
+@@ -656,15 +986,21 @@
          this.theProfiler.endStartSection("dim_unloading");
          DimensionManager.unloadWorlds(worldTickTimes);
          this.theProfiler.endStartSection("connection");
@@ -832,7 +872,7 @@
  
          this.theProfiler.endSection();
      }
-@@ -699,6 +1070,13 @@
+@@ -699,6 +1035,13 @@
  
      public WorldServer worldServerForDimension(int p_71218_1_)
      {
@@ -846,7 +886,7 @@
          WorldServer ret = DimensionManager.getWorld(p_71218_1_);
          if (ret == null)
          {
-@@ -784,13 +1162,14 @@
+@@ -784,13 +1127,14 @@
  
      public List getPossibleCompletions(ICommandSender p_71248_1_, String p_71248_2_)
      {
@@ -865,7 +905,7 @@
  
              if (list != null)
              {
-@@ -798,40 +1177,25 @@
+@@ -798,40 +1142,25 @@
  
                  while (iterator.hasNext())
                  {
@@ -914,7 +954,7 @@
      }
  
      public static MinecraftServer getServer()
-@@ -1034,7 +1398,7 @@
+@@ -1034,7 +1363,7 @@
  
      public boolean isServerInOnlineMode()
      {
@@ -923,7 +963,7 @@
      }
  
      public void setOnlineMode(boolean p_71229_1_)
-@@ -1124,7 +1488,7 @@
+@@ -1124,7 +1453,7 @@
  
      public NetworkSystem func_147137_ag()
      {
@@ -932,7 +972,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -1257,10 +1621,14 @@
+@@ -1257,10 +1586,14 @@
      @SideOnly(Side.SERVER)
      public static void main(String[] p_main_0_)
      {
@@ -947,7 +987,7 @@
              boolean flag = true;
              String s = null;
              String s1 = ".";
-@@ -1356,16 +1724,34 @@
+@@ -1356,16 +1689,34 @@
              {
                  dedicatedserver.setGuiEnabled();
              }
@@ -988,7 +1028,7 @@
          }
          catch (Exception exception)
          {
-@@ -1400,15 +1786,70 @@
+@@ -1400,15 +1751,70 @@
      @SideOnly(Side.SERVER)
      public String getPlugins()
      {
@@ -1064,7 +1104,7 @@
      }
  
      @SideOnly(Side.SERVER)
-@@ -1455,9 +1896,213 @@
+@@ -1455,9 +1861,213 @@
          return this.serverStopped;
      }
  
