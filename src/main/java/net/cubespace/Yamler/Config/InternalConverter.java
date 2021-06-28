@@ -1,5 +1,6 @@
 package net.cubespace.Yamler.Config;
 
+import net.cubespace.Yamler.Config.Converter.Config;
 import net.cubespace.Yamler.Config.Converter.Converter;
 import net.cubespace.Yamler.Config.Converter.Primitive;
 
@@ -170,12 +171,18 @@ public class InternalConverter {
 			converter = getConverter(obj.getClass());
 
 			if (converter != null) {
-				root.set(path, converter.toConfig(obj.getClass(), obj, (field.getGenericType() instanceof ParameterizedType) ? (ParameterizedType) field.getGenericType() : null));
+				if (converter instanceof Config) {
+					root.set(path, ((Config)converter).toConfig(obj.getClass(), obj, (field.getGenericType() instanceof ParameterizedType) ? (ParameterizedType) field.getGenericType() : null, config));
+				} else
+					root.set(path, converter.toConfig(obj.getClass(), obj, (field.getGenericType() instanceof ParameterizedType) ? (ParameterizedType) field.getGenericType() : null));
 				return;
 			} else {
 				converter = getConverter(field.getType());
 				if (converter != null) {
-					root.set(path, converter.toConfig(field.getType(), obj, (field.getGenericType() instanceof ParameterizedType) ? (ParameterizedType) field.getGenericType() : null));
+					if (converter instanceof Config) {
+						root.set(path, ((Config)converter).toConfig(field.getType(), obj, (field.getGenericType() instanceof ParameterizedType) ? (ParameterizedType) field.getGenericType() : null, config));
+					} else
+						root.set(path, converter.toConfig(field.getType(), obj, (field.getGenericType() instanceof ParameterizedType) ? (ParameterizedType) field.getGenericType() : null));
 					return;
 				}
 			}

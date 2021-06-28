@@ -22,6 +22,10 @@ public class Config implements Converter {
         return (obj instanceof Map) ? obj : ((YamlConfig) obj).saveToMap( obj.getClass() );
     }
 
+    public Object toConfig(Class<?> type, Object obj, ParameterizedType parameterizedType, YamlConfig parent) throws Exception {
+        return (obj instanceof Map) ? obj : ((YamlConfig) obj).saveToMap( obj.getClass(), parent );
+    }
+
     @Override
     public Object fromConfig(Class type, Object section, ParameterizedType genericType) throws Exception {
         YamlConfig obj = (YamlConfig) newInstance(type);

@@ -46,6 +46,8 @@ public class Primitive implements Converter {
                 return (section instanceof Float) ? section : new Double((double) section).floatValue();
             case "char":
                 return (section instanceof Character) ? section : ((String) section).charAt(0);
+            case "boolean":
+                return (section instanceof Boolean ? section : section != null && Boolean.parseBoolean(section.toString()));
             default:
                 return section;
         }

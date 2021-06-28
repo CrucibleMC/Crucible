@@ -2,6 +2,7 @@ package io.github.crucible;
 
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsManager;
+import io.github.crucible.config.PluginConfig;
 import net.cubespace.Yamler.Config.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;
@@ -9,9 +10,7 @@ import net.minecraft.world.WorldServer;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CrucibleConfigs extends YamlConfig {
     public static final CrucibleConfigs configs = new CrucibleConfigs();
@@ -209,6 +208,9 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Prevents grass tick from loading Chunks!")
     public boolean crucible_tweaks_noGrassChunkLoading = true;
 
+    @Comment("When true it will generate an overwrite file for each plugin")
+    public boolean crucible_tweaks_generatePluginTweakOverwrites = false;
+
     @Comments({"Let you change what timings frontend to use.",
             "Available frontends:",
             " - https://timin.gs/",
@@ -241,6 +243,10 @@ public class CrucibleConfigs extends YamlConfig {
     private CrucibleConfigs() {
         CONFIG_FILE = new File("Crucible.yml");
         CONFIG_MODE = ConfigMode.PATH_BY_UNDERSCORE;
+        CONFIG_HEADER = new String[]{"Crucible's main configuration file",
+                "We aim for every configuration to be self documented and explanatory, but if you have any question feel free to join our discord server!",
+                "https://discord.gg/jWSTJ4d",
+                "Looking for plugin and world tweaking? Take a look inside your <server root>/config/crucible folder. There you can fine tune yor server"};
 
         try {
             init();

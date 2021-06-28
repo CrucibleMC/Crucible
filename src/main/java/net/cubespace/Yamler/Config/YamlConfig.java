@@ -30,8 +30,11 @@ public class YamlConfig extends ConfigMapper implements IConfig {
 		clearComments();
 
 		internalSave(getClass());
+		addComments();
 		saveToYaml();
 	}
+
+	protected void addComments() { }
 
 	private void internalSave(Class clazz) throws InvalidConfigurationException {
 		if (!clazz.getSuperclass().equals(YamlConfig.class)) {
