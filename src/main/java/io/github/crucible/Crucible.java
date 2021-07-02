@@ -1,5 +1,7 @@
 package io.github.crucible;
 
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import org.bukkit.plugin.Plugin;
@@ -14,6 +16,7 @@ public class Crucible {
     public static final String CRUCIBLE_VERSION;
     public static final int FORGE_BUILD_VERSION;
     public static final boolean IS_DEV_BUILD;
+    private static final Interner<String> pool = Interners.newWeakInterner();
     static {
         String parsedVersion = "unknown";
         boolean parsedIsDevBuild = false;
@@ -58,7 +61,7 @@ public class Crucible {
     }
 
     public static String deduplicate(String original) {
-        return (CrucibleConfigs.configs.crucible_performance_deduplicateStrings && original != null) ? original.intern() : original;
+        return (CrucibleConfigs.configs.crucible_performance_deduplicateStrings && original != null) ? pool.intern(original) : original;
     }
 
     public static <T extends List<String>> T deduplicate (T list) {
