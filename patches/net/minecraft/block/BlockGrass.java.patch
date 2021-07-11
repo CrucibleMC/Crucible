@@ -53,7 +53,7 @@
                      int k1 = p_149674_4_ + p_149674_5_.nextInt(3) - 1;
 +
 +                    //Crucible Start
-+                    if (CrucibleConfigs.configs.crucible_tweaks_noGrassChunkLoading && !p_149674_1_.blockExists(i1, j1, k1)){
++                    if (CrucibleConfigs.configs.crucible_noGrassChunkLoading && !p_149674_1_.blockExists(i1, j1, k1)){
 +                        return;
 +                    }
 +                    //Crucible End
