@@ -217,14 +217,8 @@ class Hashable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Hashable hashable = (Hashable) o;
-        switch (CrucibleConfigs.configs.crucible_fix_tileEntityDeduplicationStrategy) {
-            case 1:
-                return myTile.xCoord == hashable.myTile.xCoord &&
-                        myTile.yCoord == hashable.myTile.yCoord &&
-                        myTile.zCoord == hashable.myTile.zCoord;
-            case 0:
-            default:
-                return myTile.equals(hashable.myTile);
-        }
+        return myTile.xCoord == hashable.myTile.xCoord &&
+                myTile.yCoord == hashable.myTile.yCoord &&
+                myTile.zCoord == hashable.myTile.zCoord;
     }
 }
