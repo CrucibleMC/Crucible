@@ -239,9 +239,9 @@
       "serverreq":true
     },
     {
-      "name": "javax.persistence:persistence-api:1.0.2",
-      "url" : "http://repo.maven.apache.org/maven2",
-      "serverreq":true
+      "name": "org.hibernate:hibernate-core:5.5.6.Final",
+	  "url": "http://repo1.maven.org/maven2",
+	  "serverreq":true
     },
     {
       "name": "org.lwjgl.lwjgl:lwjgl:2.9.1"
