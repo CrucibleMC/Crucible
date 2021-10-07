@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-18.04
     permissions:
       contents: read
-      packages: write
 
     steps:
     - uses: actions/checkout@v2
@@ -18,10 +17,10 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: '8'
-        distribution: 'zulu'
+        distribution: 'temurin'
 
     - name: Build with Gradle
-      run: ./gradlew clean setupCrucible
+      run: ./gradlew cleanCache clean setupCrucible --refresh-dependencies 
 
     - name: Create distribution
       run: ./gradlew jar
