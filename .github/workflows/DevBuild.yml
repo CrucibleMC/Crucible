@@ -21,10 +21,10 @@ jobs:
         distribution: 'adopt'
 
     - name: Build with Gradle
-      run: gradle setupCrucible
+      run: ./gradlew setupCrucible
 
     - name: Create distribution
-      run: gradle jar
+      run: ./gradlew jar
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
