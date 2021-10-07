@@ -21,7 +21,7 @@ jobs:
         distribution: 'adopt'
 
     - name: Build with Gradle
-      run: ./gradlew setupCrucible
+      run: ./gradlew clean setupCrucible
 
     - name: Create distribution
       run: ./gradlew jar
