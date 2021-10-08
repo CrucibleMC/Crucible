@@ -31,7 +31,7 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ github.sha }}
+        tag_name: dev-${{ github.sha }}
         prerelease: true
         name: Dev build ${{ github.sha }}
         files: |
