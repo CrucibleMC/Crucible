@@ -17,3 +17,76 @@
  
      private static Status status = PENDING;
      private static String target = null;
+@@ -78,71 +79,6 @@
+ 
+     public static void startVersionCheck()
+     {
+-        new Thread("Forge Version Check")
+-        {
+-            @SuppressWarnings("unchecked")
+-            @Override
+-            public void run()
+-            {
+-                try
+-                {
+-                    URL url = new URL("http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json");
+-                    InputStream con = url.openStream();
+-                    String data = new String(ByteStreams.toByteArray(con));
+-                    con.close();
+-
+-                    Map<String, Object> json = new Gson().fromJson(data, Map.class);
+-                    //String homepage = (String)json.get("homepage");
+-                    Map<String, String> promos = (Map<String, String>)json.get("promos");
+-
+-                    String rec = promos.get(MinecraftForge.MC_VERSION + "-recommended");
+-                    String lat = promos.get(MinecraftForge.MC_VERSION + "-latest");
+-                    ArtifactVersion current = new DefaultArtifactVersion(getVersion());
+-
+-                    if (rec != null)
+-                    {
+-                        ArtifactVersion recommended = new DefaultArtifactVersion(rec);
+-                        int diff = recommended.compareTo(current);
+-
+-                        if (diff == 0)
+-                            status = UP_TO_DATE;
+-                        else if (diff < 0)
+-                        {
+-                            status = AHEAD;
+-                            if (lat != null)
+-                            {
+-                                if (current.compareTo(new DefaultArtifactVersion(lat)) < 0)
+-                                {
+-                                    status = OUTDATED;
+-                                    target = lat;
+-                                }
+-                            }
+-                        }
+-                        else
+-                        {
+-                            status = OUTDATED;
+-                            target = rec;
+-                        }
+-                    }
+-                    else if (lat != null)
+-                    {
+-                        if (current.compareTo(new DefaultArtifactVersion(lat)) < 0)
+-                        {
+-                            status = BETA_OUTDATED;
+-                            target = lat;
+-                        }
+-                        else
+-                            status = BETA;
+-                    }
+-                    else
+-                        status = BETA;
+-                }
+-                catch (Exception e)
+-                {
+-                    e.printStackTrace();
+-                    status = FAILED;
+-                }
+-            }
+-        }.start();
++        status = UP_TO_DATE; // Crucible - Forge changed how the version endpoint works, and there's no real need for checking the version, maybe reuse this for crucible's own version check.
+     }
+ }
