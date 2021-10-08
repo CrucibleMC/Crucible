@@ -22,6 +22,9 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew cleanCache clean setupCrucible --refresh-dependencies 
 
+    - name: Show debug info
+      run: ./gradlew --version 
+      
     - name: Create distribution
       run: ./gradlew jar
       env:
