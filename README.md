@@ -19,7 +19,7 @@ Advantages over Thermos:
 + You can see more changes in the [releases](https://github.com/CrucibleMC/Crucible/releases) changelog.
 
 ## Build Requirements
-* Java 8u101 JDK or higher
+* Java 8u141 JDK or higher
 * Linux (apparently the project breaks on Windows).
 * `JAVA_HOME` defined on your OS
 
