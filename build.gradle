@@ -83,12 +83,12 @@ def gitInfo(String key) {
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "1614"
 ext.revision = "1.0.7"
-ext.crucibleVersion = "5.1"
-if (gitInfo('branch') != "master") {
+ext.crucibleVersion = "5.2"
+if (gitInfo('branch') == "dev") {
     version = "${mcVersion}-${gitInfo('branch')}-${gitInfo('hash')}"
     ext.crucibleVersion = "${gitInfo('branch')}-${gitInfo('hash')}"
 } else {
-    version = "${mcVersion}-${crucibleVersion}}"
+    version = "${mcVersion}-${crucibleVersion}"
 }
 System.setProperty("file.encoding", "UTF-8")
 
