@@ -1,8 +1,10 @@
 name: Sync From Wiki
+
 on:
+  workflow_dispatch:
+
 #   schedule:
 #     - cron: '30 * * * *'
-  workflow_dispatch:
 
 jobs:
   build:
