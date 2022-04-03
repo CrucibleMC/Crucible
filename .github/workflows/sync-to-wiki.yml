@@ -2,7 +2,7 @@ name: Sync To Wiki
 
 on:
   push:
-    branches: [ master ]
+    branches: [ wiki ]
 
   workflow_dispatch:
 
@@ -14,9 +14,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: push to other repo
+      - name: Sync
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git remote add wiki https://github.com/CrucibleMC/wiki.wiki.git
+          git remote add https://github.com/CrucibleMC/Crucible.wiki.git
           git push wiki master
