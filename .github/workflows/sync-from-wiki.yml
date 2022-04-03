@@ -15,7 +15,7 @@ jobs:
           
       - name: Sync
         run: |
-          git remote add wiki https://github.com/CrucibleMC/wiki.wiki.git
+          git remote add wiki https://github.com/CrucibleMC/Crucible.wiki.git
           git fetch wiki
           git pull wiki master
-          git push origin master
+          git push origin wiki
