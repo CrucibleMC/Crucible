@@ -45,11 +45,8 @@ Advantages over Thermos:
 + [Grimoire](https://github.com/CrucibleMC/Grimoire) "A core mod that [Grimoire-Mixins](https://github.com/CrucibleMC/Grimoire-Mixins) Modules use to be loaded up."
 + [Discord](https://discord.gg/jWSTJ4d) "Our support Discord."
 
-## TODO List
-- [ ] Reapply patches
-- [ ] Fix chunks randomly resetting
-- [ ] Paper-like async chunk generation
-- [ ] Patch collection for problematic mods
+## Roadmap
+You can check our Roadmap on our [wiki](https://github.com/CrucibleMC/Crucible/wiki/Roadmap).
 
 [forge]: https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-green.svg "Minecraft Forge v10.13.4.1614"
 [mc]: https://img.shields.io/badge/Minecraft-v1.7.10-green.svg "Minecraft 1.7.10"
