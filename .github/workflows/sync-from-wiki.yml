@@ -1,0 +1,21 @@
+name: Sync From Wiki
+on:
+  schedule:
+    - cron: '30 * * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          
+      - name: Sync
+        run: |
+          git remote add wiki https://github.com/CrucibleMC/wiki.wiki.git
+          git fetch wiki
+          git pull wiki master
+          git push origin master
