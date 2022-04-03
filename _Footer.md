@@ -1,1 +1,1 @@
-bbbb
+This place is a work in progress, everyone is welcome to contribute at https://github.com/CrucibleMC/Crucible/tree/wiki
