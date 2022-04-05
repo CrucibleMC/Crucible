@@ -1,17 +1,12 @@
 package io.github.crucible.patches;
 
-import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.TypeInsnNode;
 import pw.prok.imagine.asm.ImagineASM;
 import pw.prok.imagine.asm.Transformer;
 
-import java.util.Iterator;
-import java.util.List;
-
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
 @Transformer.RegisterTransformer
 public class RecurrentComplexTransformer implements Transformer {
@@ -19,8 +14,26 @@ public class RecurrentComplexTransformer implements Transformer {
     public void transform(ImagineASM asm) {
         if (asm.is("ivorius.reccomplex.structures.generic.matchers.BiomeMatcher")) {
             InsnList instructions = asm.method("ofTypes", "([Lnet/minecraftforge/common/BiomeDictionary$Type;)Ljava/lang/String;").instructions();
-            instructions.set(instructions.get(12),
-                    new MethodInsnNode(INVOKESTATIC, "io/github/crucible/patches/Hook","join","(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;", false));
+
+            AbstractInsnNode abstractInsnNode = instructions.getFirst();
+            boolean appliedPatch = false;
+            while (abstractInsnNode != null) {
+                if (abstractInsnNode.getOpcode() == INVOKESTATIC) {
+                    MethodInsnNode methodInsnNode = (MethodInsnNode) abstractInsnNode;
+                    if ("joptsimple/internal/Strings".equals(methodInsnNode.owner) &&
+                            "join".equals(methodInsnNode.name) &&
+                            "(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;"
+                                    .equals(methodInsnNode.desc)) {
+                        methodInsnNode.owner = "io/github/crucible/patches/Hook";
+                        appliedPatch = true;
+                    }
+                }
+                abstractInsnNode = abstractInsnNode.getNext();
+            }
+            if (!appliedPatch) {
+                System.out.println("[Crucible] RecurrentComplexTransformer: " +
+                        "unable to find joptsimple.internal.Strings#join(), ignoring it!");
+            }
 
 //            InsnList toAdd = new InsnList();
 //            toAdd.add(new MethodInsnNode(INVOKESTATIC, "io/github/crucible/patches/Hook","join","(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;", false));
