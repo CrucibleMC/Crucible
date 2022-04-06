@@ -52,12 +52,3 @@ You can check our Roadmap on our [wiki](https://github.com/CrucibleMC/Crucible/w
 [mc]: https://img.shields.io/badge/Minecraft-v1.7.10-green.svg "Minecraft 1.7.10"
 [java]: https://img.shields.io/badge/Java%20JDK-v1.8-blue.svg "Java JDK 8"
 [spigot]: https://img.shields.io/badge/Spigot-v1.7.10--R0.1--SNAPSHOT-lightgrey.svg "Spigot R0.1 Snapshot"
-
-## Working Mods and Plugins
-
-### Soon THESE BELLOW will be on the https://cruciblemc.github.io/
-
-### ForgeRestrictor
-Author: [KaiKikuchi](https://github.com/KaiKikuchi) <br>
-Original GitHub URL: _Not available, Only on wayback machine [here](https://web.archive.org/web/20180611114227/https://github.com/KaiKikuchi/ForgeRestrictor)_ <br>
-Download: [ForgeRestrictor-1.4-DEV-11.jar](https://cdn.discordapp.com/attachments/899002842847797258/899030688710418452/ForgeRestrictor-1.4-DEV-11.jar) _(last known working file uplaoded to discord server)_
