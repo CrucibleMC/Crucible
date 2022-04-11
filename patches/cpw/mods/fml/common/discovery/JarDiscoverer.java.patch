@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/discovery/JarDiscoverer.java
++++ ../src-work/minecraft/cpw/mods/fml/common/discovery/JarDiscoverer.java
+@@ -59,7 +59,7 @@
+             }
+             for (ZipEntry ze : Collections.list(jar.entries()))
+             {
+-                if (ze.getName()!=null && ze.getName().startsWith("__MACOSX"))
++                if (ze.getName()!=null && (ze.getName().startsWith("__MACOSX") || ze.getName().startsWith("META-INF/versions")))
+                 {
+                     continue;
+                 }
