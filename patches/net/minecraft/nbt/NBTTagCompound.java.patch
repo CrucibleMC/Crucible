@@ -134,10 +134,38 @@
          return nbttagcompound;
      }
  
-@@ -407,4 +418,29 @@
+@@ -407,4 +418,57 @@
              throw new ReportedException(crashreport);
          }
      }
++
++    /**
++     * Merges copies of data contained in {@code other} into this compound tag.
++     */
++    public void merge(NBTTagCompound other)
++    {
++        for (String s : other.tagMap.keySet())
++        {
++            NBTBase nbtbase = other.tagMap.get(s);
++
++            if (nbtbase.getId() == 10)
++            {
++                if (this.hasKey(s, 10))
++                {
++                    NBTTagCompound nbttagcompound = this.getCompoundTag(s);
++                    nbttagcompound.merge((NBTTagCompound)nbtbase);
++                }
++                else
++                {
++                    this.setTag(s, nbtbase.copy());
++                }
++            }
++            else
++            {
++                this.setTag(s, nbtbase.copy());
++            }
++        }
++    }
 +
 +    @Override
 +    public String crucible_toString()
