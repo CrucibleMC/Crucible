@@ -2,7 +2,7 @@ name: Dev Build
 
 on:
   push:
-    branches: 
+    branches:
       - dev
 
 jobs:
@@ -10,30 +10,44 @@ jobs:
     runs-on: macos-10.15
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK 8
-      uses: actions/setup-java@v2
-      with:
-        java-version: '8'
-        distribution: 'temurin'
+      - uses: actions/checkout@v2
 
-    - name: Build with Gradle
-      run: ./gradlew cleanCache clean setupCrucible --refresh-dependencies 
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
 
-    - name: Show debug info
-      run: ./gradlew --version 
-      
-    - name: Create distribution
-      run: ./gradlew jar
-      env:
-        USERNAME: ${{ github.actor }}
-        TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: dev-${{ github.sha }}
-        prerelease: true
-        name: Dev build ${{ github.sha }}
-        files: |
-          build/distributions/libraries.zip
-          build/distributions/*-server.jar
+      - name: Show debug info
+        run: ./gradlew --version
+
+      - name: Build with Gradle
+        run: ./gradlew cleanCache clean setupCrucible --refresh-dependencies
+
+      - name: Create distribution
+        run: ./gradlew jar
+        env:
+          USERNAME: ${{ github.actor }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create branch_name Variable
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Create commit_count Variable
+        id: commit_count
+        run: echo "::set-output name=commit_count::$(git rev-list --count HEAD)"
+
+      - name: Create sha_short Variable
+        id: sha_short
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+
+      - name: Release under current tag
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "${{ env.BRANCH_NAME }}.${{ steps.commit_count.outputs.commit_count }}.${{ steps.sha_short.outputs.sha_short }}"
+          prerelease: true
+          title: "DevBuild [${{ steps.commit_count.outputs.commit_count }}] - ${{ steps.sha_short.outputs.sha_short }}"
+          files: |
+            build/distributions/libraries.zip
+            build/distributions/*-server.jar
