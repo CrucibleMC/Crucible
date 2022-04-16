@@ -113,7 +113,18 @@
      }
  
      public NBTBase getTag(String p_74781_1_)
-@@ -336,15 +350,12 @@
+@@ -294,6 +308,10 @@
+ 
+     public String toString()
+     {
++        if (true){
++            return crucible_toString();
++        }
++        //Don't remove the code bellow, if you remove it will crash some coremods.... MineCraft Quality of Code
+         String s = "{";
+         String s1;
+ 
+@@ -336,15 +354,12 @@
  
      public NBTBase copy()
      {
@@ -134,7 +145,7 @@
          return nbttagcompound;
      }
  
-@@ -407,4 +418,57 @@
+@@ -407,4 +422,57 @@
              throw new ReportedException(crashreport);
          }
      }
