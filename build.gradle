@@ -10,8 +10,8 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.5.3-SNAPSHOT'
-        //classpath files('CrucibleGradle-1.0.jar')
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.5.5-SNAPSHOT'
+        //classpath files('ForgeGradle-1.2-1.5.5-SNAPSHOT.jar')
     }
 }
 
