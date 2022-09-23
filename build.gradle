@@ -112,7 +112,7 @@ dependencies {
     libraries 'commons-io:commons-io:2.4@jar'
     libraries 'net.sf.opencsv:opencsv:2.0@jar'
     libraries 'com.beust:jcommander:1.30@jar'
-    libraries 'net.minecraft:launchwrapper:1.12@jar'
+    libraries 'io.github.cruciblemc:launchwrapper:1.13@jar'
     libraries 'org.ow2.asm:asm-all:5.0.3'
     libraries 'com.typesafe.akka:akka-actor_2.11:2.3.3'
     libraries 'com.typesafe:config:1.2.1'
