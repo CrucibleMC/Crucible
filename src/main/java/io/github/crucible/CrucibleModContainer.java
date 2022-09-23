@@ -7,6 +7,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.LoadController;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -43,7 +44,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
         ModMetadata meta = getMetadata();
         meta.modId = "Crucible";
         meta.name = "Crucible Server";
-        meta.version = Crucible.CRUCIBLE_VERSION;
+        meta.version = CrucibleMetadata.CRUCIBLE_VERSION;
         meta.credits = "TODO: Add credits";
         meta.authorList = Arrays.asList("juanmuscaria", "brunoxkk0", "evernife");
         meta.description = "Pure black magic and gambiarras!";
@@ -89,6 +90,7 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
     @Override
     public List<String> getOwnedPackages() {
         return ImmutableList.of(
+                "io.github.crucible.bootstrap",
                 "io.github.crucible.entity",
                 "io.github.crucible.wrapper",
                 "io.github.crucible.event",
@@ -243,5 +245,10 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         return Collections.emptyList();
+    }
+
+    public static boolean isModPlugin(Plugin plugin) {
+        return plugin.getClass().getClassLoader().equals(Loader.instance().getModClassLoader()) ||
+                plugin.getClass().getClassLoader().equals(CrucibleModContainer.class.getClassLoader());
     }
 }

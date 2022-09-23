@@ -3,14 +3,17 @@
 @@ -1,5 +1,7 @@
  package cpw.mods.fml.relauncher;
  
-+import io.github.crucible.CrucibleServerMainHook;
++import io.github.crucible.bootstrap.CrucibleServerMainHook;
 +
  import java.lang.reflect.Method;
  
  public class ServerLaunchWrapper {
-@@ -9,6 +11,7 @@
+@@ -7,8 +9,9 @@
+     /**
+      * @param args
       */
-     public static void main(String[] args)
+-    public static void main(String[] args)
++    public static void main(String[] args) throws Exception
      {
 +        CrucibleServerMainHook.relaunchMain(args);
          new ServerLaunchWrapper().run(args);

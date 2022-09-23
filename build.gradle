@@ -170,6 +170,14 @@ def generateClasspath(boolean legacy = false) {
     return classpath.trim()
 }
 
+def generateMavenLibs() {
+    def libs = ''
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each {
+        libs += " ${it.group}:${it.name}:${it.version}"
+    }
+    return libs.trim()
+}
+
 def generateManifest(boolean legacy = false) {
     [
             'Thermos-Git-Branch'    : gitInfo('branch'),
@@ -187,7 +195,8 @@ def generateManifest(boolean legacy = false) {
             'Forge-Version'         : '10.13.4.1614',
             'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
             'Main-Class'            : 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
-            'Class-Path'            : generateClasspath(legacy)
+            'Class-Path'            : generateClasspath(legacy),
+            'Crucible-Libs'          : generateMavenLibs()
     ]
 }
 

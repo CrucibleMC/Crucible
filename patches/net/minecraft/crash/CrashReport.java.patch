@@ -5,7 +5,7 @@
  import java.util.List;
  import java.util.concurrent.Callable;
 +
-+import io.github.crucible.Crucible;
++import io.github.crucible.CrucibleMetadata;
  import net.minecraft.util.ReportedException;
  import net.minecraft.world.gen.layer.IntCache;
 +
@@ -25,7 +25,7 @@
 +        this.theReportCategory.addCrashSectionCallable("Crucible Version", new Callable<String>() {
 +            @Override
 +            public String call() throws Exception {
-+                return String.format("%s", Crucible.CRUCIBLE_VERSION);
++                return String.format("%s", CrucibleMetadata.CRUCIBLE_VERSION);
 +            }
 +        });
 +        this.theReportCategory.addCrashSectionCallable("Plugins", new Callable<String>() {

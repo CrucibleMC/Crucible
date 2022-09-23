@@ -1,36 +1,43 @@
 package io.github.crucible;
 
 import cpw.mods.fml.common.FMLLog;
-import cpw.mods.fml.common.Loader;
-import org.bukkit.plugin.Plugin;
 
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
-public class Crucible {
+public class CrucibleMetadata {
+
     public static final String CRUCIBLE_VERSION;
     public static final int FORGE_BUILD_VERSION;
     public static final boolean IS_DEV_BUILD;
+    public static final String[] NEEDED_LIBRARIES;
+
     static {
         String parsedVersion = "unknown";
         boolean parsedIsDevBuild = false;
         int forgeBuild = 0;
+        String[] libraries = new String[0];
         try {
-            Enumeration<URL> resources = Crucible.class.getClassLoader()
+            Enumeration<URL> resources = CrucibleMetadata.class.getClassLoader()
                     .getResources("META-INF/MANIFEST.MF");
             while (resources.hasMoreElements()) {
                 URL url = resources.nextElement();
-                Properties manifest = new Properties();
-                manifest.load(url.openStream());
-                if (manifest.getProperty("Forge-Version") == null)
+                Manifest manifest = new Manifest();
+                manifest.read(url.openStream());
+                Attributes attributes = manifest.getMainAttributes();
+                if (attributes.getValue("Forge-Version") == null)
                     continue;
-                parsedVersion = manifest.getProperty("Implementation-Version", parsedVersion);
+                parsedVersion = Optional.ofNullable(attributes.getValue("Implementation-Version")).orElse(parsedVersion) ;
                 parsedIsDevBuild = parsedVersion.contains("dev");
                 forgeBuild = Integer.parseInt(System.getProperty("thermos.forgeRevision", "0"));
+                libraries = attributes.getValue("Crucible-Libs").replace("\n","").split(" ");
                 if (forgeBuild == 0) {
                     Properties fmlversion = new Properties();
-                    fmlversion.load(Crucible.class.getResourceAsStream("/fmlversion.properties"));
+                    fmlversion.load(CrucibleMetadata.class.getResourceAsStream("/fmlversion.properties"));
                     forgeBuild = Integer.parseInt(String.valueOf(fmlversion.getProperty(
                             "fmlbuild.build.number", "0")));
                 }
@@ -45,13 +52,9 @@ public class Crucible {
         CRUCIBLE_VERSION = parsedVersion;
         IS_DEV_BUILD = parsedIsDevBuild;
         FORGE_BUILD_VERSION = forgeBuild;
+        NEEDED_LIBRARIES = libraries;
     }
 
-    private Crucible() {
-    }
-
-    public static boolean isModPlugin(Plugin plugin) {
-        return plugin.getClass().getClassLoader().equals(Loader.instance().getModClassLoader()) ||
-                plugin.getClass().getClassLoader().equals(Crucible.class.getClassLoader());
+    private CrucibleMetadata() {
     }
 }

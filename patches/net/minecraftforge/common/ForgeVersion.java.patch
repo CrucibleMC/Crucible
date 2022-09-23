@@ -1,23 +1,33 @@
 --- ../src-base/minecraft/net/minecraftforge/common/ForgeVersion.java
 +++ ../src-work/minecraft/net/minecraftforge/common/ForgeVersion.java
-@@ -15,6 +15,7 @@
+@@ -6,16 +6,8 @@
+ package net.minecraftforge.common;
+ import static net.minecraftforge.common.ForgeVersion.Status.*;
  
- import cpw.mods.fml.common.versioning.ArtifactVersion;
- import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
-+import io.github.crucible.Crucible;
+-import java.io.InputStream;
+-import java.net.URL;
+-import java.util.Map;
++import io.github.crucible.CrucibleMetadata;
  
+-import com.google.common.io.ByteStreams;
+-import com.google.gson.Gson;
+-
+-import cpw.mods.fml.common.versioning.ArtifactVersion;
+-import cpw.mods.fml.common.versioning.DefaultArtifactVersion;
+-
  public class ForgeVersion
  {
-@@ -25,7 +26,7 @@
+     //This number is incremented every time we remove deprecated code/major API changes, never reset
+@@ -25,7 +17,7 @@
      //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
      public static final int revisionVersion = 4;
      //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
 -    public static final int buildVersion    = 0;
-+    public static final int buildVersion    = Crucible.FORGE_BUILD_VERSION;
++    public static final int buildVersion    = CrucibleMetadata.FORGE_BUILD_VERSION;
  
      private static Status status = PENDING;
      private static String target = null;
-@@ -78,71 +79,6 @@
+@@ -78,71 +70,6 @@
  
      public static void startVersionCheck()
      {

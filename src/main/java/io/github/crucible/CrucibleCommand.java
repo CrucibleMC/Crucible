@@ -63,7 +63,7 @@ public class CrucibleCommand extends Command {
                 pluginList.append(", ");
             }
 
-            if (Crucible.isModPlugin(plugin))
+            if (CrucibleModContainer.isModPlugin(plugin))
                 pluginList.append(ChatColor.AQUA);
             else
                 pluginList.append(plugin.isEnabled() ? ChatColor.GREEN : ChatColor.RED);

@@ -13,7 +13,7 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
 +import io.github.crucible.CrucibleConfigs;
-+import io.github.crucible.CrucibleServerMainHook;
++import io.github.crucible.bootstrap.CrucibleServerMainHook;
 +import io.github.crucible.CrucibleTimings;
  import io.netty.buffer.ByteBuf;
  import io.netty.buffer.ByteBufOutputStream;
