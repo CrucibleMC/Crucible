@@ -11,7 +11,7 @@
 # Twitter: http://twitter.com/CraftBukkit
 # Bug tracker: http://leaky.bukkit.org/
 
-command-block-overrides: []
+command-block-overrides: [ ]
 aliases:
-    icanhasbukkit:
-      - "version $1-"
+  icanhasbukkit:
+    - "version $1-"

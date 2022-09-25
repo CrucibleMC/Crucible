@@ -1,7 +1,0 @@
-[submodule "bukkit"]
-	path = bukkit
-	url = https://github.com/CyberdyneCC/Thermos-Bukkit
-[submodule "forge"]
-	path = forge
-	url = https://github.com/MinecraftForge/MinecraftForge.git
-	branch = 1.7.10
