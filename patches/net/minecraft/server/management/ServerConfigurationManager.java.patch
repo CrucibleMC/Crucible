@@ -374,7 +374,7 @@
 +            // return "You are not white-listed on this server!";
 +            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, org.spigotmc.SpigotConfig.whitelistMessage); // Spigot
 +        }
-+        else if (this.bannedIPs.func_152708_a(socketaddress) && !this.bannedPlayers.func_152683_b(gameprofile).hasBanExpired())
++        else if (this.bannedIPs.func_152708_a(socketaddress) && !this.bannedIPs.func_152709_b(socketaddress).hasBanExpired())
 +        {
 +            IPBanEntry ipbanentry = this.bannedIPs.func_152709_b(socketaddress);
 +            s = "Your IP address is banned from this server!\nReason: " + ipbanentry.getBanReason();
