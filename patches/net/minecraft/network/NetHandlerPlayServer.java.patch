@@ -1874,7 +1874,7 @@
  
          if ("MC|BEdit".equals(p_147349_1_.func_149559_c()))
          {
-@@ -1075,34 +2436,50 @@
+@@ -1075,34 +2436,52 @@
  
              try
              {
@@ -1900,13 +1900,15 @@
 +                if (stack != null)
                  {
 -                    if (itemstack.getItem() == Items.writable_book && itemstack.getItem() == itemstack1.getItem())
-+                    if (push.getItem() == Items.writable_book && push.getItem() == stack.getItem() && push.getEnchantmentTagList().equals(stack.getEnchantmentTagList()))
++                    if (push.getItem() == Items.writable_book && push.getItem() == stack.getItem())
                      {
 -                        itemstack1.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
-+                        nouveau = stack.copy();
-+                        ItemWritableBook.shadowUpdate(nouveau, push, false);
-+                        CraftEventFactory.handleEditBookEvent(playerEntity, nouveau); // CraftBukkit
-+                        this.playerEntity.inventory.setInventorySlotContents(this.playerEntity.inventory.currentItem, nouveau);
++                        //nouveau = stack.copy();
++                        //ItemWritableBook.shadowUpdate(nouveau, push, false);
++                        //CraftEventFactory.handleEditBookEvent(playerEntity, nouveau); // CraftBukkit
++                        //this.playerEntity.inventory.setInventorySlotContents(this.playerEntity.inventory.currentItem, nouveau);
++                        ItemWritableBook.shadowUpdate(stack, push, false);
++                        CraftEventFactory.handleEditBookEvent(playerEntity, stack); // CraftBukkit
                      }
 +                    else
 +                    {
@@ -1935,7 +1937,7 @@
              }
              finally
              {
-@@ -1117,37 +2494,47 @@
+@@ -1117,37 +2496,49 @@
  
              try
              {
@@ -1968,10 +1970,12 @@
 -                        itemstack1.setTagInfo("pages", itemstack.getTagCompound().getTagList("pages", 8));
 -                        itemstack1.func_150996_a(Items.written_book);
 +                        nouveau = stack.copy();
++                        nouveau.func_150996_a(Items.written_book);
 +                        nouveau.setTagInfo("author", new NBTTagString(this.playerEntity.getCommandSenderName()));
 +                        ItemWritableBook.shadowUpdate(nouveau, push, true);
-+                        CraftEventFactory.handleEditBookEvent(playerEntity, nouveau); // CraftBukkit
 +                        this.playerEntity.inventory.setInventorySlotContents(this.playerEntity.inventory.currentItem, nouveau);
++                        CraftEventFactory.handleEditBookEvent(playerEntity, nouveau); // CraftBukkit
++
                      }
  
                      return;
@@ -1996,7 +2000,7 @@
              }
              finally
              {
-@@ -1174,9 +2561,12 @@
+@@ -1174,9 +2565,12 @@
                          ((ContainerMerchant)container).setCurrentRecipeIndex(i);
                      }
                  }
@@ -2010,7 +2014,7 @@
                  }
              }
              else if ("MC|AdvCdm".equals(p_147349_1_.func_149559_c()))
-@@ -1222,9 +2612,12 @@
+@@ -1222,9 +2616,12 @@
                              this.playerEntity.addChatMessage(new ChatComponentTranslation("advMode.setCommand.success", new Object[] {s1}));
                          }
                      }
@@ -2025,7 +2029,7 @@
                      }
                      finally
                      {
-@@ -1257,9 +2650,12 @@
+@@ -1257,9 +2654,12 @@
                              tileentitybeacon.markDirty();
                          }
                      }
@@ -2040,7 +2044,7 @@
                      }
                  }
              }
-@@ -1281,6 +2677,13 @@
+@@ -1281,6 +2681,13 @@
                      containerrepair.updateItemName("");
                  }
              }
@@ -2054,7 +2058,7 @@
          }
      }
  
-@@ -1292,6 +2695,21 @@
+@@ -1292,6 +2699,21 @@
          }
      }
  
