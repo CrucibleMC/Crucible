@@ -18,15 +18,7 @@
  
  import com.google.common.base.Joiner;
  import com.google.common.base.Strings;
-@@ -282,6 +287,7 @@
-     {
-         Loader.instance().serverStarted();
-         sidedDelegate.allowLogins();
-+        thermos.updater.TVersionRetriever.init(MinecraftServer.getServer());
-     }
- 
-     public void handleServerStopping()
-@@ -385,10 +391,11 @@
+@@ -385,10 +390,11 @@
          {
              return;
          }
@@ -39,7 +31,7 @@
          handlerSet.add(handler);
          handlerToCheck = new WeakReference<SaveHandler>(handler); // for confirmBackupLevelDatUse
          Map<String,NBTBase> additionalProperties = Maps.newHashMap();
-@@ -496,7 +503,14 @@
+@@ -496,7 +502,14 @@
  
      public String getModName()
      {
@@ -55,7 +47,7 @@
          modNames.add("fml");
          if (!noForge)
          {
-@@ -540,8 +554,21 @@
+@@ -540,8 +553,21 @@
          bus().post(new InputEvent.KeyInputEvent());
      }
  
