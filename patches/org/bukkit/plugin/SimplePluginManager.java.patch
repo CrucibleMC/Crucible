@@ -29,3 +29,21 @@
          return result.toArray(new Plugin[result.size()]);
      }
  
+@@ -727,4 +733,17 @@
+     public void useTimings(boolean use) {
+         useTimings = use;
+     }
++
++    //Crucible start
++
++    //Add a way to inject a mod plugin into the loaded plugins list.
++    public synchronized Plugin injectModPlugin(Plugin plugin) {
++        if (plugin != null && plugin.getDescription() != null) {
++            plugins.add(plugin);
++            lookupNames.put(plugin.getDescription().getName(), plugin);
++        }
++        return plugin;
++    }
++
++    //Crucible end
+ }
