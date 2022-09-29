@@ -31,10 +31,10 @@ public class CrucibleMetadata {
                 Attributes attributes = manifest.getMainAttributes();
                 if (attributes.getValue("Forge-Version") == null)
                     continue;
-                parsedVersion = Optional.ofNullable(attributes.getValue("Implementation-Version")).orElse(parsedVersion) ;
+                parsedVersion = Optional.ofNullable(attributes.getValue("Implementation-Version")).orElse(parsedVersion);
                 parsedIsDevBuild = parsedVersion.contains("dev");
                 forgeBuild = Integer.parseInt(System.getProperty("thermos.forgeRevision", "0"));
-                libraries = attributes.getValue("Crucible-Libs").replace("\n","").split(" ");
+                libraries = attributes.getValue("Crucible-Libs").replace("\n", "").split(" ");
                 if (forgeBuild == 0) {
                     Properties fmlversion = new Properties();
                     fmlversion.load(CrucibleMetadata.class.getResourceAsStream("/fmlversion.properties"));

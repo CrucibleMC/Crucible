@@ -14,21 +14,17 @@ import java.util.Iterator;
 public class StreamsTransformer implements Transformer {
     @Override
     public void transform(ImagineASM asm) {
-        //Patching scala gives me headaches
         if (asm.is("streams.world.gen.structure.RiverComponent$")) {
-            System.out.println("[Crucible] found streams.world.gen.structure.RiverComponent$");
+            System.out.println("[Crucible] Found streams.world.gen.structure.RiverComponent$, trying to patch it!");
             InsnList instructions = asm.method("<init>", "()V").instructions(); //We just need to replace a number
             AbstractInsnNode toReplace = null;
             Iterator<AbstractInsnNode> i = instructions.iterator();
             while (i.hasNext()) {
                 AbstractInsnNode ins = i.next();
                 if (ins.getOpcode() == Opcodes.ICONST_2) {
-                    //System.out.println("[Crucible] found Opcodes.ICONST_2, checking next instruction");
                     if (ins.getNext() instanceof FieldInsnNode) {
                         FieldInsnNode fieldAccess = (FieldInsnNode) ins.getNext();
-                        //System.out.printf("Field access desc:%s name:%s owner:%s%n", fieldAccess.desc, fieldAccess.name, fieldAccess.owner);
                         if (fieldAccess.name.contains("MinSourceBackWallHeight")) {
-                            System.out.println("[Crucible] found MinSourceBackWallHeight!");
                             toReplace = fieldAccess.getPrevious();
                             break;
                         }
@@ -36,10 +32,10 @@ public class StreamsTransformer implements Transformer {
                 }
             }
             if (toReplace == null) {
-                System.out.println("[Crucible] unable to find MinSourceBackWallHeight, ignoring it!");
+                System.out.println("[Crucible] Unable to find MinSourceBackWallHeight, skipping patch!");
             } else {
-                System.out.println("[Crucible] replacing MinSourceBackWallHeight's previous opcode!");
                 instructions.set(toReplace, new InsnNode(Opcodes.ICONST_0));
+                System.out.println("[Crucible] Patched MinSourceBackWallHeight's previous opcode!");
             }
         }
     }

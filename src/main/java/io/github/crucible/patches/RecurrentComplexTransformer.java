@@ -13,6 +13,7 @@ public class RecurrentComplexTransformer implements Transformer {
     @Override
     public void transform(ImagineASM asm) {
         if (asm.is("ivorius.reccomplex.structures.generic.matchers.BiomeMatcher")) {
+            System.out.println("[Crucible] Found ivorius.reccomplex.structures.generic.matchers.BiomeMatcher, trying to patch it!");
             InsnList instructions = asm.method("ofTypes", "([Lnet/minecraftforge/common/BiomeDictionary$Type;)Ljava/lang/String;").instructions();
 
             AbstractInsnNode abstractInsnNode = instructions.getFirst();
@@ -24,26 +25,17 @@ public class RecurrentComplexTransformer implements Transformer {
                             "join".equals(methodInsnNode.name) &&
                             "(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;"
                                     .equals(methodInsnNode.desc)) {
-                        methodInsnNode.owner = "io/github/crucible/patches/Hook";
+                        methodInsnNode.owner = "io/github/crucible/patches/AsmHooks";
                         appliedPatch = true;
+                        System.out.println("[Crucible] Patched joptsimple.internal.Strings#join() call!");
                     }
                 }
                 abstractInsnNode = abstractInsnNode.getNext();
             }
             if (!appliedPatch) {
                 System.out.println("[Crucible] RecurrentComplexTransformer: " +
-                        "unable to find joptsimple.internal.Strings#join(), ignoring it!");
+                        "unable to find joptsimple.internal.Strings#join(), skipping it!");
             }
-
-//            InsnList toAdd = new InsnList();
-//            toAdd.add(new MethodInsnNode(INVOKESTATIC, "io/github/crucible/patches/Hook","join","(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;", false));
-//            toAdd.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;", false));
-//            toAdd.add(new MethodInsnNode(INVOKEVIRTUAL, "java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false));
-//            toAdd.add(new InsnNode(ARETURN));
-//            instructions.insertBefore(new MethodInsnNode(INVOKESTATIC, "joptsimple/internal/Strings","join","(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;", false),
-//                    toAdd);
-            //instructions.remove(new MethodInsnNode(INVOKESTATIC, "joptsimple/internal/Strings","join","(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;", false));
-
         }
     }
 }

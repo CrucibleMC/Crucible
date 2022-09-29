@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 // DO NOT TRY TO LOAD ANY MINECRAFT CLASS FROM HERE, THIS CLASS IS LOADED BEFORE EVERYTHING ON THE SERVER ENTRYPOINT
 public class CrucibleServerMainHook {
-    private static final String[] REPOS = new String[] {
+    private static final String[] REPOS = new String[]{
             "https://github.com/juanmuscaria/maven/raw/master/",
             "https://github.com/juanmuscaria/maven/raw/master/ThermosLibs/",
             "https://maven.minecraftforge.net/",

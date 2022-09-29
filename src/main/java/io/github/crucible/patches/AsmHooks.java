@@ -3,15 +3,15 @@ package io.github.crucible.patches;
 import java.util.Iterator;
 import java.util.List;
 
-public class Hook {
+public class AsmHooks {
     public static String join(List<String> pieces, String separator) {
-        StringBuilder builder = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         Iterator<String> iterator = pieces.iterator();
         while (iterator.hasNext()) {
-            builder.append(iterator.next());
+            sb.append(iterator.next());
             if (iterator.hasNext())
-                builder.append(separator);
+                sb.append(separator);
         }
-        return builder.toString();
+        return sb.toString();
     }
 }

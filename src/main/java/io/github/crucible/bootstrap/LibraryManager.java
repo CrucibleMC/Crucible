@@ -70,7 +70,7 @@ public class LibraryManager {
             throw new IllegalArgumentException("Invalid identifier " + library);
         }
         return new DownloadTask<Boolean>() {
-            final String jarRelativeName = String.format("./%1$s/%2$s/%3$s/%2$s-%3$s.jar", identifiers[0].replace('.','/'),
+            final String jarRelativeName = String.format("./%1$s/%2$s/%3$s/%2$s-%3$s.jar", identifiers[0].replace('.', '/'),
                     identifiers[1], identifiers[2]);
             final Path jarFile = baseDir.resolve(jarRelativeName).normalize().toAbsolutePath();
             final Path checksumFie = baseDir.resolve(jarRelativeName + ".md5").normalize().toAbsolutePath();
@@ -84,7 +84,7 @@ public class LibraryManager {
                     return 100;
                 } else if (countableInputStream != null) {
                     return countableInputStream.getPercentage();
-                } else  {
+                } else {
                     return 0;
                 }
             }
@@ -126,7 +126,7 @@ public class LibraryManager {
                         URI uriPath = repo.resolve(jarRelativeName).normalize();
                         file = uriPath.toURL();
                         HttpURLConnection connection = (HttpURLConnection) file.openConnection();
-                        connection.setRequestMethod ("GET");
+                        connection.setRequestMethod("GET");
                         connection.connect();
                         if (connection.getResponseCode() >= 200 || connection.getResponseCode() <= 399) {
                             try (DigestInputStream in = new DigestInputStream(countableInputStream =
@@ -165,7 +165,7 @@ public class LibraryManager {
             if (identifiers.length != 3) {
                 throw new IllegalArgumentException("Invalid identifier " + neededLibrary);
             }
-            final String jarRelativeName = String.format("./%1$s/%2$s/%3$s/%2$s-%3$s.jar", identifiers[0].replace('.','/'),
+            final String jarRelativeName = String.format("./%1$s/%2$s/%3$s/%2$s-%3$s.jar", identifiers[0].replace('.', '/'),
                     identifiers[1], identifiers[2]);
             final Path jarFile = libraryRoot.resolve(jarRelativeName).normalize().toAbsolutePath();
             final Path checksumFie = libraryRoot.resolve(jarRelativeName + ".md5").normalize().toAbsolutePath();
@@ -228,8 +228,7 @@ public class LibraryManager {
         public double getPercentage() {
             if (size > 1) {
                 return ((readCount * 100.0) / size);
-            }
-            else {
+            } else {
                 return 0;
             }
         }

@@ -89,7 +89,6 @@ public class ModInventoryWrapper extends CraftInventory {
         @Override
         public void closeInventory() {
             inventory.closeInventory();
-
         }
 
         @Override

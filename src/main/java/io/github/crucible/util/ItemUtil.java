@@ -28,11 +28,11 @@ public class ItemUtil {
         }
         CraftItemStack craftItemStack = (CraftItemStack) itemStack;
         try {
-            NBTTagCompound nbtTagCompound = (NBTTagCompound) Crucible_JsonToNBT.getTagFromJson(nbt); //equivalent  MojangsonParser.parse()
+            NBTTagCompound nbtTagCompound = Crucible_JsonToNBT.getTagFromJson(nbt); //equivalent  MojangsonParser.parse()
             craftItemStack.getHandle().setTagCompound(nbtTagCompound);
             return craftItemStack;
         } catch (NBTException e) {
-            FMLLog.info("[Crucible-ItemStackSerializer] Failed to load NBT for " + itemStack.toString() + " and NBT[" + nbt + "]");
+            FMLLog.info("[Crucible-ItemStackSerializer] Failed to load NBT for " + itemStack + " and NBT[" + nbt + "]");
             e.printStackTrace();
         }
         return null;

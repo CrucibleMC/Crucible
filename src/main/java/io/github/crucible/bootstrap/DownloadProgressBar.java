@@ -1,14 +1,12 @@
 package io.github.crucible.bootstrap;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DownloadProgressBar extends Thread {
     //TODO: figure out other terminal names that supports the necessary escape codes we use
-    private static final String[] TERMS = new String[] {
+    private static final String[] TERMS = new String[]{
             "xterm",
     };
     private static final boolean FANCY_PROGRESS;
@@ -106,6 +104,6 @@ public class DownloadProgressBar extends Thread {
         String terminal = System.getenv("TERM") == null ? "" : System.getenv("TERM");
         // TODO: Finish fancy progress and add proper terminal support
         FANCY_PROGRESS = false; //System.console() != null &&
-                //Arrays.stream(TERMS).anyMatch( s -> terminal.toLowerCase(Locale.ROOT).contains(s));
+        //Arrays.stream(TERMS).anyMatch( s -> terminal.toLowerCase(Locale.ROOT).contains(s));
     }
 }

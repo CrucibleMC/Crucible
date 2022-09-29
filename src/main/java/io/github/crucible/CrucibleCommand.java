@@ -29,28 +29,26 @@ public class CrucibleCommand extends Command {
         super("crucible");
         serveReference = new WeakReference<>(server);
 
-        StringBuilder usage = new StringBuilder();
-        usage.append("&7&m-------------------&7[&bCrucible&7]&m-------------------\n");
-        usage.append("&b  >&e crucible tps &7-&a Show tps statistics.\n");
-        usage.append("&b  >&e crucible restart &7-&a Restart the server.\n");
-        usage.append("&b  >&e crucible info &7-&a Print some information about the server.\n");
-        usage.append("&b  >&e crucible chunks &7-&a Print some information about loaded chunks.\n");
-        usage.append("&b  >&e crucible heap &7-&a Dump the server heap.\n");
-        usage.append("&b  >&e crucible plugins &7-&a Shows all your loaded plugins and mod plugins.\n");
-        usage.append("&b  >&e crucible mods &7-&a Shows all your loaded mods.\n");
-        setUsage(ChatColor.translateAlternateColorCodes('&', usage.toString()));
+        String usage = "&7&m-------------------&7[&bCrucible&7]&m-------------------\n" +
+                "&b  >&e crucible tps &7-&a Show tps statistics.\n" +
+                "&b  >&e crucible restart &7-&a Restart the server.\n" +
+                "&b  >&e crucible info &7-&a Print some information about the server.\n" +
+                "&b  >&e crucible chunks &7-&a Print some information about loaded chunks.\n" +
+                "&b  >&e crucible heap &7-&a Dump the server heap.\n" +
+                "&b  >&e crucible plugins &7-&a Shows all your loaded plugins and mod plugins.\n" +
+                "&b  >&e crucible mods &7-&a Shows all your loaded mods.\n";
+        setUsage(ChatColor.translateAlternateColorCodes('&', usage));
         setPermission("crucible");
     }
 
     public static String generateInfo() {
-        StringBuilder info = new StringBuilder();
-        info.append("This server is running &3Crucible&r [").append(CrucibleModContainer.instance.getVersion()).append("] (Thermos fork by CrucibleMC Team).\n");
-        info.append("&9https://github.com/CrucibleMC/Crucible\n&r");
-        info.append("Bukkit API implemented: 1.7.9-R0.3-SNAPSHOT\n");
-        info.append("Plugins: ").append(Bukkit.getPluginManager().getPlugins().length).append("\n&r");
-        info.append("Mods: ").append(Loader.instance().getActiveModList().size())
-                .append(" &r| Loaded: ").append(Loader.instance().getModList().size()).append("\n&r");
-        return ChatColor.translateAlternateColorCodes('&' ,info.toString());
+        String info = "This server is running &3Crucible&r [" + CrucibleModContainer.instance.getVersion() + "] (Thermos fork by CrucibleMC Team).\n" +
+                "&9https://github.com/CrucibleMC/Crucible\n&r" +
+                "Bukkit API implemented: 1.7.9-R0.3-SNAPSHOT\n" +
+                "Plugins: " + Bukkit.getPluginManager().getPlugins().length + "\n&r" +
+                "Mods: " + Loader.instance().getActiveModList().size() +
+                " &r| Loaded: " + Loader.instance().getModList().size() + "\n&r";
+        return ChatColor.translateAlternateColorCodes('&', info);
     }
 
     private static String getPluginList() {
@@ -71,7 +69,7 @@ public class CrucibleCommand extends Command {
             pluginList.append(plugin.getDescription().getName()).append("@").append(plugin.getDescription().getVersion());
         }
 
-        return "(" + plugins.length + "): " + pluginList.toString();
+        return "(" + plugins.length + "): " + pluginList;
     }
 
     private static String getModList() {
@@ -88,7 +86,7 @@ public class CrucibleCommand extends Command {
             modList.append(ChatColor.GREEN).append(mod.getName()).append("@").append(mod.getVersion());
         }
 
-        return "(" + mods.size() + "): " + modList.toString();
+        return "(" + mods.size() + "): " + modList;
     }
 
     private static String getTps() {
@@ -142,7 +140,7 @@ public class CrucibleCommand extends Command {
      * Based on ForgeCommand
      */
     private static long mean(long[] values) {
-        long sum = 0l;
+        long sum = 0L;
         for (long v : values) {
             sum += v;
         }

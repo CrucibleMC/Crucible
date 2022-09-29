@@ -15,10 +15,6 @@ buildscript {
     }
 }
 
-//task wrapper(type: Wrapper) {
-//    gradleVersion = '2.8'
-//}
-
 apply plugin: 'maven'
 apply plugin: 'cauldron'
 apply plugin: 'maven-publish'
@@ -84,7 +80,7 @@ ext.mcVersion = "1.7.10"
 ext.forgeVersion = "1614"
 ext.revision = "1.0.7"
 ext.crucibleVersion = "5.4"
-if (gitInfo('branch') == "dev") {
+if (gitInfo('branch') != "master") {
     version = "${mcVersion}-${gitInfo('branch')}-${gitInfo('hash')}"
     ext.crucibleVersion = "${gitInfo('branch')}-${gitInfo('hash')}"
 } else {
