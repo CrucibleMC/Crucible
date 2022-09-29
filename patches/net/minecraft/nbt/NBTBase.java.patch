@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTBase.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTBase.java
+@@ -4,7 +4,7 @@
+ import java.io.DataOutput;
+ import java.io.IOException;
+ 
+-public abstract class NBTBase
++public abstract class NBTBase implements io.github.crucible.util.ICrucibleString
+ {
+     public static final String[] NBTTypes = new String[] {"END", "BYTE", "SHORT", "INT", "LONG", "FLOAT", "DOUBLE", "BYTE[]", "STRING", "LIST", "COMPOUND", "INT[]"};
+     private static final String __OBFID = "CL_00001229";

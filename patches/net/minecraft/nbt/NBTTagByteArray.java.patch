@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagByteArray.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagByteArray.java
+@@ -63,4 +63,23 @@
+     {
+         return this.byteArray;
+     }
++
++
++    @Override
++    public String crucible_toString()
++    {
++        StringBuilder sb = new StringBuilder("[B;");
++
++        for (int i = 0; i < this.byteArray.length; i++)
++        {
++            if (i != 0)
++            {
++                sb.append(',');
++            }
++
++            sb.append(this.byteArray[i]).append('B');
++        }
++
++        return sb.append(']').toString();
++    }
+ }

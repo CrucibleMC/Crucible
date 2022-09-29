@@ -1,6 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagCompound.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
-@@ -17,9 +17,22 @@
+@@ -3,11 +3,10 @@
+ import java.io.DataInput;
+ import java.io.DataOutput;
+ import java.io.IOException;
+-import java.util.HashMap;
+-import java.util.Iterator;
+-import java.util.Map;
+-import java.util.Set;
++import java.util.*;
+ import java.util.concurrent.Callable;
++import java.util.regex.Pattern;
++
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.util.ReportedException;
+@@ -17,9 +16,22 @@
  public class NBTTagCompound extends NBTBase
  {
      private static final Logger logger = LogManager.getLogger();
@@ -24,7 +39,7 @@
      void write(DataOutput p_74734_1_) throws IOException
      {
          Iterator iterator = this.tagMap.keySet().iterator();
-@@ -336,15 +349,12 @@
+@@ -336,15 +348,12 @@
  
      public NBTBase copy()
      {
@@ -45,7 +60,7 @@
          return nbttagcompound;
      }
  
-@@ -407,4 +417,31 @@
+@@ -407,4 +416,72 @@
              throw new ReportedException(crashreport);
          }
      }
@@ -75,5 +90,46 @@
 +                this.setTag(key, otherValue.copy());
 +            }
 +        }
++    }
++
++    @Override
++    public String crucible_toString()
++    {
++        StringBuilder sb = new StringBuilder("{");
++        Collection<String> keys = this.tagMap.keySet();
++        for (String key : keys)
++        {
++            if (sb.length() != 1)
++            {
++                sb.append(',');
++            }
++
++            sb.append(handleString(key)).append(':').append((this.tagMap.get(key)).crucible_toString());
++        }
++        return sb.append('}').toString();
++    }
++
++    private static final Pattern ALLOWED_CHARS = Pattern.compile("[A-Za-z0-9._+-]+");
++    protected static String handleString(String value)
++    {
++        return ALLOWED_CHARS.matcher(value).matches() ? value : scapeString(value);
++    }
++
++    public static String scapeString(String value)
++    {
++        StringBuilder sb = new StringBuilder("\"");
++
++        for (int i = 0; i < value.length(); ++i)
++        {
++            char charAt = value.charAt(i);
++
++            if (charAt == '\\' || charAt == '"')
++            {
++                sb.append('\\');
++            }
++
++            sb.append(charAt);
++        }
++        return sb.append('"').toString();
 +    }
  }
