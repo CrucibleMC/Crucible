@@ -3,14 +3,16 @@ name: Dev Build
 on:
   push:
     branches: 
-      - dev
+      - staging
 
 jobs:
   build:
-    runs-on: macos-10.15
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Set up JDK 8
       uses: actions/setup-java@v2
       with:
@@ -31,9 +33,9 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: dev-${{ github.sha }}
+        tag_name: staging-${{ github.sha }}
         prerelease: true
-        name: Dev build ${{ github.sha }}
+        name: Build staging-${{ github.sha }}
+        body: This is an automatic build targeting the commit ${{ github.sha }}
         files: |
-          build/distributions/libraries.zip
           build/distributions/*-server.jar
