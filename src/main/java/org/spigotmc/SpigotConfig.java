@@ -41,6 +41,7 @@ public class SpigotConfig {
     public static String outdatedServerMessage = "Outdated server! I'm still on {}";
     public static int timeoutTime = 90; // Cauldron - raise to 90
     public static boolean restartOnCrash = true;
+    public static boolean restartCommand = false;
     public static String restartScript = "./start.sh";
     public static String restartMessage;
     public static boolean bungee;
@@ -174,9 +175,10 @@ public class SpigotConfig {
     private static void watchdog() {
         timeoutTime = getInt("settings.timeout-time", timeoutTime);
         restartOnCrash = getBoolean("settings.restart-on-crash", restartOnCrash);
+        restartCommand = getBoolean("settings.restart-command", restartCommand);
         restartScript = getString("settings.restart-script", restartScript);
         restartMessage = transform(getString("messages.restart", "Server is restarting"));
-        commands.put("restart", new RestartCommand("restart"));
+        if(restartCommand) commands.put("restart", new RestartCommand("restart"));
         WatchdogThread.doStart(timeoutTime, restartOnCrash);
     }
 
