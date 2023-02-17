@@ -94,7 +94,7 @@ configurations {
 
 dependencies {
     bootstrap 'pw.prok:KBootstrap:0.2.+'
-    libraries 'io.github.cruciblemc:launchwrapper:1.13@jar'
+    libraries 'io.github.cruciblemc:launchwrapper:1.14@jar'
     libraries 'org.ow2.asm:asm-all:5.0.3'
     libraries 'com.typesafe.akka:akka-actor_2.11:2.3.3'
     libraries 'com.typesafe:config:1.2.1'
