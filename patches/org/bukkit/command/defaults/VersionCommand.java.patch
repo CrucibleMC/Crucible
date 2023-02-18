@@ -1,11 +1,13 @@
 --- ../src-base/minecraft/org/bukkit/command/defaults/VersionCommand.java
 +++ ../src-work/minecraft/org/bukkit/command/defaults/VersionCommand.java
-@@ -29,43 +29,19 @@
+@@ -29,43 +29,21 @@
          if (!testPermission(sender)) return true;
  
          if (args.length == 0) {
 -            sender.sendMessage("This server is running " + Bukkit.getName() + " version " + Bukkit.getVersion() + " (Implementing API version " + Bukkit.getBukkitVersion() + ")");
-+            sender.sendMessage("This server is running Thermos | https://github.com/CyberdyneCC/Thermos | " + Bukkit.getBukkitVersion() + " | " + Bukkit.getVersion());
++            sender.sendMessage(String.format(
++                    "This server is running Crucible | https://github.com/CrucibleMC/Crucible | %s | %s",
++                    Bukkit.getBukkitVersion(), Bukkit.getVersion()));
          } else {
 -            StringBuilder name = new StringBuilder();
  
@@ -49,7 +51,7 @@
          PluginDescriptionFile desc = plugin.getDescription();
          sender.sendMessage(ChatColor.GREEN + desc.getName() + ChatColor.WHITE + " version " + ChatColor.GREEN + desc.getVersion());
  
-@@ -84,12 +60,12 @@
+@@ -84,12 +62,12 @@
                  sender.sendMessage("Authors: " + getAuthors(desc));
              }
          }
@@ -65,7 +67,7 @@
          for (int i = 0; i < authors.size(); i++) {
              if (result.length() > 0) {
                  result.append(ChatColor.WHITE);
-@@ -105,7 +81,7 @@
+@@ -105,7 +83,7 @@
              result.append(authors.get(i));
          }
  
@@ -74,7 +76,7 @@
      }
  
      @Override
-@@ -113,9 +89,10 @@
+@@ -113,9 +91,10 @@
          Validate.notNull(sender, "Sender cannot be null");
          Validate.notNull(args, "Arguments cannot be null");
          Validate.notNull(alias, "Alias cannot be null");
@@ -87,7 +89,7 @@
              String toComplete = args[0].toLowerCase();
              for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
                  if (StringUtil.startsWithIgnoreCase(plugin.getName(), toComplete)) {
-@@ -124,6 +101,6 @@
+@@ -124,6 +103,6 @@
              }
              return completions;
          }
