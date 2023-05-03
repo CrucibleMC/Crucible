@@ -5,10 +5,10 @@
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
         </Console>
         <Console name="SysOut" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
         </Console>
         <Queue name="TerminalConsole">
-            <PatternLayout pattern="[%d{HH:mm:ss} %level]: %msg%n"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n"/>
@@ -54,6 +54,7 @@
             <AppenderRef ref="File"/>
         </Logger>
         <Root level="all">
+            <AppenderRef ref="FmlSysOut" level="INFO" />
             <AppenderRef ref="TerminalConsole" level="INFO"/>
             <AppenderRef ref="File" level="INFO"/>
             <!-- Set FmlFile to TRACE/DEBUG if you require more logging -->

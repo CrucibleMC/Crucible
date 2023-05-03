@@ -149,6 +149,15 @@
      public PluginDescriptionFile getPluginDescription(File file) throws InvalidDescriptionException {
          Validate.notNull(file, "File cannot be null");
  
+@@ -178,7 +215,7 @@
+         return fileFilters.clone();
+     }
+ 
+-    Class<?> getClassByName(final String name) {
++    public Class<?> getClassByName(final String name) {
+         Class<?> cachedClass = classes.get(name);
+ 
+         if (cachedClass != null) {
 @@ -283,8 +320,9 @@
                  }
              }

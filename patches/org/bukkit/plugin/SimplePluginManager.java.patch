@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/org/bukkit/plugin/SimplePluginManager.java
 +++ ../src-work/minecraft/org/bukkit/plugin/SimplePluginManager.java
-@@ -132,7 +132,9 @@
+@@ -40,6 +40,7 @@
+ public final class SimplePluginManager implements PluginManager {
+     private final Server server;
+     private final Map<Pattern, PluginLoader> fileAssociations = new HashMap<Pattern, PluginLoader>();
++    private final Set<PluginLoader> loaders = new HashSet<>(); // Crucible - used to look up plugins by class name
+     private final List<Plugin> plugins = new ArrayList<Plugin>();
+     private final Map<String, Plugin> lookupNames = new HashMap<String, Plugin>();
+     private static File updateDirectory = null;
+@@ -86,6 +87,7 @@
+         }
+ 
+         Pattern[] patterns = instance.getPluginFileFilters();
++        loaders.add(instance); // Crucible
+ 
+         synchronized (this) {
+             for (Pattern pattern : patterns) {
+@@ -132,7 +134,9 @@
              try {
                  description = loader.getPluginDescription(file);
                  String name = description.getName();
@@ -11,7 +27,7 @@
                      server.getLogger().log(Level.SEVERE, "Could not load '" + file.getPath() + "' in folder '" + directory.getPath() + "': Restricted Name");
                      continue;
                  } else if (description.rawName.indexOf(' ') != -1) {
-@@ -188,6 +190,9 @@
+@@ -188,6 +192,9 @@
              }
          }
  
@@ -21,7 +37,7 @@
          while (!plugins.isEmpty()) {
              boolean missingDependency = true;
              Iterator<String> pluginIterator = plugins.keySet().iterator();
-@@ -555,7 +560,8 @@
+@@ -555,7 +562,8 @@
              throw new IllegalPluginAccessException("Plugin attempted to register " + event + " while not enabled");
          }
  
@@ -31,7 +47,7 @@
              getEventListeners(event).register(new TimedRegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
          } else {
              getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
-@@ -716,7 +722,7 @@
+@@ -716,7 +724,7 @@
      }
  
      public boolean useTimings() {
@@ -40,7 +56,7 @@
      }
  
      /**
-@@ -725,6 +731,19 @@
+@@ -725,6 +733,23 @@
       * @param use True if per event timing code should be used
       */
      public void useTimings(boolean use) {
@@ -57,6 +73,10 @@
 +            lookupNames.put(plugin.getDescription().getName(), plugin);
 +        }
 +        return plugin;
++    }
++
++    public Set<PluginLoader> getLoaders() {
++        return loaders;
 +    }
 +
 +    //Crucible end
