@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/cpw/mods/fml/relauncher/FMLRelaunchLog.java
++++ ../src-work/minecraft/cpw/mods/fml/relauncher/FMLRelaunchLog.java
+@@ -21,6 +21,7 @@
+ import org.apache.logging.log4j.ThreadContext;
+ 
+ import cpw.mods.fml.common.TracingPrintStream;
++import org.apache.logging.log4j.spi.LoggerContext;
+ 
+ public class FMLRelaunchLog {
+ 
+@@ -34,6 +35,7 @@
+     private static boolean configured;
+ 
+     private Logger myLog;
++    public LoggerContext ctx; // Crucible - Used to go nuclear down the line when merging bukkit and forge loggers
+ 
+     static Side side;
+ 
+@@ -47,6 +49,7 @@
+     private static void configureLogging()
+     {
+         log.myLog = LogManager.getLogger("FML");
++        log.ctx = LogManager.getContext(false); // Crucible - capture the context
+         ThreadContext.put("side", side.name().toLowerCase(Locale.ENGLISH));
+         configured = true;
+         

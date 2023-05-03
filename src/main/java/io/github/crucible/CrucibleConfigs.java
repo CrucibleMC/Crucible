@@ -146,6 +146,10 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Log Material injections.")
     public boolean crucible_logging_logMaterialInjection = false;
 
+    @Comments({"Log the plugin/caller as prefix on System.out usages, no more mysterious console usages.",
+            "Be warned that looking up the caller can have a noticeable performance impact."})
+    public boolean crucible_logging_logStdOutCaller = false;
+
     @Comment("List of world names where the usage of modded itens and blocks will be disabled for ")
     public List<String> crucible_protectedWorld = Collections.singletonList("spawn");
 

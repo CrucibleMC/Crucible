@@ -5,6 +5,7 @@ import io.github.crucible.CrucibleMetadata;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +23,8 @@ public class CrucibleServerMainHook {
             "https://repo.maven.apache.org/maven2/"
     };
     private static final Path LIBRARY_ROOT = Paths.get("libraries").toAbsolutePath();
+    public static final PrintStream originalOut = System.out;
+    public static final PrintStream originalErr = System.err;
 
     public static void relaunchMain(String[] args) throws Exception {
         System.out.println("[Crucible] Running pre-launch tweaks");
@@ -78,5 +81,10 @@ public class CrucibleServerMainHook {
 
         LibraryManager.downloadMavenLibraries(LIBRARY_ROOT, Stream.of(REPOS, userDefinedRepos).flatMap(Stream::of)
                 .filter(s -> !s.isEmpty()).toArray(String[]::new), CrucibleMetadata.NEEDED_LIBRARIES);
+    }
+
+    public static void restoreStreams() {
+        System.setOut(originalOut);
+        System.setErr(originalErr);
     }
 }
