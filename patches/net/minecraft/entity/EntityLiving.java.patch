@@ -58,7 +58,7 @@
                  }
              }
 +            // Cauldron start - Force despawn of entity if a player isn't near
-+            else if (this.worldObj.cauldronConfig.entityDespawnImmediate && this.canDespawn())
++            else if (this.worldObj.cauldronConfig != null && this.worldObj.cauldronConfig.entityDespawnImmediate && this.canDespawn())
 +            {
 +                this.despawn("No Player : Immediate");
 +            }
