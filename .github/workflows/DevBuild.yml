@@ -26,7 +26,7 @@ jobs:
       run: ./gradlew --version 
       
     - name: Create distribution
-      run: ./gradlew jar
+      run: ./gradlew buildPackages
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}

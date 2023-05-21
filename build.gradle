@@ -1,5 +1,7 @@
 buildscript {
     repositories {
+        mavenCentral()
+        //mavenLocal() // for testing plugin pre release
         maven {
             name = "juanmuscaria"
             url = "https://github.com/juanmuscaria/maven/raw/master"
@@ -10,16 +12,16 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-1.5.6-SNAPSHOT'
-        //classpath files('ForgeGradle-1.2-1.5.5-SNAPSHOT.jar')
+        classpath 'com.anatawa12.forge:ForgeGradle:1.2-1.1.0'
+        classpath 'io.github.cruciblemc:CrucibleGradle:1.0-SNAPSHOT'
     }
 }
 
-apply plugin: 'maven'
-apply plugin: 'cauldron'
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
+// Base lifecycle tasks are provided by this plugin
 apply plugin: 'base'
+
+// Crucible tasks and subproject management is provided by this plugin
+apply plugin: 'crucible'
 
 repositories {
     maven {
@@ -27,7 +29,7 @@ repositories {
         url = "https://github.com/juanmuscaria/maven/raw/master"
     }
     maven {
-        name 'prok'
+        name 'thermos'
         url 'https://github.com/juanmuscaria/maven/raw/master/ThermosLibs'
     }
     maven {
@@ -46,61 +48,37 @@ minecraft {
     mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
     tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
     installerVersion = "1.4"
-    srgExtra "PK: org/bukkit/craftbukkit org/bukkit/craftbukkit/v1_7_R4"
+    srgExtra "PK: org/bukkit/craftbukkit org/bukkit/craftbukkit/v1_7_R4" // TODO: Perhaps rename the packages itself
+
+    // Repos used on the generated subprojects
+    repos = [
+            'https://github.com/juanmuscaria/maven/raw/master/ThermosLibs',
+            'https://github.com/juanmuscaria/maven/raw/master',
+            'https://maven.minecraftforge.net/',
+            'https://oss.sonatype.org/content/repositories/snapshots/',
+            'https://libraries.minecraft.net/'
+    ]
 }
 
-group = 'cruciblemc'
+group = 'io.github.cruciblemc'
 
-ext.buildInfoCached = null;
-
-ext.gitInfoCached = null;
-
-def gitInfo(String key) {
-    if (!gitInfoCached) {
-        if (file('.git').exists()) {
-            gitInfoCached = [
-                    hash    : ['git', 'log', "--format=%h", '-n', '1'].execute().text.trim(),
-                    fullHash: ['git', 'log', "--format=%H", '-n', '1'].execute().text.trim(),
-                    branch  : System.getenv("CI_BUILD_REF_NAME") ?: ['git', 'symbolic-ref', '--short', 'HEAD'].execute().text.trim(),
-                    message : ['git', 'log', "--format=%B", '-n', '1'].execute().text.trim()
-            ]
-        } else {
-            gitInfoCached = [
-                    hash    : 'NOT_A_GIT',
-                    fullHash: 'NOT_A_GIT',
-                    branch  : 'NOT_A_GIT',
-                    message : 'NOT_A_GIT'
-            ]
-        }
-    }
-    return key ? gitInfoCached[key] : gitInfoCached;
-}
-
+ext.buildInfoCached = null
+ext.gitInfoCached = null
 ext.mcVersion = "1.7.10"
 ext.forgeVersion = "1614"
 ext.revision = "1.0.7"
-ext.crucibleVersion = "5.4"
+var crucibleVersion = "5.4" // TODO: Not hardcode the version.
 if (gitInfo('branch') != "master") {
     version = "${mcVersion}-${gitInfo('branch')}-${gitInfo('hash')}"
-    ext.crucibleVersion = "${gitInfo('branch')}-${gitInfo('hash')}"
 } else {
     version = "${mcVersion}-${crucibleVersion}"
 }
-System.setProperty("file.encoding", "UTF-8")
-
-launch4j {
-    jreMinVersion = '1.8.0'
-}
 
 configurations {
-    compile.extendsFrom exported
     libraries
-    bootstrap
 }
 
 dependencies {
-    bootstrap 'pw.prok:KBootstrap:0.2.+'
-    libraries 'pw.prok:KBootstrap:0.3.2@jar'
     libraries 'pw.prok:Damask:0.1.2@jar'
     libraries 'commons-cli:commons-cli:1.3@jar'
     libraries 'org.slf4j:slf4j-simple:1.6.2@jar'
@@ -143,25 +121,56 @@ dependencies {
     libraries 'it.unimi.dsi:fastutil:8.2.2'
 }
 
-packageUniversal {
-    from {
-        configurations.exported.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
+packageServer {
+    manifest {
+        attributes([
+                'Thermos-Git-Branch'    : gitInfo('branch'),
+                'Thermos-Git-Hash'      : gitInfo('fullHash'),
+                'Thermos-Group'         : project.group,
+                'Thermos-Channel'       : project.name,
+                'Thermos-Version'       : project.version,
+                'Thermos-Legacy'        : true,
+                'Implementation-Vendor' : 'CrucibleMC Team',
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': project.version,
+                'Specification-Vendor'  : 'Bukkit Team',
+                'Specification-Title'   : 'Bukkit',
+                'Specification-Version' : '1.7.10-R0.1-SNAPSHOT',
+                'Forge-Version'         : '10.13.4.1614',
+                'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
+                'Main-Class'            : 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
+                'Class-Path'            : generateClasspath(),
+                'Crucible-Libs'         : generateMavenLibs()
+        ])
     }
 }
 
-def String repeat(String string, int times) {
-    StringBuilder builder = new StringBuilder(string.length() * times)
-    times.times { builder.append(string) }
-    builder as String
+def gitInfo(String key) {
+    if (!gitInfoCached) {
+        if (file('.git').exists()) {
+            gitInfoCached = [
+                    hash    : ['git', 'log', "--format=%h", '-n', '1'].execute().text.trim(),
+                    fullHash: ['git', 'log', "--format=%H", '-n', '1'].execute().text.trim(),
+                    branch  : ['git', 'symbolic-ref', '--short', 'HEAD'].execute().text.trim(),
+                    message : ['git', 'log', "--format=%B", '-n', '1'].execute().text.trim()
+            ]
+        } else {
+            gitInfoCached = [
+                    hash    : 'NOT_A_GIT',
+                    fullHash: 'NOT_A_GIT',
+                    branch  : 'NOT_A_GIT',
+                    message : 'NOT_A_GIT'
+            ]
+        }
+    }
+    return key ? gitInfoCached[key] : gitInfoCached
 }
 
-def generateClasspath(boolean legacy = false) {
+def generateClasspath() {
     def classpath = ''
     configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each {
         def jar = "${it.group.replace('.', '/')}/${it.name}/${it.version}/${it.name}-${it.version}.jar"
-        classpath += " ${legacy ? 'libraries/' : repeat('../', (group as String).split('\\.').length + 2)}${jar}"
+        classpath += " ${'libraries/'}${jar}"
     }
     return classpath.trim()
 }
@@ -172,123 +181,4 @@ def generateMavenLibs() {
         libs += " ${it.group}:${it.name}:${it.version}"
     }
     return libs.trim()
-}
-
-def generateManifest(boolean legacy = false) {
-    [
-            'Thermos-Git-Branch'    : gitInfo('branch'),
-            'Thermos-Git-Hash'      : gitInfo('fullHash'),
-            'Thermos-Group'         : project.group,
-            'Thermos-Channel'       : project.name,
-            'Thermos-Version'       : project.version,
-            'Thermos-Legacy'        : legacy,
-            'Implementation-Vendor' : 'CrucibleMC Team',
-            'Implementation-Title'  : project.name,
-            'Implementation-Version': project.version,
-            'Specification-Vendor'  : 'Bukkit Team',
-            'Specification-Title'   : 'Bukkit',
-            'Specification-Version' : '1.7.10-R0.1-SNAPSHOT',
-            'Forge-Version'         : '10.13.4.1614',
-            'TweakClass'            : 'cpw.mods.fml.common.launcher.FMLTweaker',
-            'Main-Class'            : 'cpw.mods.fml.relauncher.ServerLaunchWrapper',
-            'Class-Path'            : generateClasspath(legacy),
-            'Crucible-Libs'          : generateMavenLibs()
-    ]
-}
-
-tasks.packageUniversal {
-    classifier = 'server'
-    setManifest {}
-    manifest.attributes(generateManifest(true))
-}
-
-task copyLibraries(type: Copy) {
-    outputs.upToDateWhen { false }
-    into(buildDir)
-    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect {
-        def moduleVersion = it.moduleVersion
-        from (it.file) {
-            into ("libraries/${moduleVersion.id.group.replace('.', '/')}/${moduleVersion.id.name}/${moduleVersion.id.version}/")
-        }
-    }
-}
-
-task packageLibraries(type: Zip, dependsOn: copyLibraries) {
-    outputs.upToDateWhen { false }
-    setArchiveName("libraries.zip")
-    setDestinationDir(file("$buildDir/distributions"))
-    from("$buildDir/libraries")
-}
-
-task jar(type: Jar, dependsOn: [packageUniversal, packageLibraries]) {
-    destinationDir file("${buildDir}/distributions")
-    from zipTree(tasks.packageUniversal.archivePath)
-    manifest.attributes(generateManifest())
-}
-
-tasks.packageInstaller.onlyIf { false }
-
-tasks.getByName("generateProjectCauldron") {
-    doLast {
-        def file = new File('eclipse/cauldron/build.gradle')
-        writeToBuildFile(file)
-    }
-}
-tasks.getByName("generateProjectClean") {
-    doLast {
-        def file = new File('eclipse/Clean/build.gradle')
-        writeToBuildFile(file)
-    }
-}
-
-def writeToBuildFile(file) {
-    file.append('''
-repositories {
-    clear()
-     maven {
-            name = "juanmuscaria"
-            url = "https://github.com/juanmuscaria/maven/raw/master"
-        }
-    maven {
-        name "prok"
-        url "https://github.com/juanmuscaria/maven/raw/master/ThermosLibs"
-    }
-    maven {
-        name 'forge'
-        url 'https://maven.minecraftforge.net/'
-    }
-    maven {
-        name 'minecraft'
-        url 'https://libraries.minecraft.net/'
-    }
-}
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-dependencies {
-''')
-    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect { it.moduleVersion.id }.each { module ->
-        if (['net.minecraft:server:', 'org.ow2.asm:asm-all'].findAll { (module as String).startsWith it }.size() > 0) {
-            return
-        }
-        file.append("    compile '${module}'\n")
-    }
-    file.append('}')
-}
-
-task resolveAllDependencies {
-    doLast {
-        configurations.each { it.resolve() }
-    }
-}
-
-task copyLibs( type: Copy ) {
-    into "$buildDir/libs/lib"
-    from configurations.libraries
-}
-
-subprojects {
-    apply plugin: 'java'
-    repositories {
-        mavenCentral()
-    }
 }
