@@ -1,0 +1,30 @@
+name: Verify project build
+
+on:
+  pull_request:
+    branches:
+      - staging
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
+      - name: Show debug info
+        run: ./gradlew --version
+
+      - name: Setup Crucible
+        run: ./gradlew cleanCache clean setupCrucible --refresh-dependencies
+
+      - name: Build Crucible distribution packages
+        run: ./gradlew buildPackages
