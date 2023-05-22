@@ -143,6 +143,26 @@ packageServer {
                 'Crucible-Libs'         : generateMavenLibs()
         ])
     }
+    dependsOn("packageLibraries")
+}
+
+// TODO: Move this into the gradle plugin, generate md5 as well
+tasks.register('packageLibraries', Zip) {
+    archiveFileName = 'libraries.zip'
+    destinationDirectory = file("$buildDir/distributions")
+    outputs.upToDateWhen {
+        false // TODO: Not 100% sure how to make this task re-run when libraries are changed...
+    }
+
+    configurations.libraries.resolvedConfiguration.resolvedArtifacts.collect {
+        def moduleVersion = it.moduleVersion
+        from (it.file) {
+            into ("${moduleVersion.id.group.replace('.', '/')}/${moduleVersion.id.name}/${moduleVersion.id.version}/")
+        }
+    }
+
+    group('crucible')
+    description("Package all necessary libraries to run Crucible, in case the server is unable to download them at runtime")
 }
 
 def gitInfo(String key) {
