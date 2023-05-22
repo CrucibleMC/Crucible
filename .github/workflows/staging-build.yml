@@ -41,8 +41,8 @@ jobs:
         tag_name: staging-${{ steps.short_sha.outputs.sha }}
         prerelease: true
         name: Staging branch build ${{ steps.short_sha.outputs.sha }}
-        body:
-          - This is an automatic pre-release build of commit ${{ github.sha }}
-          - With this release you can test ahead of time the next Crucible release candidate
+        body: |
+          This is an automatic pre-release build of commit ${{ github.sha }}
+          With this release you can test ahead of time the next Crucible release candidate
         files: |
           build/distributions/*
