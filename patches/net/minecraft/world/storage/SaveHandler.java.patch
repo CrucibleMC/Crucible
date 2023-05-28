@@ -7,7 +7,7 @@
 +// CraftBukkit start
 +import java.util.UUID;
 +
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 +// CraftBukkit end
 +import cpw.mods.fml.common.registry.GameData; // Cauldron
 +

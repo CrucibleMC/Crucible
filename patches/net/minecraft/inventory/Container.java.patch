@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -2,36 +2,94 @@
+@@ -2,36 +2,95 @@
  
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
@@ -24,8 +24,9 @@
 +
 +import net.minecraft.entity.player.EntityPlayerMP;
 +
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 +import org.bukkit.event.Event.Result;
 +import org.bukkit.event.inventory.InventoryDragEvent;
 +import org.bukkit.inventory.InventoryView;
@@ -54,7 +55,7 @@
 +    // CraftBukkit start
 +    public boolean checkReachable = true;
 +    public InventoryView getBukkitView() { return bukkitView; } // Cauldron
-+    public void transferTo(Container other, org.bukkit.craftbukkit.entity.CraftHumanEntity player)
++    public void transferTo(Container other, CraftHumanEntity player)
 +    {
 +        InventoryView source = this.getBukkitView(), destination = other.getBukkitView();
 +        // Cauldron start - add null checks to skip modded inventories with no Bukkit wrappers, and
@@ -98,7 +99,7 @@
          return p_75146_1_;
      }
  
-@@ -39,7 +97,11 @@
+@@ -39,7 +98,11 @@
      {
          if (this.crafters.contains(p_75132_1_))
          {
@@ -111,7 +112,7 @@
          }
          else
          {
-@@ -51,7 +113,7 @@
+@@ -51,7 +114,7 @@
  
      public List getInventory()
      {
@@ -120,7 +121,7 @@
  
          for (int i = 0; i < this.inventorySlots.size(); ++i)
          {
-@@ -71,10 +133,12 @@
+@@ -71,10 +134,12 @@
      {
          for (int i = 0; i < this.inventorySlots.size(); ++i)
          {
@@ -135,7 +136,7 @@
              {
                  itemstack1 = itemstack == null ? null : itemstack.copy();
                  this.inventoryItemStacks.set(i, itemstack1);
-@@ -85,6 +149,7 @@
+@@ -85,6 +150,7 @@
                  }
              }
          }
@@ -143,7 +144,7 @@
      }
  
      public boolean enchantItem(EntityPlayer p_75140_1_, int p_75140_2_)
-@@ -109,6 +174,10 @@
+@@ -109,6 +175,10 @@
  
      public Slot getSlot(int p_75139_1_)
      {
@@ -154,7 +155,7 @@
          return (Slot)this.inventorySlots.get(p_75139_1_);
      }
  
-@@ -168,6 +237,7 @@
+@@ -168,6 +238,7 @@
                      itemstack3 = inventoryplayer.getItemStack().copy();
                      i1 = inventoryplayer.getItemStack().stackSize;
                      Iterator iterator = this.field_94537_h.iterator();
@@ -162,7 +163,7 @@
  
                      while (iterator.hasNext())
                      {
-@@ -190,18 +260,55 @@
+@@ -190,18 +261,55 @@
                              }
  
                              i1 -= itemstack1.stackSize - j1;
@@ -223,7 +224,7 @@
                  }
  
                  this.func_94533_d();
-@@ -235,10 +342,17 @@
+@@ -235,10 +343,17 @@
  
                          if (p_75144_2_ == 1)
                          {
@@ -242,7 +243,7 @@
                                  inventoryplayer.setItemStack((ItemStack)null);
                              }
                          }
-@@ -730,4 +844,10 @@
+@@ -730,4 +845,10 @@
              return MathHelper.floor_float(f * 14.0F) + (i > 0 ? 1 : 0);
          }
      }

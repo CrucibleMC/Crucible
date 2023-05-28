@@ -3,7 +3,7 @@ package thermos.wrapper;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
-import org.bukkit.craftbukkit.util.LongHash;
+import org.bukkit.craftbukkit.v1_7_R4.util.LongHash;
 
 import java.util.concurrent.ConcurrentHashMap;
 

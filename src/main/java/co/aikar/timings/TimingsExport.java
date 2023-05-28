@@ -32,7 +32,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
-import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 import org.bukkit.entity.EntityType;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;

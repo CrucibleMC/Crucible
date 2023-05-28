@@ -3,7 +3,8 @@ package io.github.crucible.util;
 import io.github.crucible.CrucibleConfigs;
 import org.apache.logging.log4j.*;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.command.ColouredConsoleSender;
+import org.bukkit.craftbukkit.v1_7_R4.LoggerOutputStream;
+import org.bukkit.craftbukkit.v1_7_R4.command.ColouredConsoleSender;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.SimplePluginManager;
@@ -14,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Frankenstein's monster of {@link cpw.mods.fml.common.TracingPrintStream} and {@link org.bukkit.craftbukkit.LoggerOutputStream}
+ * Frankenstein's monster of {@link cpw.mods.fml.common.TracingPrintStream} and {@link LoggerOutputStream}
  */
 public class CrucibleTracingLoggerOutputStream extends ByteArrayOutputStream {
 

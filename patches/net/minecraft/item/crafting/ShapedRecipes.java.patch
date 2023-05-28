@@ -1,18 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
-@@ -5,6 +5,11 @@
+@@ -5,6 +5,12 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.inventory.CraftShapedRecipe;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftShapedRecipe;
++import org.bukkit.craftbukkit.v1_7_R4.util.CraftMagicNumbers;
 +// CraftBukkit end
 +
  public class ShapedRecipes implements IRecipe
  {
      public final int recipeWidth;
-@@ -22,6 +27,77 @@
+@@ -22,6 +28,77 @@
          this.recipeOutput = p_i1917_4_;
      }
  
@@ -77,7 +78,7 @@
 +        {
 +            if (stack != null)
 +            {
-+                recipe.setIngredient(c, org.bukkit.craftbukkit.util.CraftMagicNumbers.getMaterial(stack.getItem()), stack.getItemDamage());
++                recipe.setIngredient(c, CraftMagicNumbers.getMaterial(stack.getItem()), stack.getItemDamage());
 +            }
 +
 +            c++;

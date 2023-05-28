@@ -5,8 +5,8 @@
  import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.event.CommandEvent;
 +// Cauldron start
-+import org.bukkit.craftbukkit.command.CraftSimpleCommandMap;
-+import org.bukkit.craftbukkit.command.ModCustomCommand;
++import org.bukkit.craftbukkit.v1_7_R4.command.CraftSimpleCommandMap;
++import org.bukkit.craftbukkit.v1_7_R4.command.ModCustomCommand;
 +import cpw.mods.fml.common.FMLCommonHandler;
 +// Cauldron end
  

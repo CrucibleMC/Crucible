@@ -1,14 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -18,11 +18,53 @@
+@@ -18,11 +18,54 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
 +import net.minecraft.entity.item.EntityMinecartHopper;
 +import net.minecraft.inventory.InventoryLargeChest;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryDoubleChest;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.InventoryMoveItemEvent;
 +import org.bukkit.event.inventory.InventoryPickupItemEvent;
@@ -54,7 +55,7 @@
      private static final String __OBFID = "CL_00000359";
  
      public void readFromNBT(NBTTagCompound p_145839_1_)
-@@ -212,12 +254,18 @@
+@@ -212,12 +255,18 @@
  
                  if (flag)
                  {
@@ -74,7 +75,7 @@
              return false;
          }
          else
-@@ -285,18 +333,70 @@
+@@ -285,18 +334,70 @@
                      if (this.getStackInSlot(j) != null)
                      {
                          ItemStack itemstack = this.getStackInSlot(j).copy();
@@ -87,7 +88,7 @@
 +                        // Have to special case large chests as they work oddly
 +                        if (iinventory instanceof InventoryLargeChest)
 +                        {
-+                            destinationInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
++                            destinationInventory = new CraftInventoryDoubleChest((InventoryLargeChest) iinventory);
 +                        }
 +                        else
 +                        {
@@ -150,7 +151,7 @@
                  return false;
              }
          }
-@@ -427,11 +527,71 @@
+@@ -427,11 +528,71 @@
          if (itemstack != null && func_145890_b(p_145892_1_, itemstack, p_145892_2_, p_145892_3_))
          {
              ItemStack itemstack1 = itemstack.copy();
@@ -162,7 +163,7 @@
 +            // Have to special case large chests as they work oddly
 +            if (p_145892_1_ instanceof InventoryLargeChest)
 +            {
-+                sourceInventory = new org.bukkit.craftbukkit.inventory.CraftInventoryDoubleChest((InventoryLargeChest) p_145892_1_);
++                sourceInventory = new CraftInventoryDoubleChest((InventoryLargeChest) p_145892_1_);
 +            }
 +            else
 +            {
@@ -224,7 +225,7 @@
                  return true;
              }
  
-@@ -451,6 +611,20 @@
+@@ -451,6 +612,20 @@
          }
          else
          {

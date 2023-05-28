@@ -1,13 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityEnderPearl.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityEnderPearl.java
-@@ -12,6 +12,13 @@
+@@ -2,7 +2,6 @@
+ 
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+-import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.entity.projectile.EntityThrowable;
+@@ -12,6 +11,14 @@
  import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.event.entity.living.EnderTeleportEvent;
  
 +
 +// CraftBukkit start
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 +import org.bukkit.event.player.PlayerTeleportEvent;
 +// CraftBukkit end
 +
@@ -32,7 +41,7 @@
                      }
 +                    // Cauldron end
 +                    // CraftBukkit start
-+                    org.bukkit.craftbukkit.entity.CraftPlayer player = entityplayermp.getBukkitEntity();
++                    CraftPlayer player = entityplayermp.getBukkitEntity();
 +                    org.bukkit.Location location = getBukkitEntity().getLocation();
 +                    location.setPitch(player.getLocation().getPitch());
 +                    location.setYaw(player.getLocation().getYaw());

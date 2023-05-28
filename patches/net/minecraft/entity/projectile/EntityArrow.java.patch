@@ -10,13 +10,15 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.material.Material;
  import net.minecraft.enchantment.EnchantmentHelper;
-@@ -23,6 +25,14 @@
+@@ -23,6 +25,16 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
 +import net.minecraft.entity.item.EntityItem;
 +
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftItem;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.entity.LivingEntity;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -25,7 +27,7 @@
  public class EntityArrow extends Entity implements IProjectile
  {
      private int field_145791_d = -1;
-@@ -30,14 +40,14 @@
+@@ -30,14 +42,14 @@
      private int field_145789_f = -1;
      private Block field_145790_g;
      private int inData;
@@ -42,7 +44,7 @@
      private static final String __OBFID = "CL_00001715";
  
      public EntityArrow(World p_i1753_1_)
-@@ -61,6 +71,7 @@
+@@ -61,6 +73,7 @@
          super(p_i1755_1_);
          this.renderDistanceWeight = 10.0D;
          this.shootingEntity = p_i1755_2_;
@@ -50,7 +52,7 @@
  
          if (p_i1755_2_ instanceof EntityPlayer)
          {
-@@ -91,6 +102,7 @@
+@@ -91,6 +104,7 @@
          super(p_i1756_1_);
          this.renderDistanceWeight = 10.0D;
          this.shootingEntity = p_i1756_2_;
@@ -58,7 +60,7 @@
  
          if (p_i1756_2_ instanceof EntityPlayer)
          {
-@@ -199,7 +211,7 @@
+@@ -199,7 +213,7 @@
              {
                  ++this.ticksInGround;
  
@@ -67,7 +69,7 @@
                  {
                      this.setDead();
                  }
-@@ -246,7 +258,7 @@
+@@ -246,7 +260,7 @@
  
                      if (movingobjectposition1 != null)
                      {
@@ -76,16 +78,16 @@
  
                          if (d1 < d0 || d0 == 0.0D)
                          {
-@@ -277,6 +289,8 @@
+@@ -277,6 +291,8 @@
  
              if (movingobjectposition != null)
              {
-+                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // CraftBukkit - Call event
++                CraftEventFactory.callProjectileHitEvent(this); // CraftBukkit - Call event
 +
                  if (movingobjectposition.entityHit != null)
                  {
                      f2 = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ);
-@@ -298,13 +312,23 @@
+@@ -298,13 +314,23 @@
                          damagesource = DamageSource.causeArrowDamage(this, this.shootingEntity);
                      }
  
@@ -114,7 +116,7 @@
                          if (movingobjectposition.entityHit instanceof EntityLivingBase)
                          {
                              EntityLivingBase entitylivingbase = (EntityLivingBase)movingobjectposition.entityHit;
-@@ -487,6 +511,23 @@
+@@ -487,6 +513,23 @@
      {
          if (!this.worldObj.isRemote && this.inGround && this.arrowShake <= 0)
          {
@@ -124,7 +126,7 @@
 +            if (this.canBePickedUp == 1 && p_70100_1_.inventory.canHold(itemstack) > 0)
 +            {
 +                EntityItem item = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, itemstack);
-+                PlayerPickupItemEvent event = new PlayerPickupItemEvent((org.bukkit.entity.Player) p_70100_1_.getBukkitEntity(), new org.bukkit.craftbukkit.entity.CraftItem(this.worldObj.getServer(), this, item), 0);
++                PlayerPickupItemEvent event = new PlayerPickupItemEvent((org.bukkit.entity.Player) p_70100_1_.getBukkitEntity(), new CraftItem(this.worldObj.getServer(), this, item), 0);
 +                // event.setCancelled(!entityplayer.canPickUpLoot); TODO
 +                this.worldObj.getServer().getPluginManager().callEvent(event);
 +
@@ -138,7 +140,7 @@
              boolean flag = this.canBePickedUp == 1 || this.canBePickedUp == 2 && p_70100_1_.capabilities.isCreativeMode;
  
              if (this.canBePickedUp == 1 && !p_70100_1_.inventory.addItemStackToInventory(new ItemStack(Items.arrow, 1)))
-@@ -553,4 +594,18 @@
+@@ -553,4 +596,18 @@
          byte b0 = this.dataWatcher.getWatchableObjectByte(16);
          return (b0 & 1) != 0;
      }

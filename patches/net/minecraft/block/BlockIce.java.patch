@@ -1,11 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockIce.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockIce.java
-@@ -86,6 +86,14 @@
+@@ -15,6 +15,7 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ import net.minecraftforge.event.ForgeEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class BlockIce extends BlockBreakable
+ {
+@@ -86,6 +87,14 @@
      {
          if (p_149674_1_.getSavedLightValue(EnumSkyBlock.Block, p_149674_2_, p_149674_3_, p_149674_4_) > 11 - this.getLightOpacity())
          {
 +            // CraftBukkit start
-+            if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockFadeEvent(p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_), Blocks.water).isCancelled())
++            if (CraftEventFactory.callBlockFadeEvent(p_149674_1_.getWorld().getBlockAt(p_149674_2_, p_149674_3_, p_149674_4_), Blocks.water).isCancelled())
 +            {
 +                return;
 +            }

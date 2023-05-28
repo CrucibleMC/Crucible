@@ -6,7 +6,7 @@
  
 +// CraftBukkit start
 +import org.bukkit.event.entity.EntityInteractEvent;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +// CraftBukkit end
 +
  public class BlockFarmland extends Block

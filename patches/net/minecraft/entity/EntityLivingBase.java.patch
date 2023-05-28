@@ -7,7 +7,19 @@
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
  import java.util.Collection;
-@@ -50,14 +51,29 @@
+@@ -20,11 +21,9 @@
+ import net.minecraft.entity.item.EntityXPOrb;
+ import net.minecraft.entity.monster.EntityZombie;
+ import net.minecraft.entity.passive.EntityPig;
+-import net.minecraft.entity.passive.EntityWolf;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.entity.projectile.EntityArrow;
+-import net.minecraft.init.Blocks;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemArmor;
+ import net.minecraft.item.ItemStack;
+@@ -50,14 +49,30 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  import net.minecraftforge.common.ForgeHooks;
@@ -17,13 +29,14 @@
 +import net.minecraft.nbt.NBTTagInt;
 +import net.minecraft.network.play.server.S28PacketEffect;
 +
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.TrigMath;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 +import org.bukkit.event.entity.EntityDamageEvent;
 +import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
-+import org.bukkit.inventory.Inventory;
 +// CraftBukkit end
-+import org.bukkit.craftbukkit.inventory.CraftItemStack; // Cauldron
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack; // Cauldron
 +
 +import com.google.common.base.Function;
 +
@@ -39,7 +52,7 @@
      private final ItemStack[] previousEquipment = new ItemStack[5];
      public boolean isSwingInProgress;
      public int swingProgressInt;
-@@ -83,7 +99,7 @@
+@@ -83,7 +98,7 @@
      public float rotationYawHead;
      public float prevRotationYawHead;
      public float jumpMovementFactor = 0.02F;
@@ -48,7 +61,7 @@
      protected int recentlyHit;
      protected boolean dead;
      protected int entityAge;
-@@ -93,7 +109,7 @@
+@@ -93,7 +108,7 @@
      protected float field_70763_ax;
      protected float field_70741_aB;
      protected int scoreValue;
@@ -57,7 +70,7 @@
      protected boolean isJumping;
      public float moveStrafing;
      public float moveForward;
-@@ -104,21 +120,26 @@
+@@ -104,21 +119,26 @@
      protected double newPosZ;
      protected double newRotationYaw;
      protected double newRotationPitch;
@@ -87,7 +100,7 @@
          this.preventEntitySpawning = true;
          this.field_70770_ap = (float)(Math.random() + 1.0D) * 0.01F;
          this.setPosition(this.posX, this.posY, this.posZ);
-@@ -173,7 +194,18 @@
+@@ -173,7 +193,18 @@
              }
              else if (!this.worldObj.isRemote && this.fallDistance > 3.0F)
              {
@@ -107,7 +120,7 @@
              }
  
              block.onFallenUpon(this.worldObj, i, j, k, this, this.fallDistance);
-@@ -234,7 +266,12 @@
+@@ -234,7 +265,12 @@
          }
          else
          {
@@ -121,7 +134,7 @@
          }
  
          if (this.isEntityAlive() && this.isWet())
-@@ -299,6 +336,22 @@
+@@ -299,6 +335,22 @@
          this.worldObj.theProfiler.endSection();
      }
  
@@ -144,7 +157,7 @@
      public boolean isChild()
      {
          return false;
-@@ -308,22 +361,21 @@
+@@ -308,22 +360,21 @@
      {
          ++this.deathTime;
  
@@ -176,7 +189,7 @@
              this.setDead();
  
              for (i = 0; i < 20; ++i)
-@@ -485,6 +537,22 @@
+@@ -485,6 +536,22 @@
              }
          }
  
@@ -199,7 +212,7 @@
          if (p_70037_1_.hasKey("HealF", 99))
          {
              this.setHealth(p_70037_1_.getFloat("HealF"));
-@@ -614,12 +682,14 @@
+@@ -614,12 +681,14 @@
  
      public boolean isPotionActive(int p_82165_1_)
      {
@@ -216,7 +229,7 @@
      }
  
      public PotionEffect getActivePotionEffect(Potion p_70660_1_)
-@@ -710,25 +780,66 @@
+@@ -710,25 +779,66 @@
          }
      }
  
@@ -261,7 +274,7 @@
 +        // CraftBukkit start - Handle scaled health
 +        if (this instanceof EntityPlayerMP)
 +        {
-+            org.bukkit.craftbukkit.entity.CraftPlayer player = ((EntityPlayerMP) this).getBukkitEntity();
++            CraftPlayer player = ((EntityPlayerMP) this).getBukkitEntity();
 +
 +            // Squeeze
 +            if (p_70606_1_ < 0.0F)
@@ -284,7 +297,7 @@
          this.dataWatcher.updateObject(6, Float.valueOf(MathHelper.clamp_float(p_70606_1_, 0.0F, this.getMaxHealth())));
      }
  
-@@ -757,11 +868,12 @@
+@@ -757,11 +867,12 @@
              }
              else
              {
@@ -299,7 +312,7 @@
  
                  this.limbSwingAmount = 1.5F;
                  boolean flag = true;
-@@ -773,16 +885,27 @@
+@@ -773,16 +884,27 @@
                          return false;
                      }
  
@@ -330,7 +343,7 @@
                      this.hurtTime = this.maxHurtTime = 10;
                  }
  
-@@ -938,6 +1061,22 @@
+@@ -938,6 +1060,22 @@
  
              if (!ForgeHooks.onLivingDrops(this, p_70645_1_, capturedDrops, i, recentlyHit > 0, j))
              {
@@ -353,7 +366,7 @@
                  for (EntityItem item : capturedDrops)
                  {
                      worldObj.spawnEntityInWorld(item);
-@@ -1010,8 +1149,17 @@
+@@ -1010,8 +1148,17 @@
  
          if (i > 0)
          {
@@ -372,7 +385,7 @@
              int j = MathHelper.floor_double(this.posX);
              int k = MathHelper.floor_double(this.posY - 0.20000000298023224D - (double)this.yOffset);
              int l = MathHelper.floor_double(this.posZ);
-@@ -1065,7 +1213,7 @@
+@@ -1065,7 +1212,7 @@
          {
              int i = 25 - this.getTotalArmorValue();
              float f1 = p_70655_2_ * (float)i;
@@ -381,7 +394,7 @@
              p_70655_2_ = f1 / 25.0F;
          }
  
-@@ -1089,7 +1237,8 @@
+@@ -1089,7 +1236,8 @@
              int j;
              float f1;
  
@@ -391,7 +404,7 @@
              {
                  i = (this.getActivePotionEffect(Potion.resistance).getAmplifier() + 1) * 5;
                  j = 25 - i;
-@@ -1122,26 +1271,218 @@
+@@ -1122,26 +1270,218 @@
          }
      }
  
@@ -621,7 +634,7 @@
      }
  
      public CombatTracker func_110142_aN()
-@@ -1558,6 +1899,7 @@
+@@ -1558,6 +1898,7 @@
      public void onUpdate()
      {
          if (ForgeHooks.onLivingUpdate(this)) return;
@@ -629,7 +642,7 @@
          super.onUpdate();
  
          if (!this.worldObj.isRemote)
-@@ -1608,7 +1950,9 @@
+@@ -1608,7 +1949,9 @@
              }
          }
  
@@ -639,17 +652,17 @@
          double d0 = this.posX - this.prevPosX;
          double d1 = this.posZ - this.prevPosZ;
          float f = (float)(d0 * d0 + d1 * d1);
-@@ -1621,7 +1965,8 @@
+@@ -1621,7 +1964,8 @@
          {
              f3 = 1.0F;
              f2 = (float)Math.sqrt((double)f) * 3.0F;
 -            f1 = (float)Math.atan2(d1, d0) * 180.0F / (float)Math.PI - 90.0F;
 +            // CraftBukkit - Math -> TrigMath
-+            f1 = (float) org.bukkit.craftbukkit.TrigMath.atan2(d1, d0) * 180.0F / (float)Math.PI - 90.0F;
++            f1 = (float) TrigMath.atan2(d1, d0) * 180.0F / (float)Math.PI - 90.0F;
          }
  
          if (this.swingProgress > 0.0F)
-@@ -1682,6 +2027,7 @@
+@@ -1682,6 +2026,7 @@
  
          this.worldObj.theProfiler.endSection();
          this.field_70764_aw += f2;
@@ -657,7 +670,7 @@
      }
  
      protected float func_110146_f(float p_110146_1_, float p_110146_2_)
-@@ -1757,6 +2103,7 @@
+@@ -1757,6 +2102,7 @@
              this.motionZ = 0.0D;
          }
  
@@ -665,7 +678,7 @@
          this.worldObj.theProfiler.startSection("ai");
  
          if (this.isMovementBlocked())
-@@ -1783,6 +2130,7 @@
+@@ -1783,6 +2129,7 @@
              }
          }
  
@@ -673,7 +686,7 @@
          this.worldObj.theProfiler.endSection();
          this.worldObj.theProfiler.startSection("jump");
  
-@@ -1811,13 +2159,17 @@
+@@ -1811,13 +2158,17 @@
          this.moveStrafing *= 0.98F;
          this.moveForward *= 0.98F;
          this.randomYawVelocity *= 0.9F;
@@ -691,7 +704,7 @@
          }
  
          this.worldObj.theProfiler.endSection();
-@@ -1829,17 +2181,36 @@
+@@ -1829,17 +2180,36 @@
      {
          List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, this.boundingBox.expand(0.20000000298023224D, 0.0D, 0.20000000298023224D));
  

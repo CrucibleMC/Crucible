@@ -14,7 +14,7 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory; // CraftBukkit
 +
  public abstract class EntityFireball extends Entity
  {

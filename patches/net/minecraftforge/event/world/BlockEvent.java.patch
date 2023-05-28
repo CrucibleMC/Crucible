@@ -1,18 +1,27 @@
 --- ../src-base/minecraft/net/minecraftforge/event/world/BlockEvent.java
 +++ ../src-work/minecraft/net/minecraftforge/event/world/BlockEvent.java
-@@ -16,6 +16,11 @@
- import net.minecraftforge.common.ForgeHooks;
+@@ -8,14 +8,17 @@
+ import cpw.mods.fml.common.eventhandler.Cancelable;
+ import cpw.mods.fml.common.eventhandler.Event;
+ import net.minecraft.block.Block;
+-import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.player.EntityPlayer;
+-import net.minecraft.init.Blocks;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.world.World;
+-import net.minecraftforge.common.ForgeHooks;
  import net.minecraftforge.common.util.BlockSnapshot;
  
 +// Cauldron start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import net.minecraft.entity.player.EntityPlayerMP;
++import org.bukkit.craftbukkit.v1_7_R4.block.CraftBlockState;
 +// Cauldron end
 +
  public class BlockEvent extends Event {
      private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
  
-@@ -80,17 +85,18 @@
+@@ -80,17 +83,18 @@
              super(x, y, z, world, block, blockMetadata);
              this.player = player;
  
@@ -37,12 +46,12 @@
          }
  
          public EntityPlayer getPlayer()
-@@ -140,6 +146,16 @@
+@@ -140,6 +144,16 @@
              this.blockSnapshot = blockSnapshot;
              this.placedBlock = blockSnapshot.getCurrentBlock();
              this.placedAgainst = placedAgainst;
 +            // Cauldron start - handle event on bukkit side
-+            org.bukkit.craftbukkit.block.CraftBlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(super.world, super.x, super.y,
++            CraftBlockState blockstate = CraftBlockState.getBlockState(super.world, super.x, super.y,
 +                    super.z);
 +            org.bukkit.event.block.BlockPlaceEvent bukkitEvent = CraftEventFactory.callBlockPlaceEvent(super.world, player, blockstate, super.x, super.y,
 +                    super.z);

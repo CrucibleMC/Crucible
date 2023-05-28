@@ -1,7 +1,7 @@
 package net.minecraftforge.cauldron.inventory;
 
 import net.minecraft.item.crafting.IRecipe;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 

@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockReed.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockReed.java
-@@ -44,9 +44,9 @@
+@@ -14,6 +14,7 @@
+ import net.minecraftforge.common.EnumPlantType;
+ import net.minecraftforge.common.util.ForgeDirection;
+ import net.minecraftforge.common.IPlantable;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class BlockReed extends Block implements IPlantable
+ {
+@@ -44,9 +45,9 @@
                  {
                      int i1 = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
  
@@ -8,7 +16,7 @@
 +                    if (i1 >= (byte) range(3, (p_149674_1_.growthOdds / p_149674_1_.getSpigotConfig().caneModifier * 15) + 0.5F, 15))   // Spigot // Cauldron
                      {
 -                        p_149674_1_.setBlock(p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
-+                        org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this, 0); // CraftBukkit
++                        CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this, 0); // CraftBukkit
                          p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, 0, 4);
                      }
                      else

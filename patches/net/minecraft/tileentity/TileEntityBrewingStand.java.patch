@@ -6,7 +6,7 @@
  
 +// CraftBukkit start
 +import net.minecraft.server.MinecraftServer;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.event.inventory.BrewEvent;
 +// CraftBukkit end

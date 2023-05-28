@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntitySkeleton.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySkeleton.java
-@@ -36,6 +36,8 @@
+@@ -36,6 +36,9 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldProviderHell;
  
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityCombustEvent; // CraftBukkit
 +
  public class EntitySkeleton extends EntityMob implements IRangedAttackMob
  {
      private EntityAIArrowAttack aiArrowAttack = new EntityAIArrowAttack(this, 1.0D, 20, 60, 15.0F);
-@@ -148,7 +150,16 @@
+@@ -148,7 +151,16 @@
  
                  if (flag)
                  {
@@ -27,12 +28,12 @@
                  }
              }
          }
-@@ -312,8 +323,23 @@
+@@ -312,8 +324,23 @@
              entityarrow.setFire(100);
          }
  
 +        // CraftBukkit start
-+        org.bukkit.event.entity.EntityShootBowEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(this, this.getHeldItem(), entityarrow, 0.8F);
++        org.bukkit.event.entity.EntityShootBowEvent event = CraftEventFactory.callEntityShootBowEvent(this, this.getHeldItem(), entityarrow, 0.8F);
 +
 +        if (event.isCancelled())
 +        {

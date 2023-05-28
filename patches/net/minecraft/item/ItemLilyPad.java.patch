@@ -1,13 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemLilyPad.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemLilyPad.java
-@@ -48,7 +48,17 @@
+@@ -8,6 +8,8 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_7_R4.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class ItemLilyPad extends ItemColored
+ {
+@@ -48,7 +50,17 @@
                  {
                      // special case for handling block placement with water lilies
                      net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(p_77659_2_, i, j + 1, k);
 +                    // Cauldron start - special case for handling block placement with water lilies
-+                    org.bukkit.block.BlockState blockstate = org.bukkit.craftbukkit.block.CraftBlockState.getBlockState(p_77659_2_, i, j + 1, k);
++                    org.bukkit.block.BlockState blockstate = CraftBlockState.getBlockState(p_77659_2_, i, j + 1, k);
                      p_77659_2_.setBlock(i, j + 1, k, Blocks.waterlily);
-+                    org.bukkit.event.block.BlockPlaceEvent placeEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callBlockPlaceEvent(p_77659_2_,
++                    org.bukkit.event.block.BlockPlaceEvent placeEvent = CraftEventFactory.callBlockPlaceEvent(p_77659_2_,
 +                            p_77659_3_, blockstate, i, j, k);
 +                    if (placeEvent != null && (placeEvent.isCancelled() || !placeEvent.canBuild()))
 +                    {
@@ -18,7 +27,7 @@
                      if (net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(p_77659_3_, blocksnapshot, net.minecraftforge.common.util.ForgeDirection.UP).isCanceled()) 
                      {
                          blocksnapshot.restore(true, false);
-@@ -66,6 +76,15 @@
+@@ -66,6 +78,15 @@
          }
      }
  

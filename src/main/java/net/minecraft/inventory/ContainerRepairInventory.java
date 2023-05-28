@@ -3,7 +3,7 @@ package net.minecraft.inventory;
 // CraftBukkit start
 
 import net.minecraft.item.ItemStack;
-import org.bukkit.craftbukkit.entity.CraftHumanEntity;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
 import org.bukkit.entity.HumanEntity;
 
 import java.util.List;

@@ -1,12 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntitySlime.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySlime.java
-@@ -14,12 +14,21 @@
+@@ -10,16 +10,24 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.EnumDifficulty;
+ import net.minecraft.world.World;
+-import net.minecraft.world.WorldType;
  import net.minecraft.world.biome.BiomeGenBase;
  import net.minecraft.world.chunk.Chunk;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.entity.CraftEntity;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.SlimeSplitEvent;
 +import net.minecraft.entity.Entity;
@@ -22,7 +26,7 @@
      private static final String __OBFID = "CL_00001698";
  
      public EntitySlime(World p_i1742_1_)
-@@ -37,7 +46,7 @@
+@@ -37,7 +45,7 @@
          this.dataWatcher.addObject(16, new Byte((byte)1));
      }
  
@@ -31,7 +35,7 @@
      {
          this.dataWatcher.updateObject(16, new Byte((byte)p_70799_1_));
          this.setSize(0.6F * (float)p_70799_1_, 0.6F * (float)p_70799_1_);
-@@ -131,8 +140,27 @@
+@@ -131,8 +139,27 @@
      protected void updateEntityActionState()
      {
          this.despawnEntity();
@@ -60,7 +64,7 @@
          if (entityplayer != null)
          {
              this.faceEntity(entityplayer, 10.0F, 20.0F);
-@@ -190,7 +218,22 @@
+@@ -190,7 +217,22 @@
          if (!this.worldObj.isRemote && i > 1 && this.getHealth() <= 0.0F)
          {
              int j = 2 + this.rand.nextInt(3);
@@ -83,7 +87,7 @@
              for (int k = 0; k < j; ++k)
              {
                  float f = ((float)(k % 2) - 0.5F) * (float)i / 4.0F;
-@@ -198,7 +241,7 @@
+@@ -198,7 +240,7 @@
                  EntitySlime entityslime = this.createInstance();
                  entityslime.setSlimeSize(i / 2);
                  entityslime.setLocationAndAngles(this.posX + (double)f, this.posY + 0.5D, this.posZ + (double)f1, this.rand.nextFloat() * 360.0F, 0.0F);

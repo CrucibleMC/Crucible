@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntitySpider.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySpider.java
-@@ -14,6 +14,8 @@
+@@ -14,6 +14,9 @@
  import net.minecraft.world.EnumDifficulty;
  import net.minecraft.world.World;
  
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 +import org.bukkit.event.entity.EntityTargetEvent; // CraftBukkit
 +
  public class EntitySpider extends EntityMob
  {
      private static final String __OBFID = "CL_00001699";
-@@ -88,7 +90,25 @@
+@@ -88,7 +91,25 @@
  
          if (f1 > 0.5F && this.rand.nextInt(100) == 0)
          {
@@ -26,7 +27,7 @@
 +                }
 +                else
 +                {
-+                    this.entityToAttack = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++                    this.entityToAttack = ((CraftEntity) event.getTarget()).getHandle();
 +                }
 +
 +                return;

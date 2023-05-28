@@ -16,9 +16,9 @@
 +// CraftBukkit start
 +import java.util.Map;
 +
-+import org.bukkit.craftbukkit.inventory.CraftInventoryEnchanting;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryEnchanting;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 +import org.bukkit.event.enchantment.EnchantItemEvent;
 +import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 +import org.bukkit.entity.Player;

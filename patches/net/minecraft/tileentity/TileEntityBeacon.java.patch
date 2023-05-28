@@ -14,8 +14,8 @@
  import net.minecraft.util.AxisAlignedBB;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.entity.Player;
 +import org.bukkit.potion.PotionEffectType;

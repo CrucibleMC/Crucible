@@ -1,11 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
-@@ -5,13 +5,22 @@
+@@ -5,13 +5,24 @@
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.nbt.NBTTagCompound;
 +import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 +import thermos.thermite.ThermiteRandom;
  
 +import java.util.Random;
@@ -23,7 +25,7 @@
  
      public EntityTNTPrimed(World p_i1729_1_)
      {
-@@ -25,10 +34,10 @@
+@@ -25,10 +36,10 @@
      {
          this(p_i1730_1_);
          this.setPosition(p_i1730_2_, p_i1730_4_, p_i1730_6_);
@@ -37,7 +39,7 @@
          this.fuse = 80;
          this.prevPosX = p_i1730_2_;
          this.prevPosY = p_i1730_4_;
-@@ -50,6 +59,7 @@
+@@ -50,6 +61,7 @@
  
      public void onUpdate()
      {
@@ -45,7 +47,7 @@
          this.prevPosX = this.posX;
          this.prevPosY = this.posY;
          this.prevPosZ = this.posZ;
-@@ -68,12 +78,14 @@
+@@ -68,12 +80,14 @@
  
          if (this.fuse-- <= 0)
          {
@@ -62,7 +64,7 @@
          }
          else
          {
-@@ -83,8 +95,19 @@
+@@ -83,8 +97,19 @@
  
      private void explode()
      {
@@ -70,8 +72,8 @@
 -        this.worldObj.createExplosion(this, this.posX, this.posY, this.posZ, f, true);
 +        // CraftBukkit start
 +        // float f = 4.0F;
-+        org.bukkit.craftbukkit.CraftServer server = this.worldObj.getServer();
-+        ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) org.bukkit.craftbukkit.entity.CraftEntity.getEntity(server, this));
++        CraftServer server = this.worldObj.getServer();
++        ExplosionPrimeEvent event = new ExplosionPrimeEvent((org.bukkit.entity.Explosive) CraftEntity.getEntity(server, this));
 +        server.getPluginManager().callEvent(event);
 +
 +        if (!event.isCancelled())
@@ -84,7 +86,7 @@
      }
  
      protected void writeEntityToNBT(NBTTagCompound p_70014_1_)
-@@ -107,4 +130,11 @@
+@@ -107,4 +132,11 @@
      {
          return this.tntPlacedBy;
      }

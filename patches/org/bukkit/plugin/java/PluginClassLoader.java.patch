@@ -10,9 +10,9 @@
 +import net.md_5.specialsource.*;
 +import net.md_5.specialsource.repo.*;
 +import net.minecraft.server.MinecraftServer;
-+import net.minecraftforge.cauldron.configuration.CauldronConfig;
 +import net.minecraftforge.cauldron.CauldronUtils;
 +
++import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 +import org.bukkit.plugin.PluginDescriptionFile;
 +import java.io.*;
 +import java.net.JarURLConnection;
@@ -24,7 +24,12 @@
  import java.io.File;
  import java.net.MalformedURLException;
  import java.net.URL;
-@@ -15,16 +33,41 @@
+@@ -10,21 +28,45 @@
+ 
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.plugin.InvalidPluginException;
+-import org.bukkit.plugin.PluginDescriptionFile;
+ 
  /**
   * A ClassLoader for plugins, to allow shared classes across multiple plugins
   */
@@ -69,7 +74,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +77,113 @@
+@@ -34,6 +76,113 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -183,7 +188,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +208,336 @@
+@@ -58,34 +207,336 @@
      }
  
      @Override
@@ -202,7 +207,7 @@
 +    public static String getNativeVersion() {
 +        // see https://github.com/mbax/VanishNoPacket/blob/master/src/main/java/org/kitteh/vanish/compat/NMSManager.java
 +        if (CauldronUtils.deobfuscatedEnvironment()) return "v1_7_R4"; // support plugins in deobf environment
-+        final String packageName = org.bukkit.craftbukkit.CraftServer.class.getPackage().getName();
++        final String packageName = CraftServer.class.getPackage().getName();
 +        return packageName.substring(packageName.lastIndexOf('.')  + 1);
 +    }
 +

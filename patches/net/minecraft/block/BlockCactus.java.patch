@@ -1,15 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
-@@ -17,6 +17,8 @@
+@@ -7,7 +7,6 @@
+ import net.minecraft.client.renderer.texture.IIconRegister;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
+-import net.minecraft.init.Blocks;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.IIcon;
+@@ -17,6 +16,8 @@
  import net.minecraftforge.common.util.ForgeDirection;
  import net.minecraftforge.common.IPlantable;
  
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory; // CraftBukkit
 +
  public class BlockCactus extends Block implements IPlantable
  {
      @SideOnly(Side.CLIENT)
-@@ -47,9 +49,9 @@
+@@ -47,9 +48,9 @@
              {
                  int i1 = p_149674_1_.getBlockMetadata(p_149674_2_, p_149674_3_, p_149674_4_);
  
@@ -21,7 +29,7 @@
                      p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, 0, 4);
                      this.onNeighborBlockChange(p_149674_1_, p_149674_2_, p_149674_3_ + 1, p_149674_4_, this);
                  }
-@@ -135,6 +137,7 @@
+@@ -135,6 +136,7 @@
  
      public void onEntityCollidedWithBlock(World p_149670_1_, int p_149670_2_, int p_149670_3_, int p_149670_4_, Entity p_149670_5_)
      {

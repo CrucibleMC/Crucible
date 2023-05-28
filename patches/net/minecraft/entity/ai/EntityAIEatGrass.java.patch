@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.Material;
 +// CraftBukkit end
 +

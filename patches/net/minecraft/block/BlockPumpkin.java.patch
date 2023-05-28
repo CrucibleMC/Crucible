@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.util.BlockStateListPopulator;
++import org.bukkit.craftbukkit.v1_7_R4.util.BlockStateListPopulator;
 +import org.bukkit.event.block.BlockRedstoneEvent;
 +import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 +// CraftBukkit end

@@ -1,19 +1,17 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/registry/EntityRegistry.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/registry/EntityRegistry.java
-@@ -41,6 +41,12 @@
+@@ -41,6 +41,10 @@
  import cpw.mods.fml.common.ModContainer;
  import cpw.mods.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
  
 +// Cauldron start
-+import net.minecraftforge.common.util.EnumHelper;
-+import org.bukkit.craftbukkit.entity.CraftEntity;
-+import org.bukkit.entity.EntityType;
++
 +// Cauldron end
 +
  public class EntityRegistry
  {
      public class EntityRegistration
-@@ -118,6 +124,8 @@
+@@ -118,6 +122,8 @@
      private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
      private Map<String,ModContainer> entityNames = Maps.newHashMap();
      private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
@@ -22,7 +20,7 @@
      public static EntityRegistry instance()
      {
          return INSTANCE;
-@@ -147,6 +155,7 @@
+@@ -147,6 +153,7 @@
      public static void registerModEntity(Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
      {
          instance().doModEntityRegistration(entityClass, entityName, id, mod, trackingRange, updateFrequency, sendsVelocityUpdates);
@@ -30,7 +28,7 @@
      }
  
      @SuppressWarnings("unchecked")
-@@ -197,6 +206,7 @@
+@@ -197,6 +204,7 @@
          }
          id = instance().validateAndClaimId(id);
          EntityList.addMapping(entityClass, entityName, id);
@@ -38,7 +36,7 @@
      }
  
      private int validateAndClaimId(int id)
-@@ -249,8 +259,38 @@
+@@ -249,8 +257,38 @@
          }
          instance().validateAndClaimId(id);
          EntityList.addMapping(entityClass, entityName, id, backgroundEggColour, foregroundEggColour);

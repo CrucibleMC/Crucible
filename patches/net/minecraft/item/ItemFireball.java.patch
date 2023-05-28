@@ -1,11 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemFireball.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemFireball.java
-@@ -61,6 +61,18 @@
+@@ -5,6 +5,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class ItemFireball extends Item
+ {
+@@ -61,6 +62,18 @@
              {
                  if (p_77648_3_.getBlock(p_77648_4_, p_77648_5_, p_77648_6_).getMaterial() == Material.air)
                  {
 +                    // CraftBukkit start
-+                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_77648_2_).isCancelled())
++                    if (CraftEventFactory.callBlockIgniteEvent(p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, org.bukkit.event.block.BlockIgniteEvent.IgniteCause.FIREBALL, p_77648_2_).isCancelled())
 +                    {
 +                        if (!p_77648_2_.capabilities.isCreativeMode)
 +                        {

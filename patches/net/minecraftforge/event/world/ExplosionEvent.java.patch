@@ -1,10 +1,12 @@
 --- ../src-base/minecraft/net/minecraftforge/event/world/ExplosionEvent.java
 +++ ../src-work/minecraft/net/minecraftforge/event/world/ExplosionEvent.java
-@@ -1,14 +1,20 @@
- package net.minecraftforge.event.world;
+@@ -2,13 +2,23 @@
  
  import java.util.List;
--
+ 
++import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftTNTPrimed;
 +import org.bukkit.event.entity.ExplosionPrimeEvent;
  import cpw.mods.fml.common.eventhandler.Cancelable;
  import cpw.mods.fml.common.eventhandler.Event;
@@ -23,7 +25,7 @@
  /** ExplosionEvent triggers when an explosion happens in the world.<br>
   * <br>
   * ExplosionEvent.Start is fired before the explosion actually occurs.<br>
-@@ -23,9 +29,12 @@
+@@ -23,9 +33,12 @@
  {
      public final World world;
      public final Explosion explosion;
@@ -36,7 +38,7 @@
          this.world = world;
          this.explosion = explosion;
      }
-@@ -39,10 +48,41 @@
+@@ -39,10 +52,41 @@
      @Cancelable
      public static class Start extends ExplosionEvent
      {
@@ -46,15 +48,15 @@
              super(world, explosion);
 +            // CraftBukkit start
 +            // float f = 4.0F;
-+            org.bukkit.craftbukkit.CraftServer server = world.getServer();
-+            org.bukkit.craftbukkit.entity.CraftEntity ce = null;
++            CraftServer server = world.getServer();
++            CraftEntity ce = null;
 +            if(explosion.exploder != null && explosion.exploder instanceof EntityLivingBase)
 +            {
-+                ce = new org.bukkit.craftbukkit.entity.CraftTNTPrimed(server, new EntityTNTPrimed(world, explosion.explosionX, explosion.explosionY, explosion.explosionZ, (EntityLivingBase) explosion.exploder ));
++                ce = new CraftTNTPrimed(server, new EntityTNTPrimed(world, explosion.explosionX, explosion.explosionY, explosion.explosionZ, (EntityLivingBase) explosion.exploder ));
 +            }
 +	    if(ce == null)
 +            {
-+                ce = new org.bukkit.craftbukkit.entity.CraftTNTPrimed(server, new EntityTNTPrimed(world, explosion.explosionX, explosion.explosionY, explosion.explosionZ, exploder_fake ));
++                ce = new CraftTNTPrimed(server, new EntityTNTPrimed(world, explosion.explosionX, explosion.explosionY, explosion.explosionZ, exploder_fake ));
 +            }
 +            event = new ExplosionPrimeEvent(ce, 8.0F, true);
 +            server.getPluginManager().callEvent(event);

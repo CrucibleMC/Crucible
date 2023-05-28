@@ -6,7 +6,7 @@
  
 +// CraftBukkit start
 +import net.minecraft.entity.player.EntityPlayerMP;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityUnleashEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent.UnleashReason;
 +// CraftBukkit end

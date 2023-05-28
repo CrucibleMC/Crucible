@@ -1,12 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
-@@ -12,13 +12,19 @@
+@@ -12,13 +12,20 @@
  import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
  
 +
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +// CraftBukkit end
 +
@@ -21,7 +22,7 @@
      private EntityPlayer closestPlayer;
      private int xpTargetColor;
      private static final String __OBFID = "CL_00001544";
-@@ -115,18 +121,27 @@
+@@ -115,18 +122,27 @@
  
          if (this.closestPlayer != null)
          {
@@ -32,7 +33,7 @@
 -            double d5 = 1.0D - d4;
 +            // CraftBukkit start
 +            EntityTargetEvent event = CraftEventFactory.callEntityTargetEvent(this, closestPlayer, EntityTargetEvent.TargetReason.CLOSEST_PLAYER);
-+            Entity target = event.getTarget() == null ? null : ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++            Entity target = event.getTarget() == null ? null : ((CraftEntity) event.getTarget()).getHandle();
  
 -            if (d5 > 0.0D)
 +            if (!event.isCancelled() && target != null)
@@ -59,7 +60,7 @@
              }
          }
  
-@@ -210,7 +225,7 @@
+@@ -210,7 +226,7 @@
                  p_70100_1_.xpCooldown = 2;
                  this.worldObj.playSoundAtEntity(p_70100_1_, "random.orb", 0.1F, 0.5F * ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.8F));
                  p_70100_1_.onItemPickup(this, 1);
@@ -68,7 +69,7 @@
                  this.setDead();
              }
          }
-@@ -229,6 +244,88 @@
+@@ -229,6 +245,88 @@
  
      public static int getXPSplit(int p_70527_0_)
      {
@@ -157,7 +158,7 @@
          return p_70527_0_ >= 2477 ? 2477 : (p_70527_0_ >= 1237 ? 1237 : (p_70527_0_ >= 617 ? 617 : (p_70527_0_ >= 307 ? 307 : (p_70527_0_ >= 149 ? 149 : (p_70527_0_ >= 73 ? 73 : (p_70527_0_ >= 37 ? 37 : (p_70527_0_ >= 17 ? 17 : (p_70527_0_ >= 7 ? 7 : (p_70527_0_ >= 3 ? 3 : 1)))))))));
      }
  
-@@ -236,4 +333,11 @@
+@@ -236,4 +334,11 @@
      {
          return false;
      }

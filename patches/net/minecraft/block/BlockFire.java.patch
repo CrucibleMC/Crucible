@@ -16,12 +16,16 @@
  import net.minecraft.block.material.MapColor;
  import net.minecraft.block.material.Material;
  import net.minecraft.client.renderer.texture.IIconRegister;
-@@ -17,6 +22,11 @@
- import net.minecraft.world.WorldProviderEnd;
+@@ -14,9 +19,14 @@
+ import net.minecraft.util.IIcon;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+-import net.minecraft.world.WorldProviderEnd;
  import net.minecraftforge.common.util.ForgeDirection;
  import static net.minecraftforge.common.util.ForgeDirection.*;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.block.CraftBlock;
 +import org.bukkit.event.block.BlockBurnEvent;
 +import org.bukkit.event.block.BlockSpreadEvent;
 +// CraftBukkit end
@@ -81,7 +85,7 @@
 +
 +                                                if (!spreadEvent.isCancelled())
 +                                                {
-+                                                    p_149674_1_.setBlock(i1, k1, j1, ((org.bukkit.craftbukkit.block.CraftBlock)blockState.getBlock()).getNMSBlock(), blockState.getRawData(), 3); // KCauldron - DragonAPI uses this call
++                                                    p_149674_1_.setBlock(i1, k1, j1, ((CraftBlock)blockState.getBlock()).getNMSBlock(), blockState.getRawData(), 3); // KCauldron - DragonAPI uses this call
 +                                                    blockState.update(true);
 +                                                }
 +                                            }

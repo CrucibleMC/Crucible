@@ -5,7 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
-import org.bukkit.craftbukkit.scheduler.CraftTask;
+import org.bukkit.craftbukkit.v1_7_R4.scheduler.CraftTask;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 

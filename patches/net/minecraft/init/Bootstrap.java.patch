@@ -8,19 +8,21 @@
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockDispenser;
  import net.minecraft.block.BlockFire;
-@@ -34,6 +35,11 @@
+@@ -34,6 +35,13 @@
  import net.minecraft.util.EnumFacing;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.projectiles.CraftBlockProjectileSource;
 +import org.bukkit.event.block.BlockDispenseEvent;
 +// CraftBukkit end
 +
  public class Bootstrap
  {
      private static boolean field_151355_a = false;
-@@ -116,14 +122,48 @@
+@@ -116,14 +124,48 @@
                  double d0 = p_82487_1_.getX() + (double)enumfacing.getFrontOffsetX();
                  double d1 = (double)((float)p_82487_1_.getYInt() + 0.2F);
                  double d2 = p_82487_1_.getZ() + (double)enumfacing.getFrontOffsetZ();
@@ -72,7 +74,7 @@
                  return p_82487_2_;
              }
          });
-@@ -136,9 +176,43 @@
+@@ -136,9 +178,43 @@
                  double d0 = p_82487_1_.getX() + (double)enumfacing.getFrontOffsetX();
                  double d1 = (double)((float)p_82487_1_.getYInt() + 0.2F);
                  double d2 = p_82487_1_.getZ() + (double)enumfacing.getFrontOffsetZ();
@@ -118,7 +120,7 @@
                  return p_82487_2_;
              }
              protected void playDispenseSound(IBlockSource p_82485_1_)
-@@ -161,8 +235,42 @@
+@@ -161,8 +237,42 @@
                  double d3 = random.nextGaussian() * 0.05D + (double)enumfacing.getFrontOffsetX();
                  double d4 = random.nextGaussian() * 0.05D + (double)enumfacing.getFrontOffsetY();
                  double d5 = random.nextGaussian() * 0.05D + (double)enumfacing.getFrontOffsetZ();
@@ -156,14 +158,14 @@
 +                }
 +
 +                EntitySmallFireball entitysmallfireball = new EntitySmallFireball(world, d0, d1, d2, event.getVelocity().getX(), event.getVelocity().getY(), event.getVelocity().getZ());
-+                entitysmallfireball.projectileSource = new org.bukkit.craftbukkit.projectiles.CraftBlockProjectileSource((TileEntityDispenser) p_82487_1_.getBlockTileEntity());
++                entitysmallfireball.projectileSource = new CraftBlockProjectileSource((TileEntityDispenser) p_82487_1_.getBlockTileEntity());
 +                world.spawnEntityInWorld(entitysmallfireball);
 +                // p_82487_2_.splitStack(1); // Handled during event processing
 +                // CraftBukkit end
                  return p_82487_2_;
              }
              protected void playDispenseSound(IBlockSource p_82485_1_)
-@@ -201,9 +309,41 @@
+@@ -201,9 +311,41 @@
                      d3 = 0.0D;
                  }
  
@@ -207,7 +209,7 @@
                  return p_82487_2_;
              }
              protected void playDispenseSound(IBlockSource p_82485_1_)
-@@ -217,16 +357,67 @@
+@@ -217,16 +359,67 @@
              private static final String __OBFID = "CL_00001399";
              public ItemStack dispenseStack(IBlockSource p_82487_1_, ItemStack p_82487_2_)
              {
@@ -278,7 +280,7 @@
                      return p_82487_2_;
                  }
                  else
-@@ -266,6 +457,36 @@
+@@ -266,6 +459,36 @@
                      item = Items.lava_bucket;
                  }
  
@@ -315,7 +317,7 @@
                  world.setBlockToAir(i, j, k);
  
                  if (--p_82487_2_.stackSize == 0)
-@@ -292,16 +513,51 @@
+@@ -292,16 +515,51 @@
                  int i = p_82487_1_.getXInt() + enumfacing.getFrontOffsetX();
                  int j = p_82487_1_.getYInt() + enumfacing.getFrontOffsetY();
                  int k = p_82487_1_.getZInt() + enumfacing.getFrontOffsetZ();
@@ -356,7 +358,7 @@
 +                if (world.isAirBlock(i, j, k))
 +                {
 +                    // CraftBukkit start - Ignition by dispensing flint and steel
-+                    if (!org.bukkit.craftbukkit.event.CraftEventFactory.callBlockIgniteEvent(world, i, j, k, p_82487_1_.getXInt(), p_82487_1_.getYInt(), p_82487_1_.getZInt()).isCancelled())
++                    if (!CraftEventFactory.callBlockIgniteEvent(world, i, j, k, p_82487_1_.getXInt(), p_82487_1_.getYInt(), p_82487_1_.getZInt()).isCancelled())
 +                    {
 +                        world.setBlock(i, j, k, Blocks.fire);
 +
@@ -371,7 +373,7 @@
                  else if (world.getBlock(i, j, k) == Blocks.tnt)
                  {
                      Blocks.tnt.onBlockDestroyedByPlayer(world, i, j, k, 1);
-@@ -339,7 +595,36 @@
+@@ -339,7 +597,36 @@
                      int i = p_82487_1_.getXInt() + enumfacing.getFrontOffsetX();
                      int j = p_82487_1_.getYInt() + enumfacing.getFrontOffsetY();
                      int k = p_82487_1_.getZInt() + enumfacing.getFrontOffsetZ();
@@ -408,7 +410,7 @@
                      if (ItemDye.func_150919_a(p_82487_2_, world, i, j, k))
                      {
                          if (!world.isRemote)
-@@ -381,9 +666,41 @@
+@@ -381,9 +668,41 @@
                  int i = p_82487_1_.getXInt() + enumfacing.getFrontOffsetX();
                  int j = p_82487_1_.getYInt() + enumfacing.getFrontOffsetY();
                  int k = p_82487_1_.getZInt() + enumfacing.getFrontOffsetZ();

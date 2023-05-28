@@ -34,7 +34,7 @@
  import net.minecraft.network.play.server.S23PacketBlockChange;
  import net.minecraft.network.play.server.S2FPacketSetSlot;
  import net.minecraft.network.play.server.S32PacketConfirmTransaction;
-@@ -81,19 +86,75 @@
+@@ -81,19 +86,73 @@
  import net.minecraft.util.IChatComponent;
  import net.minecraft.util.IntHashMap;
  import net.minecraft.util.ReportedException;
@@ -46,15 +46,14 @@
  
 +import net.minecraftforge.cauldron.CauldronUtils;
  import net.minecraftforge.common.ForgeHooks;
- import net.minecraftforge.common.MinecraftForge;
+-import net.minecraftforge.common.MinecraftForge;
 -import cpw.mods.fml.common.eventhandler.Event;
  import net.minecraftforge.event.ForgeEventFactory;
- import net.minecraftforge.event.ServerChatEvent;
+-import net.minecraftforge.event.ServerChatEvent;
  import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 -import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
  
 +// CraftBukkit start
-+import java.io.UnsupportedEncodingException;
 +import java.util.concurrent.ExecutionException;
 +import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 +import java.util.HashSet;
@@ -69,13 +68,14 @@
 +import net.minecraft.util.MovingObjectPosition;
 +import net.minecraft.util.Vec3;
 +
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
-+import org.bukkit.craftbukkit.util.CraftChatMessage;
-+import org.bukkit.craftbukkit.util.LazyPlayerSet;
-+import org.bukkit.craftbukkit.util.Waitable;
++import org.bukkit.craftbukkit.v1_7_R4.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.util.CraftChatMessage;
++import org.bukkit.craftbukkit.v1_7_R4.util.LazyPlayerSet;
++import org.bukkit.craftbukkit.v1_7_R4.util.Waitable;
 +
 +import org.bukkit.Location;
 +import org.bukkit.entity.Player;
@@ -105,14 +105,14 @@
 +import org.bukkit.util.NumberConversions;
 +// CraftBukkit end
 +// Cauldron start
-+import org.bukkit.craftbukkit.CraftServer;
++import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 +import org.bukkit.event.inventory.InventoryType;
 +// Cauldron end
 +
  public class NetHandlerPlayServer implements INetHandlerPlayServer
  {
      private static final Logger logger = LogManager.getLogger();
-@@ -107,13 +168,12 @@
+@@ -107,13 +166,12 @@
      private long field_147379_i;
      private static Random field_147376_j = new Random();
      private long field_147377_k;
@@ -130,7 +130,7 @@
      private static final String __OBFID = "CL_00001452";
  
      public NetHandlerPlayServer(MinecraftServer p_i1530_1_, NetworkManager p_i1530_2_, EntityPlayerMP p_i1530_3_)
-@@ -123,8 +183,41 @@
+@@ -123,8 +181,41 @@
          p_i1530_2_.setNetHandler(this);
          this.playerEntity = p_i1530_3_;
          p_i1530_3_.playerNetServerHandler = this;
@@ -138,7 +138,7 @@
 +        this.server = p_i1530_1_ == null ? null : p_i1530_1_.server;
      }
  
-+    private final org.bukkit.craftbukkit.CraftServer server;
++    private final CraftServer server;
 +    private int lastTick = MinecraftServer.currentTick;
 +    private int lastDropTick = MinecraftServer.currentTick;
 +    private int dropCount = 0;
@@ -172,7 +172,7 @@
      public void onNetworkTick()
      {
          this.field_147366_g = false;
-@@ -139,10 +232,16 @@
+@@ -139,10 +230,16 @@
              this.sendPacket(new S00PacketKeepAlive(this.field_147378_h));
          }
  
@@ -189,7 +189,7 @@
  
          if (this.field_147375_m > 0)
          {
-@@ -162,6 +261,24 @@
+@@ -162,6 +259,24 @@
  
      public void kickPlayerFromServer(String p_147360_1_)
      {
@@ -214,7 +214,7 @@
          final ChatComponentText chatcomponenttext = new ChatComponentText(p_147360_1_);
          this.netManager.scheduleOutboundPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener[] {new GenericFutureListener()
          {
-@@ -170,8 +287,8 @@
+@@ -170,8 +285,8 @@
              {
                  NetHandlerPlayServer.this.netManager.closeChannel(chatcomponenttext);
              }
@@ -225,7 +225,7 @@
          this.netManager.disableAutoRead();
      }
  
-@@ -180,8 +297,18 @@
+@@ -180,8 +295,18 @@
          this.playerEntity.setEntityActionState(p_147358_1_.func_149620_c(), p_147358_1_.func_149616_d(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
      }
  
@@ -244,7 +244,7 @@
          WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
          this.field_147366_g = true;
  
-@@ -199,8 +326,75 @@
+@@ -199,8 +324,75 @@
                  }
              }
  
@@ -321,7 +321,7 @@
                  double d1;
                  double d2;
                  double d3;
-@@ -280,13 +474,6 @@
+@@ -280,13 +472,6 @@
                      d3 = p_147347_1_.func_149472_e();
                      d4 = p_147347_1_.func_149471_f() - p_147347_1_.func_149467_d();
  
@@ -335,7 +335,7 @@
                      if (Math.abs(p_147347_1_.func_149464_c()) > 3.2E7D || Math.abs(p_147347_1_.func_149472_e()) > 3.2E7D)
                      {
                          this.kickPlayerFromServer("Illegal position");
-@@ -315,10 +502,14 @@
+@@ -315,10 +500,14 @@
                  //BUGFIX: min -> max, grabs the highest distance
                  double d7 = Math.max(Math.abs(d4), Math.abs(this.playerEntity.motionX));
                  double d8 = Math.max(Math.abs(d5), Math.abs(this.playerEntity.motionY));
@@ -351,7 +351,7 @@
                  {
                      logger.warn(this.playerEntity.getCommandSenderName() + " moved too quickly! " + d4 + "," + d5 + "," + d6 + " (" + d7 + ", " + d8 + ", " + d9 + ")");
                      this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
-@@ -413,21 +604,85 @@
+@@ -413,21 +602,85 @@
  
      public void setPlayerLocation(double p_147364_1_, double p_147364_3_, double p_147364_5_, float p_147364_7_, float p_147364_8_)
      {
@@ -442,7 +442,7 @@
              this.playerEntity.dropOneItem(false);
          }
          else if (p_147345_1_.func_149506_g() == 3)
-@@ -490,7 +745,17 @@
+@@ -490,7 +743,17 @@
                  }
                  else
                  {
@@ -460,7 +460,7 @@
                  }
              }
              else if (p_147345_1_.func_149506_g() == 2)
-@@ -517,6 +782,34 @@
+@@ -517,6 +780,34 @@
      public void processPlayerBlockPlacement(C08PacketPlayerBlockPlacement p_147346_1_)
      {
          WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
@@ -495,7 +495,7 @@
          ItemStack itemstack = this.playerEntity.inventory.getCurrentItem();
          boolean flag = false;
          boolean placeResult = true;
-@@ -532,12 +825,20 @@
+@@ -532,12 +823,20 @@
              {
                  return;
              }
@@ -518,7 +518,7 @@
          }
          else if (p_147346_1_.func_149571_d() >= this.serverController.getBuildLimit() - 1 && (p_147346_1_.func_149568_f() == 1 || p_147346_1_.func_149571_d() >= this.serverController.getBuildLimit()))
          {
-@@ -548,17 +849,33 @@
+@@ -548,17 +847,33 @@
          }
          else
          {
@@ -558,7 +558,7 @@
              flag = true;
          }
  
-@@ -615,7 +932,7 @@
+@@ -615,7 +930,7 @@
              this.playerEntity.openContainer.detectAndSendChanges();
              this.playerEntity.isChangingQuantityOnly = false;
  
@@ -567,7 +567,7 @@
              {
                  this.sendPacket(new S2FPacketSetSlot(this.playerEntity.openContainer.windowId, slot.slotNumber, this.playerEntity.inventory.getCurrentItem()));
              }
-@@ -624,14 +941,34 @@
+@@ -624,14 +939,34 @@
  
      public void onDisconnect(IChatComponent p_147231_1_)
      {
@@ -607,7 +607,7 @@
          if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
          {
              logger.info("Stopping singleplayer server as player logged out");
-@@ -657,6 +994,18 @@
+@@ -657,6 +992,18 @@
              }
          }
  
@@ -626,7 +626,7 @@
          try
          {
              this.netManager.scheduleOutboundPacket(p_147359_1_, new GenericFutureListener[0]);
-@@ -679,20 +1028,37 @@
+@@ -679,20 +1026,37 @@
  
      public void processHeldItemChange(C09PacketHeldItemChange p_147355_1_)
      {
@@ -665,7 +665,7 @@
          {
              ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("chat.cannotSend", new Object[0]);
              chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.RED);
-@@ -708,51 +1074,430 @@
+@@ -708,51 +1072,430 @@
              {
                  if (!ChatAllowedCharacters.isAllowedCharacter(s.charAt(i)))
                  {
@@ -1108,7 +1108,7 @@
          if (p_147357_1_.func_149513_d() == 1)
          {
              this.playerEntity.setSneaking(true);
-@@ -772,7 +1517,7 @@
+@@ -772,7 +1515,7 @@
          else if (p_147357_1_.func_149513_d() == 3)
          {
              this.playerEntity.wakeUpPlayer(false, true, true);
@@ -1117,7 +1117,7 @@
          }
          else if (p_147357_1_.func_149513_d() == 6)
          {
-@@ -789,8 +1534,20 @@
+@@ -789,8 +1532,20 @@
  
      public void processUseEntity(C02PacketUseEntity p_147340_1_)
      {
@@ -1139,7 +1139,7 @@
          this.playerEntity.func_143004_u();
  
          if (entity != null)
-@@ -805,9 +1562,53 @@
+@@ -805,9 +1560,53 @@
  
              if (this.playerEntity.getDistanceSqToEntity(entity) < d0)
              {
@@ -1193,7 +1193,7 @@
                  }
                  else if (p_147340_1_.func_149565_c() == C02PacketUseEntity.Action.ATTACK)
                  {
-@@ -819,6 +1620,13 @@
+@@ -819,6 +1618,13 @@
                      }
  
                      this.playerEntity.attackTargetEntityWithCurrentItem(entity);
@@ -1207,7 +1207,7 @@
                  }
              }
          }
-@@ -828,14 +1636,26 @@
+@@ -828,14 +1634,26 @@
      {
          this.playerEntity.func_143004_u();
          C16PacketClientStatus.EnumState enumstate = p_147342_1_.func_149435_c();
@@ -1236,7 +1236,7 @@
                  else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled())
                  {
                      if (this.serverController.isSinglePlayer() && this.playerEntity.getCommandSenderName().equals(this.serverController.getServerOwner()))
-@@ -857,7 +1677,7 @@
+@@ -857,7 +1675,7 @@
                          return;
                      }
  
@@ -1245,7 +1245,7 @@
                  }
  
                  break;
-@@ -871,17 +1691,461 @@
+@@ -871,17 +1689,461 @@
  
      public void processCloseWindow(C0DPacketCloseWindow p_147356_1_)
      {
@@ -1708,7 +1708,7 @@
              if (ItemStack.areItemStacksEqual(p_147351_1_.func_149546_g(), itemstack))
              {
                  this.playerEntity.playerNetServerHandler.sendPacket(new S32PacketConfirmTransaction(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
-@@ -903,6 +2167,12 @@
+@@ -903,6 +2165,12 @@
                  }
  
                  this.playerEntity.sendContainerAndContentsToPlayer(this.playerEntity.openContainer, arraylist);
@@ -1721,7 +1721,7 @@
              }
          }
      }
-@@ -925,9 +2195,61 @@
+@@ -925,9 +2193,61 @@
              boolean flag = p_147344_1_.func_149627_c() < 0;
              ItemStack itemstack = p_147344_1_.func_149625_d();
              boolean flag1 = p_147344_1_.func_149627_c() >= 1 && p_147344_1_.func_149627_c() < 36 + InventoryPlayer.getHotbarSize();
@@ -1784,7 +1784,7 @@
              if (flag1 && flag2 && flag3)
              {
                  if (itemstack == null)
-@@ -956,6 +2278,11 @@
+@@ -956,6 +2276,11 @@
  
      public void processConfirmTransaction(C0FPacketConfirmTransaction p_147339_1_)
      {
@@ -1796,7 +1796,7 @@
          Short oshort = (Short)this.field_147372_n.lookup(this.playerEntity.openContainer.windowId);
  
          if (oshort != null && p_147339_1_.func_149533_d() == oshort.shortValue() && this.playerEntity.openContainer.windowId == p_147339_1_.func_149532_c() && !this.playerEntity.openContainer.isPlayerNotUsingContainer(this.playerEntity))
-@@ -966,6 +2293,11 @@
+@@ -966,6 +2291,11 @@
  
      public void processUpdateSign(C12PacketUpdateSign p_147343_1_)
      {
@@ -1808,7 +1808,7 @@
          this.playerEntity.func_143004_u();
          WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
  
-@@ -980,6 +2312,7 @@
+@@ -980,6 +2310,7 @@
                  if (!tileentitysign.func_145914_a() || tileentitysign.func_145911_b() != this.playerEntity)
                  {
                      this.serverController.logWarning("Player " + this.playerEntity.getCommandSenderName() + " just tried to change non-editable sign");
@@ -1816,7 +1816,7 @@
                      return;
                  }
              }
-@@ -990,6 +2323,7 @@
+@@ -990,6 +2321,7 @@
              for (j = 0; j < 4; ++j)
              {
                  boolean flag = true;
@@ -1824,14 +1824,14 @@
  
                  if (p_147343_1_.func_149589_f()[j].length() > 15)
                  {
-@@ -1018,7 +2352,29 @@
+@@ -1018,7 +2350,29 @@
                  int k = p_147343_1_.func_149586_d();
                  i = p_147343_1_.func_149585_e();
                  TileEntitySign tileentitysign1 = (TileEntitySign)tileentity;
 -                System.arraycopy(p_147343_1_.func_149589_f(), 0, tileentitysign1.signText, 0, 4);
 +                // CraftBukkit start
 +                Player player = this.server.getPlayer(this.playerEntity);
-+                SignChangeEvent event = new SignChangeEvent((org.bukkit.craftbukkit.block.CraftBlock) player.getWorld().getBlockAt(j, k, i),
++                SignChangeEvent event = new SignChangeEvent((CraftBlock) player.getWorld().getBlockAt(j, k, i),
 +                        this.server.getPlayer(this.playerEntity), p_147343_1_.func_149589_f());
 +                this.server.getPluginManager().callEvent(event);
 +
@@ -1855,7 +1855,7 @@
                  tileentitysign1.markDirty();
                  worldserver.markBlockForUpdate(j, k, i);
              }
-@@ -1041,7 +2397,22 @@
+@@ -1041,7 +2395,22 @@
  
      public void processPlayerAbilities(C13PacketPlayerAbilities p_147348_1_)
      {
@@ -1879,7 +1879,7 @@
      }
  
      public void processTabComplete(C14PacketTabComplete p_147341_1_)
-@@ -1066,8 +2437,9 @@
+@@ -1066,8 +2435,9 @@
      public void processVanilla250Packet(C17PacketCustomPayload p_147349_1_)
      {
          PacketBuffer packetbuffer;
@@ -1891,7 +1891,7 @@
  
          if ("MC|BEdit".equals(p_147349_1_.func_149559_c()))
          {
-@@ -1075,34 +2447,52 @@
+@@ -1075,34 +2445,52 @@
  
              try
              {
@@ -1954,7 +1954,7 @@
              }
              finally
              {
-@@ -1117,37 +2507,48 @@
+@@ -1117,37 +2505,48 @@
  
              try
              {
@@ -2016,7 +2016,7 @@
              }
              finally
              {
-@@ -1174,9 +2575,12 @@
+@@ -1174,9 +2573,12 @@
                          ((ContainerMerchant)container).setCurrentRecipeIndex(i);
                      }
                  }
@@ -2030,7 +2030,7 @@
                  }
              }
              else if ("MC|AdvCdm".equals(p_147349_1_.func_149559_c()))
-@@ -1222,9 +2626,12 @@
+@@ -1222,9 +2624,12 @@
                              this.playerEntity.addChatMessage(new ChatComponentTranslation("advMode.setCommand.success", new Object[] {s1}));
                          }
                      }
@@ -2045,7 +2045,7 @@
                      }
                      finally
                      {
-@@ -1257,9 +2664,12 @@
+@@ -1257,9 +2662,12 @@
                              tileentitybeacon.markDirty();
                          }
                      }
@@ -2060,7 +2060,7 @@
                      }
                  }
              }
-@@ -1281,6 +2691,13 @@
+@@ -1281,6 +2689,13 @@
                      containerrepair.updateItemName("");
                  }
              }
@@ -2074,7 +2074,7 @@
          }
      }
  
-@@ -1292,6 +2709,21 @@
+@@ -1292,6 +2707,21 @@
          }
      }
  

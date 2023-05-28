@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraftforge/common/util/EnumHelper.java
 +++ ../src-work/minecraft/net/minecraftforge/common/util/EnumHelper.java
-@@ -21,7 +21,23 @@
+@@ -21,7 +21,22 @@
  import net.minecraft.world.EnumSkyBlock;
  import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
  import net.minecraftforge.classloading.FMLForgePlugin;
@@ -16,7 +16,6 @@
 +import org.bukkit.World;
 +import org.bukkit.WorldType;
 +import org.bukkit.block.Biome;
-+import org.bukkit.craftbukkit.entity.CraftEntity;
 +import org.bukkit.entity.EntityType;
 +import org.bukkit.event.inventory.InventoryType;
 +// Cauldron end
@@ -24,7 +23,7 @@
  public class EnumHelper
  {
      private static Object reflectionFactory      = null;
-@@ -30,6 +46,7 @@
+@@ -30,6 +45,7 @@
      private static Method newFieldAccessor       = null;
      private static Method fieldAccessorSet       = null;
      private static boolean isSetup               = false;
@@ -32,7 +31,7 @@
  
      //Some enums are decompiled with extra arguments, so lets check for that
      @SuppressWarnings("rawtypes")
-@@ -51,6 +68,73 @@
+@@ -51,6 +67,73 @@
          {EnumRarity.class, EnumChatFormatting.class, String.class}
      };
  
@@ -106,7 +105,7 @@
      public static EnumAction addAction(String name)
      {
          return addEnum(EnumAction.class, name);
-@@ -181,6 +265,10 @@
+@@ -181,6 +264,10 @@
  
      private static void cleanEnumCache(Class<?> enumClass) throws Exception
      {
@@ -117,7 +116,7 @@
          blankField(enumClass, "enumConstantDirectory");
          blankField(enumClass, "enumConstants");
      }
-@@ -280,6 +368,86 @@
+@@ -280,6 +367,86 @@
          }
      }
  

@@ -1,11 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
-@@ -84,6 +84,21 @@
+@@ -14,6 +14,7 @@
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.event.entity.player.ArrowLooseEvent;
+ import net.minecraftforge.event.entity.player.ArrowNockEvent;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class ItemBow extends Item
+ {
+@@ -84,6 +85,21 @@
                  entityarrow.setFire(100);
              }
  
 +            // CraftBukkit start
-+            org.bukkit.event.entity.EntityShootBowEvent cbEvent = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityShootBowEvent(p_77615_3_, p_77615_1_, entityarrow, f);
++            org.bukkit.event.entity.EntityShootBowEvent cbEvent = CraftEventFactory.callEntityShootBowEvent(p_77615_3_, p_77615_1_, entityarrow, f);
 +
 +            if (cbEvent.isCancelled())
 +            {
@@ -22,7 +30,7 @@
              p_77615_1_.damageItem(1, p_77615_3_);
              p_77615_2_.playSoundAtEntity(p_77615_3_, "random.bow", 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
  
-@@ -98,7 +113,7 @@
+@@ -98,7 +114,7 @@
  
              if (!p_77615_2_.isRemote)
              {

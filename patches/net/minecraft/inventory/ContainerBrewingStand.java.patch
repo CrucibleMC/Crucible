@@ -5,8 +5,8 @@
  import net.minecraft.tileentity.TileEntityBrewingStand;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftInventoryBrewer;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryBrewer;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryView;
 +// CraftBukkit end
 +
  public class ContainerBrewingStand extends Container

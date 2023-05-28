@@ -1,11 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityCreature.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityCreature.java
-@@ -13,12 +13,18 @@
+@@ -13,12 +13,19 @@
  import net.minecraft.util.Vec3;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_7_R4.TrigMath;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +import org.bukkit.event.entity.EntityUnleashEvent;
 +// CraftBukkit end
@@ -21,7 +22,7 @@
      protected boolean hasAttacked;
      protected int fleeingTick;
      private ChunkCoordinates homePosition = new ChunkCoordinates(0, 0, 0);
-@@ -52,8 +58,29 @@
+@@ -52,8 +59,29 @@
  
          if (this.entityToAttack == null)
          {
@@ -52,7 +53,7 @@
              if (this.entityToAttack != null)
              {
                  this.pathToEntity = this.worldObj.getPathEntityToEntity(this, this.entityToAttack, f4, true, false, false, true);
-@@ -70,7 +97,23 @@
+@@ -70,7 +98,23 @@
          }
          else
          {
@@ -77,17 +78,17 @@
          }
  
          if (this.entityToAttack instanceof EntityPlayerMP && ((EntityPlayerMP)this.entityToAttack).theItemInWorldManager.isCreative())
-@@ -122,7 +165,8 @@
+@@ -122,7 +166,8 @@
                  double d1 = vec3.xCoord - this.posX;
                  double d2 = vec3.zCoord - this.posZ;
                  double d3 = vec3.yCoord - (double)i;
 -                float f1 = (float)(Math.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
 +                // CraftBukkit - Math -> TrigMath
-+                float f1 = (float)(org.bukkit.craftbukkit.TrigMath.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
++                float f1 = (float)(TrigMath.atan2(d2, d1) * 180.0D / Math.PI) - 90.0F;
                  float f2 = MathHelper.wrapAngleTo180_float(f1 - this.rotationYaw);
                  this.moveForward = (float)this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
  
-@@ -303,6 +347,7 @@
+@@ -303,6 +348,7 @@
              {
                  if (f > 10.0F)
                  {
@@ -95,7 +96,7 @@
                      this.clearLeashed(true, true);
                  }
  
-@@ -335,6 +380,7 @@
+@@ -335,6 +381,7 @@
  
              if (f > 10.0F)
              {
