@@ -6,7 +6,7 @@
  
 +// CraftBukkit start
 +import java.util.List;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +import org.bukkit.inventory.InventoryHolder;
 +// CraftBukkit end

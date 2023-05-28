@@ -7,8 +7,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.world.WorldServer;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.projectiles.BlockProjectileSource;
@@ -39,7 +39,7 @@ public class CustomProjectileEntity extends CraftCustomEntity implements Project
             fake_dropper.posX = x;
             fake_dropper.posY = y;
             fake_dropper.posZ = z;
-            CraftEntity ce = org.bukkit.craftbukkit.entity.CraftEntity.getEntity(MinecraftServer.getServer().server, fake_dropper);
+            CraftEntity ce = CraftEntity.getEntity(MinecraftServer.getServer().server, fake_dropper);
             if (ce instanceof LivingEntity) return (LivingEntity) ce;
             return null;
         }

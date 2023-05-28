@@ -4,7 +4,7 @@
  import net.minecraft.world.World;
  import org.apache.commons.lang3.tuple.ImmutablePair;
  
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory; // CraftBukkit
 +
  public class EntitySilverfish extends EntityMob
  {

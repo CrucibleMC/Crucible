@@ -5,7 +5,7 @@ import net.minecraftforge.cauldron.api.inventory.BukkitOreDictionary;
 import net.minecraftforge.cauldron.api.inventory.OreDictionaryEntry;
 import net.minecraftforge.oredict.OreDictionary;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;

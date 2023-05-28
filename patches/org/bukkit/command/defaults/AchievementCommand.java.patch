@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/org/bukkit/command/defaults/AchievementCommand.java
 +++ ../src-work/minecraft/org/bukkit/command/defaults/AchievementCommand.java
-@@ -117,7 +117,7 @@
+@@ -13,6 +13,7 @@
+ import org.bukkit.Statistic.Type;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.v1_7_R4.CraftStatistic;
+ import org.bukkit.entity.EntityType;
+ import org.bukkit.entity.Player;
+ import org.bukkit.event.player.PlayerAchievementAwardedEvent;
+@@ -117,7 +118,7 @@
                  return true;
              }
  
@@ -9,12 +17,12 @@
              Bukkit.getServer().getPluginManager().callEvent(event);
              if (event.isCancelled()) {
                  sender.sendMessage(String.format("Unable to increment %s for %s", statisticString, player.getName()));
-@@ -141,12 +141,12 @@
+@@ -141,12 +142,12 @@
  
              Material material = Material.getMaterial(id);
  
 -            if (material == null) {
-+            if (material == null || org.bukkit.craftbukkit.CraftStatistic.getMaterialStatistic(statistic, material) == null) {
++            if (material == null || CraftStatistic.getMaterialStatistic(statistic, material) == null) {
                  sender.sendMessage(String.format("Unknown achievement or statistic '%s'", statisticString));
                  return true;
              }

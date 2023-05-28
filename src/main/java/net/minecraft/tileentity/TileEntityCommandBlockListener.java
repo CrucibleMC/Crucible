@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
+import org.bukkit.craftbukkit.v1_7_R4.command.CraftBlockCommandSender;
 
 // CraftBukkit - package-private -> public
 public class TileEntityCommandBlockListener extends CommandBlockLogic {
@@ -13,7 +14,7 @@ public class TileEntityCommandBlockListener extends CommandBlockLogic {
 
     TileEntityCommandBlockListener(TileEntityCommandBlock p_i45441_1_) {
         this.field_145767_a = p_i45441_1_;
-        sender = new org.bukkit.craftbukkit.command.CraftBlockCommandSender(this); // CraftBukkit - add sender
+        sender = new CraftBlockCommandSender(this); // CraftBukkit - add sender
     }
 
     /**

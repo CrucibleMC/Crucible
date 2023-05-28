@@ -8,6 +8,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftMinecartCommand;
 
 // CraftBukkit - package-private -> public
 public class EntityMinecartCommandBlockListener extends CommandBlockLogic {
@@ -15,7 +16,7 @@ public class EntityMinecartCommandBlockListener extends CommandBlockLogic {
 
     EntityMinecartCommandBlockListener(EntityMinecartCommandBlock p_i45320_1_) {
         this.field_145768_a = p_i45320_1_;
-        this.sender = (org.bukkit.craftbukkit.entity.CraftMinecartCommand) p_i45320_1_.getBukkitEntity(); // CraftBukkit - Set the sender
+        this.sender = (CraftMinecartCommand) p_i45320_1_.getBukkitEntity(); // CraftBukkit - Set the sender
     }
 
     public void func_145756_e() {

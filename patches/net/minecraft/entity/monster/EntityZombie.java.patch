@@ -1,12 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombie.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombie.java
-@@ -46,6 +46,13 @@
+@@ -46,6 +46,12 @@
  import net.minecraftforge.event.ForgeEventFactory;
  import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
  
 +//CraftBukkit start
 +import net.minecraft.server.MinecraftServer;
-+import org.bukkit.craftbukkit.entity.CraftLivingEntity;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.entity.EntityCombustEvent;
 +//CraftBukkit end
@@ -14,7 +13,7 @@
  public class EntityZombie extends EntityMob
  {
      protected static final IAttribute field_110186_bp = (new RangedAttribute("zombie.spawnReinforcements", 0.0D, 0.0D, 1.0D)).setDescription("Spawn Reinforcements Chance");
-@@ -56,6 +63,7 @@
+@@ -56,6 +62,7 @@
      private boolean field_146076_bu = false;
      private float field_146074_bv = -1.0F;
      private float field_146073_bw;
@@ -22,7 +21,7 @@
      private static final String __OBFID = "CL_00001702";
  
      public EntityZombie(World p_i1745_1_)
-@@ -64,7 +72,12 @@
+@@ -64,7 +71,12 @@
          this.getNavigator().setBreakDoors(true);
          this.tasks.addTask(0, new EntityAISwimming(this));
          this.tasks.addTask(2, new EntityAIAttackOnCollide(this, EntityPlayer.class, 1.0D, false));
@@ -36,7 +35,7 @@
          this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
          this.tasks.addTask(6, new EntityAIMoveThroughVillage(this, 1.0D, false));
          this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-@@ -72,7 +85,12 @@
+@@ -72,7 +84,12 @@
          this.tasks.addTask(8, new EntityAILookIdle(this));
          this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true));
          this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, 0, true));
@@ -50,7 +49,7 @@
          this.setSize(0.6F, 1.8F);
      }
  
-@@ -204,7 +222,16 @@
+@@ -204,7 +221,16 @@
  
                  if (flag)
                  {
@@ -68,7 +67,7 @@
                  }
              }
          }
-@@ -272,7 +299,7 @@
+@@ -272,7 +298,7 @@
  
                          if (this.worldObj.checkNoEntityCollision(entityzombie.boundingBox) && this.worldObj.getCollidingBoundingBoxes(entityzombie, entityzombie.boundingBox).isEmpty() && !this.worldObj.isAnyLiquid(entityzombie.boundingBox))
                          {
@@ -77,7 +76,7 @@
                              if (entitylivingbase != null) entityzombie.setAttackTarget(entitylivingbase);
                              entityzombie.onSpawnWithEgg((IEntityLivingData)null);
                              this.getEntityAttribute(field_110186_bp).applyModifier(new AttributeModifier("Zombie reinforcement caller charge", -0.05000000074505806D, 0));
-@@ -292,6 +319,11 @@
+@@ -292,6 +318,11 @@
          if (!this.worldObj.isRemote && this.isConverting())
          {
              int i = this.getConversionTimeBoost();
@@ -89,7 +88,7 @@
              this.conversionTime -= i;
  
              if (this.conversionTime <= 0)
-@@ -313,7 +345,16 @@
+@@ -313,7 +344,16 @@
  
              if (this.getHeldItem() == null && this.isBurning() && this.rand.nextFloat() < (float)i * 0.3F)
              {

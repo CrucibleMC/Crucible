@@ -2,9 +2,9 @@ package net.minecraftforge.cauldron.block;
 
 import net.minecraft.inventory.IInventory;
 import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.CraftWorld;
-import org.bukkit.craftbukkit.block.CraftBlockState;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.block.CraftBlockState;
+import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 

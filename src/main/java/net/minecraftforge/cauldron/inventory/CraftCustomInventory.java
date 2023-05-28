@@ -1,7 +1,7 @@
 package net.minecraftforge.cauldron.inventory;
 
 import net.minecraft.inventory.IInventory;
-import org.bukkit.craftbukkit.inventory.CraftInventory;
+import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventory;
 
 public class CraftCustomInventory extends CraftInventory {
 

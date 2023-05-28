@@ -1,10 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerRepair.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerRepair.java
-@@ -17,19 +17,13 @@
+@@ -17,19 +17,15 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryView; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryAnvil;
 +
  public class ContainerRepair extends Container
  {
@@ -23,7 +25,7 @@
      private World theWorld;
      private int field_82861_i;
      private int field_82858_j;
-@@ -39,9 +33,14 @@
+@@ -39,9 +35,14 @@
      private String repairedItemName;
      private final EntityPlayer thePlayer;
      private static final String __OBFID = "CL_00001732";
@@ -38,7 +40,7 @@
          this.theWorld = p_i1800_2_;
          this.field_82861_i = p_i1800_3_;
          this.field_82858_j = p_i1800_4_;
-@@ -461,6 +460,11 @@
+@@ -461,6 +462,11 @@
  
      public boolean canInteractWith(EntityPlayer p_75145_1_)
      {
@@ -50,7 +52,7 @@
          return this.theWorld.getBlock(this.field_82861_i, this.field_82858_j, this.field_82859_k) != Blocks.anvil ? false : p_75145_1_.getDistanceSq((double)this.field_82861_i + 0.5D, (double)this.field_82858_j + 0.5D, (double)this.field_82859_k + 0.5D) <= 64.0D;
      }
  
-@@ -535,4 +539,18 @@
+@@ -535,4 +541,18 @@
  
          this.updateRepairOutput();
      }
@@ -63,7 +65,7 @@
 +            return bukkitEntity;
 +        }
 +
-+        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryAnvil(this.inputSlots, this.outputSlot);
++        CraftInventory inventory = new CraftInventoryAnvil(this.inputSlots, this.outputSlot);
 +        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +        return bukkitEntity;
 +    }

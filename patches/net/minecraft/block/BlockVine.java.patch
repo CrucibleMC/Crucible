@@ -1,15 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockVine.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
-@@ -21,6 +21,8 @@
- import net.minecraftforge.common.ForgeHooks;
+@@ -8,19 +8,17 @@
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayer;
+-import net.minecraft.init.Blocks;
+-import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+-import net.minecraft.stats.StatList;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.Direction;
+ import net.minecraft.world.ColorizerFoliage;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+-import net.minecraftforge.common.ForgeHooks;
  import net.minecraftforge.common.IShearable;
  
-+import org.bukkit.craftbukkit.event.CraftEventFactory; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory; // CraftBukkit
 +
  public class BlockVine extends Block implements IShearable
  {
      private static final String __OBFID = "CL_00000330";
-@@ -268,7 +270,11 @@
+@@ -268,7 +266,11 @@
  
                      if (j2 > 0)
                      {
@@ -22,7 +35,7 @@
                      }
                  }
              }
-@@ -290,27 +296,34 @@
+@@ -290,27 +292,34 @@
                      {
                          l1 = k1 + 1 & 3;
                          i2 = k1 + 3 & 3;
@@ -62,7 +75,7 @@
                      }
                      else if (block.blockMaterial.isOpaque() && block.renderAsNormalBlock())
                      {
-@@ -327,7 +340,11 @@
+@@ -327,7 +336,11 @@
  
                          if (l1 > 0)
                          {

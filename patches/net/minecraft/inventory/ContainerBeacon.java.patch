@@ -1,15 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/inventory/ContainerBeacon.java
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerBeacon.java
-@@ -8,6 +8,8 @@
+@@ -4,10 +4,13 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.InventoryPlayer;
+-import net.minecraft.init.Items;
  import net.minecraft.item.ItemStack;
  import net.minecraft.tileentity.TileEntityBeacon;
  
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryView; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryBeacon;
 +
  public class ContainerBeacon extends Container
  {
      private TileEntityBeacon tileBeacon;
-@@ -15,10 +17,15 @@
+@@ -15,10 +18,15 @@
      private int field_82865_g;
      private int field_82867_h;
      private int field_82868_i;
@@ -25,7 +31,7 @@
          this.tileBeacon = p_i1802_2_;
          this.addSlotToContainer(this.beaconSlot = new ContainerBeacon.BeaconSlot(p_i1802_2_, 0, 136, 110));
          byte b0 = 36;
-@@ -77,6 +84,13 @@
+@@ -77,6 +85,13 @@
  
      public boolean canInteractWith(EntityPlayer p_75145_1_)
      {
@@ -39,7 +45,7 @@
          return this.tileBeacon.isUseableByPlayer(p_75145_1_);
      }
  
-@@ -145,6 +159,20 @@
+@@ -145,6 +160,20 @@
          return itemstack;
      }
  
@@ -51,7 +57,7 @@
 +            return bukkitEntity;
 +        }
 +
-+        org.bukkit.craftbukkit.inventory.CraftInventory inventory = new org.bukkit.craftbukkit.inventory.CraftInventoryBeacon(this.tileBeacon);
++        CraftInventory inventory = new CraftInventoryBeacon(this.tileBeacon);
 +        bukkitEntity = new CraftInventoryView(this.player.player.getBukkitEntity(), inventory, this);
 +        return bukkitEntity;
 +    }

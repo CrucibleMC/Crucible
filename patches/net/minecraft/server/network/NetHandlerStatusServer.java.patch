@@ -8,7 +8,7 @@
  import io.netty.util.concurrent.GenericFutureListener;
  import net.minecraft.network.EnumConnectionState;
  import net.minecraft.network.NetworkManager;
-@@ -11,12 +13,26 @@
+@@ -11,12 +13,27 @@
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.util.IChatComponent;
  
@@ -16,7 +16,8 @@
 +import java.net.InetSocketAddress;
 +import net.minecraft.network.ServerStatusResponse;
 +import net.minecraft.util.ChatComponentText;
-+import org.bukkit.craftbukkit.util.CraftIconCache;
++import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
++import org.bukkit.craftbukkit.v1_7_R4.util.CraftIconCache;
 +// CraftBukkit end
 +
  public class NetHandlerStatusServer implements INetHandlerStatusServer
@@ -35,7 +36,7 @@
      public NetHandlerStatusServer(MinecraftServer p_i45299_1_, NetworkManager p_i45299_2_)
      {
          this.field_147314_a = p_i45299_1_;
-@@ -37,11 +53,55 @@
+@@ -37,11 +54,55 @@
  
      public void processServerQuery(C00PacketServerQuery p_147312_1_)
      {
@@ -64,7 +65,7 @@
 +            {
 +                if (!(icon instanceof CraftIconCache))
 +                {
-+                    throw new IllegalArgumentException(icon + " was not created by " + org.bukkit.craftbukkit.CraftServer.class);
++                    throw new IllegalArgumentException(icon + " was not created by " + CraftServer.class);
 +                }
 +
 +                this.icon = (CraftIconCache) icon;

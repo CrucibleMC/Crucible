@@ -1,15 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntitySquid.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntitySquid.java
-@@ -8,6 +8,8 @@
+@@ -1,6 +1,5 @@
+ package net.minecraft.entity.passive;
+ 
+-import net.minecraft.block.material.Material;
+ import net.minecraft.entity.SharedMonsterAttributes;
+ import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
+@@ -8,6 +7,8 @@
  import net.minecraft.util.MathHelper;
  import net.minecraft.world.World;
  
-+import org.bukkit.craftbukkit.TrigMath; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.TrigMath; // CraftBukkit
 +
  public class EntitySquid extends EntityWaterMob
  {
      public float squidPitch;
-@@ -79,10 +81,12 @@
+@@ -79,10 +80,12 @@
          }
      }
  
@@ -22,7 +29,7 @@
  
      public void onLivingUpdate()
      {
-@@ -137,10 +141,12 @@
+@@ -137,10 +140,12 @@
              }
  
              f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);

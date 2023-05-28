@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/boss/EntityDragon.java
 +++ ../src-work/minecraft/net/minecraft/entity/boss/EntityDragon.java
-@@ -22,6 +22,19 @@
+@@ -4,7 +4,6 @@
+ import java.util.List;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockEndPortal;
+-import net.minecraft.block.material.Material;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -22,6 +21,22 @@
  import net.minecraft.world.Explosion;
  import net.minecraft.world.World;
  
@@ -8,8 +16,11 @@
 +import net.minecraft.entity.player.EntityPlayerMP;
 +import net.minecraft.network.play.server.S23PacketBlockChange;
 +import org.bukkit.block.BlockState;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.util.BlockStateListPopulator;
++import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.util.BlockStateListPopulator;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_7_R4.util.CraftMagicNumbers;
 +import org.bukkit.event.entity.EntityCreatePortalEvent;
 +import org.bukkit.event.entity.EntityExplodeEvent;
 +import org.bukkit.event.entity.EntityRegainHealthEvent;
@@ -20,7 +31,7 @@
  public class EntityDragon extends EntityLiving implements IBossDisplayData, IEntityMultiPart, IMob
  {
      public double targetX;
-@@ -44,6 +57,7 @@
+@@ -44,6 +59,7 @@
      private Entity target;
      public int deathTicks;
      public EntityEnderCrystal healingEnderCrystal;
@@ -28,7 +39,7 @@
      private static final String __OBFID = "CL_00001659";
  
      public EntityDragon(World p_i1700_1_)
-@@ -355,14 +369,25 @@
+@@ -355,14 +371,25 @@
              {
                  if (!this.worldObj.isRemote)
                  {
@@ -56,7 +67,7 @@
              }
          }
  
-@@ -429,7 +454,24 @@
+@@ -429,7 +456,24 @@
  
          if (this.rand.nextInt(2) == 0 && !this.worldObj.playerEntities.isEmpty())
          {
@@ -74,7 +85,7 @@
 +                }
 +                else
 +                {
-+                    this.target = ((org.bukkit.craftbukkit.entity.CraftEntity) event.getTarget()).getHandle();
++                    this.target = ((CraftEntity) event.getTarget()).getHandle();
 +                }
 +            }
 +
@@ -82,18 +93,18 @@
          }
          else
          {
-@@ -468,6 +510,10 @@
+@@ -468,6 +512,10 @@
          int j1 = MathHelper.floor_double(p_70972_1_.maxZ);
          boolean flag = false;
          boolean flag1 = false;
 +        // CraftBukkit start - Create a list to hold all the destroyed blocks
 +        List<org.bukkit.block.Block> destroyedBlocks = new java.util.ArrayList<org.bukkit.block.Block>();
-+        org.bukkit.craftbukkit.CraftWorld craftWorld = this.worldObj.getWorld();
++        CraftWorld craftWorld = this.worldObj.getWorld();
 +        // CraftBukkit end
  
          for (int k1 = i; k1 <= l; ++k1)
          {
-@@ -481,7 +527,11 @@
+@@ -481,7 +529,11 @@
                      {
                          if (block.canEntityDestroy(worldObj, k1, l1, i2, this) && this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing"))
                          {
@@ -106,7 +117,7 @@
                          }
                          else
                          {
-@@ -494,6 +544,52 @@
+@@ -494,6 +546,52 @@
  
          if (flag1)
          {
@@ -143,7 +154,7 @@
 +                    int blockX = block.getX();
 +                    int blockY = block.getY();
 +                    int blockZ = block.getZ();
-+                    Block nmsBlock = org.bukkit.craftbukkit.util.CraftMagicNumbers.getBlock(blockId);
++                    Block nmsBlock = CraftMagicNumbers.getBlock(blockId);
 +
 +                    if (nmsBlock.canDropFromExplosion(explosionSource))
 +                    {
@@ -159,7 +170,7 @@
              double d1 = p_70972_1_.minX + (p_70972_1_.maxX - p_70972_1_.minX) * (double)this.rand.nextFloat();
              double d2 = p_70972_1_.minY + (p_70972_1_.maxY - p_70972_1_.minY) * (double)this.rand.nextFloat();
              double d0 = p_70972_1_.minZ + (p_70972_1_.maxZ - p_70972_1_.minZ) * (double)this.rand.nextFloat();
-@@ -531,13 +627,18 @@
+@@ -531,13 +629,18 @@
          return false;
      }
  
@@ -179,7 +190,7 @@
          ++this.deathTicks;
  
          if (this.deathTicks >= 180 && this.deathTicks <= 200)
-@@ -555,7 +656,7 @@
+@@ -555,7 +658,7 @@
          {
              if (this.deathTicks > 150 && this.deathTicks % 5 == 0)
              {
@@ -188,7 +199,7 @@
  
                  while (i > 0)
                  {
-@@ -576,7 +677,7 @@
+@@ -576,7 +679,7 @@
  
          if (this.deathTicks == 200 && !this.worldObj.isRemote)
          {
@@ -197,7 +208,7 @@
  
              while (i > 0)
              {
-@@ -595,6 +696,8 @@
+@@ -595,6 +698,8 @@
          byte b0 = 64;
          BlockEndPortal.field_149948_a = true;
          byte b1 = 4;
@@ -206,7 +217,7 @@
  
          for (int k = b0 - 1; k <= b0 + 32; ++k)
          {
-@@ -641,6 +744,35 @@
+@@ -641,6 +746,35 @@
          this.worldObj.setBlock(p_70975_1_, b0 + 2, p_70975_2_ + 1, Blocks.torch);
          this.worldObj.setBlock(p_70975_1_, b0 + 3, p_70975_2_, Blocks.bedrock);
          this.worldObj.setBlock(p_70975_1_, b0 + 4, p_70975_2_, Blocks.dragon_egg);
@@ -242,7 +253,7 @@
          BlockEndPortal.field_149948_a = false;
      }
  
-@@ -675,4 +807,13 @@
+@@ -675,4 +809,13 @@
      {
          return 5.0F;
      }

@@ -1,12 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/world/SpawnerAnimals.java
 +++ ../src-work/minecraft/net/minecraft/world/SpawnerAnimals.java
-@@ -22,9 +22,15 @@
+@@ -1,8 +1,5 @@
+ package net.minecraft.world;
+ 
+-import java.util.ArrayList;
+-import java.util.Collections;
+-import java.util.HashMap;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
+@@ -22,9 +19,15 @@
  import cpw.mods.fml.common.eventhandler.Event.Result;
  import net.minecraftforge.event.ForgeEventFactory;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.util.LongHash;
-+import org.bukkit.craftbukkit.util.LongObjectHashMap;
++import org.bukkit.craftbukkit.v1_7_R4.util.LongHash;
++import org.bukkit.craftbukkit.v1_7_R4.util.LongObjectHashMap;
 +import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 +// CraftBukkit end
 +
@@ -17,7 +26,7 @@
      private static final String __OBFID = "CL_00000152";
  
      protected static ChunkPosition func_151350_a(World p_151350_0_, int p_151350_1_, int p_151350_2_)
-@@ -54,22 +60,30 @@
+@@ -54,22 +57,30 @@
                  int j = MathHelper.floor_double(entityplayer.posX / 16.0D);
                  k = MathHelper.floor_double(entityplayer.posZ / 16.0D);
                  byte b0 = 8;
@@ -52,7 +61,7 @@
                      }
                  }
              }
-@@ -82,22 +96,46 @@
+@@ -82,22 +93,46 @@
              for (int k3 = 0; k3 < k; ++k3)
              {
                  EnumCreatureType enumcreaturetype = aenumcreaturetype[k3];
@@ -106,7 +115,7 @@
                              int j1 = chunkposition.chunkPosX;
                              int k1 = chunkposition.chunkPosY;
                              int l1 = chunkposition.chunkPosZ;
-@@ -170,7 +208,8 @@
+@@ -170,7 +205,8 @@
                                                              if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
                                                              {
                                                                  ++i2;
@@ -116,7 +125,7 @@
                                                                  if (!ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, f1, f2))
                                                                  {
                                                                      ientitylivingdata = entityliving.onSpawnWithEgg(ientitylivingdata);
-@@ -266,8 +305,10 @@
+@@ -266,8 +302,10 @@
                              }
  
                              entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, p_77191_6_.nextFloat() * 360.0F, 0.0F);

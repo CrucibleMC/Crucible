@@ -5,12 +5,12 @@ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.NetHandlerLoginServer.LoginState;
 import net.minecraft.util.CryptManager;
-import org.bukkit.craftbukkit.util.Waitable;
+import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
+import org.bukkit.craftbukkit.v1_7_R4.util.Waitable;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 
 import java.math.BigInteger;
-import java.util.UUID;
 // CraftBukkit end
 
 class ThreadPlayerLookupUUID extends Thread {
@@ -72,7 +72,7 @@ class ThreadPlayerLookupUUID extends Thread {
         String playerName = NetHandlerLoginServer.getGameProfile(this.field_151292_a).getName();
         java.net.InetAddress address = ((java.net.InetSocketAddress) this.field_151292_a.field_147333_a.getSocketAddress()).getAddress();
         java.util.UUID uniqueId = NetHandlerLoginServer.getGameProfile(this.field_151292_a).getId();
-        final org.bukkit.craftbukkit.CraftServer server = this.mcServer.server;
+        final CraftServer server = this.mcServer.server;
 
         AsyncPlayerPreLoginEvent asyncEvent = new AsyncPlayerPreLoginEvent(playerName, address, uniqueId);
         server.getPluginManager().callEvent(asyncEvent);

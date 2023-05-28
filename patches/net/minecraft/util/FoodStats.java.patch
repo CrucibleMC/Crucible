@@ -1,12 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/util/FoodStats.java
 +++ ../src-work/minecraft/net/minecraft/util/FoodStats.java
-@@ -7,16 +7,34 @@
+@@ -7,16 +7,35 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.world.EnumDifficulty;
 +// CraftBukkit start
 +import net.minecraft.entity.player.EntityPlayerMP;
 +import net.minecraft.network.play.server.S06PacketUpdateHealth;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +// CraftBukkit end
  
  public class FoodStats
@@ -39,14 +40,14 @@
      public void addStats(int p_75122_1_, float p_75122_2_)
      {
          this.foodLevel = Math.min(p_75122_1_ + this.foodLevel, 20);
-@@ -25,7 +43,17 @@
+@@ -25,7 +44,17 @@
  
      public void func_151686_a(ItemFood p_151686_1_, ItemStack p_151686_2_)
      {
 -        this.addStats(p_151686_1_.func_150905_g(p_151686_2_), p_151686_1_.func_150906_h(p_151686_2_));
 +        // CraftBukkit start
 +        int oldFoodLevel = foodLevel;
-+        org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(entityplayer, p_151686_1_.func_150905_g(p_151686_2_) + oldFoodLevel);
++        org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(entityplayer, p_151686_1_.func_150905_g(p_151686_2_) + oldFoodLevel);
 +
 +        if (!event.isCancelled())
 +        {
@@ -58,13 +59,13 @@
      }
  
      public void onUpdate(EntityPlayer p_75118_1_)
-@@ -43,7 +71,16 @@
+@@ -43,7 +72,16 @@
              }
              else if (enumdifficulty != EnumDifficulty.PEACEFUL)
              {
 -                this.foodLevel = Math.max(this.foodLevel - 1, 0);
 +                // CraftBukkit start
-+                org.bukkit.event.entity.FoodLevelChangeEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callFoodLevelChangeEvent(p_75118_1_, Math.max(this.foodLevel - 1, 0));
++                org.bukkit.event.entity.FoodLevelChangeEvent event = CraftEventFactory.callFoodLevelChangeEvent(p_75118_1_, Math.max(this.foodLevel - 1, 0));
 +
 +                if (!event.isCancelled())
 +                {
@@ -76,7 +77,7 @@
              }
          }
  
-@@ -53,7 +90,8 @@
+@@ -53,7 +91,8 @@
  
              if (this.foodTimer >= 80)
              {

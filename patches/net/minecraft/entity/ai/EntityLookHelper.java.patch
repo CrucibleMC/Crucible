@@ -4,7 +4,7 @@
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.util.MathHelper;
  
-+import org.bukkit.craftbukkit.TrigMath; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.TrigMath; // CraftBukkit
 +
  public class EntityLookHelper
  {

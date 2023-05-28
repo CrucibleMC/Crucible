@@ -7,8 +7,8 @@
 +// CraftBukkit start
 +import net.minecraft.entity.player.EntityPlayerMP;
 +import net.minecraft.network.play.server.S2FPacketSetSlot;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryCrafting;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryCrafting;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryView;
 +// CraftBukkit end
 +
  public class ContainerWorkbench extends Container

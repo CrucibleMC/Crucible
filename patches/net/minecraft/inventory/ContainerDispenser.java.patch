@@ -6,8 +6,8 @@
  
 +// CraftBukkit start
 +import net.minecraft.entity.player.InventoryPlayer;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryView;
 +// CraftBukkit end
 +
  public class ContainerDispenser extends Container

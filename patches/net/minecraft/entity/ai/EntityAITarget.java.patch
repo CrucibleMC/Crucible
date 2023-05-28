@@ -1,18 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/entity/ai/EntityAITarget.java
 +++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAITarget.java
-@@ -12,6 +12,11 @@
+@@ -12,6 +12,12 @@
  import net.minecraft.util.MathHelper;
  import org.apache.commons.lang3.StringUtils;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftEntity;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +// CraftBukkit end
 +
  public abstract class EntityAITarget extends EntityAIBase
  {
      protected EntityCreature taskOwner;
-@@ -156,6 +161,51 @@
+@@ -156,6 +162,51 @@
                      }
                  }
  
@@ -43,7 +44,7 @@
 +                    reason = EntityTargetEvent.TargetReason.OWNER_ATTACKED_TARGET;
 +                }
 +
-+                org.bukkit.event.entity.EntityTargetLivingEntityEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetLivingEvent(this.taskOwner, p_75296_1_, reason);
++                org.bukkit.event.entity.EntityTargetLivingEntityEvent event = CraftEventFactory.callEntityTargetLivingEvent(this.taskOwner, p_75296_1_, reason);
 +
 +                if (event.isCancelled() || event.getTarget() == null)
 +                {

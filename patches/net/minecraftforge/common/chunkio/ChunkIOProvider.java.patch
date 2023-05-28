@@ -1,16 +1,24 @@
 --- ../src-base/minecraft/net/minecraftforge/common/chunkio/ChunkIOProvider.java
 +++ ../src-work/minecraft/net/minecraftforge/common/chunkio/ChunkIOProvider.java
-@@ -9,6 +9,9 @@
+@@ -1,7 +1,6 @@
+ package net.minecraftforge.common.chunkio;
+ 
+ 
+-import net.minecraft.world.ChunkCoordIntPair;
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.common.util.AsynchronousExecutor;
+ import net.minecraftforge.event.world.ChunkDataEvent;
+@@ -9,6 +8,9 @@
  import java.io.IOException;
  import java.util.concurrent.atomic.AtomicInteger;
  
 +import org.bukkit.Server;
-+import org.bukkit.craftbukkit.util.LongHash;
++import org.bukkit.craftbukkit.v1_7_R4.util.LongHash;
 +
  class ChunkIOProvider implements AsynchronousExecutor.CallBackProvider<QueuedChunk, net.minecraft.world.chunk.Chunk, Runnable, RuntimeException> {
      private final AtomicInteger threadNumber = new AtomicInteger(1);
  
-@@ -41,14 +44,36 @@
+@@ -41,14 +43,36 @@
          queuedChunk.loader.loadEntities(queuedChunk.world, queuedChunk.compound.getCompoundTag("Level"), chunk);
          MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, queuedChunk.compound)); // Don't call ChunkDataEvent.Load async
          chunk.lastSaveTime = queuedChunk.provider.worldObj.getTotalWorldTime();

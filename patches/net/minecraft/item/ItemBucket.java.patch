@@ -5,8 +5,8 @@
  import net.minecraftforge.event.entity.player.FillBucketEvent;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 +import org.bukkit.event.player.PlayerBucketEmptyEvent;
 +import org.bukkit.event.player.PlayerBucketFillEvent;
 +// CraftBukkit end

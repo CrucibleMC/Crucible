@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/org/bukkit/entity/Player.java
 +++ ../src-work/minecraft/org/bukkit/entity/Player.java
-@@ -2,19 +2,11 @@
+@@ -2,17 +2,8 @@
  
  import java.net.InetSocketAddress;
  
@@ -19,11 +19,8 @@
 +import org.bukkit.*;
  import org.bukkit.command.CommandSender;
  import org.bukkit.conversations.Conversable;
-+import org.bukkit.craftbukkit.CraftServer;
  import org.bukkit.map.MapView;
- import org.bukkit.plugin.messaging.PluginMessageRecipient;
- import org.bukkit.scoreboard.Scoreboard;
-@@ -1035,4 +1027,94 @@
+@@ -1035,4 +1026,94 @@
       * @see Player#setHealthScaled(boolean)
       */
      public double getHealthScale();

@@ -5,8 +5,8 @@
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
-+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.util.CraftMagicNumbers;
 +import org.bukkit.event.block.EntityBlockFormEvent;
 +// CraftBukkit end
 +

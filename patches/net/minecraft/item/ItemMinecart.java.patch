@@ -1,11 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMinecart.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMinecart.java
-@@ -79,6 +79,15 @@
+@@ -12,6 +12,7 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class ItemMinecart extends Item
+ {
+@@ -79,6 +80,15 @@
          {
              if (!p_77648_3_.isRemote)
              {
 +                // CraftBukkit start - Minecarts
-+                org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent(p_77648_2_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_1_);
++                org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent(p_77648_2_, org.bukkit.event.block.Action.RIGHT_CLICK_BLOCK, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_1_);
 +
 +                if (event.isCancelled())
 +                {

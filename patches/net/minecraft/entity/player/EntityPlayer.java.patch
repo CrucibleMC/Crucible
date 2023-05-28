@@ -1,6 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -92,6 +92,22 @@
+@@ -15,7 +15,6 @@
+ import java.util.Map.Entry;
+ 
+ import net.minecraft.block.Block;
+-import net.minecraft.block.BlockBed;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.command.ICommandSender;
+ import net.minecraft.command.server.CommandBlockLogic;
+@@ -39,7 +38,6 @@
+ import net.minecraft.entity.projectile.EntityArrow;
+ import net.minecraft.entity.projectile.EntityFishHook;
+ import net.minecraft.event.ClickEvent;
+-import net.minecraft.init.Blocks;
+ import net.minecraft.init.Items;
+ import net.minecraft.inventory.Container;
+ import net.minecraft.inventory.ContainerPlayer;
+@@ -53,7 +51,6 @@
+ import net.minecraft.potion.Potion;
+ import net.minecraft.scoreboard.IScoreObjectiveCriteria;
+ import net.minecraft.scoreboard.Score;
+-import net.minecraft.scoreboard.ScoreObjective;
+ import net.minecraft.scoreboard.ScorePlayerTeam;
+ import net.minecraft.scoreboard.Scoreboard;
+ import net.minecraft.scoreboard.Team;
+@@ -84,7 +81,6 @@
+ import net.minecraftforge.common.ISpecialArmor.ArmorProperties;
+ import net.minecraftforge.common.MinecraftForge;
+ import net.minecraftforge.event.ForgeEventFactory;
+-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+ import net.minecraftforge.event.entity.player.AttackEntityEvent;
+ import net.minecraftforge.event.entity.player.EntityInteractEvent;
+ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+@@ -92,6 +88,23 @@
  import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
  import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
  
@@ -8,9 +40,10 @@
 +import net.minecraft.network.play.server.S2FPacketSetSlot;
 +
 +import org.bukkit.Bukkit;
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
-+import org.bukkit.craftbukkit.entity.CraftItem;
-+import org.bukkit.craftbukkit.inventory.CraftItemStack;
++import org.bukkit.craftbukkit.v1_7_R4.TrigMath;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftItem;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.entity.EntityCombustByEntityEvent;
 +import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -23,7 +56,7 @@
  public abstract class EntityPlayer extends EntityLivingBase implements ICommandSender
  {
      public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
-@@ -102,7 +118,7 @@
+@@ -102,7 +115,7 @@
      private InventoryEnderChest theInventoryEnderChest = new InventoryEnderChest();
      public Container inventoryContainer;
      public Container openContainer;
@@ -32,7 +65,7 @@
      protected int flyToggleTimer;
      public float prevCameraYaw;
      public float cameraYaw;
-@@ -113,9 +129,19 @@
+@@ -113,9 +126,19 @@
      public double field_71094_bP;
      public double field_71095_bQ;
      public double field_71085_bR;
@@ -54,7 +87,7 @@
      public float field_71079_bU;
      @SideOnly(Side.CLIENT)
      public float field_71082_cx;
-@@ -124,6 +150,7 @@
+@@ -124,6 +147,7 @@
      private boolean spawnForced;
      private ChunkCoordinates startMinecartRidingCoordinate;
      public PlayerCapabilities capabilities = new PlayerCapabilities();
@@ -62,7 +95,7 @@
      public int experienceLevel;
      public int experienceTotal;
      public float experience;
-@@ -416,6 +443,42 @@
+@@ -416,6 +440,42 @@
          {
              this.updateItemUse(this.itemInUse, 16);
              int i = this.itemInUse.stackSize;
@@ -105,7 +138,7 @@
              ItemStack itemstack = this.itemInUse.onFoodEaten(this.worldObj, this);
  
              itemstack = ForgeEventFactory.onItemUseFinish(this, itemInUse, itemInUseCount, itemstack);
-@@ -452,6 +515,7 @@
+@@ -452,6 +512,7 @@
          return this.getHealth() <= 0.0F || this.isPlayerSleeping();
      }
  
@@ -113,7 +146,7 @@
      public void closeScreen()
      {
          this.openContainer = this.inventoryContainer;
-@@ -459,23 +523,40 @@
+@@ -459,23 +520,40 @@
  
      public void mountEntity(Entity p_70078_1_)
      {
@@ -163,7 +196,7 @@
          }
      }
  
-@@ -532,7 +613,8 @@
+@@ -532,7 +610,8 @@
  
          if (this.worldObj.difficultySetting == EnumDifficulty.PEACEFUL && this.getHealth() < this.getMaxHealth() && this.worldObj.getGameRules().getGameRuleBooleanValue("naturalRegeneration") && this.ticksExisted % 20 * 12 == 0)
          {
@@ -173,17 +206,17 @@
          }
  
          this.inventory.decrementAnimations();
-@@ -554,7 +636,8 @@
+@@ -554,7 +633,8 @@
  
          this.setAIMoveSpeed((float)iattributeinstance.getAttributeValue());
          float f = MathHelper.sqrt_double(this.motionX * this.motionX + this.motionZ * this.motionZ);
 -        float f1 = (float)Math.atan(-this.motionY * 0.20000000298023224D) * 15.0F;
 +        // CraftBukkit - Math -> TrigMath
-+        float f1 = (float) org.bukkit.craftbukkit.TrigMath.atan(-this.motionY * 0.20000000298023224D) * 15.0F;
++        float f1 = (float) TrigMath.atan(-this.motionY * 0.20000000298023224D) * 15.0F;
  
          if (f > 0.1F)
          {
-@@ -589,7 +672,7 @@
+@@ -589,7 +669,7 @@
  
              List list = this.worldObj.getEntitiesWithinAABBExcludingEntity(this, axisalignedbb);
  
@@ -192,7 +225,7 @@
              {
                  for (int i = 0; i < list.size(); ++i)
                  {
-@@ -636,11 +719,6 @@
+@@ -636,11 +716,6 @@
          captureDrops = true;
          capturedDrops.clear();
  
@@ -204,7 +237,7 @@
          if (!this.worldObj.getGameRules().getGameRuleBooleanValue("keepInventory"))
          {
              this.inventory.dropAllItems();
-@@ -687,12 +765,14 @@
+@@ -687,12 +762,14 @@
      public void addToPlayerScore(Entity p_70084_1_, int p_70084_2_)
      {
          this.addScore(p_70084_2_);
@@ -221,7 +254,7 @@
          }
          else
          {
-@@ -703,8 +783,7 @@
+@@ -703,8 +780,7 @@
  
          while (iterator.hasNext())
          {
@@ -231,7 +264,7 @@
              score.func_96648_a();
          }
      }
-@@ -777,6 +856,36 @@
+@@ -777,6 +853,36 @@
                  entityitem.motionZ += Math.sin((double)f1) * (double)f;
              }
  
@@ -268,7 +301,7 @@
              this.joinEntityItemWithWorld(entityitem);
              this.addStat(StatList.dropStat, 1);
              return entityitem;
-@@ -881,6 +990,15 @@
+@@ -881,6 +987,15 @@
              this.wakeUpPlayer(true, true, false);
          }
  
@@ -284,7 +317,7 @@
          if (p_70037_1_.hasKey("SpawnX", 99) && p_70037_1_.hasKey("SpawnY", 99) && p_70037_1_.hasKey("SpawnZ", 99))
          {
              this.spawnChunk = new ChunkCoordinates(p_70037_1_.getInteger("SpawnX"), p_70037_1_.getInteger("SpawnY"), p_70037_1_.getInteger("SpawnZ"));
-@@ -925,6 +1043,7 @@
+@@ -925,6 +1040,7 @@
              p_70014_1_.setInteger("SpawnY", this.spawnChunk.posY);
              p_70014_1_.setInteger("SpawnZ", this.spawnChunk.posZ);
              p_70014_1_.setBoolean("SpawnForced", this.spawnForced);
@@ -292,7 +325,7 @@
          }
  
          NBTTagList spawnlist = new NBTTagList();
-@@ -1003,7 +1122,7 @@
+@@ -1003,7 +1119,7 @@
                  {
                      if (this.worldObj.difficultySetting == EnumDifficulty.PEACEFUL)
                      {
@@ -301,7 +334,7 @@
                      }
  
                      if (this.worldObj.difficultySetting == EnumDifficulty.EASY)
-@@ -1017,7 +1136,7 @@
+@@ -1017,7 +1133,7 @@
                      }
                  }
  
@@ -310,7 +343,7 @@
                  {
                      return false;
                  }
-@@ -1039,9 +1158,40 @@
+@@ -1039,9 +1155,40 @@
  
      public boolean canAttackPlayer(EntityPlayer p_96122_1_)
      {
@@ -354,7 +387,7 @@
      }
  
      protected void damageArmor(float p_70675_1_)
-@@ -1073,19 +1223,34 @@
+@@ -1073,19 +1220,34 @@
          return (float)i / (float)this.inventory.armorInventory.length;
      }
  
@@ -391,7 +424,7 @@
              p_70665_2_ = this.applyPotionDamageCalculations(p_70665_1_, p_70665_2_);
              float f1 = p_70665_2_;
              p_70665_2_ = Math.max(p_70665_2_ - this.getAbsorptionAmount(), 0.0F);
-@@ -1099,6 +1264,7 @@
+@@ -1099,6 +1261,7 @@
                  this.func_110142_aN().func_94547_a(p_70665_1_, f2, p_70665_2_);
              }
          }
@@ -399,7 +432,7 @@
      }
  
      public void func_146101_a(TileEntityFurnace p_146101_1_) {}
-@@ -1134,7 +1300,8 @@
+@@ -1134,7 +1297,8 @@
  
                  if (itemstack.interactWithEntity(this, (EntityLivingBase)p_70998_1_))
                  {
@@ -409,7 +442,7 @@
                      {
                          this.destroyCurrentEquippedItem();
                      }
-@@ -1281,7 +1448,8 @@
+@@ -1281,7 +1445,8 @@
                          {
                              itemstack.hitEntity((EntityLivingBase)object, this);
  
@@ -419,7 +452,7 @@
                              {
                                  this.destroyCurrentEquippedItem();
                              }
-@@ -1293,7 +1461,17 @@
+@@ -1293,7 +1458,17 @@
  
                              if (j > 0)
                              {
@@ -438,7 +471,7 @@
                              }
                          }
  
-@@ -1322,6 +1500,10 @@
+@@ -1322,6 +1497,10 @@
  
          if (this.openContainer != null)
          {
@@ -449,7 +482,7 @@
              this.openContainer.onContainerClosed(this);
          }
      }
-@@ -1381,6 +1563,20 @@
+@@ -1381,6 +1560,20 @@
              this.mountEntity((Entity)null);
          }
  
@@ -470,7 +503,7 @@
          this.setSize(0.2F, 0.2F);
          this.yOffset = 0.2F;
  
-@@ -1476,6 +1672,26 @@
+@@ -1476,6 +1669,26 @@
              this.worldObj.updateAllPlayersSleepingFlag();
          }
  
@@ -497,7 +530,7 @@
          if (p_70999_1_)
          {
              this.sleepTimer = 0;
-@@ -1606,11 +1822,13 @@
+@@ -1606,11 +1819,13 @@
          {
              this.spawnChunk = new ChunkCoordinates(p_71063_1_);
              this.spawnForced = p_71063_2_;
@@ -511,7 +544,7 @@
          }
      }
  
-@@ -2022,7 +2240,17 @@
+@@ -2022,7 +2237,17 @@
              this.experience = p_71049_1_.experience;
              this.setScore(p_71049_1_.getScore());
          }
@@ -530,7 +563,7 @@
          this.theInventoryEnderChest = p_71049_1_.theInventoryEnderChest;
  
          this.spawnChunkMap = p_71049_1_.spawnChunkMap;
-@@ -2035,7 +2263,7 @@
+@@ -2035,7 +2260,7 @@
          {
              getEntityData().setTag(PERSISTED_NBT_TAG, old.getCompoundTag(PERSISTED_NBT_TAG));
          }

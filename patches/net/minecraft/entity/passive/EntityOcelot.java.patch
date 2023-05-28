@@ -1,5 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityOcelot.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityOcelot.java
+@@ -1,7 +1,6 @@
+ package net.minecraft.entity.passive;
+ 
+ import net.minecraft.block.Block;
+-import net.minecraft.block.material.Material;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityAgeable;
+ import net.minecraft.entity.IEntityLivingData;
+@@ -27,6 +26,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class EntityOcelot extends EntityTameable
+ {
 @@ -89,7 +89,7 @@
  
      protected boolean canDespawn()
@@ -15,7 +31,7 @@
              {
 -                if (this.rand.nextInt(3) == 0)
 +                // CraftBukkit - added event call and isCancelled check
-+                if (this.rand.nextInt(3) == 0 && !org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTameEvent(this, p_70085_1_).isCancelled())
++                if (this.rand.nextInt(3) == 0 && !CraftEventFactory.callEntityTameEvent(this, p_70085_1_).isCancelled())
                  {
                      this.setTamed(true);
                      this.setTameSkin(1 + this.worldObj.rand.nextInt(3));

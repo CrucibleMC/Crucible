@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import net.minecraft.entity.Entity;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityTargetEvent;
 +// CraftBukkit end
 +
@@ -21,7 +21,7 @@
 +
 +        if (this.attacker.getAttackTarget() == null || (this.attacker.getAttackTarget() != null && !this.attacker.getAttackTarget().isEntityAlive()))
 +        {
-+            org.bukkit.craftbukkit.event.CraftEventFactory.callEntityTargetEvent(attacker, null, reason);
++            CraftEventFactory.callEntityTargetEvent(attacker, null, reason);
 +        }
 +
 +        // CraftBukkit end

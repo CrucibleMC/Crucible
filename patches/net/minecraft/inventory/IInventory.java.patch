@@ -4,7 +4,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.ItemStack;
  
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity; // CraftBukkit
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity; // CraftBukkit
 +
  public interface IInventory
  {

@@ -4,7 +4,7 @@ import com.google.common.base.Predicate;
 import net.minecraftforge.cauldron.api.Fishing;
 import net.minecraftforge.cauldron.api.WeightedRandomFishable;
 import net.minecraftforge.common.FishingHooks;
-import org.bukkit.craftbukkit.inventory.CraftItemStack;
+import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Random;

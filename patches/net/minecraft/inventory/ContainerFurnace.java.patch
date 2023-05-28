@@ -5,8 +5,8 @@
  import net.minecraft.tileentity.TileEntityFurnace;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.inventory.CraftInventoryFurnace;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryView;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryFurnace;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryView;
 +// CraftBukkit end
 +
  public class ContainerFurnace extends Container

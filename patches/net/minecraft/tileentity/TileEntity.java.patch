@@ -8,12 +8,10 @@
  import cpw.mods.fml.common.FMLLog;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-@@ -22,20 +24,32 @@
+@@ -22,20 +24,30 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import org.bukkit.craftbukkit.Overridden;
-+import org.spigotmc.CustomTimingsHandler; // Spigot
 +import org.bukkit.inventory.InventoryHolder; // CraftBukkit
 +
  public class TileEntity
@@ -43,7 +41,7 @@
      public static void addMapping(Class p_145826_0_, String p_145826_1_)
      {
          if (nameToClassMap.containsKey(p_145826_1_))
-@@ -106,7 +120,11 @@
+@@ -106,7 +118,11 @@
          }
          catch (Exception exception)
          {
@@ -56,7 +54,7 @@
          }
  
          if (tileentity != null)
-@@ -282,6 +300,31 @@
+@@ -282,6 +298,31 @@
          addMapping(TileEntityFlowerPot.class, "FlowerPot");
      }
  

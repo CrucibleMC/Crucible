@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/passive/EntityHorse.java
 +++ ../src-work/minecraft/net/minecraft/entity/passive/EntityHorse.java
-@@ -50,7 +50,7 @@
+@@ -39,6 +39,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.util.StatCollector;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class EntityHorse extends EntityAnimal implements IInvBasic
+ {
+@@ -50,7 +51,7 @@
              return p_82704_1_ instanceof EntityHorse && ((EntityHorse)p_82704_1_).func_110205_ce();
          }
      };
@@ -9,7 +17,7 @@
      private static final String[] horseArmorTextures = new String[] {null, "textures/entity/horse/armor/horse_armor_iron.png", "textures/entity/horse/armor/horse_armor_gold.png", "textures/entity/horse/armor/horse_armor_diamond.png"};
      private static final String[] field_110273_bx = new String[] {"", "meo", "goo", "dio"};
      private static final int[] armorValues = new int[] {0, 5, 7, 11};
-@@ -64,7 +64,7 @@
+@@ -64,7 +65,7 @@
      public int field_110278_bp;
      public int field_110279_bq;
      protected boolean horseJumping;
@@ -18,7 +26,7 @@
      private boolean hasReproduced;
      protected int temper;
      protected float jumpPower;
-@@ -78,6 +78,7 @@
+@@ -78,6 +79,7 @@
      private int field_110285_bP;
      private String field_110286_bQ;
      private String[] field_110280_bR = new String[3];
@@ -26,7 +34,7 @@
      private static final String __OBFID = "CL_00001641";
  
      public EntityHorse(World p_i1685_1_)
-@@ -403,13 +404,13 @@
+@@ -403,13 +405,13 @@
      private int func_110225_cC()
      {
          int i = this.getHorseType();
@@ -43,7 +51,7 @@
          this.horseChest.func_110133_a(this.getCommandSenderName());
  
          if (animalchest != null)
-@@ -950,12 +951,25 @@
+@@ -950,12 +952,25 @@
      {
          super.onDeath(p_70645_1_);
  
@@ -69,7 +77,7 @@
      public void onLivingUpdate()
      {
          if (this.rand.nextInt(200) == 0)
-@@ -1278,6 +1292,7 @@
+@@ -1278,6 +1293,7 @@
          p_70014_1_.setInteger("Temper", this.getTemper());
          p_70014_1_.setBoolean("Tame", this.isTame());
          p_70014_1_.setString("OwnerUUID", this.func_152119_ch());
@@ -77,7 +85,7 @@
  
          if (this.isChested())
          {
-@@ -1327,6 +1342,13 @@
+@@ -1327,6 +1343,13 @@
              this.func_152120_b(p_70037_1_.getString("OwnerUUID"));
          }
  
@@ -91,7 +99,7 @@
          IAttributeInstance iattributeinstance = this.getAttributeMap().getAttributeInstanceByName("Speed");
  
          if (iattributeinstance != null)
-@@ -1566,24 +1588,33 @@
+@@ -1566,24 +1589,33 @@
      {
          if (this.isHorseSaddled())
          {
@@ -119,7 +127,7 @@
 +                power = 0.4F + 0.4F * (float)p_110206_1_ / 90.0F;
              }
 +
-+            org.bukkit.event.entity.HorseJumpEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callHorseJumpEvent(this, power);
++            org.bukkit.event.entity.HorseJumpEvent event = CraftEventFactory.callHorseJumpEvent(this, power);
 +
 +            if (!event.isCancelled())
 +            {

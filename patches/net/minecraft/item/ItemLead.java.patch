@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemLead.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemLead.java
-@@ -10,6 +10,8 @@
+@@ -10,6 +10,9 @@
  import net.minecraft.util.AxisAlignedBB;
  import net.minecraft.world.World;
  
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.event.hanging.HangingPlaceEvent; // CraftBukkit
 +
  public class ItemLead extends Item
  {
      private static final String __OBFID = "CL_00000045";
-@@ -61,8 +63,26 @@
+@@ -61,8 +64,26 @@
                      if (entityleashknot == null)
                      {
                          entityleashknot = EntityLeashKnot.func_110129_a(p_150909_1_, p_150909_2_, p_150909_3_, p_150909_4_);
@@ -27,7 +28,7 @@
                      }
  
 +                    // CraftBukkit start
-+                    if (org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerLeashEntityEvent(entityliving, entityleashknot, p_150909_0_).isCancelled())
++                    if (CraftEventFactory.callPlayerLeashEntityEvent(entityliving, entityleashknot, p_150909_0_).isCancelled())
 +                    {
 +                        continue;
 +                    }

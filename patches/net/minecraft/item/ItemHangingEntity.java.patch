@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemHangingEntity.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemHangingEntity.java
-@@ -8,6 +8,12 @@
+@@ -8,6 +8,13 @@
  import net.minecraft.util.Direction;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
++import org.bukkit.craftbukkit.v1_7_R4.block.CraftBlock;
 +import org.bukkit.entity.Player;
 +import org.bukkit.event.hanging.HangingPlaceEvent;
 +import org.bukkit.event.painting.PaintingPlaceEvent;
@@ -13,14 +14,14 @@
  public class ItemHangingEntity extends Item
  {
      private final Class hangingEntityClass;
-@@ -44,6 +50,28 @@
+@@ -44,6 +51,28 @@
                  {
                      if (!p_77648_3_.isRemote)
                      {
 +                        // CraftBukkit start
 +                        Player who = (Player) p_77648_2_.getBukkitEntity();
 +                        org.bukkit.block.Block blockClicked = p_77648_3_.getWorld().getBlockAt(p_77648_4_, p_77648_5_, p_77648_6_);
-+                        org.bukkit.block.BlockFace blockFace = org.bukkit.craftbukkit.block.CraftBlock.notchToBlockFace(p_77648_7_);
++                        org.bukkit.block.BlockFace blockFace = CraftBlock.notchToBlockFace(p_77648_7_);
 +                        HangingPlaceEvent event = new HangingPlaceEvent((org.bukkit.entity.Hanging) entityhanging.getBukkitEntity(), who, blockClicked, blockFace);
 +                        p_77648_3_.getServer().getPluginManager().callEvent(event);
 +                        PaintingPlaceEvent paintingEvent = null;

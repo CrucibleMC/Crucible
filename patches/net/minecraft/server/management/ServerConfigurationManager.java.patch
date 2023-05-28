@@ -26,19 +26,21 @@
  import net.minecraft.potion.PotionEffect;
  import net.minecraft.scoreboard.Score;
  import net.minecraft.scoreboard.ScoreObjective;
-@@ -58,15 +63,43 @@
+@@ -50,9 +55,7 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.stats.StatList;
+ import net.minecraft.stats.StatisticsFile;
+-import net.minecraft.util.ChatComponentTranslation;
+ import net.minecraft.util.ChunkCoordinates;
+-import net.minecraft.util.EnumChatFormatting;
+ import net.minecraft.util.IChatComponent;
+ import net.minecraft.util.MathHelper;
  import net.minecraft.world.Teleporter;
- import net.minecraft.world.World;
- import net.minecraft.world.WorldProvider;
-+import net.minecraft.world.WorldProviderEnd;
- import net.minecraft.world.WorldServer;
- import net.minecraft.world.WorldSettings;
-+import net.minecraft.world.WorldSettings.GameType;
+@@ -63,10 +66,40 @@
  import net.minecraft.world.demo.DemoWorldManager;
  import net.minecraft.world.storage.IPlayerFileData;
  import net.minecraft.world.storage.SaveHandler;
 +import net.minecraftforge.common.DimensionManager;
-+import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.common.chunkio.ChunkIOExecutor;
 +import net.minecraftforge.common.network.ForgeMessage;
 +import net.minecraftforge.common.network.ForgeNetworkHandler;
@@ -47,17 +49,22 @@
  
 +// CraftBukkit start
 +import net.minecraft.server.network.NetHandlerLoginServer;
-+import org.bukkit.craftbukkit.CraftServer;
-+import org.bukkit.craftbukkit.CraftWorld;
-+import org.bukkit.craftbukkit.entity.CraftPlayer;
-+import org.bukkit.craftbukkit.inventory.CraftInventory;
-+import org.bukkit.craftbukkit.inventory.CraftInventoryPlayer;
++import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
++import org.bukkit.craftbukkit.v1_7_R4.CraftTravelAgent;
++import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
++import org.bukkit.craftbukkit.v1_7_R4.command.ColouredConsoleSender;
++import org.bukkit.craftbukkit.v1_7_R4.command.ConsoleCommandCompleter;
++import org.bukkit.craftbukkit.v1_7_R4.command.CraftRemoteConsoleCommandSender;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventory;
++import org.bukkit.craftbukkit.v1_7_R4.inventory.CraftInventoryPlayer;
 +import org.bukkit.Bukkit;
 +import org.bukkit.GameMode;
 +import org.bukkit.Location;
 +import org.bukkit.TravelAgent;
++import org.bukkit.craftbukkit.v1_7_R4.util.CraftChatMessage;
 +import org.bukkit.entity.Player;
-+import org.bukkit.event.player.PlayerChangedWorldEvent;
 +import org.bukkit.event.player.PlayerPortalEvent;
 +import org.bukkit.event.player.PlayerJoinEvent;
 +import org.bukkit.event.player.PlayerLoginEvent;
@@ -91,9 +98,9 @@
      public ServerConfigurationManager(MinecraftServer p_i1500_1_)
      {
 +        p_i1500_1_.server = new CraftServer(p_i1500_1_, this);
-+        p_i1500_1_.console = org.bukkit.craftbukkit.command.ColouredConsoleSender.getInstance();
-+        p_i1500_1_.remoteConsole = new org.bukkit.craftbukkit.command.CraftRemoteConsoleCommandSender();
-+        p_i1500_1_.reader.addCompleter(new org.bukkit.craftbukkit.command.ConsoleCommandCompleter(p_i1500_1_.server));
++        p_i1500_1_.console = ColouredConsoleSender.getInstance();
++        p_i1500_1_.remoteConsole = new CraftRemoteConsoleCommandSender();
++        p_i1500_1_.reader.addCompleter(new ConsoleCommandCompleter(p_i1500_1_.server));
 +        this.cserver = p_i1500_1_.server;
 +        // CraftBukkit end
          this.bannedPlayers = new UserListBans(field_152613_a);
@@ -209,7 +216,7 @@
 +
 +        if ((joinMessage != null) && (joinMessage.length() > 0))
 +        {
-+            for (IChatComponent line : org.bukkit.craftbukkit.util.CraftChatMessage.fromString(joinMessage))
++            for (IChatComponent line : CraftChatMessage.fromString(joinMessage))
 +            {
 +                this.mcServer.getConfigurationManager().sendPacketToAllPlayers(new S02PacketChat(line));
 +            }
@@ -277,7 +284,7 @@
 +        if (p_72367_1_.playerNetServerHandler != null)
 +        {
 +            // CraftBukkit start - Quitting must be before we do final save of data, in case plugins need to modify it
-+            org.bukkit.craftbukkit.event.CraftEventFactory.handleInventoryCloseEvent(p_72367_1_);
++            CraftEventFactory.handleInventoryCloseEvent(p_72367_1_);
 +            playerQuitEvent = new PlayerQuitEvent(this.cserver.getPlayer(p_72367_1_), "\u00A7e" + p_72367_1_.getCommandSenderName() + " left the game.");
 +            this.cserver.getPluginManager().callEvent(playerQuitEvent);
 +            p_72367_1_.getBukkitEntity().disconnect(playerQuitEvent.getQuitMessage());
@@ -518,13 +525,13 @@
 +            Location enter = par1EntityPlayerMP.getBukkitEntity().getLocation();
 +            Location exit = null;
 +            // THE_END -> NORMAL; use bed if available, otherwise default spawn
-+            exit = ((org.bukkit.craftbukkit.entity.CraftPlayer) par1EntityPlayerMP.getBukkitEntity()).getBedSpawnLocation();
++            exit = ((CraftPlayer) par1EntityPlayerMP.getBukkitEntity()).getBedSpawnLocation();
 +
 +            if (exit == null || ((CraftWorld) exit.getWorld()).getHandle().dimension != 0)
 +            {
 +                exit = exitWorld.getWorld().getSpawnLocation();
 +            }
-+            PlayerPortalEvent event = new PlayerPortalEvent(par1EntityPlayerMP.getBukkitEntity(), enter, exit, org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT,
++            PlayerPortalEvent event = new PlayerPortalEvent(par1EntityPlayerMP.getBukkitEntity(), enter, exit, CraftTravelAgent.DEFAULT,
 +                    TeleportCause.END_PORTAL);
 +            event.useTravelAgent(false);
 +            Bukkit.getServer().getPluginManager().callEvent(event);
@@ -834,7 +841,7 @@
 +        }
 +        if (agent == null) // mod teleporter such as Twilight Forest
 +        {
-+            agent = org.bukkit.craftbukkit.CraftTravelAgent.DEFAULT; // return arbitrary TA to compensate for implementation dependent plugins
++            agent = CraftTravelAgent.DEFAULT; // return arbitrary TA to compensate for implementation dependent plugins
 +        }
 +
 +        PlayerPortalEvent event = new PlayerPortalEvent(par1EntityPlayerMP.getBukkitEntity(), enter, exit, agent, cause);

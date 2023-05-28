@@ -5,7 +5,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.ItemStack;
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.entity.CraftHumanEntity;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHumanEntity;
 +import org.bukkit.entity.HumanEntity;
 +// CraftBukkit end
  

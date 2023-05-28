@@ -5,8 +5,8 @@
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import java.util.List;
 +import net.minecraft.entity.player.EntityPlayer;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent;
 +// CraftBukkit end
 +
@@ -31,7 +31,7 @@
 +
 +            if (entity instanceof EntityPlayer)
 +            {
-+                cancellable = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entity, org.bukkit.event.block.Action.PHYSICAL, p_150065_2_, p_150065_3_, p_150065_4_, -1, null);
++                cancellable = CraftEventFactory.callPlayerInteractEvent((EntityPlayer) entity, org.bukkit.event.block.Action.PHYSICAL, p_150065_2_, p_150065_3_, p_150065_4_, -1, null);
          }
          else
          {

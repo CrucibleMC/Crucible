@@ -1,19 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -4,6 +4,7 @@
- import cpw.mods.fml.relauncher.SideOnly;
- import java.util.List;
- import net.minecraft.block.material.Material;
-+import net.minecraft.block.BlockRailBase;
- import net.minecraft.client.renderer.texture.IIconRegister;
- import net.minecraft.creativetab.CreativeTabs;
- import net.minecraft.entity.Entity;
-@@ -21,6 +22,12 @@
+@@ -11,7 +11,6 @@
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.item.ItemStack;
+-import net.minecraft.server.management.PlayerManager;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityPiston;
+ import net.minecraft.util.AxisAlignedBB;
+@@ -21,6 +20,12 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.block.CraftBlock;
++import org.bukkit.craftbukkit.v1_7_R4.block.CraftBlock;
 +import org.bukkit.event.block.BlockPistonRetractEvent;
 +import org.bukkit.event.block.BlockPistonExtendEvent;
 +// CraftBukkit end
@@ -21,7 +21,7 @@
  public class BlockPistonBase extends Block
  {
      private final boolean isSticky;
-@@ -128,13 +135,37 @@
+@@ -128,13 +133,37 @@
  
              if (flag && !isExtended(l))
              {
@@ -60,7 +60,7 @@
                  p_150078_1_.setBlockMetadataWithNotify(p_150078_2_, p_150078_3_, p_150078_4_, i1, 2);
                  p_150078_1_.addBlockEvent(p_150078_2_, p_150078_3_, p_150078_4_, this, 1, i1);
              }
-@@ -297,6 +328,11 @@
+@@ -297,6 +326,11 @@
  
      public static int getPistonOrientation(int p_150076_0_)
      {
@@ -72,7 +72,7 @@
          return p_150076_0_ & 7;
      }
  
-@@ -328,7 +364,7 @@
+@@ -328,7 +362,7 @@
  
      private static boolean canPushBlock(Block p_150080_0_, World p_150080_1_, int p_150080_2_, int p_150080_3_, int p_150080_4_, boolean p_150080_5_)
      {
@@ -81,7 +81,7 @@
          {
              return false;
          }
-@@ -366,7 +402,13 @@
+@@ -366,7 +400,13 @@
          }
      }
  
@@ -96,7 +96,7 @@
      {
          int i1 = p_150077_1_ + Facing.offsetsXForSide[p_150077_4_];
          int j1 = p_150077_2_ + Facing.offsetsYForSide[p_150077_4_];
-@@ -379,7 +421,7 @@
+@@ -379,7 +419,7 @@
              {
                  if (j1 <= 0 || j1 >= p_150077_0_.getHeight())
                  {
@@ -105,7 +105,7 @@
                  }
  
                  Block block = p_150077_0_.getBlock(i1, j1, k1);
-@@ -388,14 +430,14 @@
+@@ -388,14 +428,14 @@
                  {
                      if (!canPushBlock(block, p_150077_0_, i1, j1, k1, true))
                      {
@@ -122,7 +122,7 @@
                          }
  
                          i1 += Facing.offsetsXForSide[p_150077_4_];
-@@ -407,7 +449,7 @@
+@@ -407,7 +447,7 @@
                  }
              }
  

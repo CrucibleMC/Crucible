@@ -1,12 +1,20 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCocoa.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCocoa.java
-@@ -51,7 +51,8 @@
+@@ -17,6 +17,7 @@
+ import net.minecraft.util.MathHelper;
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class BlockCocoa extends BlockDirectional implements IGrowable
+ {
+@@ -51,7 +52,8 @@
              if (i1 < 2)
              {
                  ++i1;
 -                p_149674_1_.setBlockMetadataWithNotify(p_149674_2_, p_149674_3_, p_149674_4_, i1 << 2 | getDirection(l), 2);
 +                // CraftBukkit
-+                org.bukkit.craftbukkit.event.CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, this, i1 << 2 | getDirection(l));
++                CraftEventFactory.handleBlockGrowEvent(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, this, i1 << 2 | getDirection(l));
              }
          }
      }

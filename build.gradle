@@ -48,7 +48,6 @@ minecraft {
     mainClass = 'cpw.mods.fml.relauncher.ServerLaunchWrapper'
     tweakClass = 'cpw.mods.fml.common.launcher.FMLTweaker'
     installerVersion = "1.4"
-    srgExtra "PK: org/bukkit/craftbukkit org/bukkit/craftbukkit/v1_7_R4" // TODO: Perhaps rename the packages itself
 
     // Repos used on the generated subprojects
     repos = [
@@ -119,6 +118,14 @@ dependencies {
     libraries 'com.koloboke:koloboke-impl-jdk8:1.0.0'
     libraries 'java3d:vecmath:1.3.1'
     libraries 'it.unimi.dsi:fastutil:8.2.2'
+}
+packageApi {
+    include 'org/bukkit/**'
+    include 'org/spigotmc/**'
+    include 'thermos/**'
+    include 'co/aikar/**'
+    include 'io/github/crucible/**'
+    include 'net/minecraftforge/cauldron/**'
 }
 
 packageServer {

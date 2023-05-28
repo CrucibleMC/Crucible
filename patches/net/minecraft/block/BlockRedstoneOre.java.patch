@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
-@@ -13,6 +13,8 @@
+@@ -13,6 +13,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.event.entity.EntityInteractEvent; // CraftBukkit
 +
  public class BlockRedstoneOre extends Block
  {
      private boolean field_150187_a;
-@@ -43,8 +45,30 @@
+@@ -43,8 +46,30 @@
  
      public void onEntityWalking(World p_149724_1_, int p_149724_2_, int p_149724_3_, int p_149724_4_, Entity p_149724_5_)
      {
@@ -18,7 +19,7 @@
 +        // CraftBukkit start
 +        if (p_149724_5_ instanceof EntityPlayer)
 +        {
-+            org.bukkit.event.player.PlayerInteractEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callPlayerInteractEvent((EntityPlayer) p_149724_5_, org.bukkit.event.block.Action.PHYSICAL, p_149724_2_, p_149724_3_, p_149724_4_, -1, null);
++            org.bukkit.event.player.PlayerInteractEvent event = CraftEventFactory.callPlayerInteractEvent((EntityPlayer) p_149724_5_, org.bukkit.event.block.Action.PHYSICAL, p_149724_2_, p_149724_3_, p_149724_4_, -1, null);
 +
 +            if (!event.isCancelled())
 +            {

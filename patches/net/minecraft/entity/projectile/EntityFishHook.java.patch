@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
-@@ -27,6 +27,12 @@
+@@ -27,6 +27,13 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
 +// CraftBukkit start
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +import org.bukkit.entity.Player;
 +import org.bukkit.entity.Fish;
 +import org.bukkit.event.player.PlayerFishEvent;
@@ -13,7 +14,7 @@
  public class EntityFishHook extends Entity
  {
      public static final List field_146039_d = Arrays.asList(new WeightedRandomFishable[] {(new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.leather), 10), new WeightedRandomFishable(new ItemStack(Items.bone), 10), new WeightedRandomFishable(new ItemStack(Items.potionitem), 10), new WeightedRandomFishable(new ItemStack(Items.string), 5), (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).func_150709_a(0.9F), new WeightedRandomFishable(new ItemStack(Items.bowl), 10), new WeightedRandomFishable(new ItemStack(Items.stick), 5), new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1), new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10), new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10)});
-@@ -258,7 +264,7 @@
+@@ -258,7 +265,7 @@
  
                      if (movingobjectposition1 != null)
                      {
@@ -22,16 +23,16 @@
  
                          if (d2 < d0 || d0 == 0.0D)
                          {
-@@ -276,6 +282,8 @@
+@@ -276,6 +283,8 @@
  
              if (movingobjectposition != null)
              {
-+                org.bukkit.craftbukkit.event.CraftEventFactory.callProjectileHitEvent(this); // Craftbukkit - Call event
++                CraftEventFactory.callProjectileHitEvent(this); // Craftbukkit - Call event
 +
                  if (movingobjectposition.entityHit != null)
                  {
                      if (movingobjectposition.entityHit.attackEntityFrom(DamageSource.causeThrownDamage(this, this.field_146042_b), 0.0F))
-@@ -509,6 +517,16 @@
+@@ -509,6 +518,16 @@
  
              if (this.field_146043_c != null)
              {
@@ -48,7 +49,7 @@
                  double d0 = this.field_146042_b.posX - this.posX;
                  double d2 = this.field_146042_b.posY - this.posY;
                  double d4 = this.field_146042_b.posZ - this.posZ;
-@@ -522,6 +540,17 @@
+@@ -522,6 +541,17 @@
              else if (this.field_146045_ax > 0)
              {
                  EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.func_146033_f());
@@ -66,7 +67,7 @@
                  double d1 = this.field_146042_b.posX - this.posX;
                  double d3 = this.field_146042_b.posY - this.posY;
                  double d5 = this.field_146042_b.posZ - this.posZ;
-@@ -531,15 +560,37 @@
+@@ -531,15 +561,37 @@
                  entityitem.motionY = d3 * d9 + (double)MathHelper.sqrt_double(d7) * 0.08D;
                  entityitem.motionZ = d5 * d9;
                  this.worldObj.spawnEntityInWorld(entityitem);
@@ -105,7 +106,7 @@
              this.setDead();
              this.field_146042_b.fishEntity = null;
              return b0;
-@@ -580,7 +631,7 @@
+@@ -580,7 +632,7 @@
              {
                  float f3 = f - f2;
                  this.field_146042_b.addStat(StatList.fishCaughtStat, 1);
@@ -114,7 +115,7 @@
              }
          }
      }
-@@ -594,4 +645,11 @@
+@@ -594,4 +646,11 @@
              this.field_146042_b.fishEntity = null;
          }
      }

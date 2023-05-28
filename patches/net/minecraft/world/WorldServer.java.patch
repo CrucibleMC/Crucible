@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -1,16 +1,22 @@
+@@ -1,16 +1,21 @@
  package net.minecraft.world;
  
  import com.google.common.collect.Lists;
@@ -16,22 +16,13 @@
  import java.util.List;
  import java.util.Random;
  import java.util.Set;
-+import java.util.SortedSet;
  import java.util.TreeSet;
 +import java.util.Collections;
 +
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockEventData;
  import net.minecraft.block.material.Material;
-@@ -56,6 +62,7 @@
- import net.minecraft.world.chunk.storage.IChunkLoader;
- import net.minecraft.world.gen.ChunkProviderServer;
- import net.minecraft.world.gen.feature.WorldGeneratorBonusChest;
-+import net.minecraft.world.storage.DerivedWorldInfo;
- import net.minecraft.world.storage.ISaveHandler;
- import net.minecraftforge.common.ChestGenHooks;
- import static net.minecraftforge.common.ChestGenHooks.BONUS_CHEST;
-@@ -63,15 +70,31 @@
+@@ -63,15 +68,29 @@
  import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.event.ForgeEventFactory;
  import net.minecraftforge.event.world.WorldEvent;
@@ -42,13 +33,11 @@
  
 +
 +// CraftBukkit start
-+import net.minecraft.block.ITileEntityProvider;
-+import net.minecraft.block.BlockJukebox;
-+import net.minecraft.tileentity.*;
 +
 +import org.bukkit.WeatherType;
 +import org.bukkit.block.BlockState;
-+import org.bukkit.craftbukkit.util.LongHash;
++import org.bukkit.craftbukkit.v1_7_R4.CraftTravelAgent;
++import org.bukkit.craftbukkit.v1_7_R4.generator.*;
 +import org.bukkit.event.block.BlockFormEvent;
 +import org.bukkit.event.weather.LightningStrikeEvent;
 +import org.bukkit.event.weather.ThunderChangeEvent;
@@ -64,7 +53,7 @@
      private final PlayerManager thePlayerManager;
      private Set pendingTickListEntriesHashSet;
      private TreeSet pendingTickListEntriesTreeSet;
-@@ -92,9 +115,13 @@
+@@ -92,9 +111,13 @@
      protected Set<ChunkCoordIntPair> doneChunks = new HashSet<ChunkCoordIntPair>();
      public List<Teleporter> customTeleporters = new ArrayList<Teleporter>();
  
@@ -78,7 +67,7 @@
          this.mcServer = p_i45284_1_;
          this.theEntityTracker = new EntityTracker(this);
          this.thePlayerManager = new PlayerManager(this);
-@@ -106,12 +133,12 @@
+@@ -106,12 +129,12 @@
  
          if (this.pendingTickListEntriesHashSet == null)
          {
@@ -93,7 +82,7 @@
          }
  
          this.worldTeleporter = new Teleporter(this);
-@@ -124,6 +151,47 @@
+@@ -124,6 +147,47 @@
              this.mapStorage.setData("scoreboard", scoreboardsavedata);
          }
  
@@ -128,7 +117,7 @@
 +            this.pendingTickListEntriesTreeSet = (new TreeSet());
 +        }
 +
-+        this.worldTeleporter = new org.bukkit.craftbukkit.CraftTravelAgent(this); // CraftBukkit
++        this.worldTeleporter = new CraftTravelAgent(this); // CraftBukkit
 +        this.worldScoreboard = new ServerScoreboard(p_i45284_1_);
 +        ScoreboardSaveData scoreboardsavedata = (ScoreboardSaveData) this.mapStorage.loadData(ScoreboardSaveData.class, "scoreboard");
 +
@@ -141,7 +130,7 @@
          if (!(this instanceof WorldServerMulti)) //Forge: We fix the global mapStorage, which causes us to share scoreboards early. So don't associate the save data with the temporary scoreboard
          {
              scoreboardsavedata.func_96499_a(this.worldScoreboard);
-@@ -132,6 +200,31 @@
+@@ -132,6 +196,31 @@
          DimensionManager.setWorld(p_i45284_4_, this);
      }
  
@@ -173,7 +162,7 @@
      public void tick()
      {
          super.tick();
-@@ -155,12 +248,19 @@
+@@ -155,12 +244,19 @@
          }
  
          this.theProfiler.startSection("mobSpawner");
@@ -196,7 +185,7 @@
          this.theProfiler.endStartSection("chunkSource");
          this.chunkProvider.unloadQueuedChunks();
          int j = this.calculateSkylightSubtracted(1.0F);
-@@ -170,30 +270,47 @@
+@@ -170,30 +266,47 @@
              this.skylightSubtracted = j;
          }
  
@@ -245,7 +234,7 @@
      }
  
      public BiomeGenBase.SpawnListEntry spawnRandomCreature(EnumCreatureType p_73057_1_, int p_73057_2_, int p_73057_3_, int p_73057_4_)
-@@ -212,7 +329,7 @@
+@@ -212,7 +325,7 @@
          {
              EntityPlayer entityplayer = (EntityPlayer)iterator.next();
  
@@ -254,7 +243,7 @@
              {
                  this.allPlayersSleeping = false;
                  break;
-@@ -240,7 +357,25 @@
+@@ -240,7 +353,25 @@
  
      private void resetRainAndThunder()
      {
@@ -281,7 +270,7 @@
      }
  
      public boolean areAllPlayersAsleep()
-@@ -248,19 +383,26 @@
+@@ -248,19 +379,26 @@
          if (this.allPlayersSleeping && !this.isRemote)
          {
              Iterator iterator = this.playerEntities.iterator();
@@ -311,7 +300,7 @@
              return false;
          }
          else
-@@ -302,15 +444,29 @@
+@@ -302,15 +440,29 @@
          super.func_147456_g();
          int i = 0;
          int j = 0;
@@ -347,7 +336,7 @@
              this.func_147467_a(k, l, chunk);
              this.theProfiler.endStartSection("tickChunk");
              chunk.func_150804_b(false);
-@@ -346,12 +502,32 @@
+@@ -346,12 +498,32 @@
  
                  if (this.isBlockFreezableNaturally(j1 + k, l1 - 1, k1 + l))
                  {
@@ -382,7 +371,7 @@
                  }
  
                  if (this.isRaining())
-@@ -388,6 +564,7 @@
+@@ -388,6 +560,7 @@
                          if (block.getTickRandomly())
                          {
                              ++i;
@@ -390,7 +379,7 @@
                              block.updateTick(this, j2 + k, l2 + extendedblockstorage.getYLocation(), k2 + l, this.rand);
                          }
                      }
-@@ -396,6 +573,13 @@
+@@ -396,6 +569,13 @@
  
              this.theProfiler.endSection();
          }
@@ -404,7 +393,7 @@
      }
  
      public boolean isBlockTickScheduledThisTick(int p_147477_1_, int p_147477_2_, int p_147477_3_, Block p_147477_4_)
-@@ -427,7 +611,7 @@
+@@ -427,7 +607,7 @@
                  {
                      Block block1 = this.getBlock(nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord);
  
@@ -413,7 +402,7 @@
                      {
                          block1.updateTick(this, nextticklistentry.xCoord, nextticklistentry.yCoord, nextticklistentry.zCoord, this.rand);
                      }
-@@ -474,7 +658,7 @@
+@@ -474,7 +654,7 @@
  
      public void updateEntities()
      {
@@ -422,7 +411,7 @@
          {
              if (this.updateEntityTick++ >= 1200)
              {
-@@ -487,6 +671,7 @@
+@@ -487,6 +667,7 @@
          }
  
          super.updateEntities();
@@ -430,7 +419,7 @@
      }
  
      public void resetUpdateEntityTick()
-@@ -494,19 +679,60 @@
+@@ -494,19 +675,60 @@
          this.updateEntityTick = 0;
      }
  
@@ -496,7 +485,7 @@
              }
  
              this.theProfiler.startSection("cleaning");
-@@ -577,17 +803,15 @@
+@@ -577,17 +799,15 @@
  
              this.theProfiler.endSection();
              this.pendingTickListEntriesThisTick.clear();
@@ -519,7 +508,7 @@
          int l = k + 16 + 2;
  
          for (int i1 = 0; i1 < 2; ++i1)
-@@ -617,19 +841,24 @@
+@@ -617,19 +837,24 @@
                      if (p_72920_2_)
                      {
                          this.pendingTickListEntriesHashSet.remove(nextticklistentry);
@@ -546,7 +535,7 @@
          return arraylist;
      }
  
-@@ -651,7 +880,37 @@
+@@ -651,7 +876,37 @@
      protected IChunkProvider createChunkProvider()
      {
          IChunkLoader ichunkloader = this.saveHandler.getChunkLoader(this.provider);
@@ -555,23 +544,23 @@
 +        if (this.provider.getClass().toString().length() <= 3 || this.provider.getClass().toString().contains("net.minecraft"))
 +        {
 +            // CraftBukkit start
-+            org.bukkit.craftbukkit.generator.InternalChunkGenerator gen;
++            InternalChunkGenerator gen;
 +
 +            if (this.generator != null)
 +            {
-+                gen = new org.bukkit.craftbukkit.generator.CustomChunkGenerator(this, this.getSeed(), this.generator);
++                gen = new CustomChunkGenerator(this, this.getSeed(), this.generator);
 +            }
 +            else if (this.provider instanceof WorldProviderHell)
 +            {
-+                gen = new org.bukkit.craftbukkit.generator.NetherChunkGenerator(this, this.getSeed());
++                gen = new NetherChunkGenerator(this, this.getSeed());
 +            }
 +            else if (this.provider instanceof WorldProviderEnd)
 +            {
-+                gen = new org.bukkit.craftbukkit.generator.SkyLandsChunkGenerator(this, this.getSeed());
++                gen = new SkyLandsChunkGenerator(this, this.getSeed());
 +            }
 +            else
 +            {
-+                gen = new org.bukkit.craftbukkit.generator.NormalChunkGenerator(this, this.getSeed());
++                gen = new NormalChunkGenerator(this, this.getSeed());
 +            }
 +            this.theChunkProviderServer = new ChunkProviderServer(this, ichunkloader, gen);
 +            // CraftBukkit end
@@ -585,7 +574,7 @@
          return this.theChunkProviderServer;
      }
  
-@@ -659,29 +918,31 @@
+@@ -659,29 +914,31 @@
      {
          ArrayList arraylist = new ArrayList();
  
@@ -632,7 +621,7 @@
          return arraylist;
      }
  
-@@ -704,7 +965,7 @@
+@@ -704,7 +961,7 @@
  
          if (this.pendingTickListEntriesHashSet == null)
          {
@@ -641,7 +630,7 @@
          }
  
          if (this.pendingTickListEntriesTreeSet == null)
-@@ -733,7 +994,28 @@
+@@ -733,7 +990,28 @@
              int i = 0;
              int j = this.provider.getAverageGroundLevel();
              int k = 0;
@@ -670,7 +659,7 @@
              if (chunkposition != null)
              {
                  i = chunkposition.chunkPosX;
-@@ -799,14 +1081,18 @@
+@@ -799,14 +1077,18 @@
                  p_73044_2_.displayProgressMessage("Saving level");
              }
  
@@ -689,7 +678,7 @@
              MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(this));
              ArrayList arraylist = Lists.newArrayList(this.theChunkProviderServer.func_152380_a());
              Iterator iterator = arraylist.iterator();
-@@ -876,6 +1162,20 @@
+@@ -876,6 +1158,20 @@
  
      public boolean addWeatherEffect(Entity p_72942_1_)
      {
@@ -710,7 +699,7 @@
          if (super.addWeatherEffect(p_72942_1_))
          {
              this.mcServer.getConfigurationManager().sendToAllNear(p_72942_1_.posX, p_72942_1_.posY, p_72942_1_.posZ, 512.0D, this.provider.dimensionId, new S2CPacketSpawnGlobalEntity(p_72942_1_));
-@@ -894,13 +1194,24 @@
+@@ -894,13 +1190,24 @@
  
      public Explosion newExplosion(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
@@ -736,7 +725,7 @@
          if (!p_72885_10_)
          {
              explosion.affectedBlockPositions.clear();
-@@ -977,7 +1288,8 @@
+@@ -977,7 +1284,8 @@
      {
          boolean flag = this.isRaining();
          super.updateWeather();
@@ -746,7 +735,7 @@
          if (this.prevRainingStrength != this.rainingStrength)
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
-@@ -987,11 +1299,9 @@
+@@ -987,11 +1295,9 @@
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -760,7 +749,7 @@
          if (flag != this.isRaining())
          {
              if (flag)
-@@ -1006,6 +1316,33 @@
+@@ -1006,6 +1312,33 @@
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -794,7 +783,7 @@
      }
  
      protected int func_152379_p()
-@@ -1069,4 +1406,53 @@
+@@ -1069,4 +1402,53 @@
                  this();
              }
          }

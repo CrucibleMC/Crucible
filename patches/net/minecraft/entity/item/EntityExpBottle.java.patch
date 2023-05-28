@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityExpBottle.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityExpBottle.java
-@@ -43,9 +43,20 @@
+@@ -4,6 +4,7 @@
+ import net.minecraft.entity.projectile.EntityThrowable;
+ import net.minecraft.util.MovingObjectPosition;
+ import net.minecraft.world.World;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
+ 
+ public class EntityExpBottle extends EntityThrowable
+ {
+@@ -43,9 +44,20 @@
      {
          if (!this.worldObj.isRemote)
          {
@@ -9,7 +17,7 @@
 +            //this.worldObj.playAuxSFX(2002, (int)Math.round(this.posX), (int)Math.round(this.posY), (int)Math.round(this.posZ), 0);
              int i = 3 + this.worldObj.rand.nextInt(5) + this.worldObj.rand.nextInt(5);
 +            // CraftBukkit start
-+            org.bukkit.event.entity.ExpBottleEvent event = org.bukkit.craftbukkit.event.CraftEventFactory.callExpBottleEvent(this, i);
++            org.bukkit.event.entity.ExpBottleEvent event = CraftEventFactory.callExpBottleEvent(this, i);
 +            i = event.getExperience();
  
 +            if (event.getShowEffect())
@@ -22,7 +30,7 @@
              while (i > 0)
              {
                  int j = EntityXPOrb.getXPSplit(i);
-@@ -56,4 +67,11 @@
+@@ -56,4 +68,11 @@
              this.setDead();
          }
      }

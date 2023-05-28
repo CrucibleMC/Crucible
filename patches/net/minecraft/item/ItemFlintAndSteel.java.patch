@@ -1,18 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemFlintAndSteel.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemFlintAndSteel.java
-@@ -6,6 +6,11 @@
+@@ -1,11 +1,15 @@
+ package net.minecraft.item;
+ 
+-import net.minecraft.block.material.Material;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.init.Blocks;
  import net.minecraft.world.World;
  
 +// CraftBukkit start
-+import org.bukkit.craftbukkit.block.CraftBlockState;
-+import org.bukkit.craftbukkit.event.CraftEventFactory;
++import org.bukkit.craftbukkit.v1_7_R4.block.CraftBlockState;
++import org.bukkit.craftbukkit.v1_7_R4.event.CraftEventFactory;
 +// CraftBukkit end
 +
  public class ItemFlintAndSteel extends Item
  {
      private static final String __OBFID = "CL_00000035";
-@@ -19,6 +24,8 @@
+@@ -19,6 +23,8 @@
  
      public boolean onItemUse(ItemStack p_77648_1_, EntityPlayer p_77648_2_, World p_77648_3_, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_)
      {
@@ -21,7 +26,7 @@
          if (p_77648_7_ == 0)
          {
              --p_77648_5_;
-@@ -57,8 +64,27 @@
+@@ -57,8 +63,27 @@
          {
              if (p_77648_3_.isAirBlock(p_77648_4_, p_77648_5_, p_77648_6_))
              {

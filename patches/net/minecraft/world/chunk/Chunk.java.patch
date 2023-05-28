@@ -1,24 +1,45 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -36,6 +36,17 @@
+@@ -9,19 +9,15 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Random;
+-import java.util.concurrent.Callable;
++
+ import net.minecraft.block.Block;
+-import net.minecraft.block.ITileEntityProvider;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.command.IEntitySelector;
+-import net.minecraft.crash.CrashReport;
+-import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.AxisAlignedBB;
+ import net.minecraft.util.MathHelper;
+-import net.minecraft.util.ReportedException;
+ import net.minecraft.world.ChunkCoordIntPair;
+ import net.minecraft.world.ChunkPosition;
+ import net.minecraft.world.EnumSkyBlock;
+@@ -36,6 +32,17 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +// CraftBukkit start
-+import net.minecraft.block.BlockContainer;
 +import org.bukkit.Bukkit;
 +// CraftBukkit end
 +// Spigot start
 +import net.minecraft.entity.EntityLiving;
 +import net.minecraft.entity.EnumCreatureType;
 +import net.minecraft.entity.player.EntityPlayerMP;
-+import net.minecraft.inventory.IInventory;
++import org.bukkit.craftbukkit.v1_7_R4.CraftChunk;
++import org.bukkit.craftbukkit.v1_7_R4.util.UnsafeList;
 +// Spigot end
 +
  public class Chunk
  {
      private static final Logger logger = LogManager.getLogger();
-@@ -62,15 +73,49 @@
+@@ -62,15 +69,49 @@
      public int heightMapMinimum;
      public long inhabitedTime;
      private int queuedLightChecks;
@@ -69,12 +90,12 @@
          this.queuedLightChecks = 4096;
          this.entityLists = new List[16];
          this.worldObj = p_i1995_1_;
-@@ -80,13 +125,22 @@
+@@ -80,13 +121,22 @@
  
          for (int k = 0; k < this.entityLists.length; ++k)
          {
 -            this.entityLists[k] = new ArrayList();
-+            this.entityLists[k] = new org.bukkit.craftbukkit.util.UnsafeList(); // CraftBukkit - ArrayList -> UnsafeList
++            this.entityLists[k] = new UnsafeList(); // CraftBukkit - ArrayList -> UnsafeList
          }
  
          Arrays.fill(this.precipitationHeightMap, -999);
@@ -82,7 +103,7 @@
 +        // CraftBukkit start
 +        if (!(this instanceof EmptyChunk))
 +        {
-+            this.bukkitChunk = new org.bukkit.craftbukkit.CraftChunk(this);
++            this.bukkitChunk = new CraftChunk(this);
 +        }
      }
  
@@ -93,7 +114,7 @@
      public Chunk(World p_i45446_1_, Block[] p_i45446_2_, int p_i45446_3_, int p_i45446_4_)
      {
          this(p_i45446_1_, p_i45446_3_, p_i45446_4_);
-@@ -505,17 +559,17 @@
+@@ -505,17 +555,17 @@
      public Block getBlock(final int p_150810_1_, final int p_150810_2_, final int p_150810_3_)
      {
          Block block = Blocks.air;
@@ -117,7 +138,7 @@
                  catch (Throwable throwable)
                  {
                      CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting block");
-@@ -529,7 +583,7 @@
+@@ -529,7 +579,7 @@
                          }
                      });
                      throw new ReportedException(crashreport);
@@ -126,7 +147,7 @@
              }
          }
  
-@@ -589,9 +643,10 @@
+@@ -589,9 +639,10 @@
  
              if (!this.worldObj.isRemote)
              {
@@ -138,7 +159,7 @@
              extendedblockstorage.func_150818_a(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_4_);
              extendedblockstorage.setExtBlockMetadata(p_150807_1_, p_150807_2_ & 15, p_150807_3_, p_150807_5_); // This line duplicates the one below, so breakBlock fires with valid worldstate
  
-@@ -777,8 +832,20 @@
+@@ -777,8 +828,20 @@
  
          if (i != this.xPosition || j != this.zPosition)
          {
@@ -161,7 +182,7 @@
          }
  
          int k = MathHelper.floor_double(p_76612_1_.posY / 16.0D);
-@@ -799,6 +866,26 @@
+@@ -799,6 +862,26 @@
          p_76612_1_.chunkCoordY = k;
          p_76612_1_.chunkCoordZ = this.zPosition;
          this.entityLists[k].add(p_76612_1_);
@@ -188,7 +209,7 @@
      }
  
      public void removeEntity(Entity p_76622_1_)
-@@ -819,6 +906,26 @@
+@@ -819,6 +902,26 @@
          }
  
          this.entityLists[p_76608_2_].remove(p_76608_1_);
@@ -215,7 +236,7 @@
      }
  
      public boolean canBlockSeeTheSky(int p_76619_1_, int p_76619_2_, int p_76619_3_)
-@@ -874,9 +981,23 @@
+@@ -874,9 +977,23 @@
          p_150812_4_.xCoord = this.xPosition * 16 + p_150812_1_;
          p_150812_4_.yCoord = p_150812_2_;
          p_150812_4_.zCoord = this.zPosition * 16 + p_150812_3_;
@@ -240,7 +261,7 @@
          {
              if (this.chunkTileEntityMap.containsKey(chunkposition))
              {
-@@ -886,6 +1007,16 @@
+@@ -886,6 +1003,16 @@
              p_150812_4_.validate();
              this.chunkTileEntityMap.put(chunkposition, p_150812_4_);
          }
@@ -257,7 +278,7 @@
      }
  
      public void removeTileEntity(int p_150805_1_, int p_150805_2_, int p_150805_3_)
-@@ -936,6 +1067,21 @@
+@@ -936,6 +1063,21 @@
  
          for (int i = 0; i < this.entityLists.length; ++i)
          {
@@ -279,7 +300,7 @@
              this.worldObj.unloadEntities(this.entityLists[i]);
          }
          MinecraftForge.EVENT_BUS.post(new ChunkEvent.Unload(this));
-@@ -952,11 +1098,15 @@
+@@ -952,11 +1094,15 @@
          int j = MathHelper.floor_double((p_76588_2_.maxY + World.MAX_ENTITY_RADIUS) / 16.0D);
          i = MathHelper.clamp_int(i, 0, this.entityLists.length - 1);
          j = MathHelper.clamp_int(j, 0, this.entityLists.length - 1);
@@ -297,7 +318,7 @@
              for (int l = 0; l < list1.size(); ++l)
              {
                  Entity entity1 = (Entity)list1.get(l);
-@@ -1015,7 +1165,7 @@
+@@ -1015,7 +1161,7 @@
                  return true;
              }
          }
@@ -306,7 +327,7 @@
          {
              return true;
          }
-@@ -1025,7 +1175,7 @@
+@@ -1025,7 +1171,7 @@
  
      public Random getRandomWithSeed(long p_76617_1_)
      {
@@ -315,7 +336,7 @@
      }
  
      public boolean isEmpty()
-@@ -1035,6 +1185,7 @@
+@@ -1035,6 +1181,7 @@
  
      public void populateChunk(IChunkProvider p_76624_1_, IChunkProvider p_76624_2_, int p_76624_3_, int p_76624_4_)
      {
@@ -323,7 +344,7 @@
          if (!this.isTerrainPopulated && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_, p_76624_4_ + 1) && p_76624_1_.chunkExists(p_76624_3_ + 1, p_76624_4_))
          {
              p_76624_1_.populate(p_76624_2_, p_76624_3_, p_76624_4_);
-@@ -1054,6 +1205,7 @@
+@@ -1054,6 +1201,7 @@
          {
              p_76624_1_.populate(p_76624_2_, p_76624_3_ - 1, p_76624_4_ - 1);
          }
@@ -331,7 +352,7 @@
      }
  
      public int getPrecipitationHeight(int p_76626_1_, int p_76626_2_)
-@@ -1091,7 +1243,7 @@
+@@ -1091,7 +1239,7 @@
      {
          if (this.isGapLightingUpdated && !this.worldObj.provider.hasNoSky && !p_150804_1_)
          {
@@ -340,7 +361,7 @@
          }
  
          this.field_150815_m = true;
-@@ -1104,7 +1256,8 @@
+@@ -1104,7 +1252,8 @@
  
      public boolean func_150802_k()
      {
@@ -350,7 +371,7 @@
      }
  
      public ChunkCoordIntPair getChunkCoordIntPair()
-@@ -1184,8 +1337,10 @@
+@@ -1184,8 +1333,10 @@
              if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
              {
                  nibblearray = this.storageArrays[l].getMetadataArray();
@@ -363,7 +384,7 @@
              }
          }
  
-@@ -1194,8 +1349,10 @@
+@@ -1194,8 +1345,10 @@
              if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
              {
                  nibblearray = this.storageArrays[l].getBlocklightArray();
@@ -376,7 +397,7 @@
              }
          }
  
-@@ -1206,8 +1363,10 @@
+@@ -1206,8 +1359,10 @@
                  if ((p_76607_2_ & 1 << l) != 0 && this.storageArrays[l] != null)
                  {
                      nibblearray = this.storageArrays[l].getSkylightArray();
@@ -389,7 +410,7 @@
                  }
              }
          }
-@@ -1229,8 +1388,8 @@
+@@ -1229,8 +1384,8 @@
                          nibblearray = this.storageArrays[l].createBlockMSBArray();
                      }
  
@@ -400,7 +421,7 @@
                  }
              }
              else if (p_76607_4_ && this.storageArrays[l] != null && this.storageArrays[l].getBlockMSBArray() != null)
-@@ -1523,4 +1682,22 @@
+@@ -1523,4 +1678,22 @@
              }
          }
      }

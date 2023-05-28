@@ -1,6 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandBlockLogic.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandBlockLogic.java
-@@ -9,18 +9,30 @@
+@@ -5,22 +5,34 @@
+ import io.netty.buffer.ByteBuf;
+ import java.text.SimpleDateFormat;
+ import java.util.Date;
+-import net.minecraft.command.ICommandManager;
++
  import net.minecraft.command.ICommandSender;
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.server.MinecraftServer;
@@ -12,7 +17,7 @@
 +// CraftBukkit start
 +import java.util.ArrayList;
 +import org.apache.logging.log4j.Level;
-+import org.bukkit.craftbukkit.command.VanillaCommandWrapper;
++import org.bukkit.craftbukkit.v1_7_R4.command.VanillaCommandWrapper;
 +import com.google.common.base.Joiner;
 +import net.minecraft.command.PlayerSelector;
 +import net.minecraft.entity.EntityMinecartCommandBlockListener;
