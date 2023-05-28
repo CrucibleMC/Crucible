@@ -23,6 +23,9 @@ apply plugin: 'base'
 // Crucible tasks and subproject management is provided by this plugin
 apply plugin: 'crucible'
 
+// Needed for jitpack
+apply plugin: 'maven-publish'
+
 repositories {
     maven {
         name = "juanmuscaria"
@@ -119,6 +122,7 @@ dependencies {
     libraries 'java3d:vecmath:1.3.1'
     libraries 'it.unimi.dsi:fastutil:8.2.2'
 }
+
 packageApi {
     include 'org/bukkit/**'
     include 'org/spigotmc/**'
@@ -126,6 +130,20 @@ packageApi {
     include 'co/aikar/**'
     include 'io/github/crucible/**'
     include 'net/minecraftforge/cauldron/**'
+}
+
+publishing {
+    publications {
+        crucible(MavenPublication) {
+            artifact packageApi
+        }
+    }
+    repositories {
+        maven {
+            url = buildDir.absolutePath + "/repo"
+            name = "filesystem"
+        }
+    }
 }
 
 packageServer {
