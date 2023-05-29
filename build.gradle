@@ -130,6 +130,7 @@ packageApi {
     include 'co/aikar/**'
     include 'io/github/crucible/**'
     include 'net/minecraftforge/cauldron/**'
+    include 'net/md_5/**'
 }
 
 publishing {
