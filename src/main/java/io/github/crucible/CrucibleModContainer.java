@@ -11,6 +11,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import io.github.crucible.api.CrucibleAPI;
 import net.minecraft.server.MinecraftServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,14 +83,14 @@ public class CrucibleModContainer extends DummyModContainer implements Plugin {
     @Subscribe
     public void serverStarting(FMLServerStartingEvent evt) {
         evt.registerServerCommand("crucible", new CrucibleCommand(evt.getServer()));
-        getServer().getPluginManager().injectModPlugin(this);
-        getServer().getPluginManager().enablePlugin(this);
+        CrucibleAPI.registerModPlugin(this);
         metrics = new Metrics(this, 6555);
     }
 
     @Override
     public List<String> getOwnedPackages() {
         return ImmutableList.of(
+                "io.github.crucible.api",
                 "io.github.crucible.bootstrap",
                 "io.github.crucible.entity",
                 "io.github.crucible.event",
