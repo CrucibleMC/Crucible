@@ -133,18 +133,10 @@ packageApi {
     include 'net/md_5/**'
 }
 
-publishing {
-    publications {
-        crucible(MavenPublication) {
-            artifact packageApi
-        }
-    }
-    repositories {
-        maven {
-            url = buildDir.absolutePath + "/repo"
-            name = "filesystem"
-        }
-    }
+tasks.register('packageJavadoc', Jar) {
+    dependsOn ':eclipse:cauldron:javadoc'
+    archiveClassifier = 'javadoc'
+    destinationDirectory = getLibsDirectory()
 }
 
 packageServer {
@@ -189,6 +181,53 @@ tasks.register('packageLibraries', Zip) {
 
     group('crucible')
     description("Package all necessary libraries to run Crucible, in case the server is unable to download them at runtime")
+}
+
+publishing {
+    publications {
+        crucible(MavenPublication) {
+            artifact packageApi
+            artifact packageJavadoc
+        }
+    }
+    repositories {
+        maven {
+            url = buildDir.absolutePath + "/repo"
+            name = "filesystem"
+        }
+    }
+}
+
+// TODO: This is absolute awful
+//  Move this to the gradle plugin?
+var actualProject = project
+subprojects {
+    if (project.name.contains('cauldron')) {
+        // Here we are presented with an annoying situation. We need to configure the javadoc task within the cauldron project.
+        // However we can't modify the build gradle directly... Besides this "solution" a better alternative would be the following:
+        // * Create a cauldron.gradle file at the root of the project that will be appended over the generated file
+        // * Change this directly in the gradle plugin project gen
+        // For now I'll leave this quick hack here that will sure haunt me in the future
+        afterEvaluate {
+            //noinspection ConfigurationAvoidance
+            if (project.tasks.findByName("javadoc")) {
+                javadoc {
+                    include 'org/bukkit/**'
+                    include 'org/spigotmc/**'
+                    include 'thermos/**'
+                    include 'co/aikar/**'
+                    include 'io/github/crucible/**'
+                    include 'net/minecraftforge/cauldron/**'
+                    include 'net/md_5/**'
+                }
+
+                var cauldron = project
+                actualProject.tasks.named('packageJavadoc') {
+                    from cauldron.javadoc.destinationDir
+                }
+            }
+        }
+    }
 }
 
 def gitInfo(String key) {
