@@ -15,6 +15,7 @@ public class CrucibleMetadata {
     public static final int FORGE_BUILD_VERSION;
     public static final boolean IS_DEV_BUILD;
     public static final String[] NEEDED_LIBRARIES;
+    public static final String NECRO_TEMPUS_REQUIRED = "This method requires Crucible NecroTempus to work, you can get it at https://github.com/CrucibleMC/NecroTempus.";
 
     static {
         String parsedVersion = "unknown";
