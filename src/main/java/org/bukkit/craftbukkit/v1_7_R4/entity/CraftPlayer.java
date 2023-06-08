@@ -3,6 +3,7 @@ package org.bukkit.craftbukkit.v1_7_R4.entity;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.authlib.GameProfile;
 import io.github.crucible.CrucibleMetadata;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EntityTrackerEntry;
@@ -111,6 +112,38 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             return getHandle().ping;
         }
         // Paper end
+
+        //Crucible start
+        /**
+         * Sends the component to the specified screen position of this player
+         *
+         * @param position the screen position
+         * @param component the components to send
+         */
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent component) {
+            if(position == ChatMessageType.CHAT){
+                sendMessage(component);
+                return;
+            }
+            throw new UnsupportedOperationException(CrucibleMetadata.NECRO_TEMPUS_REQUIRED);
+        }
+
+        /**
+         * Sends an array of components as a single message to the specified screen position of this player
+         *
+         * @param position the screen position
+         * @param components the components to send
+         */
+        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent... components) {
+            if(position == ChatMessageType.CHAT){
+                sendMessage(components);
+                return;
+            }
+            throw new UnsupportedOperationException(CrucibleMetadata.NECRO_TEMPUS_REQUIRED);
+        }
+        //Crucible end
+
+
     };
     private boolean scaledHealth = false;
     private double healthScale = 20;
@@ -1464,8 +1497,8 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         }
     }
 
-    public String playerListHeaderString = "";
-    public String playerListFooterString = "";
+    public String playerListHeaderString;
+    public String playerListFooterString;
 
     @Override
     public String getPlayerListHeader() {

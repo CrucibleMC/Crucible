@@ -49,7 +49,7 @@
       */
      @Deprecated
      public boolean isOnGround();
-@@ -1035,4 +1026,365 @@
+@@ -1035,4 +1026,388 @@
       * @see Player#setHealthScaled(boolean)
       */
      public double getHealthScale();
@@ -139,6 +139,29 @@
 +        {
 +            throw new UnsupportedOperationException( "Not supported yet." );
 +        }
++
++        //Crucible start
++        /**
++         * Sends the component to the specified screen position of this player
++         *
++         * @param position the screen position
++         * @param component the components to send
++         */
++        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent component) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++
++        /**
++         * Sends an array of components as a single message to the specified screen position of this player
++         *
++         * @param position the screen position
++         * @param components the components to send
++         */
++        public void sendMessage(net.md_5.bungee.api.ChatMessageType position, net.md_5.bungee.api.chat.BaseComponent... components) {
++            throw new UnsupportedOperationException("Not supported yet.");
++        }
++        //Crucible end
++
 +    }
 +
 +    Spigot spigot();
