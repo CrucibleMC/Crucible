@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
-@@ -25,6 +25,8 @@
+@@ -6,6 +6,9 @@
+ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
++import io.github.crucible.CrucibleConfigs;
++import io.github.crucible.CrucibleModContainer;
++import io.github.crucible.util.Stringify;
+ import io.netty.bootstrap.Bootstrap;
+ import io.netty.channel.Channel;
+ import io.netty.channel.ChannelException;
+@@ -25,6 +28,8 @@
  import java.net.InetAddress;
  import java.net.SocketAddress;
  import java.util.Queue;
@@ -9,16 +19,17 @@
  import javax.crypto.SecretKey;
  import net.minecraft.util.ChatComponentTranslation;
  import net.minecraft.util.CryptManager;
-@@ -38,6 +40,8 @@
+@@ -38,6 +43,9 @@
  import org.apache.logging.log4j.Logger;
  import org.apache.logging.log4j.Marker;
  import org.apache.logging.log4j.MarkerManager;
 +import com.mojang.authlib.properties.Property;
 +import com.google.common.collect.ImmutableSet; // Spigot
++import org.spigotmc.WatchdogThread;
  
  public class NetworkManager extends SimpleChannelInboundHandler
  {
-@@ -54,13 +58,32 @@
+@@ -54,13 +62,32 @@
      private final Queue receivedPacketsQueue = Queues.newConcurrentLinkedQueue();
      private final Queue outboundPacketsQueue = Queues.newConcurrentLinkedQueue();
      private Channel channel;
@@ -52,7 +63,7 @@
      public NetworkManager(boolean p_i45147_1_)
      {
          this.isClientSide = p_i45147_1_;
-@@ -71,6 +94,7 @@
+@@ -71,6 +98,7 @@
          super.channelActive(p_channelActive_1_);
          this.channel = p_channelActive_1_.channel();
          this.socketAddress = this.channel.remoteAddress();
@@ -60,7 +71,7 @@
          this.setConnectionState(EnumConnectionState.HANDSHAKING);
      }
  
-@@ -128,6 +152,7 @@
+@@ -128,6 +156,7 @@
  
      public void scheduleOutboundPacket(Packet p_150725_1_, GenericFutureListener ... p_150725_2_)
      {
@@ -68,7 +79,7 @@
          if (this.channel != null && this.channel.isOpen())
          {
              this.flushOutboundQueue();
-@@ -181,9 +206,9 @@
+@@ -181,9 +210,9 @@
      {
          if (this.channel != null && this.channel.isOpen())
          {
@@ -80,11 +91,19 @@
                  this.dispatchPacket(inboundhandlertuplepacketlistener.field_150774_a, inboundhandlertuplepacketlistener.field_150773_b);
              }
          }
-@@ -208,7 +233,15 @@
+@@ -206,13 +235,45 @@
+ 
+         if (this.netHandler != null)
          {
++            // Crucible start - track player for watchdog
++            if (netHandler instanceof NetHandlerPlayServer) {
++                WatchdogThread.currentPlayer.set(((NetHandlerPlayServer) netHandler).playerEntity);
++            }
++            // Crucible end
              for (int i = 1000; !this.receivedPacketsQueue.isEmpty() && i >= 0; --i)
              {
 -                Packet packet = (Packet)this.receivedPacketsQueue.poll();
+-                packet.processPacket(this.netHandler);
 +                Packet packet = (Packet) this.receivedPacketsQueue.poll();
 +
 +                // CraftBukkit start
@@ -94,10 +113,33 @@
 +                }
 +
 +                // CraftBukkit end
-                 packet.processPacket(this.netHandler);
++                // Crucible start - add packet timeout and logging
++                long start = System.currentTimeMillis();
++                WatchdogThread.currentPacket.set(packet);
++
++                packet.processPacket(this.netHandler); // Original code
++
++                if (CrucibleConfigs.configs.crucible_logging_packetTimeout) {
++                    long end = (System.currentTimeMillis() - start);
++                    if (end > CrucibleConfigs.configs.crucible_logging_packetTimeoutMs) {
++                        CrucibleModContainer.logger.warn("Packet processing took too long!!!");
++                        if (netHandler instanceof NetHandlerPlayServer) {
++                            NetHandlerPlayServer server = (NetHandlerPlayServer) netHandler;
++                            CrucibleModContainer.logger.warn("Player: {}", server.playerEntity);
++                        }
++                        CrucibleModContainer.logger.warn("packet: {}", Stringify.describePacket(packet));
++                    }
++                }
++                WatchdogThread.currentPacket.set(null);
++                // Crucible end
              }
  
-@@ -225,11 +258,14 @@
+             this.netHandler.onNetworkTick();
++            WatchdogThread.currentPlayer.set(null); // Crucible - track player
+         }
+ 
+         this.channel.flush();
+@@ -225,11 +286,14 @@
  
      public void closeChannel(IChatComponent p_150718_1_)
      {
@@ -112,7 +154,7 @@
      }
  
      public boolean isLocalChannel()
-@@ -254,7 +290,7 @@
+@@ -254,7 +318,7 @@
                  {
                      ;
                  }
@@ -121,7 +163,7 @@
                  try
                  {
                      p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, Boolean.valueOf(false));
-@@ -322,6 +358,13 @@
+@@ -322,6 +386,13 @@
          return channel;
      }
  

@@ -1,6 +1,10 @@
 package org.spigotmc;
 
 import io.github.crucible.CrucibleConfigs;
+import io.github.crucible.util.Stringify;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.cauldron.CauldronHooks;
 import org.bukkit.Bukkit;
@@ -11,12 +15,14 @@ import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 public class WatchdogThread extends Thread {
-
+    public static final AtomicReference<Packet> currentPacket = new AtomicReference<>();
+    public static final AtomicReference<EntityPlayerMP> currentPlayer = new AtomicReference<>();
     private static WatchdogThread instance;
     private final long timeoutTime;
     private final long warningTime;
@@ -134,6 +140,21 @@ public class WatchdogThread extends Thread {
                     log.log(Level.SEVERE, "Writing heap dump to: " + file);
                     CauldronHooks.dumpHeap(file, true);
                     log.log(Level.SEVERE, "Writing complete");
+                    log.log(Level.SEVERE, "------------------------------");
+                }
+                Packet packet = currentPacket.get();
+                if (packet != null) {
+
+                    log.log(Level.SEVERE, "------------------------------");
+                    log.log(Level.SEVERE, "Current packet being processed:");
+                    log.log(Level.SEVERE, Stringify.describePacket(packet));
+
+                    EntityPlayerMP player = currentPlayer.get();
+                    if (player != null) {
+                        log.log(Level.SEVERE, "Current player:");
+                        log.log(Level.SEVERE, "  p:" + player);
+                    }
+
                     log.log(Level.SEVERE, "------------------------------");
                 }
                 // Cauldron end

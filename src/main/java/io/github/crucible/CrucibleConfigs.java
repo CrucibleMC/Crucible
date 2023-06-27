@@ -150,6 +150,12 @@ public class CrucibleConfigs extends YamlConfig {
             "Be warned that looking up the caller can have a noticeable performance impact."})
     public boolean crucible_logging_logStdOutCaller = false;
 
+    @Comment("Dump packet information whenever packet processing of a player takes too long.")
+    public boolean crucible_logging_packetTimeout = false;
+
+    @Comment("Maximum time (in milliseconds) a packet can take before getting dumped.")
+    public long crucible_logging_packetTimeoutMs = 500;
+
     @Comment("List of world names where the usage of modded itens and blocks will be disabled for ")
     public List<String> crucible_protectedWorld = Collections.singletonList("spawn");
 
