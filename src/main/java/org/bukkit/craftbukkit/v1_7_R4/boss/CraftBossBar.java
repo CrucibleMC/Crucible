@@ -11,9 +11,8 @@ import java.util.List;
 
 public class CraftBossBar implements BossBar {
 
-    public CraftBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
-        throw new UnsupportedOperationException(CrucibleMetadata.NECRO_TEMPUS_REQUIRED);
-    }
+
+    public CraftBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {}
 
     @Override
     public String getTitle() {
