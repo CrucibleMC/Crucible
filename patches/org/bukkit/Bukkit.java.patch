@@ -19,7 +19,7 @@
 +    /**
 +     * @see Server#createBossBar(String, BarColor, BarStyle, BarFlag...)
 +     */
-+    BossBar createBossBar(String title, BarColor color, BarStyle style, BarFlag... flags){
++    public static BossBar createBossBar(String title, BarColor color, BarStyle style, BarFlag... flags){
 +        return server.createBossBar(title, color, style, flags);
 +    }
 +
