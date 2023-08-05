@@ -1463,18 +1463,18 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
 
         try{
 
-            EnumParticle enumParticle = CraftParticle.toNMS(particle);
-            String name = enumParticle.b();
+            MinecraftParticles minecraftParticles = CraftParticle.toNMS(particle);
+            String name = minecraftParticles.getName();
             int[] data_arr = CraftParticle.toData(particle,data);
 
-            if(enumParticle.d() >= 1){
+            if(minecraftParticles.getArgumentCount() >= 1){
                 if(!Item.itemRegistry.containsId(data_arr[0]))
                     data_arr[0] = 1;
             }
 
-            if(enumParticle.d() == 1){
+            if(minecraftParticles.getArgumentCount() == 1){
                 name = name + data_arr[0] + "_0";
-            } else if (enumParticle.d() == 2) {
+            } else if (minecraftParticles.getArgumentCount() == 2) {
                 name = name + data_arr[0] + "_" + data_arr[1];
             }
 

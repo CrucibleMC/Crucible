@@ -6,16 +6,16 @@ import org.bukkit.material.MaterialData;
 
 public class CraftParticle {
 
-    public static EnumParticle toNMS(Particle bukkit) {
+    public static MinecraftParticles toNMS(Particle bukkit) {
 
-        for(EnumParticle enumParticle : EnumParticle.values())
-            if(enumParticle.name().equalsIgnoreCase(bukkit.name()))
-                return enumParticle;
+        for(MinecraftParticles minecraftParticles : MinecraftParticles.values())
+            if(minecraftParticles.name().equalsIgnoreCase(bukkit.name()))
+                return minecraftParticles;
 
-        return EnumParticle.FLAME;
+        return MinecraftParticles.FLAME;
     }
 
-    public static Particle toBukkit(EnumParticle nms) {
+    public static Particle toBukkit(MinecraftParticles nms) {
         return Particle.valueOf(nms.name());
     }
 
