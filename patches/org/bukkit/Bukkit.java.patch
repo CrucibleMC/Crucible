@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/org/bukkit/Bukkit.java
++++ ../src-work/minecraft/org/bukkit/Bukkit.java
+@@ -11,6 +11,10 @@
+ import java.util.logging.Logger;
+ 
+ import org.bukkit.Warning.WarningState;
++import org.bukkit.boss.BarColor;
++import org.bukkit.boss.BarFlag;
++import org.bukkit.boss.BarStyle;
++import org.bukkit.boss.BossBar;
+ import org.bukkit.command.CommandException;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.command.ConsoleCommandSender;
+@@ -747,4 +751,12 @@
+     public static UnsafeValues getUnsafe() {
+         return server.getUnsafe();
+     }
++
++    /**
++     * @see Server#createBossBar(String, BarColor, BarStyle, BarFlag...)
++     */
++    public static BossBar createBossBar(String title, BarColor color, BarStyle style, BarFlag... flags){
++        return server.createBossBar(title, color, style, flags);
++    }
++
+ }

@@ -10,6 +10,7 @@ import com.google.common.collect.MapMaker;
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.FMLLog;
 import io.github.crucible.CrucibleConfigs;
+import io.github.crucible.CrucibleMetadata;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -30,6 +31,10 @@ import org.apache.commons.lang.Validate;
 import org.bukkit.*;
 import org.bukkit.Warning.WarningState;
 import org.bukkit.World.Environment;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarFlag;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.command.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -1732,6 +1737,11 @@ public final class CraftServer implements Server {
     @Override
     public Server.Spigot spigot() {
         return spigot;
+    }
+
+    @Override
+    public BossBar createBossBar(String title, BarColor color, BarStyle style, BarFlag... flags) {
+        throw new UnsupportedOperationException(CrucibleMetadata.NECRO_TEMPUS_REQUIRED);
     }
 
     private final class BooleanWrapper {
