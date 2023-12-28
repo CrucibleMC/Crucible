@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/asm/transformers/EventSubscriptionTransformer.java
++++ ../src-work/minecraft/cpw/mods/fml/common/asm/transformers/EventSubscriptionTransformer.java
+@@ -123,7 +123,7 @@
+         {
+             for (AnnotationNode node : classNode.visibleAnnotations)
+             {
+-                if (!hasResult && node.desc.equals("Lcpw/mods/fml/common/eventhandler/Event$HasResult;"))
++                if (!hasResult && node.desc.replace('$', '/').equals("Lcpw/mods/fml/common/eventhandler/Event/HasResult;"))
+                 {
+                     /* Add:
+                      *      public boolean hasResult()
+@@ -162,7 +162,7 @@
+                 return edited;
+         }
+ 
+-        Type tSuper = Type.getType(classNode.superName);
++        Type tSuper = Type.getObjectType(classNode.superName);
+ 
+         //Add private static ListenerList LISTENER_LIST
+         classNode.fields.add(new FieldNode(ACC_PRIVATE | ACC_STATIC, "LISTENER_LIST", listDesc, null, null));

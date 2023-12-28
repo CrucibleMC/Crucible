@@ -10,7 +10,7 @@ import com.google.common.collect.MapMaker;
 import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.FMLLog;
 import io.github.crucible.CrucibleConfigs;
-import io.github.crucible.CrucibleMetadata;
+import io.github.crucible.bootstrap.CrucibleMetadata;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;

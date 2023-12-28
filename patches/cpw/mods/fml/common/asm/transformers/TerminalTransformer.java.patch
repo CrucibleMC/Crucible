@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/asm/transformers/TerminalTransformer.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/asm/transformers/TerminalTransformer.java
-@@ -46,7 +46,8 @@
+@@ -29,7 +29,7 @@
+ 
+         private ExitVisitor(ClassVisitor cv)
+         {
+-            super(Opcodes.ASM5, cv);
++            super(Opcodes.ASM9, cv);
+         }
+ 
+         @Override
+@@ -46,10 +46,11 @@
                                     clsName.equals("net/minecraft/server/dedicated/DedicatedServer") ||
                                     clsName.equals("cpw/mods/fml/common/FMLCommonHandler") ||
                                     clsName.startsWith("com/jcraft/jogg/") ||
@@ -9,4 +18,8 @@
 +                                   clsName.startsWith("net/md_5/specialsource")
                                     );
  
-             return new MethodVisitor(Opcodes.ASM5, super.visitMethod(mAccess, mName, mDesc, mSignature, mExceptions))
+-            return new MethodVisitor(Opcodes.ASM5, super.visitMethod(mAccess, mName, mDesc, mSignature, mExceptions))
++            return new MethodVisitor(Opcodes.ASM9, super.visitMethod(mAccess, mName, mDesc, mSignature, mExceptions))
+             {
+                 @Override
+                 public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean isIntf)

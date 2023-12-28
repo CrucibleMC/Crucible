@@ -1,6 +1,6 @@
 package org.bukkit.craftbukkit.v1_7_R4.boss;
 
-import io.github.crucible.CrucibleMetadata;
+import io.github.crucible.bootstrap.CrucibleMetadata;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;

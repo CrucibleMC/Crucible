@@ -1,14 +1,10 @@
 package io.github.crucible;
 
-import co.aikar.timings.Timings;
-import co.aikar.timings.TimingsManager;
-import net.cubespace.Yamler.Config.*;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.WorldServer;
+import io.github.crucible.bootstrap.Lwjgl3ifyGlue;
+import io.github.crucible.util.config.*;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -208,6 +204,9 @@ public class CrucibleConfigs extends YamlConfig {
 
     public String timings_serverName = "Crucible Server";
 
+    @Comment("Enums to make extensible at runtime")
+    public List<String> lwjgl3ify_extensibleEnums = new ArrayList<>(Arrays.asList(Lwjgl3ifyGlue.DEFAULT_EXTENSIBLE_ENUMS));
+
     private CrucibleConfigs() {
         CONFIG_FILE = new File("Crucible.yml");
         CONFIG_MODE = ConfigMode.PATH_BY_UNDERSCORE;
@@ -218,7 +217,6 @@ public class CrucibleConfigs extends YamlConfig {
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
-        configureTimings();
     }
 
     public void save() {
@@ -233,15 +231,6 @@ public class CrucibleConfigs extends YamlConfig {
         return crucible_tickHandler_serverTickTime / crucible_tickHandler_serverTickRate;
     }
 
-    private void configureTimings() {
-        TimingsManager.privacy = timings_serverNamePrivacy;
-        TimingsManager.hiddenConfigs = timings_hiddenConfigEntries;
-        Timings.setVerboseTimingsEnabled(timings_verbose);
-        Timings.setHistoryInterval(timings_historyInterval * 20);
-        Timings.setHistoryLength(timings_historyLength * 20);
-        Timings.setTimingsEnabled(timings_enabledSinceServerStartup);
-    }
-
     @Override
     public void reload() {
         try {
@@ -249,18 +238,5 @@ public class CrucibleConfigs extends YamlConfig {
         } catch (InvalidConfigurationException e) {
             e.printStackTrace();
         }
-    }
-
-    //Mimics cauldron toggle behavior setting all fields fields that are not updated with the configs with the new values.
-    public void reapplyConfigs() {
-        for (WorldServer world : MinecraftServer.getServer().worlds) {
-            world.theChunkProviderServer.loadChunkOnProvideRequest = cauldron_settings_loadChunkOnRequest;
-        }
-
-        ThreadMXBean mbean = ManagementFactory.getThreadMXBean();
-        if (mbean.isThreadContentionMonitoringSupported())
-            mbean.setThreadContentionMonitoringEnabled(cauldron_debug_enableThreadContentionMonitoring);
-        else
-            CrucibleModContainer.logger.warn("Thread monitoring is not supported!");
     }
 }

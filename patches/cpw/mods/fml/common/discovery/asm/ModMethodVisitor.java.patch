@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/discovery/asm/ModMethodVisitor.java
++++ ../src-work/minecraft/cpw/mods/fml/common/discovery/asm/ModMethodVisitor.java
+@@ -12,7 +12,7 @@
+ 
+     public ModMethodVisitor(String name, String desc, ASMModParser discoverer)
+     {
+-        super(Opcodes.ASM5);
++        super(Opcodes.ASM9);
+         this.methodName = name;
+         this.methodDescriptor = desc;
+         this.discoverer = discoverer;

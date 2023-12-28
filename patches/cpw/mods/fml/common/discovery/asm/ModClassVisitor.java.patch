@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/discovery/asm/ModClassVisitor.java
++++ ../src-work/minecraft/cpw/mods/fml/common/discovery/asm/ModClassVisitor.java
+@@ -24,7 +24,7 @@
+ 
+     public ModClassVisitor(ASMModParser discoverer)
+     {
+-        super(Opcodes.ASM5);
++        super(Opcodes.ASM9);
+         this.discoverer = discoverer;
+     }
+ 

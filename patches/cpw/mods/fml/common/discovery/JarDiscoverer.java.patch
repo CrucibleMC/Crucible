@@ -5,7 +5,7 @@
              for (ZipEntry ze : Collections.list(jar.entries()))
              {
 -                if (ze.getName()!=null && ze.getName().startsWith("__MACOSX"))
-+                if (ze.getName()!=null && (ze.getName().startsWith("__MACOSX") || ze.getName().startsWith("META-INF/versions")))
++                if (ze.getName().startsWith("__MACOSX") || ze.getName().startsWith("META-INF/versions") || ze.getName().contains("org/openjdk/nashorn") || ze.getName().contains("jakarta/servlet/"))
                  {
                      continue;
                  }

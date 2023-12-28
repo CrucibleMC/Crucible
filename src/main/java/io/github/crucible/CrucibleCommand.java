@@ -51,7 +51,8 @@ public class CrucibleCommand extends Command {
           "Bukkit API implemented: 1.7.9-R0.3-SNAPSHOT\n" +
           "Plugins: " + Bukkit.getPluginManager().getPlugins().length + "\n&r" +
           "Mods: " + Loader.instance().getActiveModList().size() +
-          " &r| Loaded: " + Loader.instance().getModList().size() + "\n&r";
+          " &r| Loaded: " + Loader.instance().getModList().size() + "\n&r" +
+            String.format("Java is %s, version %s, running on %s:%s:%s, installed at %s", System.getProperty("java.vm.name"), System.getProperty("java.version"), System.getProperty("os.name"), System.getProperty("os.arch"), System.getProperty("os.version"), System.getProperty("java.home"));
         return ChatColor.translateAlternateColorCodes('&', info);
     }
 
