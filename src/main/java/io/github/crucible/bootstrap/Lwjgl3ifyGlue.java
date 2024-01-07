@@ -28,7 +28,7 @@ public class Lwjgl3ifyGlue {
         "vswe.stevesfactory.blocks.ConnectionBlockType", "vswe.stevesfactory.components.ComponentType",
         "vswe.stevesfactory.components.ConnectionSet", "vswe.stevesfactory.components.ConnectionOption",
         "ic2.core.init.InternalName", "gregtech.api.enums.Element", "gregtech.api.enums.OrePrefixes",
-        "net.minecraft.client.audio.MusicTicker$MusicType", "org.bukkit.Material",
+        "net.minecraft.client.audio.MusicTicker$MusicType",
         "buildcraft.api.transport.IPipeTile.PipeType", "thaumcraft.common.entities.golems.EnumGolemType",
         // Non-GTNH Mods Compat
         // The Lord of the Rings Mod: Legacy
@@ -55,6 +55,9 @@ public class Lwjgl3ifyGlue {
     };
 
     public static void checkJava() {
+        System.out.println("[Crucible] Crucible now supports Java 8-17 by embedding a modified version of lwjgl3ify (https://github.com/GTNewHorizons/lwjgl3ify/).");
+        System.out.println("[Crucible] Do not report issues to upstream. All issues with newer Java version must be reported to Crucible's issue tracker instead.");
+
         if (!Boolean.getBoolean("lwjgl3ify.skipjavacheck")) {
             final String specVer = System.getProperty("java.specification.version");
             if (specVer.equals("17")) {

@@ -52,13 +52,11 @@ public class CrucibleServerMainHook {
             System.setProperty((String) entry.getKey(), (String) entry.getValue());
         }
 
-        System.out.println("[Crucible] This Crucible version has embedded a heavily modified version of lwjgl3ify (https://github.com/GTNewHorizons/lwjgl3ify/).");
-        System.out.println("[Crucible] Do not, I repeat DO NOT report any issues to upstream, any issue you encounter is mostly likely because of a hybrid environment. Do open a Crucible issue instead.");
         Lwjgl3ifyGlue.checkJava();
 
         if (!verifyLibraries()) {
             setupLibraries();
-            System.out.println("[Crucible] Crucible installed! You need to start the server again.");
+            System.out.println("[Crucible] Crucible installed! A restart is required to be able to boot.");
             System.exit(0);
         } else {
             System.out.println("[Crucible] Everything in check, booting the server");
