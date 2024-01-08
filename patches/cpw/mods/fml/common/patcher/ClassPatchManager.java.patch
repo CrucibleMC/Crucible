@@ -29,7 +29,7 @@
      public static final ClassPatchManager INSTANCE = new ClassPatchManager();
  
      public static final boolean dumpPatched = Boolean.parseBoolean(System.getProperty("fml.dumpPatchedClasses", "false"));
-@@ -155,10 +159,24 @@
+@@ -155,10 +159,20 @@
                  FMLRelaunchLog.log(Level.ERROR, "The binary patch set is missing. Either you are in a development environment, or things are not going to work!");
                  return;
              }
@@ -46,11 +46,7 @@
 -            Pack200.newUnpacker().unpack(binpatchesDecompressed, jos);
 +
 +            //Pack200.newUnpacker().unpack(binpatchesDecompressed, jos);
-+            Archive archive = new Archive(binpatchesDecompressed, jos);
-+            archive.setQuiet(true);
-+            // Crucible note: YES, this *IS* needed, Thermos logging is so broken beyond repair that not setting a log file will break *EVERYTHING* - juanmuscaria
-+            archive.setLogFile("logs/.ignoreMe");
-+            archive.unpack();
++            new Pack200UnpackerAdapter().unpack(binpatchesDecompressed, jos);
 +            // Crucible end
 +
              jis = new JarInputStream(new ByteArrayInputStream(jarBytes.toByteArray()));
