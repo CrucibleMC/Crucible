@@ -3,11 +3,11 @@ package me.eigenraven.lwjgl3ify.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.crucible.CrucibleModContainer;
 import io.github.crucible.CrucibleConfigs;
-import io.github.crucible.bootstrap.CrucibleMetadata;
 import net.minecraft.launchwrapper.IClassTransformer;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -19,7 +19,7 @@ import org.objectweb.asm.tree.FieldNode;
 import me.eigenraven.lwjgl3ify.WasFinalObjectHolder;
 
 public class UnfinalizeObjectHoldersTransformer implements IClassTransformer {
-
+    private final Logger LOGGER = LogManager.getLogger("lwjgl3ify");
     // Keep ClassNode-operating transformers together for efficiency (don't read/write the class multiple times)
     final ExtensibleEnumTransformerHelper enumTransformer = new ExtensibleEnumTransformerHelper();
     final FixConstantPoolInterfaceMethodRefHelper cpiMethodRefTransformer = new FixConstantPoolInterfaceMethodRefHelper();
@@ -47,9 +47,7 @@ public class UnfinalizeObjectHoldersTransformer implements IClassTransformer {
             return null;
         }
 
-        // Crucible classes and some of its dependencies *must* be ignored because we depend on Crucible config
-        if (transformedName.startsWith("me.eigenraven.lwjgl3ify") || transformedName.startsWith("io.github.crucible")
-            || transformedName.startsWith("org.yaml.snakeyaml")) {
+        if (transformedName.startsWith("me.eigenraven.lwjgl3ify")) {
             return basicClass;
         }
         try {
@@ -66,7 +64,7 @@ public class UnfinalizeObjectHoldersTransformer implements IClassTransformer {
             }
             transformClass |= isHolder(node.visibleAnnotations);
             if (transformedName.equals("team.chisel.init.ChiselBlocks")) {
-                CrucibleModContainer.logger.debug("chiselblocks");
+                LOGGER.debug("chiselblocks");
             }
             int fieldsModified = 0;
             for (FieldNode field : node.fields) {
@@ -88,7 +86,7 @@ public class UnfinalizeObjectHoldersTransformer implements IClassTransformer {
                 }
             }
             if (workDone) {
-                CrucibleModContainer.logger.info("Unfinalized {} Holder fields in {}", fieldsModified, transformedName);
+                LOGGER.info("Unfinalized {} Holder fields in {}", fieldsModified, transformedName);
             }
 
             if (CrucibleConfigs.configs.lwjgl3ify_extensibleEnums
@@ -103,14 +101,14 @@ public class UnfinalizeObjectHoldersTransformer implements IClassTransformer {
 
             if (enumsTransformed) {
                 workDone = true;
-                CrucibleModContainer.logger.info("Dynamicized enum {}={}", name, transformedName);
+                LOGGER.info("Dynamicized enum {}={}", name, transformedName);
             }
 
             final boolean ifaceMethodRefsTransformed = cpiMethodRefTransformer.transform(node);
 
             if (ifaceMethodRefsTransformed) {
                 workDone = true;
-                CrucibleModContainer.logger
+                LOGGER
                     .warn("Fixed missing CONSTANT_InterfaceMethodRef miscompilation in {}={}", name, transformedName);
             }
 
@@ -120,7 +118,7 @@ public class UnfinalizeObjectHoldersTransformer implements IClassTransformer {
                 return writer.toByteArray();
             }
         } catch (Exception e) {
-            CrucibleModContainer.logger.error("Error when unfinalizing ObjectHolder transformer", e);
+            LOGGER.error("Error when unfinalizing ObjectHolder transformer", e);
         }
         return basicClass;
     }

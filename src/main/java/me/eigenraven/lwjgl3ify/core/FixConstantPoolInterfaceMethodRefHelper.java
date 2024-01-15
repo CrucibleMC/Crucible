@@ -2,7 +2,8 @@ package me.eigenraven.lwjgl3ify.core;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.github.crucible.CrucibleModContainer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -20,6 +21,7 @@ import org.objectweb.asm.tree.MethodNode;
  * CONSTANT_InterfaceMethodRef
  */
 public class FixConstantPoolInterfaceMethodRefHelper {
+    private final Logger LOGGER = LogManager.getLogger("lwjgl3ify");
 
     public boolean transform(ClassNode node) {
         if (System.getProperty("java.specification.version", "1.8")
@@ -80,7 +82,7 @@ public class FixConstantPoolInterfaceMethodRefHelper {
                     }
                 } catch (ClassNotFoundException cnfe) {
                     // no-op
-                    CrucibleModContainer.logger.warn("Reference to non-existing java class {} found.", regularName, cnfe);
+                    LOGGER.warn("Reference to non-existing java class {} found.", regularName, cnfe);
                 }
             }
             if (fixSelfReference || fixJavaReference) {

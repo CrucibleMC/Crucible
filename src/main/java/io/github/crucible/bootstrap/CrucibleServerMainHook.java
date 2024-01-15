@@ -106,14 +106,13 @@ public class CrucibleServerMainHook {
 
     // Too lazy for a coremod
     public static void coremodHandleLaunch(File mcDir, LaunchClassLoader classLoader, FMLTweaker tweaker) {
+        classLoader.addClassLoaderExclusion("io.github.crucible.bootstrap.");
         try {
-            // Ensure some essential classes are loaded before we register the tweaker
+            // Ensure our config is loaded way before everything that may need it
             Class.forName("io.github.crucible.CrucibleConfigs", true, classLoader);
-            Class.forName("io.github.crucible.CrucibleModContainer", true, classLoader);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         Lwjgl3ifyGlue.doCoremodWork(classLoader);
-        classLoader.addClassLoaderExclusion("io.github.crucible.bootstrap.");
     }
 }

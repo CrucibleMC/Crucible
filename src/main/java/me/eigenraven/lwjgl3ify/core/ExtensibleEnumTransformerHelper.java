@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import io.github.crucible.CrucibleModContainer;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -23,7 +24,7 @@ import me.eigenraven.lwjgl3ify.api.MakeEnumExtensible;
 
 public class ExtensibleEnumTransformerHelper {
 
-    private final Logger LOGGER = CrucibleModContainer.logger;
+    private final Logger LOGGER = LogManager.getLogger("lwjgl3ify");
     private final Type STRING = Type.getType(String.class);
     private final Type ENUM = Type.getType(Enum.class);
     public final Type MARKER_IFACE = Type.getType(IExtensibleEnum.class);
