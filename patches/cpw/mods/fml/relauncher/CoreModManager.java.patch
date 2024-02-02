@@ -19,16 +19,17 @@
  import java.lang.reflect.Method;
  import java.net.MalformedURLException;
  import java.net.URL;
-@@ -31,6 +32,8 @@
+@@ -31,6 +32,9 @@
  import java.util.jar.Attributes;
  import java.util.jar.JarFile;
  
 +import io.github.crucible.CrucibleModContainer;
++import io.github.crucible.bootstrap.CrucibleCoremodHook;
 +import io.github.crucible.bootstrap.CrucibleServerMainHook;
  import net.minecraft.launchwrapper.ITweaker;
  import net.minecraft.launchwrapper.Launch;
  import net.minecraft.launchwrapper.LaunchClassLoader;
-@@ -57,10 +60,11 @@
+@@ -57,10 +61,11 @@
  import cpw.mods.fml.relauncher.IFMLLoadingPlugin.TransformerExclusions;
  
  public class CoreModManager {
@@ -41,7 +42,7 @@
      private static List<String> loadedCoremods = Lists.newArrayList();
      private static List<FMLPluginWrapper> loadPlugins;
      private static boolean deobfuscatedEnvironment;
-@@ -70,6 +74,7 @@
+@@ -70,6 +75,7 @@
      private static List<String> accessTransformers = Lists.newArrayList();
  
      private static class FMLPluginWrapper implements ITweaker {
@@ -49,7 +50,7 @@
          public final String name;
          public final IFMLLoadingPlugin coreModInstance;
          public final List<String> predepends;
-@@ -99,14 +104,17 @@
+@@ -99,14 +105,17 @@
          }
  
          @Override
@@ -75,7 +76,7 @@
              FMLRelaunchLog.fine("Injection complete");
  
              FMLRelaunchLog.fine("Running coremod plugin for %s {%s}", name, coreModInstance.getClass().getName());
-@@ -160,6 +168,9 @@
+@@ -160,6 +169,9 @@
  
      }
  
@@ -85,17 +86,17 @@
      public static void handleLaunch(File mcDir, LaunchClassLoader classLoader, FMLTweaker tweaker)
      {
          CoreModManager.mcDir = mcDir;
-@@ -206,6 +217,9 @@
+@@ -206,6 +218,9 @@
          }
  
          FMLRelaunchLog.fine("All fundamental core mods are successfully located");
 +        // Crucible start - too lazy for creating a coremod
-+        CrucibleServerMainHook.coremodHandleLaunch(mcDir, classLoader, tweaker);
++        CrucibleCoremodHook.coremodHandleLaunch(mcDir, classLoader, tweaker);
 +        // Crucible end
          // Now that we have the root plugins loaded - lets see what else might
          // be around
          String commandLineCoremods = System.getProperty("fml.coreMods.load", "");
-@@ -219,7 +233,19 @@
+@@ -219,7 +234,19 @@
              loadCoreMod(classLoader, coreModClassName, null);
          }
          discoverCoreMods(mcDir, classLoader);
@@ -116,7 +117,7 @@
      }
  
      private static void discoverCoreMods(File mcDir, LaunchClassLoader classLoader)
-@@ -336,6 +362,10 @@
+@@ -336,6 +363,10 @@
              String cascadedTweaker = mfAttributes.getValue("TweakClass");
              if (cascadedTweaker != null)
              {
@@ -127,7 +128,7 @@
                  FMLRelaunchLog.info("Loading tweaker %s from %s", cascadedTweaker, coreMod.getName());
                  Integer sortOrder = Ints.tryParse(Strings.nullToEmpty(mfAttributes.getValue("TweakOrder")));
                  sortOrder = (sortOrder == null ? Integer.valueOf(0) : sortOrder);
-@@ -365,6 +395,10 @@
+@@ -365,6 +396,10 @@
                  FMLRelaunchLog.fine("Not found coremod data in %s", coreMod.getName());
                  continue;
              }
@@ -138,7 +139,7 @@
              // Support things that are mod jars, but not FML mod jars
              try
              {
-@@ -377,40 +411,76 @@
+@@ -377,40 +412,76 @@
                  else
                  {
                      FMLRelaunchLog.finer("Found FMLCorePluginContainsFMLMod marker in %s, it will be examined later for regular @Mod instances",
@@ -232,7 +233,7 @@
      }
  
      /**
-@@ -467,19 +537,22 @@
+@@ -467,19 +538,22 @@
              MCVersion requiredMCVersion = coreModClazz.getAnnotation(IFMLLoadingPlugin.MCVersion.class);
              if (!Arrays.asList(rootPlugins).contains(coreModClass) && (requiredMCVersion == null || Strings.isNullOrEmpty(requiredMCVersion.value())))
              {

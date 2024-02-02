@@ -55,14 +55,19 @@ public class Lwjgl3ifyGlue {
     };
 
     public static void checkJava() {
-        System.out.println("[Crucible] Crucible now supports Java 8-17 by embedding a modified version of lwjgl3ify (https://github.com/GTNewHorizons/lwjgl3ify/).");
-        System.out.println("[Crucible] Do not report issues to upstream. All issues with newer Java version must be reported to Crucible's issue tracker instead.");
         final String specVer = System.getProperty("java.specification.version");
 
         // Is there any jvm where the specs is 8 instead of 1.8?
         if (!Boolean.getBoolean("crucible.weAreJava9") && !(specVer.equals("1.8"))) {
             System.out.println("[Crucible] Looks like you are missing the special java9+, the server may not launch without them.");
         }
+
+        if (specVer.equals("1.8")) {
+            System.out.println("[Crucible] Crucible now supports Java 8-21 by embedding a modified version of lwjgl3ify (https://github.com/GTNewHorizons/lwjgl3ify/).");
+        } else {
+            System.out.println("[Crucible] Crucible is running modified version of lwjgl3ify (https://github.com/GTNewHorizons/lwjgl3ify/).");
+        }
+        System.out.println("[Crucible] Do not report issues to upstream. All issues with newer Java version must be reported to Crucible's issue tracker instead.");
 
         if (!Boolean.getBoolean("lwjgl3ify.skipjavacheck")) {
             if (specVer.equals("17")) {
