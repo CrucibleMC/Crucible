@@ -5,7 +5,7 @@
  import java.util.List;
  import java.util.concurrent.Callable;
 +
-+import io.github.crucible.CrucibleMetadata;
++import io.github.crucible.bootstrap.CrucibleMetadata;
  import net.minecraft.util.ReportedException;
  import net.minecraft.world.gen.layer.IntCache;
 +

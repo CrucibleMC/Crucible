@@ -1,6 +1,7 @@
 package io.github.crucible.bootstrap;
 
-import io.github.crucible.CrucibleMetadata;
+import cpw.mods.fml.common.launcher.FMLTweaker;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import java.io.File;
 import java.io.FileReader;
@@ -10,17 +11,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
-import java.util.stream.Stream;
+import java.util.*;
 
 // DO NOT TRY TO LOAD ANY MINECRAFT CLASS FROM HERE, THIS CLASS IS LOADED BEFORE EVERYTHING ON THE SERVER ENTRYPOINT
+// Also avoid using streams here
 public class CrucibleServerMainHook {
     private static final String[] REPOS = new String[]{
-            "https://github.com/juanmuscaria/maven/raw/master/",
-            "https://github.com/juanmuscaria/maven/raw/master/ThermosLibs/",
-            "https://maven.minecraftforge.net/",
-            "https://libraries.minecraft.net/",
-            "https://repo.maven.apache.org/maven2/"
+      "https://github.com/juanmuscaria/maven/raw/master/",
+      "https://github.com/juanmuscaria/maven/raw/master/ThermosLibs/",
+      "https://maven.minecraftforge.net/",
+      "https://libraries.minecraft.net/",
+      "https://repo.maven.apache.org/maven2/"
     };
     private static final Path LIBRARY_ROOT = Paths.get("libraries").toAbsolutePath();
     public static final PrintStream originalOut = System.out;
@@ -35,7 +36,7 @@ public class CrucibleServerMainHook {
             try {
                 internalProperties.load(CrucibleServerMainHook.class.getClassLoader().getResourceAsStream("inject.properties"));
                 internalProperties.store(Files.newOutputStream(injectFile.toPath()),
-                        "All properties in this file will be injected into System Properties before the server starts. Useful for shared hostings");
+                  "All properties in this file will be injected into System Properties before the server starts. Useful for shared hostings");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -46,10 +47,17 @@ public class CrucibleServerMainHook {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        propertiesToInject.forEach((key, value) -> System.setProperty((String) key, (String) value));
+
+        for (Map.Entry<Object, Object> entry : propertiesToInject.entrySet()) {
+            System.setProperty((String) entry.getKey(), (String) entry.getValue());
+        }
+
+        Lwjgl3ifyGlue.checkJava();
 
         if (!verifyLibraries()) {
             setupLibraries();
+            System.out.println("[Crucible] Crucible installed! A restart is required to be able to boot.");
+            System.exit(0);
         } else {
             System.out.println("[Crucible] Everything in check, booting the server");
         }
@@ -77,10 +85,18 @@ public class CrucibleServerMainHook {
         if (Files.exists(LIBRARY_ROOT) && !Files.isDirectory(LIBRARY_ROOT)) {
             throw new IllegalStateException(String.format("Library root '%s' is a file, aborting startup!", LIBRARY_ROOT.toAbsolutePath()));
         }
+
         String[] userDefinedRepos = System.getProperty("crucible.libraryRepos", "").split(" ");
 
-        LibraryManager.downloadMavenLibraries(LIBRARY_ROOT, Stream.of(REPOS, userDefinedRepos).flatMap(Stream::of)
-                .filter(s -> !s.isEmpty()).toArray(String[]::new), CrucibleMetadata.NEEDED_LIBRARIES);
+        List<String> list = new ArrayList<>();
+        for (String[] strings : Arrays.asList(REPOS, userDefinedRepos)) {
+            for (String s : strings) {
+                if (!s.isEmpty()) {
+                    list.add(s);
+                }
+            }
+        }
+        LibraryManager.downloadMavenLibraries(LIBRARY_ROOT, list.toArray(new String[0]), CrucibleMetadata.NEEDED_LIBRARIES);
     }
 
     public static void restoreStreams() {

@@ -2,7 +2,7 @@ package org.bukkit.craftbukkit.v1_7_R4.entity;
 
 import com.google.common.collect.ImmutableSet;
 import com.mojang.authlib.GameProfile;
-import io.github.crucible.CrucibleMetadata;
+import io.github.crucible.bootstrap.CrucibleMetadata;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.entity.EntityTracker;

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/discovery/asm/ModFieldVisitor.java
++++ ../src-work/minecraft/cpw/mods/fml/common/discovery/asm/ModFieldVisitor.java
+@@ -24,7 +24,7 @@
+ 
+     public ModFieldVisitor(String name, ASMModParser discoverer)
+     {
+-        super(Opcodes.ASM5);
++        super(Opcodes.ASM9);
+         this.fieldName = name;
+         this.discoverer = discoverer;
+     }

@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/registry/ObjectHolderRegistry.java
++++ ../src-work/minecraft/cpw/mods/fml/common/registry/ObjectHolderRegistry.java
+@@ -12,6 +12,7 @@
+ import cpw.mods.fml.common.discovery.ASMDataTable;
+ import cpw.mods.fml.common.discovery.ASMDataTable.ASMData;
+ import cpw.mods.fml.common.registry.GameRegistry.ObjectHolder;
++import me.eigenraven.lwjgl3ify.WasFinalObjectHolder;
+ 
+ /**
+  * Internal registry for tracking {@link ObjectHolder} references
+@@ -111,6 +112,11 @@
+         for (Field f : clazz.getFields())
+         {
+             int mods = f.getModifiers();
++            // Crucible start - lwjgl3ify patch
++            if (f.isAnnotationPresent(WasFinalObjectHolder.class)) {
++                mods |= Modifier.FINAL;
++            }
++            // Crucible end
+             boolean isMatch = Modifier.isPublic(mods) && Modifier.isStatic(mods) && Modifier.isFinal(mods);
+             if (!isMatch || f.isAnnotationPresent(ObjectHolder.class))
+             {

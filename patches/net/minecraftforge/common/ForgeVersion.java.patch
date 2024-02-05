@@ -7,7 +7,7 @@
 -import java.io.InputStream;
 -import java.net.URL;
 -import java.util.Map;
-+import io.github.crucible.CrucibleMetadata;
++import io.github.crucible.bootstrap.CrucibleMetadata;
  
 -import com.google.common.io.ByteStreams;
 -import com.google.gson.Gson;

@@ -1,0 +1,54 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/patcher/ClassPatchManager.java
++++ ../src-work/minecraft/cpw/mods/fml/common/patcher/ClassPatchManager.java
+@@ -14,11 +14,13 @@
+ import java.util.jar.Pack200;
+ import java.util.regex.Pattern;
+ 
++import org.apache.commons.compress.harmony.unpack200.Archive;
+ import org.apache.logging.log4j.Level;
+ 
+ import net.minecraft.launchwrapper.LaunchClassLoader;
+ 
+-import LZMA.LzmaInputStream;
++import org.apache.commons.compress.harmony.unpack200.Pack200UnpackerAdapter;
++import org.apache.logging.log4j.Level;
+ 
+ import com.google.common.base.Joiner;
+ import com.google.common.base.Throwables;
+@@ -30,11 +32,13 @@
+ import com.google.common.io.ByteStreams;
+ import com.google.common.io.Files;
+ 
++import LZMA.LzmaInputStream;
+ import cpw.mods.fml.relauncher.FMLRelaunchLog;
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.repackage.com.nothome.delta.GDiffPatcher;
+ 
+ public class ClassPatchManager {
++
+     public static final ClassPatchManager INSTANCE = new ClassPatchManager();
+ 
+     public static final boolean dumpPatched = Boolean.parseBoolean(System.getProperty("fml.dumpPatchedClasses", "false"));
+@@ -155,10 +159,20 @@
+                 FMLRelaunchLog.log(Level.ERROR, "The binary patch set is missing. Either you are in a development environment, or things are not going to work!");
+                 return;
+             }
+-            LzmaInputStream binpatchesDecompressed = new LzmaInputStream(binpatchesCompressed);
++            // Crucible start - apply lwjgl3ify patch
++            // LzmaInputStream binpatchesDecompressed = new LzmaInputStream(binpatchesCompressed);
++            LzmaInputStream binpatchesDecompressedLzma = new LzmaInputStream(binpatchesCompressed);
++            // The Apache pack200 stream chokes on a lzmainputstream for some reason
++            byte[] decompressed = ByteStreams.toByteArray(binpatchesDecompressedLzma);
++            binpatchesDecompressedLzma.close();
++            ByteArrayInputStream binpatchesDecompressed = new ByteArrayInputStream(decompressed);
+             ByteArrayOutputStream jarBytes = new ByteArrayOutputStream();
+             JarOutputStream jos = new JarOutputStream(jarBytes);
+-            Pack200.newUnpacker().unpack(binpatchesDecompressed, jos);
++
++            //Pack200.newUnpacker().unpack(binpatchesDecompressed, jos);
++            new Pack200UnpackerAdapter().unpack(binpatchesDecompressed, jos);
++            // Crucible end
++
+             jis = new JarInputStream(new ByteArrayInputStream(jarBytes.toByteArray()));
+         }
+         catch (Exception e)

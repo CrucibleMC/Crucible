@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/TracingPrintStream.java
++++ ../src-work/minecraft/cpw/mods/fml/common/TracingPrintStream.java
+@@ -47,4 +47,10 @@
+         return "[" + elem.getClassName() + ":" + elem.getMethodName() + ":" + elem.getLineNumber() + "]: ";
+     }
+ 
++    @Override
++    public void close() {
++        // no-op
++        //println("Something tried to close the main output stream");
++        //new Throwable().printStackTrace();
++    }
+ }
