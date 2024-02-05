@@ -155,13 +155,13 @@ public class GenDevProjectsTask extends DefaultTask {
               .stream().map(dep -> dep.getGroup() + ':' + dep.getName() + ':' + dep.getVersion())
               .collect(Collectors.toList());
 
-      o.append("  // MC libraries").append(NEWLINE);
-      for (String dep : deps) {
+      o.append(NEWLINE).append("  // Library overwrites").append(NEWLINE);
+      for (String dep : libraryOverwrite) {
         o.append("  api '").append(dep).append('\'').append(NEWLINE);
       }
 
-      o.append(NEWLINE).append("  // Library overwrites").append(NEWLINE);
-      for (String dep : libraryOverwrite) {
+      o.append("  // MC libraries").append(NEWLINE);
+      for (String dep : deps) {
         o.append("  api '").append(dep).append('\'').append(NEWLINE);
       }
     } else {
