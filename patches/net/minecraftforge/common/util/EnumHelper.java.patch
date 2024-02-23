@@ -12,7 +12,7 @@
  import cpw.mods.fml.common.FMLLog;
  import net.minecraft.block.BlockPressurePlate.Sensitivity;
  import net.minecraft.block.material.Material;
-@@ -21,270 +24,291 @@
+@@ -21,186 +24,120 @@
  import net.minecraft.world.EnumSkyBlock;
  import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
  import net.minecraftforge.classloading.FMLForgePlugin;
@@ -37,6 +37,8 @@
 +// Cauldron end
 +
 +public class EnumHelper {
++    private static final Logger logger = LogManager.getLogger();
++    private static final Map<Class<? extends Enum<?>>, Map<String, Enum<?>>> enumConstants = new HashMap<>();
 +    private static Object reflectionFactory = null;
      private static Method newConstructorAccessor = null;
 -    private static Method newInstance            = null;
@@ -47,7 +49,6 @@
 +    private static Method newFieldAccessor = null;
 +    private static Method fieldAccessorSet = null;
 +    private static boolean isSetup = false;
-+    private static final Logger logger = LogManager.getLogger();
  
 -    //Some enums are decompiled with extra arguments, so lets check for that
 +    // Some enums are decompiled with extra arguments, so lets check for that
@@ -174,8 +175,7 @@
 +        } catch (Throwable e) {
 +            Throwables.propagate(e);
          }
-+    }
- 
+-
 -        try
 -        {
 -            Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");
@@ -184,41 +184,14 @@
 -            newInstance            = Class.forName("sun.reflect.ConstructorAccessor").getDeclaredMethod("newInstance", Object[].class);
 -            newFieldAccessor       = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newFieldAccessor", Field.class, boolean.class);
 -            fieldAccessorSet       = Class.forName("sun.reflect.FieldAccessor").getDeclaredMethod("set", Object.class, Object.class);
-+    public static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Object... paramValues) {
-+        return addEnum(commonTypes, enumType, enumName, paramValues);
-+    }
-+
-+    @SuppressWarnings("rawtypes")
-+    public static <T extends Enum<?>> T addEnum(Class[][] map, Class<T> enumType, String enumName,
-+                                                Object... paramValues) {
-+        for (Class[] lookup : map) {
-+            if (lookup[0] == enumType) {
-+                Class<?>[] paramTypes = new Class<?>[lookup.length - 1];
-+                if (paramTypes.length > 0) {
-+                    System.arraycopy(lookup, 1, paramTypes, 0, paramTypes.length);
-+                }
-+                return addEnum(enumType, enumName, paramTypes, paramValues);
-+            }
-         }
+-        }
 -        catch (Exception e)
 -        {
 -            e.printStackTrace();
-+        return null;
-+    }
-+
-+    @SuppressWarnings("unchecked")
-+    public static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes,
-+                                                Object[] paramValues) {
-+        if (!extensibleEnumIface.isAssignableFrom(enumType)) {
-+            throw new RuntimeException(
-+              "Enum " + enumType.getName() + " was not made extensible, add it to Crucible configs.");
-         }
- 
+-        }
+-
 -        isSetup = true;
--    }
-+        try {
-+            paramTypes = ArrayUtils.add(paramTypes, 0, String.class);
-+            paramValues = ArrayUtils.add(paramValues, 0, enumName);
+     }
  
 -    /*
 -     * Everything below this is found at the site below, and updated to be able to compile in Eclipse/Java 1.6+
@@ -233,9 +206,7 @@
 -        System.arraycopy(additionalParameterTypes, 0, parameterTypes, 2, additionalParameterTypes.length);
 -        return newConstructorAccessor.invoke(reflectionFactory, enumClass.getDeclaredConstructor(parameterTypes));
 -    }
-+            final Method creatorHandle = enumType.getMethod("dynamicCreate", paramTypes);
-+            T newValue = (T) creatorHandle.invoke(null, paramValues);
- 
+-
 -    private static < T extends Enum<? >> T makeEnum(Class<T> enumClass, String value, int ordinal, Class<?>[] additionalTypes, Object[] additionalValues) throws Exception
 -    {
 -        Object[] parms = new Object[additionalValues.length + 2];
@@ -243,13 +214,8 @@
 -        parms[1] = Integer.valueOf(ordinal);
 -        System.arraycopy(additionalValues, 0, parms, 2, additionalValues.length);
 -        return enumClass.cast(newInstance.invoke(getConstructorAccessor(enumClass, additionalTypes), new Object[] {parms}));
-+            return newValue;
-+        } catch (Exception e) {
-+            e.printStackTrace();
-+            throw new RuntimeException(e.getMessage(), e);
-+        }
-     }
- 
+-    }
+-
 -    public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception
 -    {
 -        field.setAccessible(true);
@@ -259,9 +225,7 @@
 -        Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
 -        fieldAccessorSet.invoke(fieldAccessor, target, value);
 -    }
-+    private static final Class<?> extensibleEnumIface;
-+    private static final MethodHandle setFieldHandle;
- 
+-
 -    private static void blankField(Class<?> enumClass, String fieldName) throws Exception
 -    {
 -        for (Field field : Class.class.getDeclaredFields())
@@ -272,74 +236,68 @@
 -                setFailsafeFieldValue(field, enumClass, null);
 -                break;
 -            }
-+    static {
-+        try {
-+            extensibleEnumIface = Class.forName("me.eigenraven.lwjgl3ify.IExtensibleEnum");
-+            Class<?> unsafeHacks = Class.forName("me.eigenraven.lwjgl3ify.UnsafeHacks");
-+            Method setFieldM = unsafeHacks.getMethod("setField", Field.class, Object.class, Object.class);
-+            setFieldHandle = MethodHandles.publicLookup()
-+              .unreflect(setFieldM);
-+        } catch (ReflectiveOperationException e) {
-+            throw new RuntimeException(e);
-         }
-     }
- 
+-        }
+-    }
+-
 -    private static void cleanEnumCache(Class<?> enumClass) throws Exception
-+    // Cauldron start
-+    public static Biome addBukkitBiome(String name)
-     {
+-    {
 -        blankField(enumClass, "enumConstantDirectory");
 -        blankField(enumClass, "enumConstants");
-+        return (Biome)addEnum(Biome.class, name, new Class[0], new Object[0]);
-     }
- 
+-    }
+-
 -    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
-+    public static World.Environment addBukkitEnvironment(int id, String name)
-     {
+-    {
 -        setup();
--        return addEnum(commonTypes, enumType, enumName, paramValues);
-+        return (World.Environment)addEnum(World.Environment.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
++    public static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Object... paramValues) {
+         return addEnum(commonTypes, enumType, enumName, paramValues);
      }
  
--    @SuppressWarnings("rawtypes")
+     @SuppressWarnings("rawtypes")
 -    public static <T extends Enum<? >> T addEnum(Class[][] map, Class<T> enumType, String enumName, Object... paramValues)
-+    public static WorldType addBukkitWorldType(String name)
-     {
+-    {
 -        for (Class[] lookup : map)
 -        {
 -            if (lookup[0] == enumType)
 -            {
--                Class<?>[] paramTypes = new Class<?>[lookup.length - 1];
++    public static <T extends Enum<?>> T addEnum(Class[][] map, Class<T> enumType, String enumName,
++                                                Object... paramValues) {
++        for (Class[] lookup : map) {
++            if (lookup[0] == enumType) {
+                 Class<?>[] paramTypes = new Class<?>[lookup.length - 1];
 -                if (paramTypes.length > 0)
 -                {
--                    System.arraycopy(lookup, 1, paramTypes, 0, paramTypes.length);
--                }
--                return addEnum(enumType, enumName, paramTypes, paramValues);
--            }
--        }
--        return null;
-+        WorldType worldType = addEnum(WorldType.class, name, new Class [] { String.class }, new Object[] { name });
-+        Map<String, WorldType> BY_NAME = ReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
-+        BY_NAME.put(name.toUpperCase(), worldType);
-+
-+        return worldType;
++                if (paramTypes.length > 0) {
+                     System.arraycopy(lookup, 1, paramTypes, 0, paramTypes.length);
+                 }
+                 return addEnum(enumType, enumName, paramTypes, paramValues);
+@@ -210,81 +147,186 @@
      }
  
--    @SuppressWarnings("unchecked")
+     @SuppressWarnings("unchecked")
 -    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object[] paramValues)
 -    {
 -        if (!isSetup)
 -        {
 -            setup();
--        }
-+    public static EntityType addBukkitEntityType(String name, Class <? extends org.bukkit.entity.Entity> clazz, int typeId, boolean independent) {
-+        String entityType = name.replace("-", "_").toUpperCase();
-+        EntityType bukkitType = addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
++    public static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes,
++                                                Object[] paramValues) {
++        if (!extensibleEnumIface.isAssignableFrom(enumType)) {
++            throw new RuntimeException(
++                "Enum " + enumType.getName() + " was not made extensible, add it to Crucible.yml");
+         }
  
 -        Field valuesField = null;
 -        Field[] fields = enumType.getDeclaredFields();
-+        Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
-+        Map<Short, EntityType> ID_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
++        synchronized (enumConstants) {
++            Map<String, Enum<?>> enumMap = enumConstants.computeIfAbsent(enumType, k -> new HashMap<>());
++            if (enumMap.containsKey(enumName.toUpperCase())) {
++                // Inside the addEnum method
++                int suffix = 1;
++                String newName;
++                do {
++                    newName = enumName + "$" + suffix;
++                    suffix++;
++                } while (enumMap.containsKey(newName.toUpperCase()));
  
 -        for (Field field : fields)
 -        {
@@ -348,15 +306,21 @@
 -            {
 -                valuesField = field;
 -                break;
--            }
++                // Log Enum Name Change
++                logger.info("Duplicate Enum found! Remapping {} to {}", enumName, newName);
++                enumName = newName;
+             }
 -        }
-+        NAME_MAP.put(name.toLowerCase(), bukkitType);
-+        ID_MAP.put((short)typeId, bukkitType);
++            try {
++                paramTypes = ArrayUtils.add(paramTypes, 0, String.class);
++                paramValues = ArrayUtils.add(paramValues, 0, enumName);
  
 -        int flags = (FMLForgePlugin.RUNTIME_DEOBF ? Modifier.PUBLIC : Modifier.PRIVATE) | Modifier.STATIC | Modifier.FINAL | 0x1000 /*SYNTHETIC*/;
 -        if (valuesField == null)
 -        {
 -            String valueType = String.format("[L%s;", enumType.getName().replace('.', '/'));
++                final Method creatorHandle = enumType.getMethod("dynamicCreate", paramTypes);
++                T newValue = (T) creatorHandle.invoke(null, paramValues);
  
 -            for (Field field : fields)
 -            {
@@ -366,9 +330,13 @@
 -                    valuesField = field;
 -                    break;
 -                }
--            }
--        }
-+        return bukkitType;
++                // Add Enum Name / Class to Map
++                enumMap.put(enumName.toUpperCase(), newValue);
++                return newValue;
++            } catch (Exception e) {
++                throw new RuntimeException("Failed to add enum constant: " + enumName, e);
+             }
+         }
 +    }
  
 -        if (valuesField == null)
@@ -383,49 +351,96 @@
 -                FMLLog.severe("       %s %s: %s", mods, field.getName(), field.getType().getName());
 -            }
 -            return null;
--        }
-+    public static InventoryType addInventoryType(TileEntity tileentity)
-+    {
-+        if (!IInventory.class.isAssignableFrom(tileentity.getClass())) return null;
-+        String id = (String)TileEntity.classToNameMap.get(tileentity.getClass());
++    private static final Class<?> extensibleEnumIface;
++    private static final MethodHandle setFieldHandle;
++
++    static {
++        try {
++            extensibleEnumIface = Class.forName("me.eigenraven.lwjgl3ify.IExtensibleEnum");
++            Class<?> unsafeHacks = Class.forName("me.eigenraven.lwjgl3ify.UnsafeHacks");
++            Method setFieldM = unsafeHacks.getMethod("setField", Field.class, Object.class, Object.class);
++            setFieldHandle = MethodHandles.publicLookup()
++              .unreflect(setFieldM);
++        } catch (ReflectiveOperationException e) {
++            throw new RuntimeException(e);
+         }
++    }
  
 -        valuesField.setAccessible(true);
--
-         try
-         {
++    // Cauldron start
++    public static Biome addBukkitBiome(String name)
++    {
++        return (Biome)addEnum(Biome.class, name, new Class[0], new Object[0]);
++    }
+ 
+-        try
+-        {
 -            T[] previousValues = (T[])valuesField.get(enumType);
 -            List<T> values = new ArrayList<T>(Arrays.asList(previousValues));
 -            T newValue = (T)makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
 -            values.add(newValue);
 -            setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));
 -            cleanEnumCache(enumType);
--
++    public static World.Environment addBukkitEnvironment(int id, String name)
++    {
++        return (World.Environment)addEnum(World.Environment.class, name, new Class[] { Integer.TYPE }, new Object[] { Integer.valueOf(id) });
++    }
+ 
 -            return newValue;
+-        }
+-        catch (Exception e)
+-        {
+-            e.printStackTrace();
+-            throw new RuntimeException(e.getMessage(), e);
+-        }
++    public static WorldType addBukkitWorldType(String name)
++    {
++        WorldType worldType = addEnum(WorldType.class, name, new Class [] { String.class }, new Object[] { name });
++        Map<String, WorldType> BY_NAME = ReflectionHelper.getPrivateValue(WorldType.class, null, "BY_NAME");
++        BY_NAME.put(name.toUpperCase(), worldType);
++
++        return worldType;
+     }
+ 
+-    static
++    public static EntityType addBukkitEntityType(String name, Class <? extends org.bukkit.entity.Entity> clazz, int typeId, boolean independent) {
++        String entityType = name.replace("-", "_").toUpperCase();
++        EntityType bukkitType = addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
++
++        Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
++        Map<Short, EntityType> ID_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
++
++        NAME_MAP.put(name.toLowerCase(), bukkitType);
++        ID_MAP.put((short)typeId, bukkitType);
++
++
++        return bukkitType;
++    }
++
++    public static InventoryType addInventoryType(TileEntity tileentity)
+     {
+-        if (!isSetup)
++        if (!IInventory.class.isAssignableFrom(tileentity.getClass())) return null;
++        String id = (String)TileEntity.classToNameMap.get(tileentity.getClass());
++
++        try
+         {
+-            setup();
 +            IInventory teInv = (IInventory)tileentity;
 +            int size = teInv.getSizeInventory();
 +            return addEnum(org.bukkit.event.inventory.InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{size, id});
          }
--        catch (Exception e)
 +        catch (Throwable e)
-         {
--            e.printStackTrace();
--            throw new RuntimeException(e.getMessage(), e);
++        {
 +            if (MinecraftServer.getServer().tileEntityConfig.enableTEInventoryWarning.getValue())
 +            {
 +                logger.log(Level.WARN, "Could not create inventory type " + tileentity.getClass().getName() + " Exception: " + e.toString());
 +                logger.log(Level.WARN, "Could not determine default inventory size for type " + tileentity.getClass().getName() + " using size of 9");
 +            }
 +            return addEnum(org.bukkit.event.inventory.InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{9, id});
-         }
++        }
      }
- 
--    static
--    {
--        if (!isSetup)
--        {
--            setup();
--        }
--    }
++
 +//    @SuppressWarnings("unchecked")
 +//    public static <T extends Enum<?>> T replaceEnum(Class<T> enumType, String enumName, int ordinal,  Class<?>[] paramTypes, Object[] paramValues)
 +//    {
