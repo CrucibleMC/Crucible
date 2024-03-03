@@ -1,23 +1,24 @@
-![](https://img.shields.io/badge/Minecraft%20Forge-v10.13.4.1614-orange?style=flat-square)
-![](https://img.shields.io/badge/Minecraft-1.7.10-orange?style=flat-square)
-![](https://img.shields.io/badge/Bukkit--1.7.9--R0.3--SNAPSHOT-orange?style=flat-square)
-![](https://img.shields.io/badge/Java%20JDK-v1.8-blue?style=flat-square)
 ![](https://img.shields.io/github/v/release/CrucibleMC/Crucible?color=sucess&style=flat-square)
 ![](https://img.shields.io/github/actions/workflow/status/CrucibleMC/Crucible/staging-build.yml?style=flat-square)
 ![](https://img.shields.io/discord/682358465175355393?color=blue&label=Discord&logo=Discord&style=flat-square)
 ![Crucible](logo.png)
 ### What's Crucible?
 
-Crucible is a [Thermos](https://github.com/CyberdyneCC/Thermos) with several improvements.
-We aim to close the gaps left by Thermos and extend the support for those still on 1.7.10 by adding support for long
+Crucible, a fork of [Thermos](https://github.com/CyberdyneCC/Thermos),
+is a CraftBukkit and Forge server implementation for 1.7.10,
+providing the ability to load both Forge mods and Bukkit plugins alongside each other.
+
+We aim to close the gaps left by Thermos and extend the support for those still using 1.7.10 by adding support for long
 broken mods and plugins and fix serious bugs as they appear.
 
 Advantages over Thermos:
 + Working/stable build across systems
-+ Fixed several bugs
-+ Performance Improvements
-+ Updated some libraries
-+ TimingsV2 implemented
++ Several bugfixes
++ Performance improvements
++ Updated libraries for newer plugin support
+* Implemented TimingsV2
+* Java 8–21 supported (using an integrated version of [lwjgl3ify](https://github.com/GTNewHorizons/lwjgl3ify))
++ Backported Bukkit APIs (With some APIs requiring the companion mod [NecroTempus](https://github.com/CrucibleMC/NecroTempus))
 + You can see more changes in the [releases](https://github.com/CrucibleMC/Crucible/releases) changelog.
 
 ## Build Requirements
@@ -43,5 +44,8 @@ Advantages over Thermos:
 + [Crucible Documentation](https://cruciblemc.github.io/docs/) - Place for everything about crucible.
 + [Discord](https://discord.gg/jWSTJ4d) - Join our support discord if you need help with server setup, or if you just want to hang out.
 
-## Roadmap
-You can check our Roadmap on our [docs](https://cruciblemc.github.io/docs/crucible/roadmap).
+## Credits
+* [Thermos](https://github.com/CyberdyneCC/Thermos) - Original project
+* [Spigot](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/browse) - Several improvements over Bukkit
+* [Paper](https://github.com/PaperMC/Paper) - Several improvements over Spigot
+* [lwjgl3ify](https://github.com/GTNewHorizons/lwjgl3ify) - Java 9+ support
