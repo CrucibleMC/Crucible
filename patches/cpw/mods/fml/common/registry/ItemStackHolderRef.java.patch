@@ -1,19 +1,31 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/registry/ItemStackHolderRef.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/registry/ItemStackHolderRef.java
-@@ -1,5 +1,7 @@
+@@ -1,19 +1,15 @@
  package cpw.mods.fml.common.registry;
  
-+import java.lang.invoke.MethodHandle;
-+import java.lang.invoke.MethodHandles;
- import java.lang.reflect.Field;
- import java.lang.reflect.Method;
- import java.lang.reflect.Modifier;
-@@ -40,20 +42,26 @@
-     private static Object reflectionFactory;
-     private static Method newFieldAccessor;
-     private static Method fieldAccessorSet;
-+    private static MethodHandle fieldSetter; // Crucible - lwjgl3ify field
-     private static void makeWritable(Field f)
+-import java.lang.reflect.Field;
+-import java.lang.reflect.Method;
+-import java.lang.reflect.Modifier;
+-
+-import net.minecraft.item.ItemStack;
+-
+-import org.apache.logging.log4j.Level;
+-
+ import com.google.common.base.Throwables;
+-
+ import cpw.mods.fml.common.FMLLog;
+ import cpw.mods.fml.common.registry.GameRegistry.ItemStackHolder;
++import net.minecraft.item.ItemStack;
++import org.apache.logging.log4j.Level;
+ 
++import java.lang.reflect.Field;
++import java.lang.reflect.Method;
+ 
++
+ /**
+  * Internal class used in tracking {@link ItemStackHolder} references
+  *
+@@ -44,16 +40,19 @@
      {
          try
          {
@@ -39,13 +51,11 @@
 +//            }
 +//            modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
 +            f.setAccessible(true);
-+            fieldSetter = MethodHandles.lookup()
-+              .unreflectSetter(f);
 +            // Crucible end
          } catch (Exception e)
          {
              throw Throwables.propagate(e);
-@@ -62,23 +70,53 @@
+@@ -62,23 +61,53 @@
  
      public void apply()
      {
@@ -94,7 +104,7 @@
 -            Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
 -            fieldAccessorSet.invoke(fieldAccessor, null, is);
 +        try {
-+            fieldSetter.invoke(is);
++            field.set(null, is);
 +        } catch (Throwable e) {
 +            FMLLog.getLogger()
 +              .log(
