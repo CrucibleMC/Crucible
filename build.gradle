@@ -90,9 +90,9 @@ dependencies {
     libraries 'org.ow2.asm:asm-util:9.5'
     libraries 'org.ow2.asm:asm-deprecated:7.1'
     libraries 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
-    libraries 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    libraries "javax.servlet:javax.servlet-api:4.0.1"
     libraries 'com.sun.xml.bind:jaxb-impl:3.0.2'
-    libraries 'org.mozilla:rhino-engine:1.7.14'
+    libraries 'org.openjdk.nashorn:nashorn-core:15.4'
 
     // Other libs
     libraries 'pw.prok:Damask:0.1.2@jar'
