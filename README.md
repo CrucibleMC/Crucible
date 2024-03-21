@@ -49,3 +49,9 @@ Advantages over Thermos:
 * [Spigot](https://hub.spigotmc.org/stash/projects/SPIGOT/repos/spigot/browse) - Several improvements over Bukkit
 * [Paper](https://github.com/PaperMC/Paper) - Several improvements over Spigot
 * [lwjgl3ify](https://github.com/GTNewHorizons/lwjgl3ify) - Java 9+ support
+
+## Special Thanks To
+
+### JetBrains
+For supporting Crucible development with access to their [Open Source License](https://jb.gg/OpenSourceSupport).
+[![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)](https://www.jetbrains.com)
