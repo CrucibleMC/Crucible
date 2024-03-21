@@ -53,5 +53,6 @@ Advantages over Thermos:
 ## Special Thanks To
 
 ### JetBrains
+[<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains Logo (Main) logo." width="100">](https://www.jetbrains.com)
+
 For supporting Crucible development with access to their [Open Source License](https://jb.gg/OpenSourceSupport).
-[![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)](https://www.jetbrains.com)
