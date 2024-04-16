@@ -74,7 +74,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +76,113 @@
+@@ -34,6 +76,119 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -83,46 +83,47 @@
 +        String pluginName = this.description.getName();
 +
 +        // configure default remapper settings
-+        boolean useCustomClassLoader = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.custom-class-loader", true);
-+        debug = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.debug", false);
-+        boolean remapNMS1710 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_7_R4", true);
-+        boolean remapNMS179 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_7_R3", true);
-+        boolean remapNMS172 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_7_R1", true);
-+        boolean remapNMS164 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_6_R3", true);
-+        boolean remapNMS152 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_5_R3", true);
-+        String remapNMSPre = MinecraftServer.getServer().cauldronConfig.getString("plugin-settings.default.remap-nms-pre", "false");
-+        boolean remapOBC1710 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_7_R4", true);
-+        boolean remapOBC179 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_7_R3", true);
-+        boolean remapOBC172 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_7_R1", true);
-+        boolean remapOBC164 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_6_R3", true);
-+        boolean remapOBC152 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_5_R3", true);
-+        boolean remapOBCPre = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-obc-pre", false);
-+        boolean globalInherit = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.global-inheritance", true);
-+        boolean pluginInherit = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.plugin-inheritance", true);
-+        boolean reflectFields = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-reflect-field", true);
-+        boolean reflectClass = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-reflect-class", true);
-+        boolean allowFuture = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings.default.remap-allow-future", false);
++        boolean useCustomClassLoader = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.custom-class-loader", true);
++        debug = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.debug", false);
++        boolean remapNMS1710 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_7_R4", true);
++        boolean remapNMS179 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_7_R3", true);
++        boolean remapNMS172 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_7_R1", true);
++        boolean remapNMS164 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_6_R3", true);
++        boolean remapNMS152 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-nms-v1_5_R3", true);
++        String remapNMSPre = MinecraftServer.cauldronConfig.getString("plugin-settings.default.remap-nms-pre", "false");
++        boolean remapOBC1710 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_7_R4", true);
++        boolean remapOBC179 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_7_R3", true);
++        boolean remapOBC172 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_7_R1", true);
++        boolean remapOBC164 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_6_R3", true);
++        boolean remapOBC152 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-obc-v1_5_R3", true);
++        boolean remapOBCPre = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-obc-pre", false);
++        boolean globalInherit = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.global-inheritance", true);
++        boolean pluginInherit = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.plugin-inheritance", true);
++        boolean reflectFields = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-reflect-field", true);
++        boolean reflectClass = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-reflect-class", true);
++        boolean allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-allow-future", false);
++        boolean remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-guava", true);
 +
 +        // plugin-specific overrides
-+        useCustomClassLoader = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader, false);
-+        debug = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".debug", debug, false);
-+        remapNMS1710 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_7_R4", remapNMS1710, false);
-+        remapNMS179 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_7_R3", remapNMS179, false);
-+        remapNMS172 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_7_R1", remapNMS172, false);
-+        remapNMS164 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_6_R3", remapNMS164, false);
-+        remapNMS152 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_5_R3", remapNMS152, false);
-+        remapNMSPre = MinecraftServer.getServer().cauldronConfig.getString("plugin-settings."+pluginName+".remap-nms-pre", remapNMSPre, false);
-+        remapOBC1710 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_7_R4", remapOBC1710, false);
-+        remapOBC179 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_7_R3", remapOBC179, false);
-+        remapOBC172 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_7_R1", remapOBC172, false);
-+        remapOBC164 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_6_R3", remapOBC164, false);
-+        remapOBC152 = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_5_R3", remapOBC152, false);
-+        remapOBCPre = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-pre", remapOBCPre, false);
-+        globalInherit = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".global-inheritance", globalInherit, false);
-+        pluginInherit = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".plugin-inheritance", pluginInherit, false);
-+        reflectFields = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-field", reflectFields, false);
-+        reflectClass = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-class", reflectClass, false);
-+        allowFuture = MinecraftServer.getServer().cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-allow-future", allowFuture, false);
++        useCustomClassLoader = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader, false);
++        debug = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".debug", debug, false);
++        remapNMS1710 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_7_R4", remapNMS1710, false);
++        remapNMS179 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_7_R3", remapNMS179, false);
++        remapNMS172 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_7_R1", remapNMS172, false);
++        remapNMS164 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_6_R3", remapNMS164, false);
++        remapNMS152 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-nms-v1_5_R3", remapNMS152, false);
++        remapNMSPre = MinecraftServer.cauldronConfig.getString("plugin-settings."+pluginName+".remap-nms-pre", remapNMSPre, false);
++        remapOBC1710 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_7_R4", remapOBC1710, false);
++        remapOBC179 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_7_R3", remapOBC179, false);
++        remapOBC172 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_7_R1", remapOBC172, false);
++        remapOBC164 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_6_R3", remapOBC164, false);
++        remapOBC152 = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-v1_5_R3", remapOBC152, false);
++        remapOBCPre = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-obc-pre", remapOBCPre, false);
++        globalInherit = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".global-inheritance", globalInherit, false);
++        pluginInherit = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".plugin-inheritance", pluginInherit, false);
++        reflectFields = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-field", reflectFields, false);
++        reflectClass = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-class", reflectClass, false);
++        allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-allow-future", allowFuture, false);
 +
 +        if (debug) {
 +            System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -160,6 +161,11 @@
 +        remapFlags = flags; // used in findClass0
 +        JarMapping jarMapping = getJarMapping(flags);
 +
++        // Remap guava
++        if(remapGuava) {
++            jarMapping.packages.put("com/google/common", "guava10/com/google/common");
++        }
++
 +        // Load inheritance map
 +        if ((flags & F_GLOBAL_INHERIT) != 0) {
 +            if (debug) {
@@ -188,7 +194,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +207,336 @@
+@@ -58,34 +213,285 @@
      }
  
      @Override
@@ -277,57 +283,6 @@
 +
 +        jarMapping = new JarMapping();
 +        try {
-+
-+            // Guava 10 is part of the Bukkit API, so plugins can use it, but FML includes Guava 15
-+            // To resolve this conflict, remap plugin usages to Guava 10 in a separate package
-+            // Most plugins should keep this enabled, unless they want a newer Guava
-+	    // Thermos force usage of guava17 for pex 1.23 and newer
-+        	if (this.description.getName().equals("PermissionsEx"))
-+        	{
-+        		String[] vn = this.description.getVersion().split(".");
-+        		if(vn.length >= 2)
-+        		{
-+        			try
-+        			{
-+        				if (Integer.parseInt(vn[1]) >= 23)
-+        					jarMapping.packages.put("com/google/common", "guava17/com/google/common");
-+        				else
-+        	        		jarMapping.packages.put("com/google/common", "guava10/com/google/common");
-+        			}
-+        			catch(Exception e)
-+        			{
-+                		jarMapping.packages.put("com/google/common", "guava10/com/google/common");        				
-+        			}
-+        		}
-+        		else
-+        		{
-+        			jarMapping.packages.put("com/google/common", "guava10/com/google/common");
-+        		}
-+        	}
-+        	else if (this.description.getName().equals("BuycraftX"))
-+        	{
-+        		String[] vn = this.description.getVersion().split(".");
-+        		if(vn.length >= 2)
-+        		{
-+        			try
-+        			{
-+        				if (Integer.parseInt(vn[1]) >= 10)
-+        					jarMapping.packages.put("com/google/common", "guava17/com/google/common");
-+        				else
-+        	        		jarMapping.packages.put("com/google/common", "guava10/com/google/common");
-+        			}
-+        			catch(Exception e)
-+        			{
-+                		jarMapping.packages.put("com/google/common", "guava10/com/google/common");        				
-+        			}
-+        		}
-+        		else
-+        		{
-+        			jarMapping.packages.put("com/google/common", "guava10/com/google/common");
-+        		}
-+        	}        	
-+        	else
-+        		jarMapping.packages.put("com/google/common", "guava10/com/google/common");
 +            jarMapping.packages.put(org_bukkit_craftbukkit + "/libs/com/google/gson", "com/google/gson"); // Handle Gson being in a "normal" place
 +            // Bukkit moves these packages to nms while we keep them in root so we must relocate them for plugins that rely on them
 +            jarMapping.packages.put("net/minecraft/util/io", "io");

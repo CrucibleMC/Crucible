@@ -1,7 +1,10 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/patcher/ClassPatchManager.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/patcher/ClassPatchManager.java
-@@ -14,11 +14,13 @@
- import java.util.jar.Pack200;
+@@ -11,14 +11,15 @@
+ import java.util.jar.JarEntry;
+ import java.util.jar.JarInputStream;
+ import java.util.jar.JarOutputStream;
+-import java.util.jar.Pack200;
  import java.util.regex.Pattern;
  
 +import org.apache.commons.compress.harmony.unpack200.Archive;
@@ -15,7 +18,7 @@
  
  import com.google.common.base.Joiner;
  import com.google.common.base.Throwables;
-@@ -30,11 +32,13 @@
+@@ -30,11 +31,13 @@
  import com.google.common.io.ByteStreams;
  import com.google.common.io.Files;
  
@@ -29,7 +32,7 @@
      public static final ClassPatchManager INSTANCE = new ClassPatchManager();
  
      public static final boolean dumpPatched = Boolean.parseBoolean(System.getProperty("fml.dumpPatchedClasses", "false"));
-@@ -155,10 +159,20 @@
+@@ -155,10 +158,20 @@
                  FMLRelaunchLog.log(Level.ERROR, "The binary patch set is missing. Either you are in a development environment, or things are not going to work!");
                  return;
              }
