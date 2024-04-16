@@ -16,8 +16,8 @@ repositories {
 
 dependencies {
     // TODO? figure a way to use the runtime dependencies of FG?
-    implementation("org.ow2.asm:asm:9.4")
-    implementation("org.ow2.asm:asm-tree:9.4")
+    implementation("org.ow2.asm:asm:9.6")
+    implementation("org.ow2.asm:asm-tree:9.6")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("com.opencsv:opencsv:5.7.0")
     implementation("com.cloudbees:diff4j:1.3")
