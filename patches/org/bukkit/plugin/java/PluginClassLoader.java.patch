@@ -75,7 +75,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +77,115 @@
+@@ -34,6 +77,116 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -125,6 +125,7 @@
 +        reflectFields = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-field", reflectFields, false);
 +        reflectClass = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-class", reflectClass, false);
 +        allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-allow-future", allowFuture, false);
++        remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-guava", remapGuava, false);
 +
 +        if (debug) {
 +            System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -191,7 +192,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +210,288 @@
+@@ -58,34 +211,288 @@
      }
  
      @Override
