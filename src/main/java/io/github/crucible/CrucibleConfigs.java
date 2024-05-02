@@ -132,9 +132,13 @@ public class CrucibleConfigs extends YamlConfig {
             "   discarted by vanilla mc rolling back the chunk to the previous valid disk version.",
             "Why is it enabled by default?",
             " - Oversized chunks are abused by dupers to possibly damage your server and economy, having it enabled by default",
-            "   will prevent the headache of having to deal with duped items later plus it's warned in the console when",
-            "   a oversized chunk is saved helping you to find it later, it also might save some player base with a big applied energistics system."})
+            "   will prevent the headache of having to deal with duped items later.",
+            "   It also might save some player's bases with a big applied energistics system"})
     public boolean crucible_enableOversizedChunk = true;
+
+    @Comments({"Warn about Oversized Chunks",
+            "Log in the console when an oversized chunk is saved helping you to find it later."})
+    public boolean crucible_warnOversizedChunk = true;
 
     @Comment("Size of cached chunk")
     public int crucible_chunkCacheSize = 256;

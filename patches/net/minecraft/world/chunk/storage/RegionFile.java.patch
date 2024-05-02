@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
-@@ -1,373 +1,303 @@
+@@ -1,373 +1,323 @@
  package net.minecraft.world.chunk.storage;
  
 -import java.io.BufferedInputStream;
@@ -19,6 +19,7 @@
 +import java.io.*;
  import java.util.ArrayList;
 +import java.util.List;
++import java.util.regex.Pattern;
  import java.util.zip.DeflaterOutputStream;
  import java.util.zip.GZIPInputStream;
  import java.util.zip.InflaterInputStream;
@@ -31,6 +32,7 @@
 +    // Minecraft is limited to 256 sections per chunk. So 1MB. This can easily be override.
 +    // So we extend this to use the REAL size when the count is maxed by seeking to that section and reading the length.
 +    private static final boolean FORGE_ENABLE_EXTENDED_SAVE = CrucibleConfigs.configs.crucible_enableOversizedChunk;
++    private static final boolean FORGE_ENABLE_EXTENDED_WARNING = CrucibleConfigs.configs.crucible_warnOversizedChunk;
 +    private static final long SECTOR_LENGTH = 4096L;
 +    private static final byte[] EMPTY_SECTOR = new byte[(int) SECTOR_LENGTH];
      private final File fileName;
@@ -42,6 +44,7 @@
      private int sizeDelta;
      private long lastModified;
      private static final String __OBFID = "CL_00000381";
++    private String filePathName = null;
  
 -    public RegionFile(File p_i2001_1_)
 -    {
@@ -327,7 +330,21 @@
 -            int i1 = l >> 8;
 -            int j1 = l & 255;
 -            int k1 = (p_76706_4_ + 5) / 4096 + 1;
--
++    public String getFilePathName() {
++        if (filePathName == null){
++            String[] parts = this.fileName.getAbsolutePath().split(Pattern.quote("\\"));
++            StringBuilder stringBuilder = new StringBuilder();
++            for (int i = Math.max(0, parts.length - 3); i < parts.length; i++) {
++                stringBuilder.append(parts[i]);
++                if (i < parts.length - 1) {
++                    stringBuilder.append("/");
++                }
++            }
++            filePathName = stringBuilder.toString();
++        }
++        return filePathName;
++    }
+ 
 -            if (k1 >= 256)
 -            {
 -                return;
@@ -348,7 +365,9 @@
 -            {
 -                this.write(i1, p_76706_3_, p_76706_4_);
 +            if (sectorsNeeded >= 256) { //crucible - info: chunk has a limit of 255 sectors
-+                CrucibleModContainer.logger.warn("[Crucible] Oversized Chunk at ({}, {})", x, z);
++                if (FORGE_ENABLE_EXTENDED_WARNING){
++                    CrucibleModContainer.logger.warn("[Crucible] Found Oversized Chunk to be saved at [{}] in Chunk ({}, {})! Its recommended to not overload a chunk with too much data!", getFilePathName(), x, z);
++                }
 +                if (!FORGE_ENABLE_EXTENDED_SAVE) {
 +                    return;
 +                }
