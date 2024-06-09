@@ -42,6 +42,10 @@ repositories {
         name 'minecraft'
         url 'https://libraries.minecraft.net/'
     }
+    maven {
+        name 'gtnh'
+        url 'https://nexus.gtnewhorizons.com/repository/public/'
+    }
 }
 
 minecraft {
@@ -81,6 +85,9 @@ configurations {
 
 dependencies {
     // New java stuff
+    libraries('com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.2') {
+        exclude group: 'org.apache.logging.log4j'
+    }
     libraries 'org.apache.commons:commons-lang3:3.12.0'
     libraries 'org.apache.commons:commons-compress:1.21'
     libraries 'org.ow2.asm:asm:9.5'
