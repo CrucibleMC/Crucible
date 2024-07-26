@@ -61,6 +61,7 @@ minecraft {
             'https://github.com/juanmuscaria/maven/raw/master',
             'https://maven.minecraftforge.net/',
             'https://oss.sonatype.org/content/repositories/snapshots/',
+            'https://nexus.gtnewhorizons.com/repository/public/',
             'https://libraries.minecraft.net/'
     ]
 }
@@ -85,7 +86,7 @@ configurations {
 
 dependencies {
     // New java stuff
-    libraries('com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.2') {
+    libraries('com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.7') {
         exclude group: 'org.apache.logging.log4j'
     }
     libraries 'org.apache.commons:commons-lang3:3.12.0'
