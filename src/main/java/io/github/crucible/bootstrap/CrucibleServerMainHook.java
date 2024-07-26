@@ -55,6 +55,11 @@ public class CrucibleServerMainHook {
 
         Lwjgl3ifyGlue.checkJava();
 
+        if(System.getProperty("java.class.loader") == null) {
+            System.setProperty("rfb.skipClassLoaderCheck", "true");
+        }
+        System.setProperty("java.util.logging.manager", "io.github.crucible.JulLogManager");
+
         if (!verifyLibraries()) {
             setupLibraries();
             System.out.println("[Crucible] Crucible installed! A restart is required to be able to boot.");
