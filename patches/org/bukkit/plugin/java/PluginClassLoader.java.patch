@@ -75,7 +75,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +77,116 @@
+@@ -34,6 +77,115 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -131,68 +131,67 @@
 +            System.out.println("PluginClassLoader debugging enabled for "+pluginName);
 +        }
 +
-+        if (!useCustomClassLoader) {
-+            remapper = null;
-+            return;
-+        }
++        if (useCustomClassLoader) {
++            int flags = 0;
++            if (remapNMS1710) flags |= F_REMAP_NMS1710;
++            if (remapNMS179) flags |= F_REMAP_NMS179;
++            if (remapNMS172) flags |= F_REMAP_NMS172;
++            if (remapNMS164) flags |= F_REMAP_NMS164;
++            if (remapNMS152) flags |= F_REMAP_NMS152;
++            if (!remapNMSPre.equals("false")) {
++                if      (remapNMSPre.equals("1.7.10")) flags |= 0x17100000;
++                else if (remapNMSPre.equals("1.7.9")) flags |= 0x01790000;
++                else if (remapNMSPre.equals("1.7.2")) flags |= 0x01720000;
++                else if (remapNMSPre.equals("1.6.4")) flags |= 0x01640000;
++                else if (remapNMSPre.equals("1.5.2")) flags |= 0x01520000;
++                else {
++                    System.out.println("Unsupported nms-remap-pre version '"+remapNMSPre+"', disabling");
++                }
++            }
++            if (remapOBC1710) flags |= F_REMAP_OBC1710;
++            if (remapOBC179) flags |= F_REMAP_OBC179;
++            if (remapOBC172) flags |= F_REMAP_OBC172;
++            if (remapOBC164) flags |= F_REMAP_OBC164;
++            if (remapOBC152) flags |= F_REMAP_OBC152;
++            if (remapOBCPre) flags |= F_REMAP_OBCPRE;
++            if (remapGuava) flags |= F_REMAP_GUAVA;
++            if (globalInherit) flags |= F_GLOBAL_INHERIT;
 +
-+        int flags = 0;
-+        if (remapNMS1710) flags |= F_REMAP_NMS1710;
-+        if (remapNMS179) flags |= F_REMAP_NMS179;
-+        if (remapNMS172) flags |= F_REMAP_NMS172;
-+        if (remapNMS164) flags |= F_REMAP_NMS164;
-+        if (remapNMS152) flags |= F_REMAP_NMS152;
-+        if (!remapNMSPre.equals("false")) {
-+            if      (remapNMSPre.equals("1.7.10")) flags |= 0x17100000;
-+            else if (remapNMSPre.equals("1.7.9")) flags |= 0x01790000;
-+            else if (remapNMSPre.equals("1.7.2")) flags |= 0x01720000;
-+            else if (remapNMSPre.equals("1.6.4")) flags |= 0x01640000;
-+            else if (remapNMSPre.equals("1.5.2")) flags |= 0x01520000;
-+            else {
-+                System.out.println("Unsupported nms-remap-pre version '"+remapNMSPre+"', disabling");
++            remapFlags = flags; // used in findClass0
++            JarMapping jarMapping = getJarMapping(flags);
++
++            // Load inheritance map
++            if ((flags & F_GLOBAL_INHERIT) != 0) {
++                if (debug) {
++                    System.out.println("Enabling global inheritance remapping");
++                    //ClassLoaderProvider.verbose = debug; // TODO: changed in https://github.com/md-5/SpecialSource/commit/132584eda4f0860c9d14f4c142e684a027a128b8#L3L48
++                }
++                jarMapping.setInheritanceMap(loader.getGlobalInheritanceMap());
++                jarMapping.setFallbackInheritanceProvider(new ClassLoaderProvider(this));
++            }
++
++            remapper = new thermos.ThermosRemapper(jarMapping);
++
++            if (pluginInherit || reflectFields || reflectClass) {
++                remapperProcessor = new RemapperProcessor(
++                        pluginInherit ? loader.getGlobalInheritanceMap() : null,
++                        (reflectFields || reflectClass) ? jarMapping : null);
++
++                remapperProcessor.setRemapReflectField(reflectFields);
++                remapperProcessor.setRemapReflectClass(reflectClass);
++                remapperProcessor.debug = debug;
++            } else {
++                remapperProcessor = null;
 +            }
 +        }
-+        if (remapOBC1710) flags |= F_REMAP_OBC1710;
-+        if (remapOBC179) flags |= F_REMAP_OBC179;
-+        if (remapOBC172) flags |= F_REMAP_OBC172;
-+        if (remapOBC164) flags |= F_REMAP_OBC164;
-+        if (remapOBC152) flags |= F_REMAP_OBC152;
-+        if (remapOBCPre) flags |= F_REMAP_OBCPRE;
-+        if (remapGuava) flags |= F_REMAP_GUAVA;
-+        if (globalInherit) flags |= F_GLOBAL_INHERIT;
 +
-+        remapFlags = flags; // used in findClass0
-+        JarMapping jarMapping = getJarMapping(flags);
 +
-+        // Load inheritance map
-+        if ((flags & F_GLOBAL_INHERIT) != 0) {
-+            if (debug) {
-+                System.out.println("Enabling global inheritance remapping");
-+                //ClassLoaderProvider.verbose = debug; // TODO: changed in https://github.com/md-5/SpecialSource/commit/132584eda4f0860c9d14f4c142e684a027a128b8#L3L48
-+            }
-+            jarMapping.setInheritanceMap(loader.getGlobalInheritanceMap());
-+            jarMapping.setFallbackInheritanceProvider(new ClassLoaderProvider(this));
-+        }
-+
-+        remapper = new thermos.ThermosRemapper(jarMapping);
-+
-+        if (pluginInherit || reflectFields || reflectClass) {
-+            remapperProcessor = new RemapperProcessor(
-+                    pluginInherit ? loader.getGlobalInheritanceMap() : null,
-+                    (reflectFields || reflectClass) ? jarMapping : null);
-+
-+            remapperProcessor.setRemapReflectField(reflectFields);
-+            remapperProcessor.setRemapReflectClass(reflectClass);
-+            remapperProcessor.debug = debug;
-+        } else {
-+            remapperProcessor = null;
-+        }
 +        // Cauldron end
 +
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +211,288 @@
+@@ -58,34 +210,288 @@
      }
  
      @Override
