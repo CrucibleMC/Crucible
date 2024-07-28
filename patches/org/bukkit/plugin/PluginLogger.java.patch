@@ -8,38 +8,35 @@
  import java.util.logging.Level;
  import java.util.logging.LogRecord;
  import java.util.logging.Logger;
-@@ -11,7 +13,7 @@
+@@ -11,8 +13,7 @@
   *
   * @see Logger
   */
 -public class PluginLogger extends Logger {
+-    private String pluginName;
 +public class PluginLogger extends JulLogManager.JulToLog4jLogger {
-     private String pluginName;
  
      /**
-@@ -20,16 +22,21 @@
+      * Creates a new PluginLogger that extracts the name from a plugin.
+@@ -20,17 +21,12 @@
       * @param context A reference to the plugin
       */
      public PluginLogger(Plugin context) {
 -        super(context.getClass().getCanonicalName(), null);
-+        super(context.getClass().getCanonicalName());
-         String prefix = context.getDescription().getPrefix();
+-        String prefix = context.getDescription().getPrefix();
 -        pluginName = prefix != null ? new StringBuilder().append("[").append(prefix).append("] ").toString() : "[" + context.getDescription().getName() + "] ";
 -        setParent(context.getServer().getLogger());
-+        // Crucible start - give plugins a proper prefix for log4j
-+        //pluginName = prefix != null ? new StringBuilder().append("[").append(prefix).append("] ").toString() : "[" + context.getDescription().getName() + "] ";
-+        pluginName = prefix != null ? prefix : context.getDescription().getName();
-+        // Crucible end
++        super(getLoggerName(context));
          setLevel(Level.ALL);
      }
  
-     @Override
-     public void log(LogRecord logRecord) {
+-    @Override
+-    public void log(LogRecord logRecord) {
 -        logRecord.setMessage(pluginName + logRecord.getMessage());
-+        // Crucible start - fix log4j prefix
-+        //logRecord.setMessage(pluginName + logRecord.getMessage());
-+        logRecord.setLoggerName(pluginName);
-+        // Crucible end
-         super.log(logRecord);
+-        super.log(logRecord);
++    private static String getLoggerName(Plugin context) {
++        String prefix = context.getDescription().getPrefix();
++        return prefix != null ? prefix : context.getDescription().getName();
      }
- 
+-
+ }

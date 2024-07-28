@@ -1,14 +1,18 @@
 --- ../src-base/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
 +++ ../src-work/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
-@@ -1,5 +1,23 @@
+@@ -1,5 +1,27 @@
  package org.bukkit.plugin.java;
  
 +// Cauldron start
++import com.gtnewhorizons.retrofuturabootstrap.Main;
++import com.gtnewhorizons.retrofuturabootstrap.URLClassLoaderBase;
++import com.gtnewhorizons.retrofuturabootstrap.api.RfbClassTransformer;
 +import net.md_5.specialsource.provider.ClassLoaderProvider;
 +import net.md_5.specialsource.transformer.MavenShade;
 +//import org.bouncycastle.util.io.Streams;
 +import net.md_5.specialsource.*;
 +import net.md_5.specialsource.repo.*;
++import net.minecraft.launchwrapper.LaunchClassLoader;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraftforge.cauldron.CauldronUtils;
 +
@@ -24,7 +28,11 @@
  import java.io.File;
  import java.net.MalformedURLException;
  import java.net.URL;
-@@ -10,21 +28,46 @@
+@@ -7,24 +29,52 @@
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.Set;
++import java.util.jar.Manifest;
  
  import org.apache.commons.lang.Validate;
  import org.bukkit.plugin.InvalidPluginException;
@@ -35,6 +43,7 @@
   */
 -final class PluginClassLoader extends URLClassLoader {
 +public class PluginClassLoader extends URLClassLoader {
++    private static final LaunchClassLoader launchClassLoader = (LaunchClassLoader) PluginClassLoader.class.getClassLoader();
 +    public JavaPlugin getPlugin() { return plugin; } // Spigot
      private final JavaPluginLoader loader;
 -    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
@@ -51,6 +60,7 @@
 +    private RemapperProcessor remapperProcessor; // secondary; for inheritance & remapping reflection
 +    private boolean debug;            // classloader debugging
 +    private int remapFlags = -1;
++    private boolean runRfbTransformers;
  
 +    private static ConcurrentMap<Integer,JarMapping> jarMappings = new ConcurrentHashMap<Integer, JarMapping>();
 +    private static final int F_GLOBAL_INHERIT   = 1 << 1;
@@ -75,7 +85,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +77,115 @@
+@@ -34,6 +84,117 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -104,6 +114,7 @@
 +        boolean reflectClass = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-reflect-class", true);
 +        boolean allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-allow-future", false);
 +        boolean remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-guava", true);
++        runRfbTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.rfb-transformers", true);
 +
 +        // plugin-specific overrides
 +        useCustomClassLoader = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader, false);
@@ -126,6 +137,7 @@
 +        reflectClass = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-class", reflectClass, false);
 +        allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-allow-future", allowFuture, false);
 +        remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-guava", remapGuava, false);
++        runRfbTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".rfb-transformers", runRfbTransformers, false);
 +
 +        if (debug) {
 +            System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -191,7 +203,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +210,288 @@
+@@ -58,34 +219,296 @@
      }
  
      @Override
@@ -398,7 +410,7 @@
 +                }
  
 +                if (result == null) {
-+                    if (remapper == null) {
++                    if (remapper == null && !runRfbTransformers) {
 +                        result = super.findClass(name);
 +                    } else {
 +                        result = remappedFindClass(name);
@@ -441,13 +453,24 @@
 +                        bytecode = remapperProcessor.process(stream);
 +                        if (bytecode == null) stream = url.openStream();
 +                    }
++                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection(); // parses only
++                    URL jarURL = jarURLConnection.getJarFileURL();
++                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
++                    Manifest manifest = jarURLConnection.getManifest();
 +
-+                    /*if (bytecode == null) {
-+                        bytecode = Streams.readAll(stream);
-+                    }*/
++                    if (bytecode == null) {
++                        bytecode = URLClassLoaderBase.readAllBytes(stream, null);
++                    }
 +
 +                    // Remap the classes
-+                    byte[] remappedBytecode = remapper.remapClassFile(bytecode, RuntimeRepo.getInstance());
++                    byte[] remappedBytecode = bytecode;
++                    if(remapper != null) {
++                        remappedBytecode = remapper.remapClassFile(bytecode, RuntimeRepo.getInstance());
++                    }
++                    if(runRfbTransformers) {
++                        remappedBytecode = launchClassLoader.runRfbTransformers(
++                                Main.getRfbTransformers(), RfbClassTransformer.Context.LCL_NO_TRANSFORMS, manifest, name, remappedBytecode);
++                    }
 +
 +                    if (debug) {
 +                        File file = new File("remapped-plugin-classes/"+name+".class");
@@ -461,15 +484,12 @@
 +                        }
 +                    }
 +
++
 +                    // Define (create) the class using the modified byte code
 +                    // The top-child class loader is used for this to prevent access violations
 +                    // Set the codesource to the jar, not within the jar, for compatibility with
 +                    // plugins that do new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()))
 +                    // instead of using getResourceAsStream - see https://github.com/MinecraftPortCentral/Cauldron-Plus/issues/75
-+                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection(); // parses only
-+                    URL jarURL = jarURLConnection.getJarFileURL();
-+                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
-+
 +                    result = this.defineClass(name, remappedBytecode, 0, remappedBytecode.length, codeSource);
 +                    if (result != null) {
 +                        // Resolve it - sets the class loader of the class

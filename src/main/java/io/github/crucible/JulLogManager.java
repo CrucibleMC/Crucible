@@ -101,6 +101,12 @@ public class JulLogManager extends LogManager {
         }
 
         @Override
+        public Logger getParent() {
+            final org.apache.logging.log4j.core.Logger parent = ((org.apache.logging.log4j.core.Logger)logger).getParent();
+            return parent == null ? null : Logger.getLogger(parent.getName());
+        }
+
+        @Override
         public void log(final Level level, final String msg) {
             logger.log(convertLevel(level), msg);
         }
