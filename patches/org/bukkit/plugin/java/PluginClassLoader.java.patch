@@ -1,13 +1,12 @@
 --- ../src-base/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
 +++ ../src-work/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
-@@ -1,5 +1,32 @@
+@@ -1,5 +1,30 @@
  package org.bukkit.plugin.java;
  
 +// Cauldron start
 +import com.gtnewhorizons.retrofuturabootstrap.Main;
 +import com.gtnewhorizons.retrofuturabootstrap.URLClassLoaderBase;
 +import com.gtnewhorizons.retrofuturabootstrap.api.RfbClassTransformer;
-+import cpw.mods.fml.relauncher.ReflectionHelper;
 +import net.md_5.specialsource.provider.ClassLoaderProvider;
 +import net.md_5.specialsource.transformer.MavenShade;
 +//import org.bouncycastle.util.io.Streams;
@@ -22,7 +21,6 @@
 +import java.io.*;
 +import java.lang.invoke.MethodHandle;
 +import java.lang.invoke.MethodHandles;
-+import java.lang.invoke.MethodType;
 +import java.lang.reflect.Method;
 +import java.net.JarURLConnection;
 +import java.security.CodeSigner;
@@ -33,7 +31,7 @@
  import java.io.File;
  import java.net.MalformedURLException;
  import java.net.URL;
-@@ -7,24 +34,68 @@
+@@ -7,24 +32,68 @@
  import java.util.HashMap;
  import java.util.Map;
  import java.util.Set;
@@ -106,7 +104,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +105,119 @@
+@@ -34,6 +103,119 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -226,7 +224,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +242,300 @@
+@@ -58,34 +240,313 @@
      }
  
      @Override
@@ -412,9 +410,22 @@
 +        if (name.startsWith("net.minecraft."))
 +        {
 +            JarMapping jarMapping = this.getJarMapping(remapFlags); // grab from SpecialSource
-+            String remappedClass = jarMapping.classes.get(name.replaceAll("\\.", "\\/")); // get remapped pkgmcp class name
-+            Class<?> clazz = ((net.minecraft.launchwrapper.LaunchClassLoader)MinecraftServer.getServer().getClass().getClassLoader()).findClass(remappedClass);
-+            return clazz;
++            String remappedClass = jarMapping.classes.get(name.replace('.', '/')); // get remapped pkgmcp class name
++            if(remappedClass == null) {
++                throw new ClassNotFoundException(name);
++            }
++            try {
++                Class<?> clazz = ((net.minecraft.launchwrapper.LaunchClassLoader)MinecraftServer.getServer().getClass().getClassLoader()).findClass(remappedClass);
++                if(debug) {
++                    System.out.printf("Found class %s (remapped to %s, found %s)\n", name, remappedClass, clazz.getName());
++                }
++                return clazz;
++            } catch (Throwable e) {
++                if(debug) {
++                    System.out.printf("Not found class %s (remapped %s)\n", name, remappedClass);
++                }
++                throw e;
++            }
 +        }
 +        if (name.startsWith("org.bukkit.")) {
 +            if (debug) {
