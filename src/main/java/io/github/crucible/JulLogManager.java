@@ -97,7 +97,7 @@ public class JulLogManager extends LogManager {
 
         @Override
         public void setParent(final Logger parent) {
-            throw new UnsupportedOperationException();
+            logger.warn("Logger.setParent() not supported by jul-to-log4j LogManager. Logs may be broken");
         }
 
         @Override
