@@ -1,12 +1,13 @@
 --- ../src-base/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
 +++ ../src-work/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
-@@ -1,5 +1,27 @@
+@@ -1,5 +1,32 @@
  package org.bukkit.plugin.java;
  
 +// Cauldron start
 +import com.gtnewhorizons.retrofuturabootstrap.Main;
 +import com.gtnewhorizons.retrofuturabootstrap.URLClassLoaderBase;
 +import com.gtnewhorizons.retrofuturabootstrap.api.RfbClassTransformer;
++import cpw.mods.fml.relauncher.ReflectionHelper;
 +import net.md_5.specialsource.provider.ClassLoaderProvider;
 +import net.md_5.specialsource.transformer.MavenShade;
 +//import org.bouncycastle.util.io.Streams;
@@ -19,6 +20,10 @@
 +import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 +import org.bukkit.plugin.PluginDescriptionFile;
 +import java.io.*;
++import java.lang.invoke.MethodHandle;
++import java.lang.invoke.MethodHandles;
++import java.lang.invoke.MethodType;
++import java.lang.reflect.Method;
 +import java.net.JarURLConnection;
 +import java.security.CodeSigner;
 +import java.security.CodeSource;
@@ -28,7 +33,7 @@
  import java.io.File;
  import java.net.MalformedURLException;
  import java.net.URL;
-@@ -7,24 +29,52 @@
+@@ -7,24 +34,68 @@
  import java.util.HashMap;
  import java.util.Map;
  import java.util.Set;
@@ -44,6 +49,21 @@
 -final class PluginClassLoader extends URLClassLoader {
 +public class PluginClassLoader extends URLClassLoader {
 +    private static final LaunchClassLoader launchClassLoader = (LaunchClassLoader) PluginClassLoader.class.getClassLoader();
++    private static final MethodHandle runTransformersMH;
++
++    static {
++        MethodHandle runTransformersMHTmp;
++        try {
++            Method method = LaunchClassLoader.class.getDeclaredMethod("runTransformers", String.class, String.class, byte[].class);
++            method.setAccessible(true);
++            runTransformersMHTmp = MethodHandles.lookup().unreflect(method);
++        } catch (NoSuchMethodException | IllegalAccessException e) {
++            e.printStackTrace();
++            runTransformersMHTmp = null;
++        }
++        runTransformersMH = runTransformersMHTmp;
++    }
++
 +    public JavaPlugin getPlugin() { return plugin; } // Spigot
      private final JavaPluginLoader loader;
 -    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
@@ -61,6 +81,7 @@
 +    private boolean debug;            // classloader debugging
 +    private int remapFlags = -1;
 +    private boolean runRfbTransformers;
++    private boolean runLwTransformers;
  
 +    private static ConcurrentMap<Integer,JarMapping> jarMappings = new ConcurrentHashMap<Integer, JarMapping>();
 +    private static final int F_GLOBAL_INHERIT   = 1 << 1;
@@ -85,7 +106,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +84,117 @@
+@@ -34,6 +105,119 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -115,6 +136,7 @@
 +        boolean allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-allow-future", false);
 +        boolean remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-guava", true);
 +        runRfbTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.rfb-transformers", true);
++        runLwTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.lw-transformers", false);
 +
 +        // plugin-specific overrides
 +        useCustomClassLoader = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader, false);
@@ -138,6 +160,7 @@
 +        allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-allow-future", allowFuture, false);
 +        remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-guava", remapGuava, false);
 +        runRfbTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".rfb-transformers", runRfbTransformers, false);
++        runLwTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".lw-transformers", runLwTransformers, false);
 +
 +        if (debug) {
 +            System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -203,7 +226,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +219,296 @@
+@@ -58,34 +242,300 @@
      }
  
      @Override
@@ -410,7 +433,7 @@
 +                }
  
 +                if (result == null) {
-+                    if (remapper == null && !runRfbTransformers) {
++                    if (remapper == null && !runRfbTransformers && !runLwTransformers) {
 +                        result = super.findClass(name);
 +                    } else {
 +                        result = remappedFindClass(name);
@@ -467,9 +490,13 @@
 +                    if(remapper != null) {
 +                        remappedBytecode = remapper.remapClassFile(bytecode, RuntimeRepo.getInstance());
 +                    }
++                    if(runLwTransformers) {
++                        remappedBytecode = (byte[]) runTransformersMH.invoke(launchClassLoader, name, name, remappedBytecode);
++                    }
 +                    if(runRfbTransformers) {
 +                        remappedBytecode = launchClassLoader.runRfbTransformers(
-+                                Main.getRfbTransformers(), RfbClassTransformer.Context.LCL_NO_TRANSFORMS, manifest, name, remappedBytecode);
++                                Main.getRfbTransformers(), runLwTransformers ? RfbClassTransformer.Context.LCL_WITH_TRANSFORMS : RfbClassTransformer.Context.LCL_NO_TRANSFORMS,
++                                manifest, name, remappedBytecode);
 +                    }
 +
 +                    if (debug) {
