@@ -77,7 +77,7 @@
          {
              private static final String __OBFID = "CL_00001787";
              {
-@@ -82,31 +100,59 @@
+@@ -82,31 +100,54 @@
          };
      }
  
@@ -111,7 +111,7 @@
 -                        DedicatedServer.this.addPendingCommand(s4, DedicatedServer.this);
 +                        if (useJline)
 +                        {
-+                            s = bufferedreader.readLine(">", null);
++                            s = bufferedreader.readLine("", null);
 +                        }
 +                        else
 +                        {
@@ -135,16 +135,11 @@
          };
          thread.setDaemon(true);
          thread.start();
-+
-+        CrucibleServerMainHook.restoreStreams(); // Crucible - Restores the original streams so System.out does not log to forge logger
-+        new Thread(new TerminalConsoleWriterThread(System.out, this.reader)).start();
-+        System.setOut(new PrintStream(new CrucibleTracingLoggerOutputStream(LogManager.getLogger("STDOUT"), Level.INFO), true));
-+        System.setErr(new PrintStream(new CrucibleTracingLoggerOutputStream(LogManager.getLogger("STDERR"), Level.WARN), true));
 +        // CraftBukkit end 
          field_155771_h.info("Starting minecraft server version 1.7.10");
  
          if (Runtime.getRuntime().maxMemory() / 1024L / 1024L < 512L)
-@@ -117,7 +163,7 @@
+@@ -117,7 +158,7 @@
          FMLCommonHandler.instance().onServerStart(this);
  
          field_155771_h.info("Loading properties");
@@ -153,7 +148,7 @@
          this.field_154332_n = new ServerEula(new File("eula.txt"));
  
          if (!this.field_154332_n.func_154346_a())
-@@ -172,6 +218,18 @@
+@@ -172,6 +213,18 @@
                  this.setServerPort(this.settings.getIntProperty("server-port", 25565));
              }
  
@@ -172,7 +167,7 @@
              field_155771_h.info("Generating keypair");
              this.setKeyPair(CryptManager.createNewKeyPair());
              field_155771_h.info("Starting Minecraft server on " + (this.getServerHostname().length() == 0 ? "*" : this.getServerHostname()) + ":" + this.getServerPort());
-@@ -180,7 +238,7 @@
+@@ -180,7 +233,7 @@
              {
                  this.func_147137_ag().addLanEndpoint(inetaddress, this.getServerPort());
              }
@@ -181,7 +176,7 @@
              {
                  field_155771_h.warn("**** FAILED TO BIND TO PORT!");
                  field_155771_h.warn("The exception was: {}", new Object[] {ioexception.toString()});
-@@ -196,10 +254,17 @@
+@@ -196,10 +249,17 @@
                  field_155771_h.warn("To change this, set \"online-mode\" to \"true\" in the server.properties file.");
              }
  
@@ -201,7 +196,7 @@
  
              if (!PreYggdrasilConverter.func_152714_a(this.settings))
              {
-@@ -208,7 +273,8 @@
+@@ -208,7 +268,8 @@
              else
              {
                  FMLCommonHandler.instance().onServerStarted();
@@ -211,7 +206,7 @@
                  long j = System.nanoTime();
  
                  if (this.getFolderName() == null)
-@@ -274,11 +340,30 @@
+@@ -274,11 +335,30 @@
                      this.theRConThreadMain.startThread();
                  }
  
@@ -242,7 +237,7 @@
      public boolean canStructuresSpawn()
      {
          return this.canSpawnStructures;
-@@ -364,11 +449,19 @@
+@@ -364,11 +444,19 @@
  
      public void executePendingCommands()
      {
