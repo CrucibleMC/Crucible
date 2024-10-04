@@ -11,7 +11,29 @@
  import org.apache.logging.log4j.Level;
  
  import com.google.common.base.Preconditions;
-@@ -131,19 +135,44 @@
+@@ -118,6 +122,21 @@
+         }
+     }
+ 
++    public void crucible_register(ASMEventHandler listener, Class<?> eventType, Object target, Method method, ModContainer owner) throws Exception {
++        Constructor<?> ctr = eventType.getConstructor();
++        ctr.setAccessible(true);
++        Event event = (Event)ctr.newInstance();
++        event.getListenerList().register(busID, listener.getPriority(), listener);
++
++        ArrayList<IEventListener> others = listeners.get(target);
++        if (others == null)
++        {
++            others = new ArrayList<IEventListener>();
++            listeners.put(target, others);
++        }
++        others.add(listener);
++    }
++
+     public void unregister(Object object)
+     {
+         ArrayList<IEventListener> list = listeners.remove(object);
+@@ -131,19 +150,44 @@
  
      public boolean post(Event event)
      {
@@ -66,3 +88,12 @@
          }
          return (event.isCancelable() ? event.isCanceled() : false);
      }
+@@ -158,4 +202,8 @@
+             FMLLog.log(Level.ERROR, "%d: %s", x, listeners[x]);
+         }
+     }
++
++    public ConcurrentHashMap<Object, ArrayList<IEventListener>> getListeners() {
++        return listeners;
++    }
+ }
