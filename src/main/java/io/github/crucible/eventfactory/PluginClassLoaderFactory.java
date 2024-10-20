@@ -1,8 +1,8 @@
 package io.github.crucible.eventfactory;
 
+import com.google.common.collect.Maps;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.IEventListener;
-import io.github.crucible.unsafe.CrucibleUnsafe;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
@@ -10,10 +10,15 @@ import org.objectweb.asm.Type;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.security.ProtectionDomain;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.objectweb.asm.Opcodes.*;
 
 public class PluginClassLoaderFactory {
+    private static AtomicInteger IDs = new AtomicInteger();
+    private static final HashMap<Method, Class<?>> cache = Maps.newHashMap();
     private static final String HANDLER_DESC = Type.getInternalName(IEventListener.class);
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(Event.class));
 
@@ -26,6 +31,9 @@ public class PluginClassLoaderFactory {
     }
 
     public Class<?> createWrapper(Method callback) {
+        if (cache.containsKey(callback)) {
+            return cache.get(callback);
+        }
 
         ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
@@ -74,15 +82,32 @@ public class PluginClassLoaderFactory {
         }
         cw.visitEnd();
         byte[] bytes = cw.toByteArray();
-        return CrucibleUnsafe.defineClass(name, bytes, 0, bytes.length, callback.getDeclaringClass().getClassLoader(), callback.getDeclaringClass().getProtectionDomain());
+
+        PluginASMClassLoader LOADER = new PluginASMClassLoader(callback.getDeclaringClass().getClassLoader(), callback.getDeclaringClass().getProtectionDomain());
+        Class<?> ret = LOADER.define(name, bytes);
+        cache.put(callback, ret);
+        return ret;
     }
 
     public String getUniqueName(Method callback) {
-        return String.format("%s.__%s_%s_%s",
-                callback.getDeclaringClass().getPackage().getName(),
+        return String.format("%s_%d_%s_%s_%s",
+                getClass().getName(),
+                IDs.incrementAndGet(),
                 callback.getDeclaringClass().getSimpleName(),
                 callback.getName(),
-                callback.getParameterTypes()[0].getSimpleName()
-        );
+                callback.getParameterTypes()[0].getSimpleName());
+    }
+
+    private static class PluginASMClassLoader extends ClassLoader {
+        private final ProtectionDomain protectionDomain;
+
+        private PluginASMClassLoader(ClassLoader classLoader, ProtectionDomain protectionDomain) {
+            super(classLoader);
+            this.protectionDomain = protectionDomain;
+        }
+
+        public Class<?> define(String name, byte[] data) {
+            return defineClass(name, data, 0, data.length, protectionDomain);
+        }
     }
 }
