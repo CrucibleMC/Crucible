@@ -91,11 +91,11 @@ dependencies {
     }
     libraries 'org.apache.commons:commons-lang3:3.12.0'
     libraries 'org.apache.commons:commons-compress:1.21'
-    libraries 'org.ow2.asm:asm:9.5'
-    libraries 'org.ow2.asm:asm-commons:9.5'
-    libraries 'org.ow2.asm:asm-tree:9.5'
-    libraries 'org.ow2.asm:asm-analysis:9.5'
-    libraries 'org.ow2.asm:asm-util:9.5'
+    libraries 'org.ow2.asm:asm:9.7.1'
+    libraries 'org.ow2.asm:asm-commons:9.7.1'
+    libraries 'org.ow2.asm:asm-tree:9.7.1'
+    libraries 'org.ow2.asm:asm-analysis:9.7.1'
+    libraries 'org.ow2.asm:asm-util:9.7.1'
     libraries 'org.ow2.asm:asm-deprecated:7.1'
     libraries 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
     libraries "javax.servlet:javax.servlet-api:4.0.1"
