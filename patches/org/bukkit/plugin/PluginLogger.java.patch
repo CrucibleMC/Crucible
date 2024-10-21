@@ -1,25 +1,42 @@
 --- ../src-base/minecraft/org/bukkit/plugin/PluginLogger.java
 +++ ../src-work/minecraft/org/bukkit/plugin/PluginLogger.java
-@@ -22,14 +22,20 @@
+@@ -1,5 +1,7 @@
+ package org.bukkit.plugin;
+ 
++import io.github.crucible.JulLogManager;
++
+ import java.util.logging.Level;
+ import java.util.logging.LogRecord;
+ import java.util.logging.Logger;
+@@ -11,8 +13,7 @@
+  *
+  * @see Logger
+  */
+-public class PluginLogger extends Logger {
+-    private String pluginName;
++public class PluginLogger extends JulLogManager.JulToLog4jLogger {
+ 
+     /**
+      * Creates a new PluginLogger that extracts the name from a plugin.
+@@ -20,17 +21,12 @@
+      * @param context A reference to the plugin
+      */
      public PluginLogger(Plugin context) {
-         super(context.getClass().getCanonicalName(), null);
-         String prefix = context.getDescription().getPrefix();
+-        super(context.getClass().getCanonicalName(), null);
+-        String prefix = context.getDescription().getPrefix();
 -        pluginName = prefix != null ? new StringBuilder().append("[").append(prefix).append("] ").toString() : "[" + context.getDescription().getName() + "] ";
-+        // Crucible start - give plugins a proper prefix for log4j
-+        //pluginName = prefix != null ? new StringBuilder().append("[").append(prefix).append("] ").toString() : "[" + context.getDescription().getName() + "] ";
-+        pluginName = prefix != null ? prefix : context.getDescription().getName();
-+        // Crucible end
-         setParent(context.getServer().getLogger());
+-        setParent(context.getServer().getLogger());
++        super(getLoggerName(context));
          setLevel(Level.ALL);
      }
  
-     @Override
-     public void log(LogRecord logRecord) {
+-    @Override
+-    public void log(LogRecord logRecord) {
 -        logRecord.setMessage(pluginName + logRecord.getMessage());
-+        // Crucible start - fix log4j prefix
-+        //logRecord.setMessage(pluginName + logRecord.getMessage());
-+        logRecord.setLoggerName(pluginName);
-+        // Crucible end
-         super.log(logRecord);
+-        super.log(logRecord);
++    private static String getLoggerName(Plugin context) {
++        String prefix = context.getDescription().getPrefix();
++        return prefix != null ? prefix : context.getDescription().getName();
      }
- 
+-
+ }

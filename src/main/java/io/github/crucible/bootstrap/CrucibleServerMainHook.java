@@ -21,7 +21,8 @@ public class CrucibleServerMainHook {
       "https://github.com/juanmuscaria/maven/raw/master/ThermosLibs/",
       "https://maven.minecraftforge.net/",
       "https://libraries.minecraft.net/",
-      "https://repo.maven.apache.org/maven2/"
+      "https://repo.maven.apache.org/maven2/",
+      "https://nexus.gtnewhorizons.com/repository/public/"
     };
     private static final Path LIBRARY_ROOT = Paths.get("libraries").toAbsolutePath();
     public static final PrintStream originalOut = System.out;
@@ -53,6 +54,11 @@ public class CrucibleServerMainHook {
         }
 
         Lwjgl3ifyGlue.checkJava();
+
+        if(System.getProperty("java.class.loader") == null) {
+            System.setProperty("rfb.skipClassLoaderCheck", "true");
+        }
+        System.setProperty("java.util.logging.manager", "io.github.crucible.JulLogManager");
 
         if (!verifyLibraries()) {
             setupLibraries();

@@ -42,6 +42,10 @@ repositories {
         name 'minecraft'
         url 'https://libraries.minecraft.net/'
     }
+    maven {
+        name 'gtnh'
+        url 'https://nexus.gtnewhorizons.com/repository/public/'
+    }
 }
 
 minecraft {
@@ -57,6 +61,7 @@ minecraft {
             'https://github.com/juanmuscaria/maven/raw/master',
             'https://maven.minecraftforge.net/',
             'https://oss.sonatype.org/content/repositories/snapshots/',
+            'https://nexus.gtnewhorizons.com/repository/public/',
             'https://libraries.minecraft.net/'
     ]
 }
@@ -81,13 +86,16 @@ configurations {
 
 dependencies {
     // New java stuff
+    libraries('com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.7') {
+        exclude group: 'org.apache.logging.log4j'
+    }
     libraries 'org.apache.commons:commons-lang3:3.12.0'
     libraries 'org.apache.commons:commons-compress:1.21'
-    libraries 'org.ow2.asm:asm:9.5'
-    libraries 'org.ow2.asm:asm-commons:9.5'
-    libraries 'org.ow2.asm:asm-tree:9.5'
-    libraries 'org.ow2.asm:asm-analysis:9.5'
-    libraries 'org.ow2.asm:asm-util:9.5'
+    libraries 'org.ow2.asm:asm:9.7.1'
+    libraries 'org.ow2.asm:asm-commons:9.7.1'
+    libraries 'org.ow2.asm:asm-tree:9.7.1'
+    libraries 'org.ow2.asm:asm-analysis:9.7.1'
+    libraries 'org.ow2.asm:asm-util:9.7.1'
     libraries 'org.ow2.asm:asm-deprecated:7.1'
     libraries 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
     libraries "javax.servlet:javax.servlet-api:4.0.1"

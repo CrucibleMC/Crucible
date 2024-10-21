@@ -1,20 +1,27 @@
 --- ../src-base/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
 +++ ../src-work/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
-@@ -1,5 +1,23 @@
+@@ -1,5 +1,30 @@
  package org.bukkit.plugin.java;
  
 +// Cauldron start
++import com.gtnewhorizons.retrofuturabootstrap.Main;
++import com.gtnewhorizons.retrofuturabootstrap.URLClassLoaderBase;
++import com.gtnewhorizons.retrofuturabootstrap.api.RfbClassTransformer;
 +import net.md_5.specialsource.provider.ClassLoaderProvider;
 +import net.md_5.specialsource.transformer.MavenShade;
 +//import org.bouncycastle.util.io.Streams;
 +import net.md_5.specialsource.*;
 +import net.md_5.specialsource.repo.*;
++import net.minecraft.launchwrapper.LaunchClassLoader;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraftforge.cauldron.CauldronUtils;
 +
 +import org.bukkit.craftbukkit.v1_7_R4.CraftServer;
 +import org.bukkit.plugin.PluginDescriptionFile;
 +import java.io.*;
++import java.lang.invoke.MethodHandle;
++import java.lang.invoke.MethodHandles;
++import java.lang.reflect.Method;
 +import java.net.JarURLConnection;
 +import java.security.CodeSigner;
 +import java.security.CodeSource;
@@ -24,7 +31,11 @@
  import java.io.File;
  import java.net.MalformedURLException;
  import java.net.URL;
-@@ -10,21 +28,46 @@
+@@ -7,24 +32,68 @@
+ import java.util.HashMap;
+ import java.util.Map;
+ import java.util.Set;
++import java.util.jar.Manifest;
  
  import org.apache.commons.lang.Validate;
  import org.bukkit.plugin.InvalidPluginException;
@@ -35,6 +46,22 @@
   */
 -final class PluginClassLoader extends URLClassLoader {
 +public class PluginClassLoader extends URLClassLoader {
++    private static final LaunchClassLoader launchClassLoader = (LaunchClassLoader) PluginClassLoader.class.getClassLoader();
++    private static final MethodHandle runTransformersMH;
++
++    static {
++        MethodHandle runTransformersMHTmp;
++        try {
++            Method method = LaunchClassLoader.class.getDeclaredMethod("runTransformers", String.class, String.class, byte[].class);
++            method.setAccessible(true);
++            runTransformersMHTmp = MethodHandles.lookup().unreflect(method);
++        } catch (NoSuchMethodException | IllegalAccessException e) {
++            e.printStackTrace();
++            runTransformersMHTmp = null;
++        }
++        runTransformersMH = runTransformersMHTmp;
++    }
++
 +    public JavaPlugin getPlugin() { return plugin; } // Spigot
      private final JavaPluginLoader loader;
 -    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
@@ -51,6 +78,8 @@
 +    private RemapperProcessor remapperProcessor; // secondary; for inheritance & remapping reflection
 +    private boolean debug;            // classloader debugging
 +    private int remapFlags = -1;
++    private boolean runRfbTransformers;
++    private boolean runLwTransformers;
  
 +    private static ConcurrentMap<Integer,JarMapping> jarMappings = new ConcurrentHashMap<Integer, JarMapping>();
 +    private static final int F_GLOBAL_INHERIT   = 1 << 1;
@@ -75,7 +104,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +77,116 @@
+@@ -34,6 +103,119 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -104,6 +133,8 @@
 +        boolean reflectClass = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-reflect-class", true);
 +        boolean allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-allow-future", false);
 +        boolean remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-guava", true);
++        runRfbTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.rfb-transformers", true);
++        runLwTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.lw-transformers", false);
 +
 +        // plugin-specific overrides
 +        useCustomClassLoader = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader, false);
@@ -126,73 +157,74 @@
 +        reflectClass = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-reflect-class", reflectClass, false);
 +        allowFuture = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-allow-future", allowFuture, false);
 +        remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-guava", remapGuava, false);
++        runRfbTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".rfb-transformers", runRfbTransformers, false);
++        runLwTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".lw-transformers", runLwTransformers, false);
 +
 +        if (debug) {
 +            System.out.println("PluginClassLoader debugging enabled for "+pluginName);
 +        }
 +
-+        if (!useCustomClassLoader) {
-+            remapper = null;
-+            return;
-+        }
++        if (useCustomClassLoader) {
++            int flags = 0;
++            if (remapNMS1710) flags |= F_REMAP_NMS1710;
++            if (remapNMS179) flags |= F_REMAP_NMS179;
++            if (remapNMS172) flags |= F_REMAP_NMS172;
++            if (remapNMS164) flags |= F_REMAP_NMS164;
++            if (remapNMS152) flags |= F_REMAP_NMS152;
++            if (!remapNMSPre.equals("false")) {
++                if      (remapNMSPre.equals("1.7.10")) flags |= 0x17100000;
++                else if (remapNMSPre.equals("1.7.9")) flags |= 0x01790000;
++                else if (remapNMSPre.equals("1.7.2")) flags |= 0x01720000;
++                else if (remapNMSPre.equals("1.6.4")) flags |= 0x01640000;
++                else if (remapNMSPre.equals("1.5.2")) flags |= 0x01520000;
++                else {
++                    System.out.println("Unsupported nms-remap-pre version '"+remapNMSPre+"', disabling");
++                }
++            }
++            if (remapOBC1710) flags |= F_REMAP_OBC1710;
++            if (remapOBC179) flags |= F_REMAP_OBC179;
++            if (remapOBC172) flags |= F_REMAP_OBC172;
++            if (remapOBC164) flags |= F_REMAP_OBC164;
++            if (remapOBC152) flags |= F_REMAP_OBC152;
++            if (remapOBCPre) flags |= F_REMAP_OBCPRE;
++            if (remapGuava) flags |= F_REMAP_GUAVA;
++            if (globalInherit) flags |= F_GLOBAL_INHERIT;
 +
-+        int flags = 0;
-+        if (remapNMS1710) flags |= F_REMAP_NMS1710;
-+        if (remapNMS179) flags |= F_REMAP_NMS179;
-+        if (remapNMS172) flags |= F_REMAP_NMS172;
-+        if (remapNMS164) flags |= F_REMAP_NMS164;
-+        if (remapNMS152) flags |= F_REMAP_NMS152;
-+        if (!remapNMSPre.equals("false")) {
-+            if      (remapNMSPre.equals("1.7.10")) flags |= 0x17100000;
-+            else if (remapNMSPre.equals("1.7.9")) flags |= 0x01790000;
-+            else if (remapNMSPre.equals("1.7.2")) flags |= 0x01720000;
-+            else if (remapNMSPre.equals("1.6.4")) flags |= 0x01640000;
-+            else if (remapNMSPre.equals("1.5.2")) flags |= 0x01520000;
-+            else {
-+                System.out.println("Unsupported nms-remap-pre version '"+remapNMSPre+"', disabling");
++            remapFlags = flags; // used in findClass0
++            JarMapping jarMapping = getJarMapping(flags);
++
++            // Load inheritance map
++            if ((flags & F_GLOBAL_INHERIT) != 0) {
++                if (debug) {
++                    System.out.println("Enabling global inheritance remapping");
++                    //ClassLoaderProvider.verbose = debug; // TODO: changed in https://github.com/md-5/SpecialSource/commit/132584eda4f0860c9d14f4c142e684a027a128b8#L3L48
++                }
++                jarMapping.setInheritanceMap(loader.getGlobalInheritanceMap());
++                jarMapping.setFallbackInheritanceProvider(new ClassLoaderProvider(this));
++            }
++
++            remapper = new thermos.ThermosRemapper(jarMapping);
++
++            if (pluginInherit || reflectFields || reflectClass) {
++                remapperProcessor = new RemapperProcessor(
++                        pluginInherit ? loader.getGlobalInheritanceMap() : null,
++                        (reflectFields || reflectClass) ? jarMapping : null);
++
++                remapperProcessor.setRemapReflectField(reflectFields);
++                remapperProcessor.setRemapReflectClass(reflectClass);
++                remapperProcessor.debug = debug;
++            } else {
++                remapperProcessor = null;
 +            }
 +        }
-+        if (remapOBC1710) flags |= F_REMAP_OBC1710;
-+        if (remapOBC179) flags |= F_REMAP_OBC179;
-+        if (remapOBC172) flags |= F_REMAP_OBC172;
-+        if (remapOBC164) flags |= F_REMAP_OBC164;
-+        if (remapOBC152) flags |= F_REMAP_OBC152;
-+        if (remapOBCPre) flags |= F_REMAP_OBCPRE;
-+        if (remapGuava) flags |= F_REMAP_GUAVA;
-+        if (globalInherit) flags |= F_GLOBAL_INHERIT;
 +
-+        remapFlags = flags; // used in findClass0
-+        JarMapping jarMapping = getJarMapping(flags);
 +
-+        // Load inheritance map
-+        if ((flags & F_GLOBAL_INHERIT) != 0) {
-+            if (debug) {
-+                System.out.println("Enabling global inheritance remapping");
-+                //ClassLoaderProvider.verbose = debug; // TODO: changed in https://github.com/md-5/SpecialSource/commit/132584eda4f0860c9d14f4c142e684a027a128b8#L3L48
-+            }
-+            jarMapping.setInheritanceMap(loader.getGlobalInheritanceMap());
-+            jarMapping.setFallbackInheritanceProvider(new ClassLoaderProvider(this));
-+        }
-+
-+        remapper = new thermos.ThermosRemapper(jarMapping);
-+
-+        if (pluginInherit || reflectFields || reflectClass) {
-+            remapperProcessor = new RemapperProcessor(
-+                    pluginInherit ? loader.getGlobalInheritanceMap() : null,
-+                    (reflectFields || reflectClass) ? jarMapping : null);
-+
-+            remapperProcessor.setRemapReflectField(reflectFields);
-+            remapperProcessor.setRemapReflectClass(reflectClass);
-+            remapperProcessor.debug = debug;
-+        } else {
-+            remapperProcessor = null;
-+        }
 +        // Cauldron end
 +
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +211,288 @@
+@@ -58,34 +240,313 @@
      }
  
      @Override
@@ -378,9 +410,22 @@
 +        if (name.startsWith("net.minecraft."))
 +        {
 +            JarMapping jarMapping = this.getJarMapping(remapFlags); // grab from SpecialSource
-+            String remappedClass = jarMapping.classes.get(name.replaceAll("\\.", "\\/")); // get remapped pkgmcp class name
-+            Class<?> clazz = ((net.minecraft.launchwrapper.LaunchClassLoader)MinecraftServer.getServer().getClass().getClassLoader()).findClass(remappedClass);
-+            return clazz;
++            String remappedClass = jarMapping.classes.get(name.replace('.', '/')); // get remapped pkgmcp class name
++            if(remappedClass == null) {
++                throw new ClassNotFoundException(name);
++            }
++            try {
++                Class<?> clazz = ((net.minecraft.launchwrapper.LaunchClassLoader)MinecraftServer.getServer().getClass().getClassLoader()).findClass(remappedClass);
++                if(debug) {
++                    System.out.printf("Found class %s (remapped to %s, found %s)\n", name, remappedClass, clazz.getName());
++                }
++                return clazz;
++            } catch (Throwable e) {
++                if(debug) {
++                    System.out.printf("Not found class %s (remapped %s)\n", name, remappedClass);
++                }
++                throw e;
++            }
 +        }
 +        if (name.startsWith("org.bukkit.")) {
 +            if (debug) {
@@ -399,7 +444,7 @@
 +                }
  
 +                if (result == null) {
-+                    if (remapper == null) {
++                    if (remapper == null && !runRfbTransformers && !runLwTransformers) {
 +                        result = super.findClass(name);
 +                    } else {
 +                        result = remappedFindClass(name);
@@ -442,13 +487,28 @@
 +                        bytecode = remapperProcessor.process(stream);
 +                        if (bytecode == null) stream = url.openStream();
 +                    }
++                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection(); // parses only
++                    URL jarURL = jarURLConnection.getJarFileURL();
++                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
++                    Manifest manifest = jarURLConnection.getManifest();
 +
-+                    /*if (bytecode == null) {
-+                        bytecode = Streams.readAll(stream);
-+                    }*/
++                    if (bytecode == null) {
++                        bytecode = URLClassLoaderBase.readAllBytes(stream, null);
++                    }
 +
 +                    // Remap the classes
-+                    byte[] remappedBytecode = remapper.remapClassFile(bytecode, RuntimeRepo.getInstance());
++                    byte[] remappedBytecode = bytecode;
++                    if(remapper != null) {
++                        remappedBytecode = remapper.remapClassFile(bytecode, RuntimeRepo.getInstance());
++                    }
++                    if(runLwTransformers) {
++                        remappedBytecode = (byte[]) runTransformersMH.invoke(launchClassLoader, name, name, remappedBytecode);
++                    }
++                    if(runRfbTransformers) {
++                        remappedBytecode = launchClassLoader.runRfbTransformers(
++                                Main.getRfbTransformers(), runLwTransformers ? RfbClassTransformer.Context.LCL_WITH_TRANSFORMS : RfbClassTransformer.Context.LCL_NO_TRANSFORMS,
++                                manifest, name, remappedBytecode);
++                    }
 +
 +                    if (debug) {
 +                        File file = new File("remapped-plugin-classes/"+name+".class");
@@ -462,15 +522,12 @@
 +                        }
 +                    }
 +
++
 +                    // Define (create) the class using the modified byte code
 +                    // The top-child class loader is used for this to prevent access violations
 +                    // Set the codesource to the jar, not within the jar, for compatibility with
 +                    // plugins that do new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()))
 +                    // instead of using getResourceAsStream - see https://github.com/MinecraftPortCentral/Cauldron-Plus/issues/75
-+                    JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection(); // parses only
-+                    URL jarURL = jarURLConnection.getJarFileURL();
-+                    CodeSource codeSource = new CodeSource(jarURL, new CodeSigner[0]);
-+
 +                    result = this.defineClass(name, remappedBytecode, 0, remappedBytecode.length, codeSource);
 +                    if (result != null) {
 +                        // Resolve it - sets the class loader of the class
