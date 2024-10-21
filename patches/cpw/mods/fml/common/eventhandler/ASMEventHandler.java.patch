@@ -1,0 +1,16 @@
+--- ../src-base/minecraft/cpw/mods/fml/common/eventhandler/ASMEventHandler.java
++++ ../src-work/minecraft/cpw/mods/fml/common/eventhandler/ASMEventHandler.java
+@@ -36,6 +36,13 @@
+         readable = "ASM: " + target + " " + method.getName() + Type.getMethodDescriptor(method);
+     }
+ 
++    public ASMEventHandler(IEventListener handler, Object target, Method method, ModContainer owner, String readable) {
++        this.handler = handler;
++        this.subInfo = method.getAnnotation(SubscribeEvent.class);
++        this.owner = owner;
++        this.readable = readable;
++    }
++
+     @Override
+     public void invoke(Event event)
+     {
