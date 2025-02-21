@@ -1,12 +1,13 @@
 --- ../src-base/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
 +++ ../src-work/minecraft/org/bukkit/plugin/java/PluginClassLoader.java
-@@ -1,5 +1,30 @@
+@@ -1,5 +1,31 @@
  package org.bukkit.plugin.java;
  
 +// Cauldron start
 +import com.gtnewhorizons.retrofuturabootstrap.Main;
 +import com.gtnewhorizons.retrofuturabootstrap.URLClassLoaderBase;
 +import com.gtnewhorizons.retrofuturabootstrap.api.RfbClassTransformer;
++import io.github.crucible.api.CruciblePluginTransform;
 +import net.md_5.specialsource.provider.ClassLoaderProvider;
 +import net.md_5.specialsource.transformer.MavenShade;
 +//import org.bouncycastle.util.io.Streams;
@@ -31,7 +32,7 @@
  import java.io.File;
  import java.net.MalformedURLException;
  import java.net.URL;
-@@ -7,24 +32,68 @@
+@@ -7,24 +33,69 @@
  import java.util.HashMap;
  import java.util.Map;
  import java.util.Set;
@@ -80,6 +81,7 @@
 +    private int remapFlags = -1;
 +    private boolean runRfbTransformers;
 +    private boolean runLwTransformers;
++    private boolean runPluginTransformers;
  
 +    private static ConcurrentMap<Integer,JarMapping> jarMappings = new ConcurrentHashMap<Integer, JarMapping>();
 +    private static final int F_GLOBAL_INHERIT   = 1 << 1;
@@ -104,7 +106,7 @@
      PluginClassLoader(final JavaPluginLoader loader, final ClassLoader parent, final PluginDescriptionFile description, final File dataFolder, final File file) throws InvalidPluginException, MalformedURLException {
          super(new URL[] {file.toURI().toURL()}, parent);
          Validate.notNull(loader, "Loader cannot be null");
-@@ -34,6 +103,119 @@
+@@ -34,6 +105,121 @@
          this.dataFolder = dataFolder;
          this.file = file;
  
@@ -135,6 +137,7 @@
 +        boolean remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.remap-guava", true);
 +        runRfbTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.rfb-transformers", true);
 +        runLwTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.lw-transformers", false);
++        runPluginTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings.default.plugin-transformers", true);
 +
 +        // plugin-specific overrides
 +        useCustomClassLoader = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".custom-class-loader", useCustomClassLoader, false);
@@ -159,6 +162,7 @@
 +        remapGuava = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".remap-guava", remapGuava, false);
 +        runRfbTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".rfb-transformers", runRfbTransformers, false);
 +        runLwTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".lw-transformers", runLwTransformers, false);
++        runPluginTransformers = MinecraftServer.cauldronConfig.getBoolean("plugin-settings."+pluginName+".plugin-transformers", runPluginTransformers, false);
 +
 +        if (debug) {
 +            System.out.println("PluginClassLoader debugging enabled for "+pluginName);
@@ -224,7 +228,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +240,313 @@
+@@ -58,34 +244,316 @@
      }
  
      @Override
@@ -444,7 +448,7 @@
 +                }
  
 +                if (result == null) {
-+                    if (remapper == null && !runRfbTransformers && !runLwTransformers) {
++                    if (remapper == null && !runRfbTransformers && !runLwTransformers && !runPluginTransformers) {
 +                        result = super.findClass(name);
 +                    } else {
 +                        result = remappedFindClass(name);
@@ -503,6 +507,9 @@
 +                    }
 +                    if(runLwTransformers) {
 +                        remappedBytecode = (byte[]) runTransformersMH.invoke(launchClassLoader, name, name, remappedBytecode);
++                    }
++                    if(runPluginTransformers) {
++                        remappedBytecode = CruciblePluginTransform.transform(name, name, remappedBytecode, plugin);
 +                    }
 +                    if(runRfbTransformers) {
 +                        remappedBytecode = launchClassLoader.runRfbTransformers(
