@@ -82,14 +82,14 @@
 +            if (itemstack.getItem() instanceof net.minecraft.item.ItemDye && itemstack.getItemDamage() == 15)
 +            {
 +                Block block = world.getBlock(x, y, z);
-+                if (block != null && (block instanceof net.minecraft.block.BlockSapling || block instanceof net.minecraft.block.BlockMushroom))
++                if ((block instanceof net.minecraft.block.BlockSapling || block instanceof net.minecraft.block.BlockMushroom))
 +                {
-+                    world.captureTreeGeneration = true;
++                    world.captureAndProxyBlocks = true;
 +                }
 +            }
 +            // Cauldron end
 +            
-+            if(!world.captureTreeGeneration)
++            if(!world.captureAndProxyBlocks)
 +            	world.captureItemDrops = true; // Thermos real og right here, prevent sugar cane dupe glitch amongst other issues
 +            
          }
@@ -100,23 +100,24 @@
          world.captureBlockSnapshots = false;
 -
 -        if (flag)
-+        if(!world.captureTreeGeneration) // Thermos stop capturing item drops to the world
++        world.worldChangeHolder.transferToForgeBlockSnapshot(); // Crucible - Not touching this whole method now, keep compatibility.
++        if(!world.captureAndProxyBlocks) // Thermos stop capturing item drops to the world
 +        	world.captureItemDrops = false;
 +        // Cauldron start
-+        if (flag && world.captureTreeGeneration && world.capturedBlockSnapshots.size() > 0)
++        if (flag && world.captureAndProxyBlocks && !world.capturedBlockSnapshots.isEmpty())
          {
 -            // save new item data
 -            int newMeta = itemstack.getItemDamage();
 -            int newSize = itemstack.stackSize;
 -            NBTTagCompound newNBT = null;
 -            if (itemstack.getTagCompound() != null)
-+            world.captureTreeGeneration = false;
++            world.captureAndProxyBlocks = false;
 +            Location loc = new Location(world.getWorld(), (double) x, (double) y, (double) z);
 +            TreeType type = net.minecraft.block.BlockSapling.treeType;
 +            net.minecraft.block.BlockSapling.treeType = null;
-+            List<BlockState> states = new ArrayList();
++            List<BlockState> states = new ArrayList<>();
 +
-+            for (net.minecraftforge.common.util.BlockSnapshot snapshot : (List<net.minecraftforge.common.util.BlockSnapshot>) world.capturedBlockSnapshots.clone())
++            for (net.minecraftforge.common.util.BlockSnapshot snapshot : new ArrayList<>(world.capturedBlockSnapshots))
              {
 -                newNBT = (NBTTagCompound)itemstack.getTagCompound().copy();
 +                states.add(new CraftBlockState(snapshot));
@@ -166,7 +167,7 @@
 +        }
 +        else
 +        {
-+            world.captureTreeGeneration = false; // Cauldron end
++            world.captureAndProxyBlocks = false; // Cauldron end
 +            if (flag)
              {
 -                // Change the stack to its new content
@@ -181,8 +182,7 @@
 +                    newNBT = (NBTTagCompound) itemstack.getTagCompound().copy();
 +                }
 +                net.minecraftforge.event.world.BlockEvent.PlaceEvent placeEvent = null;
-+                List<net.minecraftforge.common.util.BlockSnapshot> blockSnapshots = (List<net.minecraftforge.common.util.BlockSnapshot>) world.capturedBlockSnapshots
-+                        .clone();
++                List<net.minecraftforge.common.util.BlockSnapshot> blockSnapshots = new ArrayList<>(world.capturedBlockSnapshots);
 +                world.capturedBlockSnapshots.clear();
 +
 +                // make sure to set pre-placement item data for event

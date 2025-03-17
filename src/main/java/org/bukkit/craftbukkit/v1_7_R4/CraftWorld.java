@@ -1,6 +1,7 @@
 package org.bukkit.craftbukkit.v1_7_R4;
 
 import cpw.mods.fml.common.registry.EntityRegistry;
+import io.github.crucible.util.WorldChangeHolder;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldServer;
@@ -542,28 +543,11 @@ public class CraftWorld implements World {
                 break;
         }
 
-        world.captureTreeGeneration = true;
-        world.captureBlockSnapshots = true;
-        boolean grownTree = gen.generate(world, rand, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        world.captureBlockSnapshots = false;
-        world.captureTreeGeneration = false;
-        if (grownTree) { // Copy block data to delegate
-            for (BlockSnapshot blocksnapshot : world.capturedBlockSnapshots) {
-                int x = blocksnapshot.x;
-                int y = blocksnapshot.y;
-                int z = blocksnapshot.z;
-                net.minecraft.block.Block oldBlock = world.getBlock(x, y, z);
-                int newId = net.minecraft.block.Block.getIdFromBlock(blocksnapshot.replacedBlock);
-                int data = blocksnapshot.meta;
-                int flag = blocksnapshot.flag;
-                delegate.setTypeIdAndData(x, y, z, newId, data);
-                net.minecraft.block.Block newBlock = world.getBlock(x, y, z);
-                world.markAndNotifyBlock(x, y, z, null, oldBlock, newBlock, flag);
+        try (WorldChangeHolder.CaptureContext context = world.worldChangeHolder.startCapture()) {
+            if (gen.generate(world, rand, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
+                context.notifyDelegate(delegate);
+                return true;
             }
-            world.capturedBlockSnapshots.clear();
-            return true;
-        } else {
-            world.capturedBlockSnapshots.clear();
             return false;
         }
     }
