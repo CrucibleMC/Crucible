@@ -45,6 +45,8 @@ public class Lwjgl3ifyGlue {
         "Reika.DragonAPI.ModInteract.Bees.ButterflyAlleleRegistry$Life",
         // Et Futurum Requiem
         "net.minecraft.world.WorldSettings$GameType",
+        // Minechem
+        "net.minecraftforge.common.BiomeDictionary$Type",
         // Bukkit Enums
         "org.bukkit.Material",
         "org.bukkit.block.Biome",

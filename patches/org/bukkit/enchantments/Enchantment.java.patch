@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/org/bukkit/enchantments/Enchantment.java
++++ ../src-work/minecraft/org/bukkit/enchantments/Enchantment.java
+@@ -3,7 +3,9 @@
+ import java.util.HashMap;
+ import java.util.Map;
+ 
++import io.github.crucible.CrucibleModContainer;
+ import org.bukkit.command.defaults.EnchantCommand;
++import org.bukkit.craftbukkit.v1_7_R4.enchantments.CraftEnchantment;
+ import org.bukkit.inventory.ItemStack;
+ 
+ /**
+@@ -232,8 +234,16 @@
+      * @param enchantment Enchantment to register
+      */
+     public static void registerEnchantment(Enchantment enchantment) {
+-        if (byId.containsKey(enchantment.id) || byName.containsKey(enchantment.getName())) {
+-            throw new IllegalArgumentException("Cannot set already-set enchantment");
++        // Crucible - Allow mods to overwrite enchantments
++        if (byId.containsKey(enchantment.id)) {
++            Enchantment replaced = byId.put(enchantment.id, enchantment);
++            CrucibleModContainer.logger.warn("Replacing previously registered enchantment! This may indicate an id conflict! Old: {}, New: {}", replaced, enchantment);
++            byName.remove(replaced.getName());
++            byName.put(enchantment.getName(), enchantment);
++            return;
++        } else if (byName.containsKey(enchantment.getName())) {
++            CrucibleModContainer.logger.warn("Tried to register enchantment with different IDs but with same names! Old: {}, New: {}", byName.get(enchantment.getName()), enchantment);
++            throw new IllegalArgumentException("Name registered with different ids!");
+         } else if (!isAcceptingRegistrations()) {
+             throw new IllegalStateException("No longer accepting new enchantments (can only be done by the server implementation)");
+         }
