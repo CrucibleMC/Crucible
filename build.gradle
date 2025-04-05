@@ -86,7 +86,7 @@ configurations {
 
 dependencies {
     // New java stuff
-    libraries('com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.7') {
+    libraries('com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.10') {
         exclude group: 'org.apache.logging.log4j'
     }
     libraries 'org.apache.commons:commons-lang3:3.12.0'
