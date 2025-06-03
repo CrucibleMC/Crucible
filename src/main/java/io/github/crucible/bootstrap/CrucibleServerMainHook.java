@@ -7,11 +7,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
+import java.util.stream.Collectors;
 
 // DO NOT TRY TO LOAD ANY MINECRAFT CLASS FROM HERE, THIS CLASS IS LOADED BEFORE EVERYTHING ON THE SERVER ENTRYPOINT
 // Also avoid using streams here
@@ -59,6 +64,9 @@ public class CrucibleServerMainHook {
             System.setProperty("rfb.skipClassLoaderCheck", "true");
         }
         System.setProperty("java.util.logging.manager", "io.github.crucible.JulLogManager");
+        if(!Boolean.getBoolean("crucible.skipFixClasspath")) {
+            fixClasspathProperty();
+        }
 
         if (!verifyLibraries()) {
             setupLibraries();
@@ -103,6 +111,31 @@ public class CrucibleServerMainHook {
             }
         }
         LibraryManager.downloadMavenLibraries(LIBRARY_ROOT, list.toArray(new String[0]), CrucibleMetadata.NEEDED_LIBRARIES);
+    }
+
+    private static void fixClasspathProperty() {
+        String[] classpath = System.getProperty("java.class.path").split(File.pathSeparator);
+        URL location = CrucibleServerMainHook.class.getProtectionDomain().getCodeSource().getLocation();
+        if(location == null || !location.toString().endsWith(".jar")) {
+            return;
+        }
+        try(JarInputStream input = new JarInputStream(location.openStream())){
+            Manifest manifest = input.getManifest();
+            String classPathFromManifest = (String) manifest.getMainAttributes().get(new Attributes.Name("Class-Path"));
+            String[] internalClasspath = classPathFromManifest.split(" ");
+            Set<String> set = new HashSet<>();
+            Collections.addAll(set, classpath);
+            List<String> allClasspath = new ArrayList<>(classpath.length + internalClasspath.length);
+            Collections.addAll(allClasspath, classpath);
+            for(String s : internalClasspath) {
+                if(!set.contains(s)) {
+                    allClasspath.add(s);
+                }
+            }
+            System.setProperty("java.class.path", String.join(File.pathSeparator, allClasspath));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     public static void restoreStreams() {
