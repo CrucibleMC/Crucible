@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/org/bukkit/util/NumberConversions.java
++++ ../src-work/minecraft/org/bukkit/util/NumberConversions.java
+@@ -101,4 +101,24 @@
+         }
+         return 0;
+     }
++
++    public static boolean isFinite(double d) {
++        return Math.abs(d) <= Double.MAX_VALUE;
++    }
++
++    public static boolean isFinite(float f) {
++        return Math.abs(f) <= Float.MAX_VALUE;
++    }
++
++    public static void checkFinite(double d, String message) {
++        if (!isFinite(d)) {
++            throw new IllegalArgumentException(message);
++        }
++    }
++
++    public static void checkFinite(float d, String message) {
++        if (!isFinite(d)) {
++            throw new IllegalArgumentException(message);
++        }
++    }
+ }
