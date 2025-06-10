@@ -1,15 +1,157 @@
 --- ../src-base/minecraft/org/bukkit/World.java
 +++ ../src-work/minecraft/org/bukkit/World.java
-@@ -17,6 +17,8 @@
+@@ -7,6 +7,8 @@
+ import java.util.List;
+ import java.util.Map;
+ import java.util.UUID;
++import java.util.function.Consumer;
++import java.util.function.Predicate;
+ 
+ import org.bukkit.block.Biome;
+ import org.bukkit.block.Block;
+@@ -15,8 +17,13 @@
+ import org.bukkit.inventory.ItemStack;
+ import org.bukkit.metadata.Metadatable;
  import org.bukkit.plugin.messaging.PluginMessageRecipient;
++import org.bukkit.util.BoundingBox;
  import org.bukkit.util.Vector;
  
 +import net.minecraft.world.WorldServer;
++import org.jetbrains.annotations.NotNull;
++import org.jetbrains.annotations.Nullable;
 +
  /**
   * Represents a world, which may contain entities, chunks and blocks
   */
-@@ -1155,6 +1157,56 @@
+@@ -138,6 +145,15 @@
+     public boolean isChunkLoaded(Chunk chunk);
+ 
+     /**
++     * Checks if the {@link Chunk} at the specified coordinates is generated
++     *
++     * @param x X-coordinate of the chunk
++     * @param z Z-coordinate of the chunk
++     * @return true if the chunk is generated, otherwise false
++     */
++    public boolean isChunkGenerated(int x, int z);
++
++    /**
+      * Gets an array of all loaded {@link Chunk}s
+      *
+      * @return Chunk[] containing all loaded chunks
+@@ -296,6 +312,18 @@
+     public Item dropItem(Location location, ItemStack item);
+ 
+     /**
++     * Drops an item at the specified {@link Location}
++     * Note that functions will run before the entity is spawned
++     *
++     * @param location Location to drop the item
++     * @param item ItemStack to drop
++     * @param function the function to be run before the entity is spawned.
++     * @return ItemDrop entity created as a result of this method
++     */
++    @NotNull
++    public Item dropItem(@NotNull Location location, @NotNull ItemStack item, @Nullable Consumer<Item> function);
++
++    /**
+      * Drops an item at the specified {@link Location} with a random offset
+      *
+      * @param location Location to drop the item
+@@ -305,6 +333,17 @@
+     public Item dropItemNaturally(Location location, ItemStack item);
+ 
+     /**
++     * Drops an item at the specified {@link Location} with a random offset
++     * Note that functions will run before the entity is spawned
++     *
++     * @param location Location to drop the item
++     * @param item ItemStack to drop
++     * @param function the function to be run before the entity is spawned.
++     * @return ItemDrop entity created as a result of this method
++     */
++    public Item dropItemNaturally(Location location, ItemStack item, Consumer<Item> function);
++
++    /**
+      * Creates an {@link Arrow} entity at the given {@link Location}
+      *
+      * @param location Location to spawn the arrow
+@@ -451,6 +490,74 @@
+     public UUID getUID();
+ 
+     /**
++     * Returns a list of entities within a bounding box centered around a
++     * Location.
++     * <p>
++     * This may not consider entities in currently unloaded chunks. Some
++     * implementations may impose artificial restrictions on the size of the
++     * search bounding box.
++     *
++     * @param location The center of the bounding box
++     * @param x 1/2 the size of the box along x axis
++     * @param y 1/2 the size of the box along y axis
++     * @param z 1/2 the size of the box along z axis
++     * @return the collection of entities near location. This will always be a
++     *      non-null collection.
++     */
++    @NotNull
++    public Collection<Entity> getNearbyEntities(@NotNull Location location, double x, double y, double z);
++
++    /**
++     * Returns a list of entities within a bounding box centered around a
++     * Location.
++     * <p>
++     * This may not consider entities in currently unloaded chunks. Some
++     * implementations may impose artificial restrictions on the size of the
++     * search bounding box.
++     *
++     * @param location The center of the bounding box
++     * @param x 1/2 the size of the box along x axis
++     * @param y 1/2 the size of the box along y axis
++     * @param z 1/2 the size of the box along z axis
++     * @param filter only entities that fulfill this predicate are considered,
++     *     or <code>null</code> to consider all entities
++     * @return the collection of entities near location. This will always be a
++     *     non-null collection.
++     */
++    @NotNull
++    public Collection<Entity> getNearbyEntities(@NotNull Location location, double x, double y, double z, @Nullable Predicate<Entity> filter);
++
++    /**
++     * Returns a list of entities within the given bounding box.
++     * <p>
++     * This may not consider entities in currently unloaded chunks. Some
++     * implementations may impose artificial restrictions on the size of the
++     * search bounding box.
++     *
++     * @param boundingBox the bounding box
++     * @return the collection of entities within the bounding box, will always
++     *     be a non-null collection
++     */
++    @NotNull
++    public Collection<Entity> getNearbyEntities(@NotNull BoundingBox boundingBox);
++
++    /**
++     * Returns a list of entities within the given bounding box.
++     * <p>
++     * This may not consider entities in currently unloaded chunks. Some
++     * implementations may impose artificial restrictions on the size of the
++     * search bounding box.
++     *
++     * @param boundingBox the bounding box
++     * @param filter only entities that fulfill this predicate are considered,
++     *     or <code>null</code> to consider all entities
++     * @return the collection of entities within the bounding box, will always
++     *     be a non-null collection
++     */
++    @NotNull
++    public Collection<Entity> getNearbyEntities(@NotNull BoundingBox boundingBox, @Nullable Predicate<Entity> filter);
++
++    /**
+      * Gets the default spawn {@link Location} of this world
+      *
+      * @return The spawn location of this world
+@@ -1155,6 +1262,56 @@
       */
      public boolean isGameRule(String rule);
  
@@ -66,7 +208,7 @@
      /**
       * Represents various map environment types that a world may be
       */
-@@ -1203,10 +1255,18 @@
+@@ -1203,10 +1360,18 @@
              return lookup.get(id);
          }
  

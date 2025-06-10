@@ -2,6 +2,7 @@ package org.bukkit.craftbukkit.v1_7_R4;
 
 import cpw.mods.fml.common.registry.EntityRegistry;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.BlockSnapshot;
 import org.apache.commons.lang.Validate;
@@ -30,10 +31,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.StandardMessenger;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class CraftWorld implements World {
     //public static final int CUSTOM_DIMENSION_OFFSET = 10; // Cauldron - disabled
@@ -319,6 +323,11 @@ public class CraftWorld implements World {
         return isChunkLoaded(chunk.getX(), chunk.getZ());
     }
 
+    @Override
+    public boolean isChunkGenerated(int x, int z) {
+        return isChunkLoaded(x, z) || world.theChunkProviderServer.currentChunkProvider.chunkExists(x,z);
+    }
+
     public void loadChunk(Chunk chunk) {
         loadChunk(chunk.getX(), chunk.getZ());
         ((CraftChunk) getChunkAt(chunk.getX(), chunk.getZ())).getHandle().bukkitChunk = chunk;
@@ -328,18 +337,33 @@ public class CraftWorld implements World {
         return world;
     }
 
+    @Override
     public org.bukkit.entity.Item dropItem(Location loc, ItemStack item) {
+        return dropItem(loc, item, null);
+    }
+
+    @Override
+    public org.bukkit.entity.Item dropItem(Location loc, ItemStack item, Consumer<org.bukkit.entity.Item> function) {
         Validate.notNull(item, "Cannot drop a Null item.");
         Validate.isTrue(item.getTypeId() != 0, "Cannot drop AIR.");
         net.minecraft.entity.item.EntityItem entity = new net.minecraft.entity.item.EntityItem(world, loc.getX(), loc.getY(), loc.getZ(), CraftItemStack.asNMSCopy(item));
         entity.delayBeforeCanPickup = 10;
+        if (function != null) {
+            function.accept((org.bukkit.entity.Item) entity.getBukkitEntity());
+        }
         world.spawnEntityInWorld(entity);
         // TODO this is inconsistent with how Entity.getBukkitEntity() works.
         // However, this entity is not at the moment backed by a server entity class so it may be left.
         return new CraftItem(world.getServer(), entity);
     }
 
+    @Override
     public org.bukkit.entity.Item dropItemNaturally(Location loc, ItemStack item) {
+        return dropItemNaturally(loc, item, null);
+    }
+
+    @Override
+    public org.bukkit.entity.Item dropItemNaturally(Location loc, ItemStack item, Consumer<Item> function) {
         double xs = world.rand.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
         double ys = world.rand.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
         double zs = world.rand.nextFloat() * 0.7F + (1.0F - 0.7F) * 0.5D;
@@ -347,7 +371,7 @@ public class CraftWorld implements World {
         loc.setX(loc.getX() + xs);
         loc.setY(loc.getY() + ys);
         loc.setZ(loc.getZ() + zs);
-        return dropItem(loc, item);
+        return dropItem(loc, item, function);
     }
 
     public Arrow spawnArrow(Location loc, Vector velocity, float speed, float spread) {
@@ -794,6 +818,43 @@ public class CraftWorld implements World {
         }
 
         return list;
+    }
+
+    @Override
+    public Collection<Entity> getNearbyEntities(Location location, double x, double y, double z) {
+        return this.getNearbyEntities(location, x, y, z, null);
+    }
+
+    @Override
+    public Collection<Entity> getNearbyEntities(Location location, double x, double y, double z, Predicate<Entity> filter) {
+        org.apache.commons.lang3.Validate.notNull(location, "Location is null!");
+        org.apache.commons.lang3.Validate.isTrue(this.equals(location.getWorld()), "Location is from different world!");
+
+        BoundingBox aabb = BoundingBox.of(location, x, y, z);
+        return this.getNearbyEntities(aabb, filter);
+    }
+
+    @Override
+    public Collection<Entity> getNearbyEntities(BoundingBox boundingBox) {
+        return this.getNearbyEntities(boundingBox, null);
+    }
+
+    @Override
+    public Collection<Entity> getNearbyEntities(BoundingBox boundingBox, Predicate<Entity> filter) {
+        org.apache.commons.lang3.Validate.notNull(boundingBox, "Bounding box is null!");
+
+        AxisAlignedBB bb = AxisAlignedBB.getBoundingBox(boundingBox.getMinX(), boundingBox.getMinY(), boundingBox.getMinZ(), boundingBox.getMaxX(), boundingBox.getMaxY(), boundingBox.getMaxZ());
+        List<net.minecraft.entity.Entity> entityList = getHandle().selectEntitiesWithinAABB(net.minecraft.entity.Entity.class, bb, null);
+        List<Entity> bukkitEntityList = new ArrayList<org.bukkit.entity.Entity>(entityList.size());
+
+        for (net.minecraft.entity.Entity entity : entityList) {
+            Entity bukkitEntity = entity.getBukkitEntity();
+            if (filter == null || filter.test(bukkitEntity)) {
+                bukkitEntityList.add(bukkitEntity);
+            }
+        }
+
+        return bukkitEntityList;
     }
 
     public void save() {
