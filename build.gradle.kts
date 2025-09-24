@@ -59,7 +59,7 @@ configure<io.github.cruciblemc.forgegradle.DevExtension> {
     installerVersion = "1.4"
 
     // Repos used on the generated subprojects
-    repos = arrayOf("https://github.com/juanmuscaria/maven/raw/master/ThermosLibs",
+    repos = listOf("https://github.com/juanmuscaria/maven/raw/master/ThermosLibs",
         "https://github.com/juanmuscaria/maven/raw/master",
         "https://maven.minecraftforge.net/",
         "https://oss.sonatype.org/content/repositories/snapshots/",
@@ -82,12 +82,14 @@ version = if (gitInfo("branch") != "master") {
     "${extra["mcVersion"]}-$crucibleVersion"
 }
 
-configurations {
-    create("libraries")
+val libraries by configurations.creating {
+    isCanBeConsumed = false; isCanBeResolved = true;
 }
 
+configurations["implementation"].extendsFrom(libraries)
+
 dependencies {
-    "libraries"("com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.10") {
+    "libraries"("com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.11") {
         exclude(group = "org.apache.logging.log4j")
     }
     "libraries"("org.apache.commons:commons-lang3:3.12.0")
@@ -103,7 +105,46 @@ dependencies {
     "libraries"("com.sun.xml.bind:jaxb-impl:3.0.2")
     "libraries"("org.openjdk.nashorn:nashorn-core:15.4")
     "libraries"("it.unimi.dsi:fastutil:8.5.12")
-    // ... continue with the rest of your long libraries list
+
+    // Other libs
+    "libraries"("commons-cli:commons-cli:1.3@jar")
+    "libraries"("org.slf4j:slf4j-simple:1.6.2@jar")
+    "libraries"("org.eclipse.jetty:jetty-servlet:9.0.3.v20130506@jar")
+    "libraries"("commons-io:commons-io:2.4@jar")
+    "libraries"("net.sf.opencsv:opencsv:2.0@jar")
+    "libraries"("com.beust:jcommander:1.30@jar")
+    "libraries"("io.github.cruciblemc:launchwrapper:1.13@jar")
+    "libraries"("com.typesafe.akka:akka-actor_2.11:2.3.3")
+    "libraries"("com.typesafe:config:1.2.1")
+    "libraries"("org.scala-lang:scala-actors-migration_2.11:1.1.0")
+    "libraries"("org.scala-lang:scala-compiler:2.11.7")
+    "libraries"("org.scala-lang.plugins:scala-continuations-library_2.11:1.0.2")
+    "libraries"("org.scala-lang.plugins:scala-continuations-plugin_2.11.2:1.0.2")
+    "libraries"("org.scala-lang:scala-library:2.11.7")
+    "libraries"("org.scala-lang:scala-parser-combinators:2.11.0-M4")
+    "libraries"("org.scala-lang:scala-reflect:2.11.7")
+    "libraries"("org.scala-lang:scala-swing:2.11.0-M7")
+    "libraries"("org.scala-lang:scala-xml:2.11.0-M4")
+    "libraries"("net.sf.jopt-simple:jopt-simple:5.0.1")
+    "libraries"("lzma:lzma:0.0.1")
+    "libraries"("org.yaml:snakeyaml:1.9")
+    "libraries"("commons-lang:commons-lang:2.6")
+    "libraries"("org.avaje:ebean:2.7.3")
+    "libraries"("jline:jline:2.6")
+    "libraries"("net.md-5:SpecialSource:1.10.0")
+    "libraries"("net.sourceforge.argo:argo:2.25")
+    "libraries"("com.googlecode.json-simple:json-simple:1.1")
+    "libraries"("org.xerial:sqlite-jdbc:3.7.2")
+    "libraries"("mysql:mysql-connector-java:5.1.14")
+    "libraries"("javax.persistence:persistence-api:1.0.2")
+    "libraries"("pw.prok:KImagine:0.2.0@jar")
+    "libraries"("org.apache.httpcomponents:httpclient:4.4.1")
+    "libraries"("net.openhft:affinity:3.0.1")
+    "libraries"("org.fusesource.jansi:jansi:1.11")
+    "libraries"("com.koloboke:koloboke-impl-jdk8:1.0.0")
+    "libraries"("java3d:vecmath:1.3.1")
+    "libraries"("net.minecraft:server:1.7.10")
+    "libraries"(project(":eclipse:cauldron"))
 }
 
 tasks.register<Jar>("packageJavadoc") {
