@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/org/bukkit/block/BlockFace.java
++++ ../src-work/minecraft/org/bukkit/block/BlockFace.java
+@@ -1,5 +1,7 @@
+ package org.bukkit.block;
+ 
++import org.bukkit.util.Vector;
++
+ /**
+  * Represents the face of a block
+  */
+@@ -67,6 +69,39 @@
+         return modZ;
+     }
+ 
++    /**
++     * Gets the normal vector corresponding to this block face.
++     *
++     * @return the normal vector
++     */
++    public Vector getDirection() {
++        Vector direction = new Vector(modX, modY, modZ);
++        if (modX != 0 || modY != 0 || modZ != 0) {
++            direction.normalize();
++        }
++        return direction;
++    }
++
++    /**
++     * Returns true if this face is aligned with one of the unit axes in 3D
++     * Cartesian space (ie NORTH, SOUTH, EAST, WEST, UP, DOWN).
++     *
++     * @return Cartesian status
++     */
++    public boolean isCartesian() {
++        switch (this) {
++            case NORTH:
++            case SOUTH:
++            case EAST:
++            case WEST:
++            case UP:
++            case DOWN:
++                return true;
++            default:
++                return false;
++        }
++    }
++
+     public BlockFace getOppositeFace() {
+         switch (this) {
+         case NORTH:
