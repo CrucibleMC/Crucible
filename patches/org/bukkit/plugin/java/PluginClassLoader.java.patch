@@ -192,7 +192,7 @@
          try {
              Class<?> jarClass;
              try {
-@@ -58,34 +211,288 @@
+@@ -58,34 +211,291 @@
      }
  
      @Override
@@ -379,6 +379,9 @@
 +        {
 +            JarMapping jarMapping = this.getJarMapping(remapFlags); // grab from SpecialSource
 +            String remappedClass = jarMapping.classes.get(name.replaceAll("\\.", "\\/")); // get remapped pkgmcp class name
++            if (remappedClass == null){
++                throw new ClassNotFoundException(name);
++            }
 +            Class<?> clazz = ((net.minecraft.launchwrapper.LaunchClassLoader)MinecraftServer.getServer().getClass().getClassLoader()).findClass(remappedClass);
 +            return clazz;
 +        }
