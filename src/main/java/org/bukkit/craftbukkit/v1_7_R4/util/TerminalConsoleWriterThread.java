@@ -26,7 +26,7 @@ public class TerminalConsoleWriterThread implements Runnable {
             @SuppressWarnings("unchecked")
             Map<String, BlockingQueue<String>> instance = (Map<String, BlockingQueue<String>>) queues.get(null);
             instance.get("TerminalConsole").clear();
-        } catch (ReflectiveOperationException e) {
+        } catch (ReflectiveOperationException | NullPointerException e) {
             e.printStackTrace();
         }
         // Crucible end
