@@ -2,7 +2,7 @@ name: Pre-release build
 
 on:
   push:
-    branches: 
+    branches:
       - staging
 
 permissions:
@@ -13,36 +13,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
+
     - name: Set up JDK 8
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v5
       with:
         java-version: '8'
         distribution: 'temurin'
 
-    - name: Show debug info
+    - name: Show Gradle version
       run: ./gradlew --version
 
     - name: Setup Crucible
       run: ./gradlew cleanCache clean setupCrucible --refresh-dependencies
-      
+
     - name: Build Crucible distribution packages
       run: ./gradlew buildPackages
 
-    - name: Get short hash
-      id: short_sha
-      run: echo "::set-output name=sha::$(expr substr ${{ github.sha }} 1 7)"
+    - name: Get commit count
+      id: commit_count
+      run: |
+        echo "count=$(git rev-list --count HEAD)" >> $GITHUB_OUTPUT
 
-    - name: Create Release
+    - name: Get short SHA
+      id: short_sha
+      run: |
+        echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+    - name: Rename JAR with dev version
+      run: |
+        for file in build/distributions/*-server.jar; do
+          mv "$file" "build/distributions/Crucible-1.7.10-staging-${{ steps.short_sha.outputs.sha }}-dev-${{ steps.commit_count.outputs.count }}-server.jar"
+        done
+
+    - name: Create GitHub pre-release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: staging-${{ steps.short_sha.outputs.sha }}
         prerelease: true
-        name: Staging branch build ${{ steps.short_sha.outputs.sha }}
+        name: Staging Build ${{ steps.short_sha.outputs.sha }} | dev-${{ steps.commit_count.outputs.count }}
         body: |
-          This is an automatic pre-release build of commit ${{ github.sha }}
-          With this release you can test ahead of time the next Crucible release candidate
+          This is an automatic pre-release dev build.
+          
+          Commit: ${{ github.sha }}
+          Dev build number: dev-${{ steps.commit_count.outputs.count }}
+          
+          This is the most up-to-date build available.
         files: |
           build/distributions/*

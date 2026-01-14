@@ -1,0 +1,136 @@
+--- ../src-base/minecraft/org/bukkit/Location.java
++++ ../src-work/minecraft/org/bukkit/Location.java
+@@ -1,13 +1,17 @@
+ package org.bukkit;
+ 
+ import org.bukkit.block.Block;
++import org.bukkit.configuration.serialization.ConfigurationSerializable;
+ import org.bukkit.util.NumberConversions;
+ import org.bukkit.util.Vector;
+ 
++import java.util.HashMap;
++import java.util.Map;
++
+ /**
+  * Represents a 3-dimensional position in a world
+  */
+-public class Location implements Cloneable {
++public class Location implements Cloneable, ConfigurationSerializable {
+     private World world;
+     private double x;
+     private double y;
+@@ -56,6 +60,15 @@
+     }
+ 
+     /**
++     * Checks if world in this location is present and loaded.
++     *
++     * @return true if is loaded, otherwise false
++     */
++    public boolean isWorldLoaded() {
++        return world != null && Bukkit.getWorld(world.getUID()) != null;
++    }
++
++    /**
+      * Gets the world that this location resides in
+      *
+      * @return World that contains this location
+@@ -548,6 +561,19 @@
+     }
+ 
+     /**
++     * Check if each component of this Location is finite.
++     *
++     * @throws IllegalArgumentException if any component is not finite
++     */
++    public void checkFinite() throws IllegalArgumentException {
++        NumberConversions.checkFinite(x, "x not finite");
++        NumberConversions.checkFinite(y, "y not finite");
++        NumberConversions.checkFinite(z, "z not finite");
++        NumberConversions.checkFinite(pitch, "pitch not finite");
++        NumberConversions.checkFinite(yaw, "yaw not finite");
++    }
++
++    /**
+      * Safely converts a double (location coordinate) to an int (block
+      * coordinate)
+      *
+@@ -557,4 +583,78 @@
+     public static int locToBlock(double loc) {
+         return NumberConversions.floor(loc);
+     }
++
++    @Override
++    @Utility
++    public Map<String, Object> serialize() {
++        Map<String, Object> data = new HashMap<>();
++
++        if (this.world != null) {
++            data.put("world", getWorld().getName());
++        }
++
++        data.put("x", this.x);
++        data.put("y", this.y);
++        data.put("z", this.z);
++
++        data.put("yaw", this.yaw);
++        data.put("pitch", this.pitch);
++
++        return data;
++    }
++
++    /**
++     * Required method for deserialization
++     *
++     * @param args map to deserialize
++     * @return deserialized location
++     * @throws IllegalArgumentException if the world don't exists
++     * @see ConfigurationSerializable
++     */
++    public static Location deserialize(Map<String, Object> args) {
++        World world = null;
++        if (args.containsKey("world")) {
++            world = Bukkit.getWorld((String) args.get("world"));
++            if (world == null) {
++                throw new IllegalArgumentException("unknown world");
++            }
++        }
++
++        return new Location(world, NumberConversions.toDouble(args.get("x")), NumberConversions.toDouble(args.get("y")), NumberConversions.toDouble(args.get("z")), NumberConversions.toFloat(args.get("yaw")), NumberConversions.toFloat(args.get("pitch")));
++    }
++
++    /**
++     * Normalizes the given yaw angle to a value between <code>+/-180</code>
++     * degrees.
++     *
++     * @param yaw the yaw in degrees
++     * @return the normalized yaw in degrees
++     * @see Location#getYaw()
++     */
++    public static float normalizeYaw(float yaw) {
++        yaw %= 360.0f;
++        if (yaw >= 180.0f) {
++            yaw -= 360.0f;
++        } else if (yaw < -180.0f) {
++            yaw += 360.0f;
++        }
++        return yaw;
++    }
++
++    /**
++     * Normalizes the given pitch angle to a value between <code>+/-90</code>
++     * degrees.
++     *
++     * @param pitch the pitch in degrees
++     * @return the normalized pitch in degrees
++     * @see Location#getPitch()
++     */
++    public static float normalizePitch(float pitch) {
++        if (pitch > 90.0f) {
++            pitch = 90.0f;
++        } else if (pitch < -90.0f) {
++            pitch = -90.0f;
++        }
++        return pitch;
++    }
+ }

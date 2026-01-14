@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.objectweb.asm.Opcodes.*;
 
 public class PluginClassLoaderFactory {
-    private static AtomicInteger IDs = new AtomicInteger();
+    private static final AtomicInteger IDs = new AtomicInteger();
     private static final HashMap<Method, Class<?>> cache = Maps.newHashMap();
     private static final String HANDLER_DESC = Type.getInternalName(IEventListener.class);
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(Event.class));
