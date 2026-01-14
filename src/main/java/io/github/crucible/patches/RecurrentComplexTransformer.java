@@ -1,41 +1,62 @@
 package io.github.crucible.patches;
 
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.MethodInsnNode;
-import pw.prok.imagine.asm.ImagineASM;
-import pw.prok.imagine.asm.Transformer;
+import cpw.mods.fml.common.FMLLog;
+import net.minecraft.launchwrapper.IClassTransformer;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.*;
 
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 
-@Transformer.RegisterTransformer
-public class RecurrentComplexTransformer implements Transformer {
-    @Override
-    public void transform(ImagineASM asm) {
-        if (asm.is("ivorius.reccomplex.structures.generic.matchers.BiomeMatcher")) {
-            System.out.println("[Crucible] Found ivorius.reccomplex.structures.generic.matchers.BiomeMatcher, trying to patch it!");
-            InsnList instructions = asm.method("ofTypes", "([Lnet/minecraftforge/common/BiomeDictionary$Type;)Ljava/lang/String;").instructions();
+public class RecurrentComplexTransformer implements IClassTransformer {
+    private static final String TARGET_CLASS =
+            "ivorius.reccomplex.structures.generic.matchers.BiomeMatcher";
 
-            AbstractInsnNode abstractInsnNode = instructions.getFirst();
-            boolean appliedPatch = false;
-            while (abstractInsnNode != null) {
-                if (abstractInsnNode.getOpcode() == INVOKESTATIC) {
-                    MethodInsnNode methodInsnNode = (MethodInsnNode) abstractInsnNode;
-                    if ("joptsimple/internal/Strings".equals(methodInsnNode.owner) &&
-                            "join".equals(methodInsnNode.name) &&
-                            "(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;"
-                                    .equals(methodInsnNode.desc)) {
-                        methodInsnNode.owner = "io/github/crucible/patches/AsmHooks";
-                        appliedPatch = true;
-                        System.out.println("[Crucible] Patched joptsimple.internal.Strings#join() call!");
+    @Override
+    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+        if (!transformedName.equals(TARGET_CLASS)) {
+            return basicClass;
+        }
+
+        FMLLog.info("[Crucible] Found %s, attempting ASM patch", TARGET_CLASS);
+
+        ClassNode classNode = new ClassNode();
+        new ClassReader(basicClass).accept(classNode, 0);
+
+        boolean patched = false;
+
+        for (MethodNode method : classNode.methods) {
+            if (!method.name.equals("ofTypes")) continue;
+            if (!method.desc.equals("([Lnet/minecraftforge/common/BiomeDictionary$Type;)Ljava/lang/String;"))
+                continue;
+
+            InsnList insns = method.instructions;
+
+            for (AbstractInsnNode insn = insns.getFirst(); insn != null; insn = insn.getNext()) {
+                if (insn.getOpcode() == INVOKESTATIC && insn instanceof MethodInsnNode) {
+                    MethodInsnNode m = (MethodInsnNode) insn;
+
+                    if (m.owner.equals("joptsimple/internal/Strings")
+                            && m.name.equals("join")
+                            && m.desc.equals("(Ljava/util/List;Ljava/lang/String;)Ljava/lang/String;")) {
+
+                        m.owner = "io/github/crucible/patches/AsmHooks";
+                        patched = true;
+
+                        FMLLog.info("[Crucible] Patched Strings.join() call in BiomeMatcher");
+                        break;
                     }
                 }
-                abstractInsnNode = abstractInsnNode.getNext();
-            }
-            if (!appliedPatch) {
-                System.out.println("[Crucible] RecurrentComplexTransformer: " +
-                        "unable to find joptsimple.internal.Strings#join(), skipping it!");
             }
         }
+
+        if (!patched) {
+            FMLLog.warning("[Crucible] Failed to patch BiomeMatcher: join() call not found");
+            return basicClass;
+        }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        classNode.accept(writer);
+        return writer.toByteArray();
     }
 }

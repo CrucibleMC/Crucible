@@ -1,42 +1,59 @@
 package io.github.crucible.patches;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import pw.prok.imagine.asm.ImagineASM;
-import pw.prok.imagine.asm.Transformer;
+import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
 
-@Transformer.RegisterTransformer
-public class StreamsTransformer implements Transformer {
+public class StreamsTransformer implements IClassTransformer {
+    private static final String TARGET_CLASS =
+            "streams.world.gen.structure.RiverComponent$";
+
     @Override
-    public void transform(ImagineASM asm) {
-        if (asm.is("streams.world.gen.structure.RiverComponent$")) {
-            System.out.println("[Crucible] Found streams.world.gen.structure.RiverComponent$, trying to patch it!");
-            InsnList instructions = asm.method("<init>", "()V").instructions(); //We just need to replace a number
-            AbstractInsnNode toReplace = null;
-            Iterator<AbstractInsnNode> i = instructions.iterator();
-            while (i.hasNext()) {
-                AbstractInsnNode ins = i.next();
-                if (ins.getOpcode() == Opcodes.ICONST_2) {
-                    if (ins.getNext() instanceof FieldInsnNode) {
-                        FieldInsnNode fieldAccess = (FieldInsnNode) ins.getNext();
-                        if (fieldAccess.name.contains("MinSourceBackWallHeight")) {
-                            toReplace = fieldAccess.getPrevious();
-                            break;
-                        }
-                    }
-                }
-            }
-            if (toReplace == null) {
-                System.out.println("[Crucible] Unable to find MinSourceBackWallHeight, skipping patch!");
-            } else {
-                instructions.set(toReplace, new InsnNode(Opcodes.ICONST_0));
-                System.out.println("[Crucible] Patched MinSourceBackWallHeight's previous opcode!");
+    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+        if (!transformedName.equals(TARGET_CLASS)) {
+            return basicClass;
+        }
+
+        System.out.println("[Crucible] Found " + TARGET_CLASS + ", patching…");
+
+        ClassNode classNode = new ClassNode();
+        ClassReader reader = new ClassReader(basicClass);
+        reader.accept(classNode, 0);
+
+        for (MethodNode method : classNode.methods) {
+            if ("<init>".equals(method.name) && "()V".equals(method.desc)) {
+                patchConstructor(method);
             }
         }
+
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        classNode.accept(writer);
+        return writer.toByteArray();
+    }
+
+    private void patchConstructor(MethodNode method) {
+        InsnList insns = method.instructions;
+
+        for (Iterator<AbstractInsnNode> it = insns.iterator(); it.hasNext(); ) {
+            AbstractInsnNode insn = it.next();
+
+            if (insn.getOpcode() == Opcodes.ICONST_2 &&
+                    insn.getNext() instanceof FieldInsnNode) {
+
+                FieldInsnNode field = (FieldInsnNode) insn.getNext();
+
+                if (field.name.contains("MinSourceBackWallHeight")) {
+                    insns.set(insn, new InsnNode(Opcodes.ICONST_0));
+                    System.out.println("[Crucible] Patched MinSourceBackWallHeight");
+                    return;
+                }
+            }
+        }
+
+        System.out.println("[Crucible] Failed to find MinSourceBackWallHeight");
     }
 }
