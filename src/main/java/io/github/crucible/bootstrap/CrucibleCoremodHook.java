@@ -15,6 +15,5 @@ public class CrucibleCoremodHook {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        Lwjgl3ifyGlue.doCoremodWork(classLoader);
     }
 }

@@ -58,8 +58,6 @@ public class CrucibleServerMainHook {
             System.setProperty((String) entry.getKey(), (String) entry.getValue());
         }
 
-        Lwjgl3ifyGlue.checkJava();
-
         if(System.getProperty("java.class.loader") == null) {
             System.setProperty("rfb.skipClassLoaderCheck", "true");
         }
