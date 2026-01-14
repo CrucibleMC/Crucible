@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.cauldron.block.CraftCustomContainer;
+import io.github.crucible.util.BukkitEnumHelper;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -191,7 +192,7 @@ public class CraftBlock implements Block {
                 int id = BiomeGenBase.getBiome(i).biomeID;
 
                 System.out.println("Adding biome mapping " + BiomeGenBase.getBiome(i).biomeID + " " + name + " at BiomeBase[" + i + "]");
-                net.minecraftforge.common.util.EnumHelper.addBukkitBiome(name); // Forge
+                BukkitEnumHelper.addBukkitBiome(name); // Forge
                 BIOME_MAPPING[BiomeGenBase.getBiome(i).biomeID] = Enum.valueOf(Biome.class, name);
                 // Cauldron end
             }

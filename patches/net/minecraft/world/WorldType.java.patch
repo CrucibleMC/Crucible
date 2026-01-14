@@ -4,7 +4,7 @@
  import net.minecraft.world.gen.layer.GenLayerZoom;
  import cpw.mods.fml.relauncher.Side;
  import cpw.mods.fml.relauncher.SideOnly;
-+import net.minecraftforge.common.util.EnumHelper; // Cauldron
++import io.github.crucible.util.BukkitEnumHelper;
  
  public class WorldType
  {
@@ -15,7 +15,7 @@
 +        // Cauldron start - add worldtype for bukkit if it does not already exist
 +        if (org.bukkit.WorldType.getByName(p_i1960_2_) == null)
 +        {
-+            EnumHelper.addBukkitWorldType(p_i1960_2_);
++            BukkitEnumHelper.addBukkitWorldType(p_i1960_2_);
 +        }
 +        // Cauldron end
      }

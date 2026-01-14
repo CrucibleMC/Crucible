@@ -8,21 +8,27 @@
  import java.util.HashSet;
  import java.util.Iterator;
  import java.util.List;
-@@ -33,6 +34,13 @@
+@@ -26,6 +27,7 @@
+ import net.minecraft.world.storage.IThreadedFileIO;
+ import net.minecraft.world.storage.ThreadedFileIOBase;
+ import net.minecraftforge.common.MinecraftForge;
++import io.github.crucible.util.BukkitEnumHelper;
+ import net.minecraftforge.event.world.ChunkDataEvent;
+ 
+ import org.apache.logging.log4j.Level;
+@@ -33,6 +35,11 @@
  import org.apache.logging.log4j.Logger;
  
  import cpw.mods.fml.common.FMLLog;
 +// Cauldron start
-+import java.util.Map;
 +import net.minecraft.server.MinecraftServer;
 +import net.minecraftforge.cauldron.CauldronUtils;
-+import net.minecraftforge.common.util.EnumHelper;
 +import cpw.mods.fml.common.asm.transformers.SideTransformer;
 +// Cauldron end
  
  public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
  {
-@@ -41,6 +49,7 @@
+@@ -41,6 +48,7 @@
      private Set pendingAnvilChunksCoordinates = new HashSet();
      private Object syncLockObject = new Object();
      public final File chunkSaveLocation;
@@ -30,7 +36,7 @@
      private static final String __OBFID = "CL_00000384";
  
      public AnvilChunkLoader(File p_i2003_1_)
-@@ -68,18 +77,22 @@
+@@ -68,18 +76,22 @@
              }
          }
  
@@ -54,7 +60,7 @@
              return chunk;
          }
  
-@@ -156,8 +169,8 @@
+@@ -156,8 +168,8 @@
              if (!chunk.isAtLocation(p_75822_2_, p_75822_3_))
              {
                  logger.error("Chunk file at " + p_75822_2_ + "," + p_75822_3_ + " is in the wrong location; relocating. (Expected " + p_75822_2_ + ", " + p_75822_3_ + ", got " + chunk.xPosition + ", " + chunk.zPosition + ")");
@@ -65,7 +71,7 @@
                  // Have to move tile entities since we don't load them at this stage
                  NBTTagList tileEntities = p_75822_4_.getCompoundTag("Level").getTagList("TileEntities", 10);
  
-@@ -187,8 +200,18 @@
+@@ -187,8 +199,18 @@
  
      public void saveChunk(World p_75816_1_, Chunk p_75816_2_) throws MinecraftException, IOException
      {
@@ -85,7 +91,7 @@
          try
          {
              NBTTagCompound nbttagcompound = new NBTTagCompound();
-@@ -230,7 +253,7 @@
+@@ -230,7 +252,7 @@
  
      public boolean writeNextIO()
      {
@@ -94,7 +100,7 @@
          Object object = this.syncLockObject;
  
          synchronized (this.syncLockObject)
-@@ -240,15 +263,15 @@
+@@ -240,15 +262,15 @@
                  return false;
              }
  
@@ -114,7 +120,7 @@
              }
              catch (Exception exception)
              {
-@@ -259,7 +282,7 @@
+@@ -259,7 +281,7 @@
          return true;
      }
  
@@ -123,7 +129,7 @@
      {
          DataOutputStream dataoutputstream = RegionFileCache.getChunkOutputStream(this.chunkSaveLocation, p_75821_1_.chunkCoordinate.chunkXPos, p_75821_1_.chunkCoordinate.chunkZPos);
          CompressedStreamTools.write(p_75821_1_.nbtTags, dataoutputstream);
-@@ -307,19 +330,19 @@
+@@ -307,19 +329,19 @@
  
                  if (extendedblockstorage.getBlockMSBArray() != null)
                  {
@@ -148,7 +154,7 @@
                  }
  
                  nbttaglist.appendTag(nbttagcompound1);
-@@ -379,17 +402,16 @@
+@@ -379,17 +401,16 @@
          }
  
          p_75820_3_.setTag("TileEntities", nbttaglist3);
@@ -172,7 +178,7 @@
                  NBTTagCompound nbttagcompound2 = new NBTTagCompound();
                  nbttagcompound2.setInteger("i", Block.getIdFromBlock(nextticklistentry.func_151351_a()));
                  nbttagcompound2.setInteger("x", nextticklistentry.xCoord);
-@@ -401,7 +423,6 @@
+@@ -401,7 +422,6 @@
              }
  
              p_75820_3_.setTag("TileTicks", nbttaglist1);
@@ -180,7 +186,7 @@
      }
  
      private Chunk readChunkFromNBT(World p_75823_1_, NBTTagCompound p_75823_2_)
-@@ -455,6 +476,8 @@
+@@ -455,6 +475,8 @@
  
      public void loadEntities(World p_75823_1_, NBTTagCompound p_75823_2_, Chunk chunk)
      {
@@ -189,7 +195,7 @@
          NBTTagList nbttaglist1 = p_75823_2_.getTagList("Entities", 10);
  
          if (nbttaglist1 != null)
-@@ -468,24 +491,31 @@
+@@ -468,24 +490,31 @@
                  if (entity2 != null)
                  {
                      chunk.addEntity(entity2);
@@ -230,7 +236,7 @@
          NBTTagList nbttaglist2 = p_75823_2_.getTagList("TileEntities", 10);
  
          if (nbttaglist2 != null)
-@@ -497,11 +527,35 @@
+@@ -497,11 +526,35 @@
  
                  if (tileentity != null)
                  {
@@ -252,7 +258,7 @@
 +                            SideTransformer.allowInvalidSide = false;
 +                        }
 +                        // inject TE into InventoryType to support inventory events
-+                        EnumHelper.addInventoryType(tileentity);
++                        BukkitEnumHelper.addInventoryType(tileentity);
 +                        this.checkedTileEntities.add(tileentity.getClass());
 +                    }
 +                    // Cauldron end
@@ -266,7 +272,7 @@
          if (p_75823_2_.hasKey("TileTicks", 9))
          {
              NBTTagList nbttaglist3 = p_75823_2_.getTagList("TileTicks", 10);
-@@ -515,6 +569,7 @@
+@@ -515,6 +568,7 @@
                  }
              }
          }
