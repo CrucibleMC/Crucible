@@ -1000,7 +1000,7 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             entry.removePlayerFromTracker(getHandle());
         }
 
-        getHandle().playerNetServerHandler.sendPacket(new S38PacketPlayerListItem(player.getPlayerListName(), false, 9999));
+        getHandle().playerNetServerHandler.sendPacket(new S38PacketPlayerListItem(player.getPlayerListName(), true, 9999));
     }
 
     public void removeDisconnectingPlayer(Player player) {
