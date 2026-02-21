@@ -55,7 +55,7 @@ jobs:
       with:
         tag_name: staging-${{ steps.short_sha.outputs.sha }}
         prerelease: true
-        name: RetroFOrge All-Patches Build ${{ steps.short_sha.outputs.sha }} | dev-${{ steps.commit_count.outputs.count }}
+        name: RetroForge All-Patches Build ${{ steps.short_sha.outputs.sha }} | dev-${{ steps.commit_count.outputs.count }}
         body: |
           This is an automatic pre-release dev build.
           
@@ -65,3 +65,4 @@ jobs:
           This is the most up-to-date build available.
         files: |
           build/distributions/*
+          java9args.txt
