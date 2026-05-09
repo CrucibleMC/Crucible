@@ -22,6 +22,7 @@ import net.minecraftforge.gradle.patching.ContextualPatch.HunkReport;
 import net.minecraftforge.gradle.patching.ContextualPatch.PatchReport;
 import net.minecraftforge.gradle.patching.ContextualPatch.PatchStatus;
 import net.minecraftforge.gradle.tasks.abstractutil.CachedTask;
+import org.gradle.api.Action;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.logging.LogLevel;
 import org.gradle.api.tasks.*;
@@ -156,12 +157,11 @@ public class DeterministicDecompileTask extends CachedTask {
   }
 
   private void decompile(final File inJar, final File outJar, final File fernFlower) {
-    this.getProject().javaexec(new Closure<JavaExecSpec>(this) {
+    this.getProject().getProviders().javaexec(new Action<>() {
       private static final long serialVersionUID = 4608694547855396167L;
 
       @Override
-      public JavaExecSpec call() {
-        JavaExecSpec exec = (JavaExecSpec) this.getDelegate();
+      public void execute(JavaExecSpec exec) {
 
         exec.args(
                 fernFlower.getAbsolutePath(),
@@ -182,13 +182,6 @@ public class DeterministicDecompileTask extends CachedTask {
         exec.setStandardOutput(DevConstants.getTaskLogStream(DeterministicDecompileTask.this.getProject(), DeterministicDecompileTask.this.getName() + ".log"));
 
         exec.setMaxHeapSize("512M");
-
-        return exec;
-      }
-
-      @Override
-      public JavaExecSpec call(Object obj) {
-        return this.call();
       }
     });
   }
