@@ -157,7 +157,7 @@ public class DeterministicDecompileTask extends CachedTask {
   }
 
   private void decompile(final File inJar, final File outJar, final File fernFlower) {
-    this.getProject().getProviders().javaexec(new Action<>() {
+    this.getProject().javaexec(new Action<JavaExecSpec>() {
       private static final long serialVersionUID = 4608694547855396167L;
 
       @Override
