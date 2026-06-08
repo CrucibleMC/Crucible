@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.publish.maven.MavenPublication
+import io.github.cruciblemc.forgegradle.tasks.DelayedJar
 import java.io.ByteArrayOutputStream
 
 plugins {
@@ -176,6 +177,34 @@ tasks.named<Jar>("jar").configure {
                 "Crucible-Libs" to generateMavenLibs()
             )
         )
+    }
+}
+
+tasks.named<DelayedJar>("packageServer").configure {
+    doFirst {
+        manifest {
+            attributes(
+                mapOf(
+                    "Thermos-Git-Branch" to gitInfo("branch"),
+                    "Thermos-Git-Hash" to gitInfo("fullHash"),
+                    "Thermos-Group" to project.group,
+                    "Thermos-Channel" to project.name,
+                    "Thermos-Version" to project.version,
+                    "Thermos-Legacy" to true,
+                    "Implementation-Vendor" to "CrucibleMC Team",
+                    "Implementation-Title" to project.name,
+                    "Implementation-Version" to project.version,
+                    "Specification-Vendor" to "Bukkit Team",
+                    "Specification-Title" to "Bukkit",
+                    "Specification-Version" to "1.7.10-R0.1-SNAPSHOT",
+                    "Forge-Version" to "10.13.4.1614",
+                    "TweakClass" to "cpw.mods.fml.common.launcher.FMLTweaker",
+                    "Main-Class" to "cpw.mods.fml.relauncher.ServerLaunchWrapper",
+                    "Class-Path" to generateClasspath(),
+                    "Crucible-Libs" to generateMavenLibs()
+                )
+            )
+        }
     }
 }
 
