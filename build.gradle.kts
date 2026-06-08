@@ -90,16 +90,17 @@ val libraries by configurations.creating {
 configurations["implementation"].extendsFrom(libraries)
 
 dependencies {
-    "libraries"("com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.0.11") {
+    "libraries"("com.gtnewhorizons.retrofuturabootstrap:RetroFuturaBootstrap:1.1.0") {
         exclude(group = "org.apache.logging.log4j")
     }
-    "libraries"("org.apache.commons:commons-lang3:3.12.0")
-    "libraries"("org.apache.commons:commons-compress:1.21")
-    "libraries"("org.ow2.asm:asm:9.8")
-    "libraries"("org.ow2.asm:asm-commons:9.8")
-    "libraries"("org.ow2.asm:asm-tree:9.8")
-    "libraries"("org.ow2.asm:asm-analysis:9.8")
-    "libraries"("org.ow2.asm:asm-util:9.8")
+    "libraries"("com.google.code.gson:gson:2.14.0")
+    "libraries"("org.apache.commons:commons-lang3:3.17.0")
+    "libraries"("org.apache.commons:commons-compress:1.27.1")
+    "libraries"("org.ow2.asm:asm:9.9.1")
+    "libraries"("org.ow2.asm:asm-commons:9.9.1")
+    "libraries"("org.ow2.asm:asm-tree:9.9.1")
+    "libraries"("org.ow2.asm:asm-analysis:9.9.1")
+    "libraries"("org.ow2.asm:asm-util:9.9.1")
     "libraries"("org.ow2.asm:asm-deprecated:7.1")
     "libraries"("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
     "libraries"("javax.servlet:javax.servlet-api:4.0.1")
@@ -111,7 +112,7 @@ dependencies {
     "libraries"("commons-cli:commons-cli:1.3@jar")
     "libraries"("org.slf4j:slf4j-simple:1.6.2@jar")
     "libraries"("org.eclipse.jetty:jetty-servlet:9.0.3.v20130506@jar")
-    "libraries"("commons-io:commons-io:2.4@jar")
+    "libraries"("commons-io:commons-io:2.18.0")
     "libraries"("net.sf.opencsv:opencsv:2.0@jar")
     "libraries"("com.beust:jcommander:1.30@jar")
     "libraries"("io.github.cruciblemc:launchwrapper:1.13@jar")
@@ -145,7 +146,6 @@ dependencies {
     "libraries"("com.koloboke:koloboke-impl-jdk8:1.0.0")
     "libraries"("java3d:vecmath:1.3.1")
     "libraries"("net.minecraft:server:1.7.10")
-    "libraries"(project(":eclipse:cauldron"))
 }
 
 tasks.register<Jar>("packageJavadoc") {

@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -38,7 +39,7 @@ public class LibraryManager {
             reposUri[i] = URI.create(repos[i]);
         }
 
-        ForkJoinPool pool = new ForkJoinPool((Runtime.getRuntime().availableProcessors() * 2) + 1);
+        ExecutorService pool = Executors.newFixedThreadPool(Math.min(libraries.length, 16));
         List<DownloadTask<Boolean>> tasks = new ArrayList<>(libraries.length);
         for (String library : libraries) {
             tasks.add(makeMavenDownloadTask(baseDir, reposUri, library));
@@ -58,6 +59,8 @@ public class LibraryManager {
                 e.printStackTrace();
             }
         }
+
+        pool.shutdown();
 
         if (failed) {
             throw new RuntimeException("Failed to download one or more essential files for the server, check your logs for more information");
@@ -126,6 +129,8 @@ public class LibraryManager {
                         URI uriPath = repo.resolve(jarRelativeName).normalize();
                         file = uriPath.toURL();
                         HttpURLConnection connection = (HttpURLConnection) file.openConnection();
+                        connection.setConnectTimeout(10000);
+                        connection.setReadTimeout(10000);
                         connection.setRequestMethod("GET");
                         connection.connect();
                         if (connection.getResponseCode() >= 200 || connection.getResponseCode() <= 399) {
