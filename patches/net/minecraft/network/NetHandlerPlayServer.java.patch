@@ -976,7 +976,7 @@
 +            // Spigot Start
 +            if (org.spigotmc.SpigotConfig.logCommands)
 +            {
-+                this.logger.info(event.getPlayer().getName() + " issued server command: " + event.getMessage()); // CraftBukkit
++                this.logger.info("{} issued server command: {}", event.getPlayer().getName(), event.getMessage()); // CraftBukkit
 +            }
 +
 +            // Spigot end
