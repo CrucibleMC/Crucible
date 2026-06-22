@@ -6,6 +6,7 @@ import io.github.cruciblemc.forgegradle.tasks.DeterministicDecompileTask;
 import io.github.cruciblemc.forgegradle.tasks.ExtractS2SRangeTask;
 import io.github.cruciblemc.forgegradle.tasks.UncodeJarTask;
 import io.github.cruciblemc.forgegradle.tasks.dev.GenDevProjectsTask;
+import io.github.cruciblemc.forgegradle.tasks.dev.ModernGenBinaryPatchesTask;
 import io.github.cruciblemc.forgegradle.tasks.dev.ObfuscateTask;
 import io.github.cruciblemc.forgegradle.tasks.dev.SubprojectTask;
 import net.minecraftforge.gradle.common.Constants;
@@ -15,7 +16,6 @@ import net.minecraftforge.gradle.tasks.ProcessJarTask;
 import net.minecraftforge.gradle.tasks.ProcessSrcJarTask;
 import net.minecraftforge.gradle.tasks.RemapSourcesTask;
 import net.minecraftforge.gradle.tasks.abstractutil.ExtractTask;
-import net.minecraftforge.gradle.tasks.dev.GenBinaryPatches;
 import net.minecraftforge.gradle.tasks.dev.GeneratePatches;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
@@ -360,7 +360,7 @@ public class CrucibleDevPlugin extends DevBasePlugin {
       obf.dependsOn("genSrgs", ECLIPSE_CAULDRON_PROJECT + ":jar");
     }
 
-    GenBinaryPatches task3 = makeTask("genBinPatches", GenBinaryPatches.class);
+    ModernGenBinaryPatchesTask task3 = makeTask("genBinPatches", ModernGenBinaryPatchesTask.class);
     {
       task3.setCleanClient(delayedFile(Constants.JAR_CLIENT_FRESH));
       task3.setCleanServer(delayedFile(Constants.JAR_SERVER_FRESH));

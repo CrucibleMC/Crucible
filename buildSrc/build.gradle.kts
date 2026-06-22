@@ -29,6 +29,7 @@ dependencies {
     implementation("com.anatawa12.forge:SpecialSource:1.11.1")
     implementation("org.apache.httpcomponents:httpclient:4.5.14")
     implementation("org.apache.httpcomponents:httpmime:4.5.14")
+    implementation("org.apache.commons:commons-compress:1.27.1")
     implementation("de.oceanlabs.mcp:RetroGuard:3.6.6")
     implementation("de.oceanlabs.mcp:mcinjector:3.2-SNAPSHOT")
     implementation("net.minecraftforge:Srg2Source:4.2.7")

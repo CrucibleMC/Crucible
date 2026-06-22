@@ -46,7 +46,19 @@ public class GenDevProjectsTask extends DefaultTask {
           processResources {
             duplicatesStrategy = DuplicatesStrategy.INCLUDE
           }
-                     
+
+          def pack200StubDir = rootProject.file('src/compileStubs/java')
+          if (JavaVersion.current().isJava9Compatible() && pack200StubDir.isDirectory()) {
+            sourceSets.main.java.srcDir pack200StubDir
+            tasks.withType(JavaCompile).configureEach {
+              options.release = 8
+            }
+            tasks.withType(Jar).configureEach {
+              exclude 'java/util/jar/Pack200.class'
+              exclude 'java/util/jar/Pack200$*.class'
+            }
+          }
+                      
           def links = []
           def dupes = []
           eclipse.project.file.withXml { provider ->

@@ -148,6 +148,25 @@ dependencies {
     "libraries"("net.minecraft:server:1.7.10")
 }
 
+subprojects {
+    val pack200StubDir = rootProject.file("src/compileStubs/java")
+    if (JavaVersion.current().isJava9Compatible && pack200StubDir.isDirectory) {
+        plugins.withId("java") {
+            extensions.configure<SourceSetContainer>("sourceSets") {
+                named("main") {
+                    java.srcDir(pack200StubDir)
+                }
+            }
+            tasks.withType<JavaCompile>().configureEach {
+                options.release.set(8)
+            }
+            tasks.withType<Jar>().configureEach {
+                exclude("java/util/jar/Pack200.class", "java/util/jar/Pack200$*.class")
+            }
+        }
+    }
+}
+
 tasks.register<Jar>("packageJavadoc") {
     dependsOn(":eclipse:cauldron:javadoc")
     archiveClassifier.set("javadoc")
