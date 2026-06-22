@@ -249,7 +249,7 @@ fun gitInfo(key: String): String {
             mapOf(
                 "hash" to runGit("log", "--format=%h", "-n", "1"),
                 "fullHash" to runGit("log", "--format=%H", "-n", "1"),
-                "branch" to runGit("symbolic-ref", "--short", "HEAD"),
+                "branch" to runGit("rev-parse", "--abbrev-ref", "HEAD"),
                 "message" to runGit("log", "--format=%B", "-n", "1")
             )
         } else {
