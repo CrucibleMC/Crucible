@@ -23,16 +23,23 @@ public class Lwjgl3ifyGlue {
         "net.minecraftforge.event.terraingen.InitMapGenEvent$EventType",
         "net.minecraftforge.event.terraingen.OreGenEvent$GenerateMinable$EventType",
         "net.minecraftforge.event.terraingen.DecorateBiomeEvent$Decorate$EventType",
+        "net.minecraftforge.common.BiomeDictionary$Type",
         // From GTNH crashes
         "vswe.stevesfactory.Localization", "vswe.stevesfactory.blocks.ClusterMethodRegistration",
         "vswe.stevesfactory.blocks.ConnectionBlockType", "vswe.stevesfactory.components.ComponentType",
         "vswe.stevesfactory.components.ConnectionSet", "vswe.stevesfactory.components.ConnectionOption",
         "ic2.core.init.InternalName", "gregtech.api.enums.Element", "gregtech.api.enums.OrePrefixes",
-        "net.minecraft.client.audio.MusicTicker$MusicType",
-        "buildcraft.api.transport.IPipeTile.PipeType", "thaumcraft.common.entities.golems.EnumGolemType",
+        "net.minecraft.client.audio.MusicTicker$MusicType", "org.bukkit.Material",
+        "buildcraft.api.transport.IPipeTile$PipeType", "thaumcraft.common.entities.golems.EnumGolemType",
         // Non-GTNH Mods Compat
         // The Lord of the Rings Mod: Legacy
         "net.minecraft.event.HoverEvent$Action",
+        // LotR Addons
+        "lotr.common.fac.LOTRFaction", "lotr.common.quest.LOTRMiniQuestFactory", "lotr.common.world.map.LOTRWaypoint",
+        "lotr.common.world.map.LOTRWaypoint$Region", "lotr.common.world.spawning.LOTRInvasions",
+        "lotr.common.LOTRShields", "lotr.common.LOTRDimension$DimensionRegion",
+        "lotr.common.item.LOTRItemBanner$BannerType", "lotr.common.LOTRAchievement$Category",
+        "lotr.client.gui.LOTRMapLabels",
         // Reika's mods
         "net.minecraft.client.audio.SoundCategory",
         "Reika.RotaryCraft.TileEntities.Processing.TileEntityFuelConverter$Conversions",
@@ -42,18 +49,19 @@ public class Lwjgl3ifyGlue {
         "Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry$Territory",
         "Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry$Life",
         "Reika.DragonAPI.ModInteract.Bees.ButterflyAlleleRegistry$Fertility",
-        "Reika.DragonAPI.ModInteract.Bees.ButterflyAlleleRegistry$Life",
+        "Reika.DragonAPI.ModInteract.Bees.ButterflyAlleleRegistry$Life", "Reika.DragonAPI.ModRegistry.ModCropList",
         // Et Futurum Requiem
         "net.minecraft.world.WorldSettings$GameType",
-        // Minechem
-        "net.minecraftforge.common.BiomeDictionary$Type",
+        "ganymedes01.etfuturum.tileentities.TileEntityBanner$EnumBannerPattern",
+        // EnderIO Addons
+        "crazypants.enderio.ModObject",
         // Bukkit Enums
-        "org.bukkit.Material",
         "org.bukkit.block.Biome",
         "org.bukkit.World$Environment",
         "org.bukkit.WorldType",
         "org.bukkit.entity.EntityType",
         "org.bukkit.event.inventory.InventoryType",
+        //
     };
 
     public static void checkJava() {

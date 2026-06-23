@@ -64,3 +64,4 @@ jobs:
           This is the most up-to-date build available.
         files: |
           build/distributions/*
+          java9args.txt

@@ -1,40 +1,82 @@
 package thermos;
 
 import cpw.mods.fml.common.FMLLog;
+import net.minecraft.launchwrapper.IClassTransformer;
 import org.apache.logging.log4j.Level;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.IntInsnNode;
-import pw.prok.imagine.asm.ImagineASM;
-import pw.prok.imagine.asm.Transformer;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.*;
 
 import static org.objectweb.asm.Opcodes.*;
 
-@Transformer.RegisterTransformer
-public class ThermosClassTransformer implements Transformer {
+public class ThermosClassTransformer implements IClassTransformer {
+    private static final String TARGET_CLASS =
+            "climateControl/utils/ChunkGeneratorExtractor";
+
     @Override
-    public void transform(final ImagineASM asm) {
-        if (asm.is("climateControl.utils.ChunkGeneratorExtractor")) {
-            boolean undergroundBiomesInstalled = false;
-            try {
-                Class.forName("exterminatorJeff.undergroundBiomes.worldGen.ChunkProviderWrapper");
-                undergroundBiomesInstalled = true;
-            } catch (Exception ignored) {
+    public byte[] transform(String name, String transformedName, byte[] basicClass) {
+        if (!TARGET_CLASS.equals(transformedName.replace('.', '/'))) {
+            return basicClass;
+        }
+
+        if (isUndergroundBiomesPresent()) {
+            return basicClass;
+        }
+
+        FMLLog.log(Level.INFO,
+                "Thermos: Patching ChunkGeneratorExtractor for Climate Control compatibility");
+
+        ClassNode cn = new ClassNode();
+        ClassReader cr = new ClassReader(basicClass);
+        cr.accept(cn, 0);
+
+        for (MethodNode mn : cn.methods) {
+            if (mn.name.equals("extractFrom")
+                    && mn.desc.equals("(Lnet/minecraft/world/WorldServer;)Lnet/minecraft/world/chunk/IChunkProvider;")) {
+
+                patchMethod(mn);
+                break;
             }
-            if (!undergroundBiomesInstalled) {
-                FMLLog.log(Level.INFO, "Thermos: Patching " + asm.getActualName() + " for compatibility with Climate Control");
-                extractFrom(asm, asm.method("extractFrom",
-                        "(Lnet/minecraft/world/WorldServer;)Lnet/minecraft/world/chunk/IChunkProvider;").instructions());
-            }
+        }
+
+        ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        cn.accept(cw);
+        return cw.toByteArray();
+    }
+
+    private void patchMethod(MethodNode mn) {
+        mn.instructions.clear();
+
+        boolean obf = isObfuscated();
+
+        String worldClass   = obf ? "ahb" : "net/minecraft/world/World";
+        String fieldName    = obf ? "v"   : "chunkProvider";
+        String fieldDesc    = obf ? "Lapu;" :
+                "Lnet/minecraft/world/chunk/IChunkProvider;";
+
+        InsnList insns = new InsnList();
+        insns.add(new VarInsnNode(ALOAD, 1));
+        insns.add(new FieldInsnNode(GETFIELD, worldClass, fieldName, fieldDesc));
+        insns.add(new InsnNode(ARETURN));
+
+        mn.instructions.add(insns);
+    }
+
+    private boolean isUndergroundBiomesPresent() {
+        try {
+            Class.forName("exterminatorJeff.undergroundBiomes.worldGen.ChunkProviderWrapper");
+            return true;
+        } catch (Throwable ignored) {
+            return false;
         }
     }
 
-    public void extractFrom(ImagineASM asm, InsnList list) {
-        //Pair<String, String> fieldChunkProvider = asm.field("net/minecraft/world/World", "chunkProvider");
-        list.clear();
-        list.add(new IntInsnNode(ALOAD, 1));
-        list.add(new FieldInsnNode(GETFIELD, "ahb", "v", "Lapu;"));
-        list.add(new InsnNode(ARETURN));
+    private boolean isObfuscated() {
+        try {
+            Class.forName("net.minecraft.world.World");
+            return false;
+        } catch (Throwable t) {
+            return true;
+        }
     }
 }

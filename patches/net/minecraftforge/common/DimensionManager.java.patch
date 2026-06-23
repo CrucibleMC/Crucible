@@ -1,14 +1,23 @@
 --- ../src-base/minecraft/net/minecraftforge/common/DimensionManager.java
 +++ ../src-work/minecraft/net/minecraftforge/common/DimensionManager.java
-@@ -11,6 +11,7 @@
+@@ -11,6 +11,8 @@
  import java.util.Map.Entry;
  import java.util.concurrent.ConcurrentMap;
  
 +import io.github.crucible.CrucibleConfigs;
++import io.github.crucible.util.BukkitEnumHelper;
  import org.apache.logging.log4j.Level;
  
  import com.google.common.collect.HashMultiset;
-@@ -34,6 +35,15 @@
+@@ -21,7 +23,6 @@
+ import cpw.mods.fml.common.FMLLog;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.server.MinecraftServer;
+-import net.minecraft.world.MinecraftException;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldManager;
+ import net.minecraft.world.WorldProvider;
+@@ -34,6 +35,14 @@
  import net.minecraft.world.storage.ISaveHandler;
  import net.minecraft.world.storage.SaveHandler;
  import net.minecraftforge.event.world.WorldEvent;
@@ -16,7 +25,6 @@
 +import net.minecraft.server.dedicated.DedicatedServer;
 +import net.minecraft.world.chunk.storage.AnvilSaveHandler;
 +import net.minecraftforge.cauldron.CauldronUtils;
-+import net.minecraftforge.common.util.EnumHelper;
 +import org.bukkit.World.Environment;
 +import org.bukkit.WorldCreator;
 +import org.bukkit.generator.ChunkGenerator;
@@ -24,7 +32,7 @@
  
  public class DimensionManager
  {
-@@ -46,6 +56,11 @@
+@@ -46,6 +55,11 @@
      private static BitSet dimensionMap = new BitSet(Long.SIZE << 4);
      private static ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().<World,World>makeMap();
      private static Multiset<Integer> leakedWorlds = HashMultiset.create();
@@ -36,7 +44,7 @@
  
      public static boolean registerProviderType(int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
      {
-@@ -53,7 +68,23 @@
+@@ -53,7 +67,23 @@
          {
              return false;
          }
@@ -60,7 +68,7 @@
          spawnSettings.put(id, keepLoaded);
          return true;
      }
-@@ -157,28 +188,33 @@
+@@ -157,28 +187,33 @@
  
      public static Integer[] getIDs(boolean check)
      {
@@ -108,7 +116,7 @@
          return getIDs();
      }
      public static Integer[] getIDs()
-@@ -191,12 +227,23 @@
+@@ -191,12 +226,23 @@
          if (world != null)
          {
              worlds.put(id, world);
@@ -133,7 +141,7 @@
              worlds.remove(id);
              MinecraftServer.getServer().worldTickTimes.remove(id);
              FMLLog.info("Unloading dimension %d", id);
-@@ -224,6 +271,7 @@
+@@ -224,6 +270,7 @@
      }
  
      public static void initDimension(int dim) {
@@ -141,7 +149,7 @@
          WorldServer overworld = getWorld(0);
          if (overworld == null)
          {
-@@ -231,6 +279,12 @@
+@@ -231,6 +278,12 @@
          }
          try
          {
@@ -154,7 +162,7 @@
              DimensionManager.getProviderType(dim);
          }
          catch (Exception e)
-@@ -242,9 +296,63 @@
+@@ -242,9 +295,63 @@
          ISaveHandler savehandler = overworld.getSaveHandler();
          WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
  
@@ -219,7 +227,7 @@
          if (!mcServer.isSinglePlayer())
          {
              world.getWorldInfo().setGameType(mcServer.getGameType());
-@@ -253,6 +361,79 @@
+@@ -253,6 +360,79 @@
          mcServer.func_147139_a(mcServer.func_147135_j());
      }
  
@@ -299,7 +307,7 @@
      public static WorldServer getWorld(int id)
      {
          return worlds.get(id);
-@@ -266,7 +447,7 @@
+@@ -266,7 +446,7 @@
      public static boolean shouldLoadSpawn(int dim)
      {
          int id = getProviderType(dim);
@@ -308,7 +316,7 @@
      }
  
      static
-@@ -306,7 +487,8 @@
+@@ -306,7 +486,8 @@
      }
  
      public static void unloadWorld(int id) {
@@ -318,7 +326,7 @@
      }
  
      /*
-@@ -315,26 +497,9 @@
+@@ -315,26 +496,9 @@
      public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes) {
          for (int id : unloadQueue) {
              WorldServer w = worlds.get(id);
@@ -347,7 +355,7 @@
              }
          }
          unloadQueue.clear();
-@@ -425,4 +590,45 @@
+@@ -425,4 +589,45 @@
              return null;
          }
      }
@@ -359,7 +367,7 @@
 +        if (env == null) // Cauldron  if environment not found, register one
 +        {
 +            providerName = providerName.replace("WorldProvider", "");
-+            env = EnumHelper.addBukkitEnvironment(dim, providerName.toUpperCase());
++            env = BukkitEnumHelper.addBukkitEnvironment(dim, providerName.toUpperCase());
 +            Environment.registerEnvironment(env);
 +        }
 +        return env;

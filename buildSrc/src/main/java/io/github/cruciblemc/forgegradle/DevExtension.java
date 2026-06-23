@@ -1,128 +1,84 @@
 package io.github.cruciblemc.forgegradle;
 
-import groovy.lang.Closure;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraftforge.gradle.common.BaseExtension;
 import org.gradle.api.Action;
 import org.gradle.api.Project;
-import org.gradle.util.ClosureBackedAction;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 public class DevExtension extends BaseExtension {
-  private String fmlDir;
-  private String forgeDir;
-  private String bukkitDir;
-  private String mainClass;
-  private String tweakClass;
-  private String[] repos = new String[0];
-  private boolean makeJavadoc = true;
-  private String installerVersion = "null";
-  private Action<Project> subprojects = null;
-  private Action<Project> cleanProject = null;
-  private Action<Project> dirtyProject = null;
+    @Setter
+    private String fmlDir;
+    @Setter
+    private String forgeDir;
+    @Setter
+    private String bukkitDir;
+    @Getter
+    private String mainClass = "";
+    @Getter
+    private String tweakClass = "";
+    @Getter
+    private List<String> repos = new ArrayList<>();
+    @Setter
+    @Getter
+    private boolean makeJavadoc = true;
+    @Setter
+    @Getter
+    private String installerVersion = "null";
 
-  public DevExtension(DevBasePlugin plugin) {
-    super(plugin);
-  }
+    @Setter
+    @Getter
+    private Action<Project> subprojects;
+    @Setter
+    @Getter
+    private Action<Project> cleanProject;
+    @Setter
+    @Getter
+    private Action<Project> dirtyProject;
 
-  public String getFmlDir() {
-    return fmlDir == null ? project.getProjectDir().getPath().replace('\\', '/') : fmlDir.replace('\\', '/');
-  }
+    public DevExtension(DevBasePlugin plugin) {
+        super(plugin);
+    }
 
-  public void setFmlDir(String fmlDir) {
-    this.fmlDir = fmlDir;
-  }
+    public String getFmlDir() {
+        return normalizeOrDefault(fmlDir);
+    }
 
-  public String getForgeDir() {
-    return forgeDir == null ? project.getProjectDir().getPath().replace('\\', '/') : forgeDir.replace('\\', '/');
-  }
+    public String getForgeDir() {
+        return normalizeOrDefault(forgeDir);
+    }
 
-  public void setForgeDir(String forgeDir) {
-    this.forgeDir = forgeDir;
-  }
+    public String getBukkitDir() {
+        return normalizeOrDefault(bukkitDir);
+    }
 
-  public String getBukkitDir() {
-    return bukkitDir == null ? project.getProjectDir().getPath().replace('\\', '/') : bukkitDir.replace('\\', '/');
-  }
+    public void setMainClass(String mainClass) {
+        this.mainClass = mainClass == null ? "" : mainClass;
+    }
 
-  public void setBukkitDir(String bukkitDir) {
-    this.bukkitDir = bukkitDir;
-  }
+    public void setTweakClass(String tweakClass) {
+        this.tweakClass = tweakClass == null ? "" : tweakClass;
+    }
 
-  public String getMainClass() {
-    return mainClass == null ? "" : mainClass;
-  }
+    public void setRepos(List<String> repos) {
+        this.repos = new ArrayList<>(repos);
+    }
 
-  public void setMainClass(String mainClass) {
-    this.mainClass = mainClass;
-  }
+    public void setRepos(String... repos) {
+        this.repos = new ArrayList<>(Arrays.asList(repos));
+    }
 
-  public String getInstallerVersion() {
-    return installerVersion;
-  }
+    // --- Helpers ---
 
-  public void setInstallerVersion(String installerVersion) {
-    this.installerVersion = installerVersion;
-  }
-
-  public String getTweakClass() {
-    return tweakClass == null ? "" : tweakClass;
-  }
-
-  public void setTweakClass(String tweakClass) {
-    this.tweakClass = tweakClass;
-  }
-
-  public Action<Project> getSubprojects() {
-    return subprojects;
-  }
-
-  public void setSubprojects(Action<Project> subprojects) {
-    this.subprojects = subprojects;
-  }
-
-  @SuppressWarnings("rawtypes")
-  public void subprojects(Closure subprojects) {
-    this.subprojects = new ClosureBackedAction<>(subprojects);
-  }
-
-  public Action<Project> getCleanProject() {
-    return cleanProject;
-  }
-
-  public void setCleanProject(Action<Project> cleanProject) {
-    this.cleanProject = cleanProject;
-  }
-
-  @SuppressWarnings("rawtypes")
-  public void cleanProject(Closure subprojects) {
-    this.cleanProject = new ClosureBackedAction<Project>(subprojects);
-  }
-
-  public Action<Project> getDirtyProject() {
-    return dirtyProject;
-  }
-
-  public void setDirtyProject(Action<Project> dirtyProject) {
-    this.dirtyProject = dirtyProject;
-  }
-
-  @SuppressWarnings("rawtypes")
-  public void dirtyProject(Closure subprojects) {
-    this.dirtyProject = new ClosureBackedAction<>(subprojects);
-  }
-
-  public boolean getMakeJavadoc() {
-    return makeJavadoc;
-  }
-
-  public void setMakeJavadoc(boolean makeJavadoc) {
-    this.makeJavadoc = makeJavadoc;
-  }
-
-  public String[] getRepos() {
-    return repos;
-  }
-
-  public void setRepos(String[] repos) {
-    this.repos = repos;
-  }
+    private String normalizeOrDefault(String path) {
+        if (path == null) {
+            return project.getProjectDir().getPath().replace('\\', '/');
+        }
+        return path.replace('\\', '/');
+    }
 }

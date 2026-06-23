@@ -3,7 +3,7 @@ package org.bukkit.craftbukkit.v1_7_R4.entity;
 import net.minecraft.entity.Entity;
 import io.github.crucible.entity.CraftCustomEntity;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.util.EnumHelper;
+import io.github.crucible.util.BukkitEnumHelper;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import org.bukkit.EntityEffect;
 import org.bukkit.Location;
@@ -501,7 +501,7 @@ public abstract class CraftEntity implements org.bukkit.entity.Entity {
             int entityId = getEntityTypeIDfromClass(entityClass);
 
             Class<? extends org.bukkit.entity.Entity> bukkitEntityClass = CraftEntity.getEntityClass(entityClass);
-            EnumHelper.addBukkitEntityType(entityName, bukkitEntityClass, entityId, false);
+            BukkitEnumHelper.addBukkitEntityType(entityName, bukkitEntityClass, entityId, false);
         }
     }
     // Cauldron end

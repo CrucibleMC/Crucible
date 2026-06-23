@@ -15,6 +15,9 @@ public class CrucibleCoremodHook {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        Lwjgl3ifyGlue.doCoremodWork(classLoader);
+        
+        classLoader.registerTransformer("io.github.crucible.patches.RecurrentComplexTransformer");
+        classLoader.registerTransformer("io.github.crucible.patches.StreamsTransformer");
+        classLoader.registerTransformer("thermos.ThermosClassTransformer");
     }
 }
