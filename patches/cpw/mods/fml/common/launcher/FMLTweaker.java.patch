@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/launcher/FMLTweaker.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/launcher/FMLTweaker.java
-@@ -32,7 +32,9 @@
+@@ -32,10 +32,17 @@
          System.setProperty("java.net.preferIPv4Stack", "true"); //Lets do this as early as possible. Vanilla does it in Main.main
          try
          {
@@ -9,5 +9,15 @@
 +        	sm.defman = System.getSecurityManager();
 +            System.setSecurityManager(sm);
          }
++        catch (UnsupportedOperationException uoe)
++        {
++            // Java 24+ (JEP 486) permanently disabled the SecurityManager: System.setSecurityManager()
++            // always throws UnsupportedOperationException. The FML SM only trapped rogue System.exit() and
++            // SM-replacement; neither is essential. Continue without it so the server boots on Java 24+.
++            System.out.println("[Crucible] SecurityManager unavailable (Java 24+/JEP 486); continuing without FML exit-trap.");
++        }
          catch (SecurityException se)
          {
+             throw new RuntimeException("FML was unable to install the security manager. The game will not start", se);
+         }
+     }
