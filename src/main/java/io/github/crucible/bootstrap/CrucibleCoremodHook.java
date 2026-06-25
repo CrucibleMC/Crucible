@@ -19,5 +19,19 @@ public class CrucibleCoremodHook {
         classLoader.registerTransformer("io.github.crucible.patches.RecurrentComplexTransformer");
         classLoader.registerTransformer("io.github.crucible.patches.StreamsTransformer");
         classLoader.registerTransformer("thermos.ThermosClassTransformer");
+
+        // Force-recompute StackMapTables (kept LAST in the transformer chain) so classes left with stale
+        // frames by COMPUTE_MAXS-only coremod/Mixin passes pass the split bytecode verifier. RFB's
+        // rfb-asm-safety plugin only makes getCommonSuperClass safe for transformers that already
+        // recompute; it does NOT force a recompute on e.g. Cauldron's patched ChunkProviderServer
+        // .func_73153_a after a SpongePowered Mixin rewrites it with COMPUTE_MAXS only. Reflectively
+        // loading that class (Dynmap's field scan) then throws
+        // "VerifyError: Expecting a stackmap frame at branch target N". Measured on the lwjgl3ify server
+        // path: the full pack fails this way on every modern JDK tested (21-25); Java 8 is unaffected
+        // because its verifier fails over to the old type-inference verifier for these class files.
+        // Disable with -Dcrucible.frameSafety=false.
+        if (!"false".equalsIgnoreCase(System.getProperty("crucible.frameSafety", "true"))) {
+            classLoader.registerTransformer("io.github.crucible.asm.AsmFrameSafetyTransformer");
+        }
     }
 }
