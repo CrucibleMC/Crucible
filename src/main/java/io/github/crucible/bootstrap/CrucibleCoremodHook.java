@@ -1,6 +1,7 @@
 package io.github.crucible.bootstrap;
 
 import cpw.mods.fml.common.launcher.FMLTweaker;
+import io.github.crucible.CrucibleConfigs;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import java.io.File;
@@ -15,7 +16,7 @@ public class CrucibleCoremodHook {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-        
+
         classLoader.registerTransformer("io.github.crucible.patches.RecurrentComplexTransformer");
         classLoader.registerTransformer("io.github.crucible.patches.StreamsTransformer");
         classLoader.registerTransformer("thermos.ThermosClassTransformer");
@@ -29,8 +30,12 @@ public class CrucibleCoremodHook {
         // "VerifyError: Expecting a stackmap frame at branch target N". Measured on the lwjgl3ify server
         // path: the full pack fails this way on every modern JDK tested (21-25); Java 8 is unaffected
         // because its verifier fails over to the old type-inference verifier for these class files.
-        // Disable with -Dcrucible.frameSafety=false.
-        if (!"false".equalsIgnoreCase(System.getProperty("crucible.frameSafety", "true"))) {
+        // -Dcrucible.frameSafety=true|false overrides the Crucible.yml value when set.
+        String frameSafetyProp = System.getProperty("crucible.frameSafety");
+        boolean frameSafety = frameSafetyProp != null
+            ? !"false".equalsIgnoreCase(frameSafetyProp)
+            : CrucibleConfigs.configs.crucible_asm_frameSafety;
+        if (frameSafety) {
             classLoader.registerTransformer("io.github.crucible.asm.AsmFrameSafetyTransformer");
         }
     }

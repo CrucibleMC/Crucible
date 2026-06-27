@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.crucible.CrucibleConfigs;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 
@@ -46,7 +47,7 @@ public final class AsmFrameSafetyTransformer implements IClassTransformer {
      * to recompute everything, or a custom prefix list to widen (e.g. to a mod package that also breaks).
      */
     private static final String[] SCOPE = parseScope(
-        System.getProperty("crucible.frameSafety.scope", "net.minecraft."));
+        System.getProperty("crucible.frameSafety.scope", CrucibleConfigs.configs.crucible_asm_frameSafetyScope));
 
     private static String[] parseScope(String raw) {
         if (raw == null) return new String[0];
