@@ -30,12 +30,7 @@ public class CrucibleCoremodHook {
         // "VerifyError: Expecting a stackmap frame at branch target N". Measured on the lwjgl3ify server
         // path: the full pack fails this way on every modern JDK tested (21-25); Java 8 is unaffected
         // because its verifier fails over to the old type-inference verifier for these class files.
-        // -Dcrucible.frameSafety=true|false overrides the Crucible.yml value when set.
-        String frameSafetyProp = System.getProperty("crucible.frameSafety");
-        boolean frameSafety = frameSafetyProp != null
-            ? !"false".equalsIgnoreCase(frameSafetyProp)
-            : CrucibleConfigs.configs.crucible_asm_frameSafety;
-        if (frameSafety) {
+        if (CrucibleConfigs.configs.crucible_asm_frameSafety) {
             classLoader.registerTransformer("io.github.crucible.asm.AsmFrameSafetyTransformer");
         }
     }

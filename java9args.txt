@@ -1,5 +1,4 @@
 --illegal-access=warn
--Djava.security.manager=allow
 -Dfile.encoding=UTF-8
 -Dcrucible.weAreJava9=true
 --add-opens

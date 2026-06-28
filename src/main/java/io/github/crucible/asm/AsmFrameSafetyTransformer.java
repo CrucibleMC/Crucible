@@ -43,11 +43,10 @@ public final class AsmFrameSafetyTransformer implements IClassTransformer {
      * Only recompute classes whose (deobf) name starts with one of these comma-separated prefixes —
      * the stale frames the verifier rejects come from COMPUTE_MAXS-only Mixin/coremod passes,
      * which overwhelmingly target {@code net.minecraft.*}. Recomputing every class would needlessly read+
-     * rewrite thousands of mod classes at load time. Set {@code -Dcrucible.frameSafety.scope=all} (or empty)
-     * to recompute everything, or a custom prefix list to widen (e.g. to a mod package that also breaks).
+     * rewrite thousands of mod classes at load time. Configured via {@code crucible.asm.frameSafetyScope}
+     * in Crucible.yml ({@code all} or empty = everything).
      */
-    private static final String[] SCOPE = parseScope(
-        System.getProperty("crucible.frameSafety.scope", CrucibleConfigs.configs.crucible_asm_frameSafetyScope));
+    private static final String[] SCOPE = parseScope(CrucibleConfigs.configs.crucible_asm_frameSafetyScope);
 
     private static String[] parseScope(String raw) {
         if (raw == null) return new String[0];
