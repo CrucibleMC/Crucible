@@ -10,18 +10,18 @@ import com.nothome.delta.Delta;
 import lzma.streams.LzmaOutputStream;
 import net.minecraftforge.gradle.delayed.DelayedFile;
 import net.minecraftforge.gradle.delayed.DelayedFileTree;
-import org.apache.commons.compress.java.util.jar.Pack200;
+import org.apache.commons.compress.harmony.pack200.Archive;
+import org.apache.commons.compress.harmony.pack200.PackingOptions;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,10 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
 import java.util.zip.Adler32;
 import java.util.zip.ZipEntry;
@@ -167,21 +165,25 @@ public class ModernGenBinaryPatchesTask extends DefaultTask {
   }
 
   private byte[] pack200(byte[] data) throws Exception {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    PrintStream err = System.err;
-    try (JarInputStream in = new JarInputStream(new ByteArrayInputStream(data))) {
-      Pack200.Packer packer = Pack200.newPacker();
-      SortedMap<String, String> props = packer.properties();
-      props.put(Pack200.Packer.EFFORT, "9");
-      props.put(Pack200.Packer.KEEP_FILE_ORDER, Pack200.Packer.TRUE);
-      props.put(Pack200.Packer.UNKNOWN_ATTRIBUTE, Pack200.Packer.PASS);
+    Files.createDirectories(getTemporaryDir().toPath());
+    Path tempJar = Files.createTempFile(getTemporaryDir().toPath(), "binpatches", ".jar");
+    try {
+      Files.write(tempJar, data);
 
-      System.setErr(new PrintStream(ByteStreams.nullOutputStream()));
-      packer.pack(in, out);
+      PackingOptions options = new PackingOptions();
+      options.setGzip(false);
+      options.setEffort(9);
+      options.setKeepFileOrder(true);
+      options.setUnknownAttributeAction(PackingOptions.PASS);
+
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      try (JarFile in = new JarFile(tempJar.toFile())) {
+        new Archive(in, out, options).pack();
+      }
+      return out.toByteArray();
     } finally {
-      System.setErr(err);
+      Files.deleteIfExists(tempJar);
     }
-    return out.toByteArray();
   }
 
   private byte[] compress(byte[] data) throws Exception {

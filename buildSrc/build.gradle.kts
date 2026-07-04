@@ -41,12 +41,12 @@ dependencies {
     implementation("com.github.tony19:named-regexp:0.2.3")
 
     // Java 9+ syntax
-    annotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:0.4.2")
-    compileOnly("com.github.bsideup.jabel:jabel-javac-plugin:0.4.2")
+    annotationProcessor("com.pkware.jabel:jabel-javac-plugin:1.0.1-1")
+    compileOnly("com.pkware.jabel:jabel-javac-plugin:1.0.1-1")
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.26")
-    annotationProcessor("org.projectlombok:lombok:1.18.26")
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
 }
 
 tasks.test {
@@ -60,7 +60,7 @@ tasks.named("compileJava").configure {
 
     javaCompiler.set(
             javaToolchains.compilerFor {
-                languageVersion.set(JavaLanguageVersion.of(17))
+                languageVersion.set(JavaLanguageVersion.of(21))
             }
     )
 }
