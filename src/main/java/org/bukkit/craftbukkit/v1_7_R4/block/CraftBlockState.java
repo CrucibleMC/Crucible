@@ -75,6 +75,24 @@ public class CraftBlockState implements BlockState {
         this.createData((byte) blocksnapshot.meta);
     }
 
+    public CraftBlockState(net.minecraft.world.World world, int x, int y, int z, net.minecraft.block.Block block, byte meta, TileEntity te) {
+        this.world = world.getWorld();
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.type = net.minecraft.block.Block.getIdFromBlock(block);
+        this.light = (byte) block.getLightValue();
+        this.chunk = (CraftChunk) this.world.getBlockAt(this.x, this.y, this.z).getChunk();
+        this.flag = 3;
+        if (te != null) {
+            this.nbt = new NBTTagCompound();
+            te.writeToNBT(this.nbt);
+        } else {
+            this.nbt = null;
+        }
+        this.createData(meta);
+    }
+
     public static CraftBlockState getBlockState(net.minecraft.world.World world, int x, int y, int z) {
         return new CraftBlockState(world.getWorld().getBlockAt(x, y, z));
     }
