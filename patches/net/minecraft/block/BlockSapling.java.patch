@@ -29,7 +29,7 @@
      private static final String __OBFID = "CL_00000305";
  
      protected BlockSapling()
-@@ -41,9 +52,32 @@
+@@ -41,9 +52,34 @@
          {
              super.updateTick(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_5_);
  
@@ -38,7 +38,6 @@
              {
 -                this.func_149879_c(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_5_);
 +                // Cauldron start
-+                // If there's no bukkit tree type, changes will be implicitly applied
 +                try (WorldChangeHolder.CaptureContext context = p_149674_1_.worldChangeHolder.startCapture()) {
 +                    this.func_149879_c(p_149674_1_, p_149674_2_, p_149674_3_, p_149674_4_, p_149674_5_);
 +                    context.pauseCapture();
@@ -51,20 +50,23 @@
 +                        context.discardChanges(); // Changes applied through the event and bukkit BlockState
 +                        Location location = new Location(p_149674_1_.getWorld(), p_149674_2_, p_149674_3_, p_149674_4_);
 +
-+                        StructureGrowEvent event = new StructureGrowEvent(location, treeType, false, null, blockstates);;
++                        StructureGrowEvent event = new StructureGrowEvent(location, treeType, false, null, blockstates);
 +                        org.bukkit.Bukkit.getPluginManager().callEvent(event);
 +                        if (!event.isCancelled()) {
 +                            for (BlockState blockstate : blockstates) {
 +                                blockstate.update(true);
 +                            }
 +                        }
++                    } else {
++                        // No bukkit tree type (or nothing captured): apply the captured changes normally.
++                        context.commit();
 +                    }
 +                }
 +                // Cauldron end
              }
          }
      }
-@@ -73,7 +107,20 @@
+@@ -73,7 +109,20 @@
      {
          if (!net.minecraftforge.event.terraingen.TerrainGen.saplingGrowTree(p_149878_1_, p_149878_5_, p_149878_2_, p_149878_3_, p_149878_4_)) return;
          int l = p_149878_1_.getBlockMetadata(p_149878_2_, p_149878_3_, p_149878_4_) & 7;
@@ -86,7 +88,7 @@
          int i1 = 0;
          int j1 = 0;
          boolean flag = false;
-@@ -84,6 +131,7 @@
+@@ -84,6 +133,7 @@
              default:
                  break;
              case 1:
@@ -94,7 +96,7 @@
                  label78:
  
                  for (i1 = 0; i1 >= -1; --i1)
-@@ -108,6 +156,7 @@
+@@ -108,6 +158,7 @@
  
                  break;
              case 2:
@@ -102,7 +104,7 @@
                  object = new WorldGenForest(true, false);
                  break;
              case 3:
-@@ -119,6 +168,7 @@
+@@ -119,6 +170,7 @@
                      {
                          if (this.func_149880_a(p_149878_1_, p_149878_2_ + i1, p_149878_3_, p_149878_4_ + j1, 3) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1 + 1, p_149878_3_, p_149878_4_ + j1, 3) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1, p_149878_3_, p_149878_4_ + j1 + 1, 3) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1 + 1, p_149878_3_, p_149878_4_ + j1 + 1, 3))
                          {
@@ -110,7 +112,7 @@
                              object = new WorldGenMegaJungle(true, 10, 20, 3, 3);
                              flag = true;
                              break label93;
-@@ -130,11 +180,13 @@
+@@ -130,11 +182,13 @@
                  {
                      j1 = 0;
                      i1 = 0;
@@ -124,7 +126,7 @@
                  object = new WorldGenSavannaTree(true);
                  break;
              case 5:
-@@ -147,6 +199,7 @@
+@@ -147,6 +201,7 @@
                          if (this.func_149880_a(p_149878_1_, p_149878_2_ + i1, p_149878_3_, p_149878_4_ + j1, 5) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1 + 1, p_149878_3_, p_149878_4_ + j1, 5) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1, p_149878_3_, p_149878_4_ + j1 + 1, 5) && this.func_149880_a(p_149878_1_, p_149878_2_ + i1 + 1, p_149878_3_, p_149878_4_ + j1 + 1, 5))
                          {
                              object = new WorldGenCanopyTree(true);

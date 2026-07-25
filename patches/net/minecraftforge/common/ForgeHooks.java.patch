@@ -74,7 +74,7 @@
          {
              // Let the client know the block still exists
              entityPlayer.playerNetServerHandler.sendPacket(new S23PacketBlockChange(x, y, z, world));
-@@ -500,81 +514,150 @@
+@@ -500,81 +514,164 @@
          if (!(itemstack.getItem() instanceof ItemBucket)) // if not bucket
          {
              world.captureBlockSnapshots = true;
@@ -94,23 +94,39 @@
 +            
          }
  
-+        ItemStack.currentPlayer = player; // Cauldron
-         boolean flag = itemstack.getItem().onItemUse(itemstack, player, world, x, y, z, side, hitX, hitY, hitZ);
-+        ItemStack.currentPlayer = null; // Cauldron
-         world.captureBlockSnapshots = false;
+-        boolean flag = itemstack.getItem().onItemUse(itemstack, player, world, x, y, z, side, hitX, hitY, hitZ);
+-        world.captureBlockSnapshots = false;
 -
 -        if (flag)
-+        world.worldChangeHolder.transferToForgeBlockSnapshot(); // Crucible - Not touching this whole method now, keep compatibility.
-+        if(!world.captureAndProxyBlocks) // Thermos stop capturing item drops to the world
-+        	world.captureItemDrops = false;
-+        // Cauldron start
-+        if (flag && world.captureAndProxyBlocks && !world.capturedBlockSnapshots.isEmpty())
++        ItemStack.currentPlayer = player; // Cauldron
++        // Crucible start - remember whether we were proxying; the capture flags are reset in the finally below so an
++        // exception thrown by onItemUse can never leave the world stuck in capture mode.
++        boolean proxying = world.captureAndProxyBlocks;
++        boolean flag;
++        try
          {
 -            // save new item data
 -            int newMeta = itemstack.getItemDamage();
 -            int newSize = itemstack.stackSize;
 -            NBTTagCompound newNBT = null;
 -            if (itemstack.getTagCompound() != null)
++            flag = itemstack.getItem().onItemUse(itemstack, player, world, x, y, z, side, hitX, hitY, hitZ);
++            world.captureBlockSnapshots = false;
++            world.worldChangeHolder.transferToForgeBlockSnapshot(); // Not touching this whole method now, keep compatibility.
++        }
++        finally
++        {
++            ItemStack.currentPlayer = null; // Cauldron
++            world.captureBlockSnapshots = false;
++            world.captureAndProxyBlocks = false;
++            if (!proxying) // Thermos stop capturing item drops to the world
++                world.captureItemDrops = false;
++            world.worldChangeHolder.discardChanges();
++        }
++        // Crucible end
++        // Cauldron start
++        if (flag && proxying && !world.capturedBlockSnapshots.isEmpty())
++        {
 +            world.captureAndProxyBlocks = false;
 +            Location loc = new Location(world.getWorld(), (double) x, (double) y, (double) z);
 +            TreeType type = net.minecraft.block.BlockSapling.treeType;

@@ -1248,12 +1248,12 @@
              TileEntity tileentity1;
  
 +            // Crucible start - tree generation
-+            if (this.worldChangeHolder.isCapturing())
++            // When a position is captured its tile is should be returned mid-capture, even when it is null (block has no tile).
++            // Returning the chunk's pre-capture tile here would hand generators a stale tile the capture already overwrote
++            // and result in a crash if a generator is expecting a tile entity to already be present.
++            if (this.worldChangeHolder.isCapturing() && this.worldChangeHolder.isCaptured(p_147438_1_, p_147438_2_, p_147438_3_))
 +            {
-+                tileentity = this.worldChangeHolder.getTileEntity(p_147438_1_, p_147438_2_, p_147438_3_);
-+                if (tileentity != null) {
-+                    return tileentity;
-+                }
++                return this.worldChangeHolder.getTileEntity(p_147438_1_, p_147438_2_, p_147438_3_);
 +            }
 +            // Crucible end
 +

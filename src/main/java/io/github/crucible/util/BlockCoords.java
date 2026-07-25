@@ -19,7 +19,7 @@ public class BlockCoords {
         this.y = y;
         this.z = z;
 
-        key = ((long) y << 56) | (((long) z & 0xFFFFFFF) << 28) | (x & 0xFFFFFFF);
+        key = asLong(x, y, z);
         hash = Long.hashCode(key);
     }
 

@@ -2,7 +2,6 @@ package org.bukkit.craftbukkit.v1_7_R4.block;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.BlockSnapshot;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
