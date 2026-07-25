@@ -186,6 +186,20 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Prevents grass tick from loading Chunks!")
     public boolean crucible_noGrassChunkLoading = true;
 
+    @Comments({"Recompute stale StackMapTables as the last transform step so Mixin-heavy packs verify",
+            "on modern JDKs (Java 21+). COMPUTE_MAXS-only coremod/Mixin passes can leave frames the",
+            "split verifier rejects (VerifyError: Expecting a stackmap frame at branch target N).",
+            "Safe to leave on; only Java 8 (old type-inference verifier) does not need it.",
+            "The -Dcrucible.frameSafety=true|false system property overrides this if set."})
+    public boolean crucible_asm_frameSafety = true;
+
+    @Comments({"Only recompute classes whose deobf name starts with one of these comma-separated",
+            "prefixes. The stale frames come from passes that target net.minecraft.*, so that is the",
+            "default; recomputing everything would needlessly rewrite thousands of mod classes at load.",
+            "Use 'all' (or empty) to recompute every class, or add prefixes to widen to a mod package.",
+            "The -Dcrucible.frameSafety.scope=... system property overrides this if set."})
+    public String crucible_asm_frameSafetyScope = "net.minecraft.";
+
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
 

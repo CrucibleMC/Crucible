@@ -17,7 +17,7 @@ Advantages over Thermos:
 + Performance improvements
 + Updated libraries for newer plugin support
 * Implemented TimingsV2
-* Java 8–21 supported (using an integrated version of [lwjgl3ify](https://github.com/GTNewHorizons/lwjgl3ify))
+* Java 8–25 supported (using an integrated version of [lwjgl3ify](https://github.com/GTNewHorizons/lwjgl3ify))
 + Backported Bukkit APIs (With some APIs requiring the companion mod [NecroTempus](https://github.com/CrucibleMC/NecroTempus))
 + You can see more changes in the [releases](https://github.com/CrucibleMC/Crucible/releases) changelog.
 
