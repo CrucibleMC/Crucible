@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/org/bukkit/command/SimpleCommandMap.java
 +++ ../src-work/minecraft/org/bukkit/command/SimpleCommandMap.java
-@@ -35,7 +35,7 @@
+@@ -11,6 +11,7 @@
+ import java.util.Map;
+ import java.util.regex.Pattern;
+ 
++import io.github.crucible.command.CommandRegistrationFilter;
+ import org.apache.commons.lang.Validate;
+ import org.bukkit.Server;
+ import org.bukkit.command.defaults.*;
+@@ -35,7 +36,7 @@
          register("bukkit", new VersionCommand("version"));
          register("bukkit", new ReloadCommand("reload"));
          register("bukkit", new PluginsCommand("plugins"));
@@ -9,7 +17,7 @@
      }
  
      public void setFallbackCommands() {
-@@ -100,6 +100,7 @@
+@@ -100,6 +101,7 @@
       * {@inheritDoc}
       */
      public boolean register(String label, String fallbackPrefix, Command command) {
@@ -17,7 +25,19 @@
          label = label.toLowerCase().trim();
          fallbackPrefix = fallbackPrefix.toLowerCase().trim();
          boolean registered = register(label, command, false, fallbackPrefix);
-@@ -167,17 +168,25 @@
+@@ -135,6 +137,11 @@
+      */
+     private synchronized boolean register(String label, Command command, boolean isAlias, String fallbackPrefix) {
+         knownCommands.put(fallbackPrefix + ":" + label, command);
++        // Crucible start - leave the bare name free when the config asks for it, keeping owner:label reachable
++        if (CommandRegistrationFilter.isBlocked(fallbackPrefix, label, command)) {
++            return false;
++        }
++        // Crucible end
+         if ((command instanceof VanillaCommand || isAlias) && knownCommands.containsKey(label)) {
+             // Request is for an alias/fallback command and it conflicts with
+             // a existing command or previous alias ignore it
+@@ -167,17 +174,25 @@
          if (args.length == 0) {
              return false;
          }

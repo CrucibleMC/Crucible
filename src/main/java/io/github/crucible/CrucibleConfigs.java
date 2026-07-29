@@ -186,6 +186,21 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Prevents grass tick from loading Chunks!")
     public boolean crucible_noGrassChunkLoading = true;
 
+    @Comments({
+            "Command names Crucible must not allow to be registered.",
+            "Accepted forms Examples:",
+            " - 'msg'               blocks that name '/msg' no matter who owns it",
+            " - 'bukkit:msg'        blocks a single owner. Owner is 'bukkit' for Bukkit's own commands",
+            " - 'modid:mod_command' is that same form aimed at a mod, so mod commands can be disabled",
+            " - 'essentials:msg'    is that same form aimed at a plugin, so plugin commands can be disabled",
+            " - 'bukkit:*'          blocks every command of that owner, 'pluginid:*', 'modid:*' every command of that owner",
+            "Blocking a command's own name also drops its aliases, while blocking an alias keeps the",
+            "rest of the command. So 'bukkit:tell' removes /tell, /w and /msg, and 'bukkit:msg' removes",
+            "only /msg. The 'owner:command' form stays registered either way.",
+            "A plugin's own command can be blocked too, but expect that plugin to break without it."
+    })
+    public List<String> crucible_commands_unregister = Collections.emptyList();
+
     @Comment("Let timings be turned on since the server statup!")
     public boolean timings_enabledSinceServerStartup = false;
 
