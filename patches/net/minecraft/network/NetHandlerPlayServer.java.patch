@@ -959,7 +959,7 @@
 +        	int ind = p_147361_1_.indexOf(':');
 +        	int spc = p_147361_1_.indexOf(' ');
 +        	if (ind != -1 && ( ind < spc || spc == -1))
-+        		p_147361_1_ = "/" + p_147361_1_.substring(ind);
++        		p_147361_1_ = "/" + p_147361_1_.substring(ind + 1);
 +        }        
 +        
 +        PlayerCommandPreprocessEvent event = new PlayerCommandPreprocessEvent(player, p_147361_1_, new LazyPlayerSet());
