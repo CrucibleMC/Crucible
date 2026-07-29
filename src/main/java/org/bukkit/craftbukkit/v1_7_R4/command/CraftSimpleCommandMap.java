@@ -39,6 +39,10 @@ public class CraftSimpleCommandMap extends SimpleCommandMap {
             // Cauldron start - if command is a mod command, check permissions and route through vanilla
             if (target instanceof ModCustomCommand) {
                 if (!target.testPermission(sender)) return true;
+                // Crucible - the vanilla handler only knows bare names, so drop the modid: namespace
+                if (sentCommandLabel.indexOf(':') >= 0) {
+                    commandLine = target.getName() + commandLine.substring(args[0].length());
+                }
                 if (sender instanceof ConsoleCommandSender) {
                     FMLCommonHandler.instance().getMinecraftServerInstance().getCommandManager().executeCommand(this.vanillaConsoleSender, commandLine);
                 } else

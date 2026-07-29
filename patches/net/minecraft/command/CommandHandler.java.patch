@@ -1,18 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
-@@ -16,6 +16,11 @@
+@@ -16,6 +16,12 @@
  
  import net.minecraftforge.common.MinecraftForge;
  import net.minecraftforge.event.CommandEvent;
 +// Cauldron start
 +import org.bukkit.craftbukkit.v1_7_R4.command.CraftSimpleCommandMap;
 +import org.bukkit.craftbukkit.v1_7_R4.command.ModCustomCommand;
++import io.github.crucible.command.ModCommandNamespace;
 +import cpw.mods.fml.common.FMLCommonHandler;
 +// Cauldron end
  
  public class CommandHandler implements ICommandManager
  {
-@@ -48,7 +53,7 @@
+@@ -48,7 +54,7 @@
                  throw new CommandNotFoundException();
              }
  
@@ -21,7 +22,7 @@
              {
                  CommandEvent event = new CommandEvent(icommand, p_71556_1_, astring);
                  if (MinecraftForge.EVENT_BUS.post(event))
-@@ -134,11 +139,30 @@
+@@ -134,11 +140,31 @@
  
      public ICommand registerCommand(ICommand p_71560_1_)
      {
@@ -48,14 +49,15 @@
 +        customCommand.setPermission(permissionNode);
          if (list != null)
 +            customCommand.setAliases(list);
-+        commandMap.register(par1ICommand.getCommandName(), customCommand);
-+        LogManager.getLogger().info("Registered command " + par1ICommand.getCommandName() + " with permission node " + permissionNode);
++        String namespace = ModCommandNamespace.current(); // Crucible - file the command under its owner instead of its own name
++        commandMap.register(namespace, customCommand);
++        LogManager.getLogger().info("Registered command " + namespace + ":" + par1ICommand.getCommandName() + " with permission node " + permissionNode);
 +
 +        if (list != null)
          {
              Iterator iterator = list.iterator();
  
-@@ -149,13 +173,14 @@
+@@ -149,13 +175,14 @@
  
                  if (icommand1 == null || !icommand1.getCommandName().equals(s))
                  {
