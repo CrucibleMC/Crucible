@@ -64,7 +64,7 @@
 -            {
 -                clearRegionFileReferences();
 -            }
-+			if (REGIONS_BY_FILE.size() >= 256)
++			if (REGIONS_BY_FILE.size() >= CrucibleConfigs.configs.crucible_chunkCacheSize)
 +			{
 +				deleteOldestReference();
 +			}
@@ -91,16 +91,7 @@
 +	// This is a key part of ensuring that the chunk existence thread can complete its necessary tasks
 +	public static synchronized void deleteOldestReference()
 +	{
-+		long oldest = System.currentTimeMillis();
-+		File toJunk = null;
-+		for (Map.Entry<File,RegionFile> entry :REGIONS_BY_FILE.entrySet())
-+		{
-+			if(entry.getKey().lastModified() < oldest)
-+			{
-+				oldest = entry.getKey().lastModified();
-+				toJunk = entry.getKey();
-+			}
-+		}
++		File toJunk = REGIONS_BY_FILE.isEmpty() ? null : REGIONS_BY_FILE.keySet().iterator().next();
 +		if(toJunk != null)
 +		{
 +			try
@@ -178,9 +169,9 @@
 +		}
 +		else if (file1.exists() && file2.exists())
 +		{
-+			if (REGIONS_BY_FILE.size() >= 256)
++			if (REGIONS_BY_FILE.size() >= CrucibleConfigs.configs.crucible_chunkCacheSize)
 +			{
-+				clearRegionFileReferences();
++				deleteOldestReference();
 +			}
 +
 +			RegionFile regionfile1 = new RegionFile(file2);
