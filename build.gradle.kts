@@ -106,7 +106,7 @@ dependencies {
     "libraries"("javax.servlet:javax.servlet-api:4.0.1")
     "libraries"("com.sun.xml.bind:jaxb-impl:3.0.2")
     "libraries"("org.openjdk.nashorn:nashorn-core:15.4")
-    "libraries"("it.unimi.dsi:fastutil:8.5.12")
+    "libraries"("it.unimi.dsi:fastutil:8.5.18")
 
     // Other libs
     "libraries"("commons-cli:commons-cli:1.3@jar")
