@@ -412,9 +412,6 @@
  
 -                    try
 +                    worldserver.saveAllChunks(true, (IProgressUpdate) null);
-+                    worldserver.timings.worldIOFlush.startTiming();
-+                    worldserver.flush();
-+                    worldserver.timings.worldIOFlush.stopTiming();
 +                    WorldSaveEvent event = new WorldSaveEvent(worldserver.getWorld());
 +                    this.server.getPluginManager().callEvent(event);
 +                    // Cauldron start - save world configs
