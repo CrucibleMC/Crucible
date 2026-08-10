@@ -29,6 +29,7 @@ dependencies {
     implementation("com.anatawa12.forge:SpecialSource:1.11.1")
     implementation("org.apache.httpcomponents:httpclient:4.5.14")
     implementation("org.apache.httpcomponents:httpmime:4.5.14")
+    implementation("org.apache.commons:commons-compress:1.27.1")
     implementation("de.oceanlabs.mcp:RetroGuard:3.6.6")
     implementation("de.oceanlabs.mcp:mcinjector:3.2-SNAPSHOT")
     implementation("net.minecraftforge:Srg2Source:4.2.7")
@@ -40,12 +41,12 @@ dependencies {
     implementation("com.github.tony19:named-regexp:0.2.3")
 
     // Java 9+ syntax
-    annotationProcessor("com.github.bsideup.jabel:jabel-javac-plugin:0.4.2")
-    compileOnly("com.github.bsideup.jabel:jabel-javac-plugin:0.4.2")
+    annotationProcessor("com.pkware.jabel:jabel-javac-plugin:1.0.1-1")
+    compileOnly("com.pkware.jabel:jabel-javac-plugin:1.0.1-1")
 
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.26")
-    annotationProcessor("org.projectlombok:lombok:1.18.26")
+    compileOnly("org.projectlombok:lombok:1.18.46")
+    annotationProcessor("org.projectlombok:lombok:1.18.46")
 }
 
 tasks.test {
@@ -59,7 +60,7 @@ tasks.named("compileJava").configure {
 
     javaCompiler.set(
             javaToolchains.compilerFor {
-                languageVersion.set(JavaLanguageVersion.of(17))
+                languageVersion.set(JavaLanguageVersion.of(21))
             }
     )
 }
