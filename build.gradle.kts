@@ -214,14 +214,19 @@ tasks.register<Zip>("packageLibraries") {
 
     outputs.upToDateWhen { false }
 
-    from(configurations.named("libraries").get().resolvedConfiguration.resolvedArtifacts.map { art ->
+    // Laid out exactly like generateClasspath(), because that is what reads it back: the server
+    // jar's own Class-Path resolves every library at
+    // libraries/<group as path>/<name>/<version>/<name>-<version>.jar, relative to the server
+    // directory. A flat archive resolves none of them, so the offline case this task exists to
+    // cover ends with the server on an empty classpath, dying on the first class a library owns.
+    configurations["libraries"].resolvedConfiguration.resolvedArtifacts.forEach { art ->
         val id = art.moduleVersion.id
-        val intoPath = "${id.group.replace('.', '/')}/${id.name}/${id.version}/"
-        zipTree(art.file).matching { }.let { copySpec ->
-            //copySpec.into(intoPath)
+        from(art.file) {
+            into("libraries/${id.group.replace('.', '/')}/${id.name}/${id.version}")
+            // A published file name can carry a classifier; the Class-Path entry never does.
+            rename { "${id.name}-${id.version}.jar" }
         }
-        art.file
-    })
+    }
 
     group = "crucible"
     description = "Package all necessary libraries to run Crucible, in case the server cannot download them at runtime"
