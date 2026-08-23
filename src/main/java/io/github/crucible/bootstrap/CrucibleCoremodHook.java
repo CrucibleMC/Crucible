@@ -16,7 +16,6 @@ public class CrucibleCoremodHook {
             throw new RuntimeException(e);
         }
         
-        classLoader.registerTransformer("io.github.crucible.patches.RecurrentComplexTransformer");
         classLoader.registerTransformer("io.github.crucible.patches.StreamsTransformer");
         classLoader.registerTransformer("thermos.ThermosClassTransformer");
     }
