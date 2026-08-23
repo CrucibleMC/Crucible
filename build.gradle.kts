@@ -221,6 +221,10 @@ tasks.register<Zip>("packageLibraries") {
     archiveFileName.set("libraries.zip")
     destinationDirectory.set(layout.buildDirectory.dir("distributions"))
 
+    // cleanPackages empties build/distributions and nothing else orders the two, so without this
+    // the archive can be written first and then deleted.
+    mustRunAfter("cleanPackages")
+
     outputs.upToDateWhen { false }
 
     // Laid out exactly like generateClasspath(), because that is what reads it back: the server
@@ -239,6 +243,11 @@ tasks.register<Zip>("packageLibraries") {
 
     group = "crucible"
     description = "Package all necessary libraries to run Crucible, in case the server cannot download them at runtime"
+}
+
+// The offline archive is only useful next to the jar it was built from, so it ships with it.
+tasks.named("buildPackages").configure {
+    dependsOn("packageLibraries")
 }
 
 publishing {
