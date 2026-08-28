@@ -1,5 +1,6 @@
 package org.spigotmc;
 
+import io.github.crucible.CrucibleConfigs;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -239,6 +240,17 @@ public class SpigotWorldConfig {
     private void bulkChunkCount() {
         maxBulkChunk = getInt("max-bulk-chunks", 5);
         log("Sending up to " + maxBulkChunk + " chunks per packet");
+
+        int perTick = CrucibleConfigs.configs.crucible_optimization_maxChunkSendsPerTick;
+
+        if (maxBulkChunk > perTick) {
+            // Not log(): that one is gated behind spigot.yml's 'verbose', which is off by default,
+            // and a server that raised max-bulk-chunks to stream faster is exactly the one that
+            // needs to hear it now sizes the packet and no longer the tick.
+            Bukkit.getLogger().warning("max-bulk-chunks is " + maxBulkChunk + " but only " + perTick
+                    + " chunks leave per tick: that setting now sizes the packet, so raise"
+                    + " crucible.optimization.maxChunkSendsPerTick to stream more than " + perTick);
+        }
     }
 
     private void maxEntityCollision() {

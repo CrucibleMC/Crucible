@@ -13,10 +13,12 @@
  import java.util.Collection;
  import java.util.HashSet;
  import java.util.Iterator;
-@@ -106,24 +106,39 @@
+@@ -106,24 +106,41 @@
  import net.minecraftforge.event.entity.player.PlayerDropsEvent;
  import net.minecraftforge.event.world.ChunkWatchEvent;
  
++import io.github.crucible.CrucibleConfigs;
++
 +// CraftBukkit start
 +import net.minecraft.util.CombatTracker;
 +import net.minecraft.util.FoodStats;
@@ -57,7 +59,7 @@
      private EntityPlayer.EnumChatVisibility chatVisibility;
      private boolean chatColours = true;
      private long field_143005_bX = System.currentTimeMillis();
-@@ -131,6 +146,42 @@
+@@ -131,6 +148,42 @@
      public boolean isChangingQuantityOnly;
      public int ping;
      public boolean playerConqueredTheEnd;
@@ -100,7 +102,7 @@
      private static final String __OBFID = "CL_00001440";
  
      public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, ItemInWorldManager p_i45285_4_)
-@@ -153,6 +204,16 @@
+@@ -153,6 +206,16 @@
          {
              this.setPosition(this.posX, this.posY + 1.0D, this.posZ);
          }
@@ -117,7 +119,7 @@
      }
  
      public void readEntityFromNBT(NBTTagCompound p_70037_1_)
-@@ -170,14 +231,57 @@
+@@ -170,14 +233,57 @@
                  this.theItemInWorldManager.setGameType(WorldSettings.GameType.getByID(p_70037_1_.getInteger("playerGameType")));
              }
          }
@@ -175,21 +177,40 @@
      public void addExperienceLevel(int p_82242_1_)
      {
          super.addExperienceLevel(p_82242_1_);
-@@ -240,7 +344,7 @@
-             ArrayList arraylist1 = new ArrayList();
-             Chunk chunk;
+@@ -235,12 +341,16 @@
+ 
+         if (!this.loadedChunks.isEmpty())
+         {
+-            ArrayList arraylist = new ArrayList();
++            // Crucible start - stream several bulk packets per tick instead of a single one.
++            // A zero or negative packet size would make the slicing loop below spin forever.
++            final int chunksPerPacket = Math.max(1, this.worldObj.getSpigotConfig().maxBulkChunk);   // Spigot // Cauldron
++            final int chunksPerTick = Math.max(1, CrucibleConfigs.configs.crucible_optimization_maxChunkSendsPerTick);
++            ArrayList chunkSendBatch = new ArrayList(chunksPerTick);
++            ArrayList chunkSendTileEntities = new ArrayList();
++
+             Iterator iterator1 = this.loadedChunks.iterator();
+-            ArrayList arraylist1 = new ArrayList();
+-            Chunk chunk;
  
 -            while (iterator1.hasNext() && arraylist.size() < S26PacketMapChunkBulk.func_149258_c())
-+            while (iterator1.hasNext() && arraylist.size() < this.worldObj.getSpigotConfig().maxBulkChunk)   // Spigot // Cauldron
++            while (iterator1.hasNext() && chunkSendBatch.size() < chunksPerTick)
              {
                  ChunkCoordIntPair chunkcoordintpair = (ChunkCoordIntPair)iterator1.next();
  
-@@ -253,8 +357,17 @@
+@@ -248,13 +358,22 @@
+                 {
+                     if (this.worldObj.blockExists(chunkcoordintpair.chunkXPos << 4, 0, chunkcoordintpair.chunkZPos << 4))
+                     {
+-                        chunk = this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
++                        Chunk chunk = this.worldObj.getChunkFromChunkCoords(chunkcoordintpair.chunkXPos, chunkcoordintpair.chunkZPos);
+ 
                          if (chunk.func_150802_k())
                          {
-                             arraylist.add(chunk);
+-                            arraylist.add(chunk);
 -                            arraylist1.addAll(((WorldServer)this.worldObj).func_147486_a(chunkcoordintpair.chunkXPos * 16, 0, chunkcoordintpair.chunkZPos * 16, chunkcoordintpair.chunkXPos * 16 + 15, 256, chunkcoordintpair.chunkZPos * 16 + 15));
 -                            //BugFix: 16 makes it load an extra chunk, which isn't associated with a player, which makes it not unload unless a player walks near it.
++                            chunkSendBatch.add(chunk);
 +
 +                            // CraftBukkit - Get tile entities directly from the chunk instead of the world
 +                            for (Object te : chunk.chunkTileEntityMap.values())
@@ -197,14 +218,57 @@
 +                                // The chunk map keeps invalidated entries until the world tick sweeps them.
 +                                if (!((TileEntity)te).isInvalid())
 +                                {
-+                                    arraylist1.add(te);
++                                    chunkSendTileEntities.add(te);
 +                                }
 +                            }
 +
                              iterator1.remove();
                          }
                      }
-@@ -297,9 +410,16 @@
+@@ -265,26 +384,26 @@
+                 }
+             }
+ 
+-            if (!arraylist.isEmpty())
++            // The slicing loop sits here, after the walk, and not inside it: a ChunkWatchEvent
++            // listener that queues another chunk would land on the iterator still being walked.
++            for (int from = 0; from < chunkSendBatch.size(); from += chunksPerPacket)
+             {
+-                this.playerNetServerHandler.sendPacket(new S26PacketMapChunkBulk(arraylist));
+-                Iterator iterator2 = arraylist1.iterator();
++                int to = Math.min(from + chunksPerPacket, chunkSendBatch.size());
++                this.playerNetServerHandler.sendPacket(new S26PacketMapChunkBulk(chunkSendBatch.subList(from, to)));
++            }
+ 
+-                while (iterator2.hasNext())
+-                {
+-                    TileEntity tileentity = (TileEntity)iterator2.next();
+-                    this.func_147097_b(tileentity);
+-                }
++            for (int i = 0; i < chunkSendTileEntities.size(); ++i)
++            {
++                this.func_147097_b((TileEntity)chunkSendTileEntities.get(i));
++            }
+ 
+-                iterator2 = arraylist.iterator();
+-
+-                while (iterator2.hasNext())
+-                {
+-                    chunk = (Chunk)iterator2.next();
+-                    this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
+-                    MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(chunk.getChunkCoordIntPair(), this));
+-                }
++            for (int i = 0; i < chunkSendBatch.size(); ++i)
++            {
++                Chunk chunk = (Chunk)chunkSendBatch.get(i);
++                this.getServerForPlayer().getEntityTracker().func_85172_a(this, chunk);
++                MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(chunk.getChunkCoordIntPair(), this));
+             }
++            // Crucible end
+         }
+     }
+ 
+@@ -297,9 +416,16 @@
              for (int i = 0; i < this.inventory.getSizeInventory(); ++i)
              {
                  ItemStack itemstack = this.inventory.getStackInSlot(i);
@@ -223,7 +287,7 @@
                      Packet packet = ((ItemMapBase)itemstack.getItem()).func_150911_c(itemstack, this.worldObj, this);
  
                      if (packet != null)
-@@ -309,9 +429,10 @@
+@@ -309,9 +435,10 @@
                  }
              }
  
@@ -235,7 +299,7 @@
                  this.lastHealth = this.getHealth();
                  this.lastFoodLevel = this.foodStats.getFoodLevel();
                  this.wasHungry = this.foodStats.getSaturationLevel() == 0.0F;
-@@ -320,16 +441,18 @@
+@@ -320,16 +447,18 @@
              if (this.getHealth() + this.getAbsorptionAmount() != this.field_130068_bO)
              {
                  this.field_130068_bO = this.getHealth() + this.getAbsorptionAmount();
@@ -261,7 +325,7 @@
              if (this.experienceTotal != this.lastExperience)
              {
                  this.lastExperience = this.experienceTotal;
-@@ -340,6 +463,20 @@
+@@ -340,6 +469,20 @@
              {
                  this.func_147098_j();
              }
@@ -282,7 +346,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -400,36 +537,85 @@
+@@ -400,36 +543,85 @@
          }
      }
  
@@ -377,7 +441,7 @@
              score.func_96648_a();
          }
  
-@@ -495,7 +681,8 @@
+@@ -495,7 +687,8 @@
  
      public boolean canAttackPlayer(EntityPlayer p_96122_1_)
      {
@@ -387,7 +451,7 @@
      }
  
      public void travelToDimension(int p_71027_1_)
-@@ -526,7 +713,10 @@
+@@ -526,7 +719,10 @@
                  this.triggerAchievement(AchievementList.portal);
              }
  
@@ -399,7 +463,7 @@
              this.lastExperience = -1;
              this.lastHealth = -1.0F;
              this.lastFoodLevel = -1;
-@@ -569,6 +759,11 @@
+@@ -569,6 +765,11 @@
  
      public void wakeUpPlayer(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_)
      {
@@ -411,7 +475,7 @@
          if (this.isPlayerSleeping())
          {
              this.getServerForPlayer().getEntityTracker().func_151248_b(this, new S0BPacketAnimation(this, 2));
-@@ -584,11 +779,27 @@
+@@ -584,11 +785,27 @@
  
      public void mountEntity(Entity p_70078_1_)
      {
@@ -442,7 +506,7 @@
      protected void updateFallState(double p_70064_1_, boolean p_70064_3_) {}
  
      public void handleFalling(double p_71122_1_, boolean p_71122_3_)
-@@ -610,29 +821,64 @@
+@@ -610,29 +827,64 @@
          this.currentWindowId = this.currentWindowId % 100 + 1;
      }
  
@@ -510,7 +574,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -644,71 +890,150 @@
+@@ -644,71 +896,150 @@
              this.closeScreen();
          }
  
@@ -669,7 +733,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
          InventoryMerchant inventorymerchant = ((ContainerMerchant)this.openContainer).getMerchantInventory();
-@@ -725,7 +1050,7 @@
+@@ -725,7 +1056,7 @@
                  merchantrecipelist.func_151391_a(packetbuffer);
                  this.playerNetServerHandler.sendPacket(new S3FPacketCustomPayload("MC|TrList", packetbuffer));
              }
@@ -678,7 +742,7 @@
              {
                  logger.error("Couldn\'t send trade list", ioexception);
              }
-@@ -738,6 +1063,17 @@
+@@ -738,6 +1069,17 @@
  
      public void displayGUIHorse(EntityHorse p_110298_1_, IInventory p_110298_2_)
      {
@@ -696,7 +760,7 @@
          if (this.openContainer != this.inventoryContainer)
          {
              this.closeScreen();
-@@ -745,7 +1081,7 @@
+@@ -745,7 +1087,7 @@
  
          this.getNextWindowId();
          this.playerNetServerHandler.sendPacket(new S2DPacketOpenWindow(this.currentWindowId, 11, p_110298_2_.getInventoryName(), p_110298_2_.getSizeInventory(), p_110298_2_.hasCustomInventoryName(), p_110298_1_.getEntityId()));
@@ -705,7 +769,7 @@
          this.openContainer.windowId = this.currentWindowId;
          this.openContainer.addCraftingToCrafters(this);
      }
-@@ -770,6 +1106,15 @@
+@@ -770,6 +1112,15 @@
      {
          this.playerNetServerHandler.sendPacket(new S30PacketWindowItems(p_71110_1_.windowId, p_71110_2_));
          this.playerNetServerHandler.sendPacket(new S2FPacketSetSlot(-1, -1, this.inventory.getItemStack()));
@@ -721,7 +785,7 @@
      }
  
      public void sendProgressBarUpdate(Container p_71112_1_, int p_71112_2_, int p_71112_3_)
-@@ -779,6 +1124,7 @@
+@@ -779,6 +1130,7 @@
  
      public void closeScreen()
      {
@@ -729,7 +793,7 @@
          this.playerNetServerHandler.sendPacket(new S2EPacketCloseWindow(this.openContainer.windowId));
          this.closeContainer();
      }
-@@ -853,8 +1199,19 @@
+@@ -853,8 +1205,19 @@
      public void setPlayerHealthUpdated()
      {
          this.lastHealth = -1.0E8F;
@@ -749,7 +813,7 @@
      public void addChatComponentMessage(IChatComponent p_146105_1_)
      {
          this.playerNetServerHandler.sendPacket(new S02PacketChat(p_146105_1_));
-@@ -882,7 +1239,24 @@
+@@ -882,7 +1245,24 @@
          this.lastExperience = -1;
          this.lastHealth = -1.0F;
          this.lastFoodLevel = -1;
@@ -774,7 +838,7 @@
      }
  
      protected void onNewPotionEffect(PotionEffect p_70670_1_)
-@@ -1037,6 +1411,114 @@
+@@ -1037,6 +1417,114 @@
          return this.field_143005_bX;
      }
  
