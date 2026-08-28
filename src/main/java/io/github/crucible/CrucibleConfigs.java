@@ -149,6 +149,19 @@ public class CrucibleConfigs extends YamlConfig {
             "changes how many of those a tick may send. Keep it at 50 or below, lower with many players."})
     public int crucible_optimization_maxChunkSendsPerTick = 5;
 
+    @Comments({"Deflate level for the bulk packets that stream chunks to players, from 0 to 9, or",
+            "-1 for zlib's own default. Single chunk update packets keep a fixed level of 4.",
+            "0 does not compress at all, 1 is the fastest real compression, 9 the smallest output.",
+            "The cost is CPU on the netty threads and the benefit is bandwidth, so the useful answer",
+            "depends on which of the two your host runs out of first. Measured on real chunk traffic,",
+            "going above 4 is close to worthless - level 9 buys 10% fewer bytes for 14x the CPU - while",
+            "2 gives back 45% of the CPU for 28% more bytes, which is why it is the default.",
+            "At 0 a packet does not shrink, and one carrying more than 12 full chunks outgrows the",
+            "2MB protocol frame and disconnects the player. A packet holds the smaller of",
+            "'max-bulk-chunks' (spigot.yml) and the setting above, so 0 is only safe while both are.",
+            "Only read when a network thread starts compressing, so a change needs a restart."})
+    public int crucible_optimization_chunkCompressionLevel = 2;
+
     @Comment("Log Material injections.")
     public boolean crucible_logging_logMaterialInjection = false;
 
