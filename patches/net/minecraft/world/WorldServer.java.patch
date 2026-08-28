@@ -574,16 +574,17 @@
          return this.theChunkProviderServer;
      }
  
-@@ -659,29 +914,31 @@
+@@ -659,29 +914,38 @@
      {
          ArrayList arraylist = new ArrayList();
  
 -        for(int x = (p_147486_1_ >> 4); x <= (p_147486_4_ >> 4); x++)
 +        // CraftBukkit start - Get tile entities from chunks instead of world
-+        for (int chunkX = (p_147486_1_ >> 4); chunkX <= ((p_147486_4_ - 1) >> 4); chunkX++)
++        // Crucible - inclusive maximum corner, the convention Forge mods compile against
++        for (int chunkX = (p_147486_1_ >> 4); chunkX <= (p_147486_4_ >> 4); chunkX++)
          {
 -            for(int z = (p_147486_3_ >> 4); z <= (p_147486_6_ >> 4); z++)
-+            for (int chunkZ = (p_147486_3_ >> 4); chunkZ <= ((p_147486_6_ - 1) >> 4); chunkZ++)
++            for (int chunkZ = (p_147486_3_ >> 4); chunkZ <= (p_147486_6_ >> 4); chunkZ++)
              {
 -                Chunk chunk = getChunkFromChunkCoords(x, z);
 -                if (chunk != null)
@@ -599,8 +600,8 @@
 +                {
 +                    TileEntity tileentity = (TileEntity) te;
 +
-+                    if ((tileentity.xCoord >= p_147486_1_) && (tileentity.yCoord >= p_147486_2_) && (tileentity.zCoord >= p_147486_3_)
-+                            && (tileentity.xCoord < p_147486_4_) && (tileentity.yCoord < p_147486_5_) && (tileentity.zCoord < p_147486_6_))
++                    // The chunk map keeps invalidated entries until the world tick sweeps them.
++                    if (tileentity.isInvalid())
                      {
 -                        TileEntity entity = (TileEntity)obj;
 -                        if (!entity.isInvalid())
@@ -611,8 +612,14 @@
 -                                arraylist.add(entity);
 -                            }
 -                        }
-+                        arraylist.add(tileentity);
++                        continue;
                      }
++
++                    if ((tileentity.xCoord >= p_147486_1_) && (tileentity.yCoord >= p_147486_2_) && (tileentity.zCoord >= p_147486_3_)
++                            && (tileentity.xCoord <= p_147486_4_) && (tileentity.yCoord <= p_147486_5_) && (tileentity.zCoord <= p_147486_6_))
++                    {
++                        arraylist.add(tileentity);
++                    }
                  }
              }
          }
@@ -621,7 +628,7 @@
          return arraylist;
      }
  
-@@ -704,7 +961,7 @@
+@@ -704,7 +968,7 @@
  
          if (this.pendingTickListEntriesHashSet == null)
          {
@@ -630,7 +637,7 @@
          }
  
          if (this.pendingTickListEntriesTreeSet == null)
-@@ -733,7 +990,28 @@
+@@ -733,7 +997,28 @@
              int i = 0;
              int j = this.provider.getAverageGroundLevel();
              int k = 0;
@@ -659,7 +666,7 @@
              if (chunkposition != null)
              {
                  i = chunkposition.chunkPosX;
-@@ -799,14 +1077,18 @@
+@@ -799,14 +1084,18 @@
                  p_73044_2_.displayProgressMessage("Saving level");
              }
  
@@ -678,7 +685,7 @@
              MinecraftForge.EVENT_BUS.post(new WorldEvent.Save(this));
              ArrayList arraylist = Lists.newArrayList(this.theChunkProviderServer.func_152380_a());
              Iterator iterator = arraylist.iterator();
-@@ -876,6 +1158,20 @@
+@@ -876,6 +1165,20 @@
  
      public boolean addWeatherEffect(Entity p_72942_1_)
      {
@@ -699,7 +706,7 @@
          if (super.addWeatherEffect(p_72942_1_))
          {
              this.mcServer.getConfigurationManager().sendToAllNear(p_72942_1_.posX, p_72942_1_.posY, p_72942_1_.posZ, 512.0D, this.provider.dimensionId, new S2CPacketSpawnGlobalEntity(p_72942_1_));
-@@ -894,13 +1190,24 @@
+@@ -894,13 +1197,24 @@
  
      public Explosion newExplosion(Entity p_72885_1_, double p_72885_2_, double p_72885_4_, double p_72885_6_, float p_72885_8_, boolean p_72885_9_, boolean p_72885_10_)
      {
@@ -725,7 +732,7 @@
          if (!p_72885_10_)
          {
              explosion.affectedBlockPositions.clear();
-@@ -977,7 +1284,8 @@
+@@ -977,7 +1291,8 @@
      {
          boolean flag = this.isRaining();
          super.updateWeather();
@@ -735,7 +742,7 @@
          if (this.prevRainingStrength != this.rainingStrength)
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
-@@ -987,11 +1295,9 @@
+@@ -987,11 +1302,9 @@
          {
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -749,7 +756,7 @@
          if (flag != this.isRaining())
          {
              if (flag)
-@@ -1006,6 +1312,33 @@
+@@ -1006,6 +1319,33 @@
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(7, this.rainingStrength), this.provider.dimensionId);
              this.mcServer.getConfigurationManager().sendPacketToAllPlayersInDimension(new S2BPacketChangeGameState(8, this.thunderingStrength), this.provider.dimensionId);
          }
@@ -783,7 +790,7 @@
      }
  
      protected int func_152379_p()
-@@ -1069,4 +1402,53 @@
+@@ -1069,4 +1409,53 @@
                  this();
              }
          }
