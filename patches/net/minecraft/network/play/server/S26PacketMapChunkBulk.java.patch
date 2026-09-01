@@ -46,7 +46,7 @@
  
      public S26PacketMapChunkBulk() {}
  
-@@ -38,50 +49,91 @@
+@@ -38,50 +49,84 @@
          this.field_149264_b = new int[i];
          this.field_149265_c = new int[i];
          this.field_149262_d = new int[i];
@@ -109,7 +109,7 @@
 +        deflater.reset();
 +        deflater.setInput(this.field_149268_i);
 +        deflater.finish();
-+        this.field_149263_e = new byte[deflateBound(this.field_149268_i.length)];
++        this.field_149263_e = new byte[S21PacketChunkData.deflateBound(this.field_149268_i.length)];
 +        this.field_149261_g = deflater.deflate(this.field_149263_e);
 +
 +        if (!deflater.finished())
@@ -149,20 +149,13 @@
 +        return level > Deflater.BEST_COMPRESSION ? Deflater.BEST_COMPRESSION : level;
      }
  
-+    // zlib's own compressBound. At a low level deflate stores rather than compresses and the output
-+    // grows past the input; deflate() would then quietly stop short and ship a truncated stream.
-+    private static int deflateBound(int length)
-+    {
-+        return length + (length >> 12) + (length >> 14) + (length >> 25) + 13;
-+    }
-+
 +    // Crucible end
 +    // CraftBukkit end
 +
      public static int func_149258_c()
      {
          return 5;
-@@ -97,6 +149,7 @@
+@@ -97,6 +142,7 @@
          this.field_149265_c = new int[short1];
          this.field_149262_d = new int[short1];
          this.field_149260_f = new byte[short1][];
@@ -170,7 +163,7 @@
  
          if (field_149268_i.length < this.field_149261_g)
          {
-@@ -148,6 +201,7 @@
+@@ -148,6 +194,7 @@
              }
  
              this.field_149260_f[j] = new byte[i1];
@@ -178,7 +171,7 @@
              System.arraycopy(abyte, i, this.field_149260_f[j], 0, i1);
              i += i1;
          }
-@@ -155,16 +209,7 @@
+@@ -155,16 +202,7 @@
  
      public void writePacketData(PacketBuffer p_148840_1_) throws IOException
      {
@@ -196,7 +189,7 @@
          p_148840_1_.writeShort(this.field_149266_a.length);
          p_148840_1_.writeInt(this.field_149261_g);
          p_148840_1_.writeBoolean(this.field_149267_h);
-@@ -207,7 +252,7 @@
+@@ -207,7 +245,7 @@
                  stringbuilder.append(", ");
              }
  
