@@ -1,6 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/S26PacketMapChunkBulk.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/S26PacketMapChunkBulk.java
-@@ -24,10 +24,18 @@
+@@ -4,7 +4,6 @@
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.IOException;
+ import java.util.List;
+-import java.util.concurrent.Semaphore;
+ import java.util.zip.DataFormatException;
+ import java.util.zip.Deflater;
+ import java.util.zip.Inflater;
+@@ -14,6 +13,8 @@
+ import net.minecraft.network.play.INetHandlerPlayClient;
+ import net.minecraft.world.chunk.Chunk;
+ 
++import io.github.crucible.CrucibleConfigs;
++
+ public class S26PacketMapChunkBulk extends Packet
+ {
+     private int[] field_149266_a;
+@@ -24,10 +25,19 @@
      private byte[][] field_149260_f;
      private int field_149261_g;
      private boolean field_149267_h;
@@ -15,15 +32,16 @@
 +        @Override
 +        protected Deflater initialValue()
 +        {
-+            // Don't use higher compression level, slows things down too much
-+            return new Deflater(4); // Spigot 6 -> 4
++            // Crucible - read once per thread: the level is a restart-time decision, not a per
++            // packet one, and reapplying it on a pooled deflater costs a wasted deflate() call
++            return new Deflater(clampCompressionLevel(CrucibleConfigs.configs.crucible_optimization_chunkCompressionLevel));
 +        }
 +    };
 +    // CraftBukkit end
  
      public S26PacketMapChunkBulk() {}
  
-@@ -46,6 +54,15 @@
+@@ -46,6 +56,15 @@
          {
              Chunk chunk = (Chunk)p_i45197_1_.get(k);
              S21PacketChunkData.Extracted extracted = S21PacketChunkData.func_149269_a(chunk, true, 65535);
@@ -39,65 +57,100 @@
              j += extracted.field_150282_a.length;
              this.field_149266_a[k] = chunk.xPosition;
              this.field_149264_b[k] = chunk.zPosition;
-@@ -53,34 +70,36 @@
+@@ -53,35 +72,75 @@
              this.field_149262_d[k] = extracted.field_150281_c;
              this.field_149260_f[k] = extracted.field_150282_a;
          }
 -        this.deflateGate = new Semaphore(1);
 -        maxLen = j;
--    }
--
--    private void deflate()
--    {
--        byte[] data = new byte[maxLen];
--        int offset = 0;
--        for (int x = 0; x < field_149260_f.length; x++)
--        {
--            System.arraycopy(field_149260_f[x], 0, data, offset, field_149260_f[x].length);
--            offset += field_149260_f[x].length;
--        }
 +        /* CraftBukkit start - Moved to compress()
-         Deflater deflater = new Deflater(-1);
- 
--        try
--        {
--            deflater.setInput(data, 0, data.length);
++        Deflater deflater = new Deflater(-1);
++
 +        try {
 +            deflater.setInput(buildBuffer, 0, j);
-             deflater.finish();
--            byte[] deflated = new byte[data.length];
--            this.field_149261_g = deflater.deflate(deflated);
--            this.field_149263_e = deflated;
++            deflater.finish();
 +            this.buffer = new byte[j];
 +            this.size = deflater.deflate(this.buffer);
 +        } finally {
 +            deflater.end();
-         }
--        finally
++        }
 +        */
-+    }
-+
+     }
+ 
+-    private void deflate()
 +    // Add compression method
 +    public void compress()
-+    {
+     {
+-        byte[] data = new byte[maxLen];
+-        int offset = 0;
+-        for (int x = 0; x < field_149260_f.length; x++)
 +        if (this.field_149263_e != null)
          {
--            deflater.end();
+-            System.arraycopy(field_149260_f[x], 0, data, offset, field_149260_f[x].length);
+-            offset += field_149260_f[x].length;
 +            return;
          }
-+
+-        Deflater deflater = new Deflater(-1);
+ 
+-        try
 +        Deflater deflater = localDeflater.get();
 +        deflater.reset();
 +        deflater.setInput(this.field_149268_i);
 +        deflater.finish();
-+        this.field_149263_e = new byte[this.field_149268_i.length + 100];
++        this.field_149263_e = new byte[deflateBound(this.field_149268_i.length)];
 +        this.field_149261_g = deflater.deflate(this.field_149263_e);
++
++        if (!deflater.finished())
+         {
+-            deflater.setInput(data, 0, data.length);
+-            deflater.finish();
+-            byte[] deflated = new byte[data.length];
+-            this.field_149261_g = deflater.deflate(deflated);
+-            this.field_149263_e = deflated;
++            // deflate() reports a buffer that is too small by writing what fits and returning, so
++            // without this the packet would carry a truncated stream and the client would inflate
++            // it into empty chunks without an error on either side.
++            throw new IllegalStateException("Chunk deflate stopped short: wrote " + this.field_149261_g
++                    + " of a " + this.field_149263_e.length + " byte buffer for "
++                    + this.field_149268_i.length + " input bytes");
+         }
+-        finally
++    }
++
++    // Crucible start
++    // new Deflater accepts -1..9 and throws outside it, so a typo in the config must not become an
++    // exception on the netty thread. -1 is zlib's own default level rather than a value under the
++    // floor, so it passes through: clamping it to NO_COMPRESSION would ship chunks uncompressed.
++    private static int clampCompressionLevel(int level)
++    {
++        if (level == Deflater.DEFAULT_COMPRESSION)
+         {
+-            deflater.end();
++            return level;
+         }
++
++        if (level < Deflater.NO_COMPRESSION)
++        {
++            return Deflater.NO_COMPRESSION;
++        }
++
++        return level > Deflater.BEST_COMPRESSION ? Deflater.BEST_COMPRESSION : level;
      }
-+    // CraftBukkit end
  
++    // zlib's own compressBound. At a low level deflate stores rather than compresses and the output
++    // grows past the input; deflate() would then quietly stop short and ship a truncated stream.
++    private static int deflateBound(int length)
++    {
++        return length + (length >> 12) + (length >> 14) + (length >> 25) + 13;
++    }
++
++    // Crucible end
++    // CraftBukkit end
++
      public static int func_149258_c()
      {
-@@ -155,16 +174,7 @@
+         return 5;
+@@ -155,16 +214,7 @@
  
      public void writePacketData(PacketBuffer p_148840_1_) throws IOException
      {
