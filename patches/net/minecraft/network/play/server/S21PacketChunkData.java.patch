@@ -9,55 +9,205 @@
          try
          {
              deflater.setInput(this.field_149278_f, 0, this.field_149278_f.length);
-@@ -198,8 +198,10 @@
-             if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
+@@ -154,102 +154,132 @@
+ 
+     public static S21PacketChunkData.Extracted func_149269_a(Chunk p_149269_0_, boolean p_149269_1_, int p_149269_2_)
+     {
+-        int j = 0;
+-        ExtendedBlockStorage[] aextendedblockstorage = p_149269_0_.getBlockStorageArray();
+-        int k = 0;
++        // Crucible start - measure first so the payload is allocated at its exact size and copied
++        // once, straight from the chunk
++        S21PacketChunkData.ChunkDataLayout layout = layoutOf(p_149269_0_, p_149269_1_, p_149269_2_);
+         S21PacketChunkData.Extracted extracted = new S21PacketChunkData.Extracted();
+-        byte[] abyte = field_149286_i;
++        extracted.field_150280_b = layout.sectionMask;
++        extracted.field_150281_c = layout.msbMask;
++        extracted.field_150282_a = new byte[layout.length];
++        writeChunkData(p_149269_0_, p_149269_1_, layout, extracted.field_150282_a, 0);
++        return extracted;
++    }
+ 
+-        if (p_149269_1_)
+-        {
+-            p_149269_0_.sendUpdates = true;
+-        }
++    /**
++     * Sizes the payload {@link #writeChunkData} produces for {@code chunk} without copying any block
++     * data. {@code sendAll} skips empty sections and appends the biome array, as a full chunk send
++     * does; {@code sectionFilter} is the bit mask of the sections to include.
++     */
++    public static S21PacketChunkData.ChunkDataLayout layoutOf(Chunk chunk, boolean sendAll, int sectionFilter)
++    {
++        ExtendedBlockStorage[] sections = chunk.getBlockStorageArray();
++        boolean hasSky = !chunk.worldObj.provider.hasNoSky;
++        S21PacketChunkData.ChunkDataLayout layout = new S21PacketChunkData.ChunkDataLayout();
++        int length = 0;
+ 
+-        int l;
+-
+-        for (l = 0; l < aextendedblockstorage.length; ++l)
++        for (int l = 0; l < sections.length; ++l)
+         {
+-            if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
++            ExtendedBlockStorage section = sections[l];
++
++            if (section != null && (!sendAll || !section.isEmpty()) && (sectionFilter & 1 << l) != 0)
              {
-                 nibblearray = aextendedblockstorage[l].getMetadataArray();
--                System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
--                j += nibblearray.data.length;
-+                // Spigot start
-+                nibblearray.copyToByteArray(abyte, j);
-+                j += nibblearray.getByteLength();
-+                // Spigot end
+-                extracted.field_150280_b |= 1 << l;
++                layout.sectionMask |= 1 << l;
++                length += section.getBlockLSBArray().length;
++                length += section.getMetadataArray().getByteLength();
++                length += section.getBlocklightArray().getByteLength();
+ 
+-                if (aextendedblockstorage[l].getBlockMSBArray() != null)
++                if (hasSky)
+                 {
+-                    extracted.field_150281_c |= 1 << l;
+-                    ++k;
++                    length += section.getSkylightArray().getByteLength();
+                 }
++
++                if (section.getBlockMSBArray() != null)
++                {
++                    layout.msbMask |= 1 << l;
++                    length += section.getBlockMSBArray().getByteLength();
++                }
              }
          }
  
-@@ -208,8 +210,10 @@
-             if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
+-        for (l = 0; l < aextendedblockstorage.length; ++l)
++        if (sendAll)
+         {
+-            if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
++            length += chunk.getBiomeArray().length;
++        }
++
++        layout.length = length;
++        return layout;
++    }
++
++    /**
++     * Copies the chunk payload described by {@code layout} into {@code dest} from {@code offset} on,
++     * in wire order: block ids, metadata, block light, sky light, extra ids, biomes. Returns the
++     * offset just past the written bytes.
++     */
++    public static int writeChunkData(Chunk chunk, boolean sendAll, S21PacketChunkData.ChunkDataLayout layout, byte[] dest, int offset)
++    {
++        ExtendedBlockStorage[] sections = chunk.getBlockStorageArray();
++        int j = offset;
++
++        if (sendAll)
++        {
++            chunk.sendUpdates = true;
++        }
++
++        for (int l = 0; l < sections.length; ++l)
++        {
++            if ((layout.sectionMask & 1 << l) != 0)
              {
-                 nibblearray = aextendedblockstorage[l].getBlocklightArray();
--                System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
--                j += nibblearray.data.length;
-+                // Spigot start
-+                nibblearray.copyToByteArray(abyte, j);
-+                j += nibblearray.getByteLength();
-+                // Spigot end
+-                byte[] abyte1 = aextendedblockstorage[l].getBlockLSBArray();
+-                System.arraycopy(abyte1, 0, abyte, j, abyte1.length);
+-                j += abyte1.length;
++                byte[] lsb = sections[l].getBlockLSBArray();
++                System.arraycopy(lsb, 0, dest, j, lsb.length);
++                j += lsb.length;
              }
          }
  
-@@ -220,8 +224,10 @@
-                 if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
+-        NibbleArray nibblearray;
+-
+-        for (l = 0; l < aextendedblockstorage.length; ++l)
++        for (int l = 0; l < sections.length; ++l)
+         {
+-            if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
++            if ((layout.sectionMask & 1 << l) != 0)
+             {
+-                nibblearray = aextendedblockstorage[l].getMetadataArray();
+-                System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
+-                j += nibblearray.data.length;
++                j = sections[l].getMetadataArray().copyToByteArray(dest, j);
+             }
+         }
+ 
+-        for (l = 0; l < aextendedblockstorage.length; ++l)
++        for (int l = 0; l < sections.length; ++l)
+         {
+-            if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
++            if ((layout.sectionMask & 1 << l) != 0)
+             {
+-                nibblearray = aextendedblockstorage[l].getBlocklightArray();
+-                System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
+-                j += nibblearray.data.length;
++                j = sections[l].getBlocklightArray().copyToByteArray(dest, j);
+             }
+         }
+ 
+-        if (!p_149269_0_.worldObj.provider.hasNoSky)
++        if (!chunk.worldObj.provider.hasNoSky)
+         {
+-            for (l = 0; l < aextendedblockstorage.length; ++l)
++            for (int l = 0; l < sections.length; ++l)
+             {
+-                if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
++                if ((layout.sectionMask & 1 << l) != 0)
                  {
-                     nibblearray = aextendedblockstorage[l].getSkylightArray();
+-                    nibblearray = aextendedblockstorage[l].getSkylightArray();
 -                    System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
 -                    j += nibblearray.data.length;
-+                    // Spigot start
-+                    nibblearray.copyToByteArray(abyte, j);
-+                    j += nibblearray.getByteLength();
-+                    // Spigot end
++                    j = sections[l].getSkylightArray().copyToByteArray(dest, j);
                  }
              }
          }
-@@ -233,8 +239,10 @@
-                 if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && aextendedblockstorage[l].getBlockMSBArray() != null && (p_149269_2_ & 1 << l) != 0)
-                 {
-                     nibblearray = aextendedblockstorage[l].getBlockMSBArray();
+ 
+-        if (k > 0)
++        for (int l = 0; l < sections.length; ++l)
+         {
+-            for (l = 0; l < aextendedblockstorage.length; ++l)
++            if ((layout.msbMask & 1 << l) != 0)
+             {
+-                if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && aextendedblockstorage[l].getBlockMSBArray() != null && (p_149269_2_ & 1 << l) != 0)
+-                {
+-                    nibblearray = aextendedblockstorage[l].getBlockMSBArray();
 -                    System.arraycopy(nibblearray.data, 0, abyte, j, nibblearray.data.length);
 -                    j += nibblearray.data.length;
-+                    // Spigot start
-+                    nibblearray.copyToByteArray(abyte, j);
-+                    j += nibblearray.getByteLength();
-+                    // Spigot end
-                 }
+-                }
++                j = sections[l].getBlockMSBArray().copyToByteArray(dest, j);
              }
          }
+ 
+-        if (p_149269_1_)
++        if (sendAll)
+         {
+-            byte[] abyte2 = p_149269_0_.getBiomeArray();
+-            System.arraycopy(abyte2, 0, abyte, j, abyte2.length);
+-            j += abyte2.length;
++            byte[] biomes = chunk.getBiomeArray();
++            System.arraycopy(biomes, 0, dest, j, biomes.length);
++            j += biomes.length;
+         }
+ 
+-        extracted.field_150282_a = new byte[j];
+-        System.arraycopy(abyte, 0, extracted.field_150282_a, 0, j);
+-        return extracted;
++        return j;
+     }
++    // Crucible end
+ 
+     public void processPacket(INetHandler p_148833_1_)
+     {
+@@ -286,6 +316,14 @@
+         return this.field_149279_g;
+     }
+ 
++    /** Section masks and payload length of one chunk, as {@link #layoutOf} measures them. */
++    public static class ChunkDataLayout
++    {
++        public int sectionMask;
++        public int msbMask;
++        public int length;
++    }
++
+     public static class Extracted
+         {
+             public byte[] field_150282_a;
