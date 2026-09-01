@@ -143,6 +143,12 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("Size of cached chunk")
     public int crucible_chunkCacheSize = 256;
 
+    @Comments({"Maximum number of chunks the server streams to a single player per tick.",
+            "5 is Forge's rate and the default here; raising it speeds up joining and teleporting.",
+            "Chunks still leave in bulk packets of at most 'max-bulk-chunks' (spigot.yml), so this only",
+            "changes how many of those a tick may send. Keep it at 50 or below, lower with many players."})
+    public int crucible_optimization_maxChunkSendsPerTick = 5;
+
     @Comment("Log Material injections.")
     public boolean crucible_logging_logMaterialInjection = false;
 
