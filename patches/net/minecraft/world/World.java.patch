@@ -1369,7 +1369,7 @@
 +        // Keep chunks with growth inside of the optimal chunk range
 +        int chunksPerPlayer = Math.min(200, Math.max(1, (int) (((optimalChunks - playerEntities.size()) / (double) playerEntities.size()) + 0.5)));
 +        // Cauldron start - use server view distance instead of capping it at 7
-+        int randRange = this.func_152379_p();
++        int randRange = Math.min(this.getSpigotConfig().tickDistance, this.func_152379_p());
 +        if (randRange < 1)
 +        {
 +            throw new IllegalArgumentException("Too small view radius! edit server.properties and change view-distance to a value > 0.");
