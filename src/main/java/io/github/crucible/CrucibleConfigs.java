@@ -144,10 +144,14 @@ public class CrucibleConfigs extends YamlConfig {
     public int crucible_chunkCacheSize = 256;
 
     @Comments({"Maximum number of chunks the server streams to a single player per tick.",
-            "5 is Forge's rate and the default here; raising it speeds up joining and teleporting.",
-            "Chunks still leave in bulk packets of at most 'max-bulk-chunks' (spigot.yml), so this only",
-            "changes how many of those a tick may send. Keep it at 50 or below, lower with many players."})
-    public int crucible_optimization_maxChunkSendsPerTick = 5;
+            "Forge sends 5, which was also its packet size; the two are separate settings here and",
+            "the default is 20, draining a join queue in a quarter of the ticks. Raising it further",
+            "keeps speeding up joining and teleporting.",
+            "Chunks still leave in bulk packets of at most 'max-bulk-chunks' (spigot.yml), so this",
+            "only changes how many of those a tick may send. Keep it at 50 or below, and lower it",
+            "when many players can be streaming at once: every chunk in the budget is serialized on",
+            "the server thread before it leaves."})
+    public int crucible_optimization_maxChunkSendsPerTick = 20;
 
     @Comments({"Deflate level for the bulk packets that stream chunks to players, from 0 to 9, or",
             "-1 for zlib's own default. Single chunk update packets keep a fixed level of 4.",
