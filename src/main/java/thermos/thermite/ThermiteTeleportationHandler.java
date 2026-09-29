@@ -16,6 +16,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.network.ForgeMessage;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
+import org.bukkit.Location;
 import org.bukkit.World.Environment;
 
 import java.util.Iterator;
@@ -46,13 +47,16 @@ public class ThermiteTeleportationHandler {
         WorldProvider pOld = oldWorld.provider;
         WorldProvider pNew = newWorld.provider;
         double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
-        double x = ent.posX * moveFactor;
-        double z = ent.posZ * moveFactor;
+        transferEntityToWorld(ent, newWorld, ent.posX * moveFactor, ent.posY, ent.posZ * moveFactor, ent.rotationYaw, ent.rotationPitch);
+    }
+
+    public static void transferEntityToWorld(Entity ent, WorldServer newWorld, double x, double y, double z, float yaw, float pitch) {
+
         x = MathHelper.clamp_double(x, -29999872, 29999872);
         z = MathHelper.clamp_double(z, -29999872, 29999872);
 
         if (ent.isEntityAlive()) {
-            ent.setLocationAndAngles(x, ent.posY, z, ent.rotationYaw, ent.rotationPitch);
+            ent.setLocationAndAngles(x, y, z, yaw, pitch);
             newWorld.spawnEntityInWorld(ent);
             newWorld.updateEntityWithOptionalForce(ent, false);
         }
@@ -61,6 +65,14 @@ public class ThermiteTeleportationHandler {
     }
 
     public static void transferPlayerToDimension(EntityPlayerMP player, int dim, ServerConfigurationManager manager, Environment environ) {
+        transferPlayerToDimension(player, dim, manager, environ, null);
+    }
+
+    /**
+     * Moves a player to another dimension. If to is given the player lands there straight away.
+     * Without it the player first lands at their old x and z, and the chunks around that spot load or get generated for nothing.
+     */
+    public static void transferPlayerToDimension(EntityPlayerMP player, int dim, ServerConfigurationManager manager, Environment environ, Location to) {
 
         int oldDim = player.dimension;
         WorldServer worldserver = manager.getServerInstance().worldServerForDimension(player.dimension);
@@ -86,7 +98,11 @@ public class ThermiteTeleportationHandler {
             player.mountEntity(null);
         }
         player.isDead = false;
-        transferEntityToWorld(player, worldserver, worldserver1);
+        if (to != null) {
+            transferEntityToWorld(player, worldserver1, to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
+        } else {
+            transferEntityToWorld(player, worldserver, worldserver1);
+        }
         manager.func_72375_a(player, worldserver);
         player.playerNetServerHandler.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
         player.theItemInWorldManager.setWorld(worldserver1);
