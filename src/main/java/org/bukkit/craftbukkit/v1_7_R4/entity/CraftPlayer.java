@@ -582,9 +582,6 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
             //Thermos....transfer them correctly?!
             this.getHandle().mountEntity(null);
             thermos.thermite.ThermiteTeleportationHandler.transferPlayerToDimension(this.getHandle(), toWorld.dimension, this.getHandle().mcServer.getConfigurationManager(), to.getWorld().getEnvironment(), to);
-            //this.getHandle().playerNetServerHandler.teleport(to);
-            this.getHandle().playerNetServerHandler.teleport(to);
-            //this.getHandle().playerNetServerHandler.setPlayerLocation(to.getX(), to.getY(), to.getZ(), this.getHandle().rotationYaw, this.getHandle().rotationPitch);
             //server.getHandle().respawnPlayer(entity, toWorld.dimension, false, to, false); // Cauldron
         }
         return true;

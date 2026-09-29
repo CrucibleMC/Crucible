@@ -67,7 +67,8 @@ public class ThermiteTeleportationHandler {
         player.isDead = false;
         transferEntityToWorld(player, worldserver1, to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
         manager.func_72375_a(player, worldserver);
-        player.playerNetServerHandler.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
+        // teleport, not setPlayerLocation: the latter fires a second PlayerTeleportEvent on top of the caller's
+        player.playerNetServerHandler.teleport(new Location(worldserver1.getWorld(), player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch));
         player.theItemInWorldManager.setWorld(worldserver1);
         manager.updateTimeAndWeatherForPlayer(player, worldserver1);
         manager.syncPlayerInventory(player);
