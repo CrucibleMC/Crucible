@@ -11,7 +11,6 @@ import net.minecraft.network.play.server.S1FPacketSetExperience;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.network.ForgeMessage;
@@ -22,34 +21,6 @@ import org.bukkit.World.Environment;
 import java.util.Iterator;
 
 public class ThermiteTeleportationHandler {
-    public static void transferEntityToDimension(Entity ent, int dim, ServerConfigurationManager manager, Environment environ) {
-
-        if (ent instanceof EntityPlayerMP) {
-            transferPlayerToDimension((EntityPlayerMP) ent, dim, manager, environ);
-            return;
-        }
-        WorldServer worldserver = manager.getServerInstance().worldServerForDimension(ent.dimension);
-        ent.dimension = dim;
-        WorldServer worldserver1 = manager.getServerInstance().worldServerForDimension(ent.dimension);
-        worldserver.removePlayerEntityDangerously(ent);
-        if (ent.riddenByEntity != null) {
-            ent.riddenByEntity.mountEntity(null);
-        }
-        if (ent.ridingEntity != null) {
-            ent.mountEntity(null);
-        }
-        ent.isDead = false;
-        transferEntityToWorld(ent, worldserver, worldserver1);
-    }
-
-    public static void transferEntityToWorld(Entity ent, WorldServer oldWorld, WorldServer newWorld) {
-
-        WorldProvider pOld = oldWorld.provider;
-        WorldProvider pNew = newWorld.provider;
-        double moveFactor = pOld.getMovementFactor() / pNew.getMovementFactor();
-        transferEntityToWorld(ent, newWorld, ent.posX * moveFactor, ent.posY, ent.posZ * moveFactor, ent.rotationYaw, ent.rotationPitch);
-    }
-
     public static void transferEntityToWorld(Entity ent, WorldServer newWorld, double x, double y, double z, float yaw, float pitch) {
 
         x = MathHelper.clamp_double(x, -29999872, 29999872);
@@ -64,13 +35,9 @@ public class ThermiteTeleportationHandler {
         ent.setWorld(newWorld);
     }
 
-    public static void transferPlayerToDimension(EntityPlayerMP player, int dim, ServerConfigurationManager manager, Environment environ) {
-        transferPlayerToDimension(player, dim, manager, environ, null);
-    }
-
     /**
-     * Moves a player to another dimension. If to is given the player lands there straight away.
-     * Without it the player first lands at their old x and z, and the chunks around that spot load or get generated for nothing.
+     * Moves a player to {@code to} in another dimension. The player is placed at the destination before the new
+     * world's PlayerManager registers them, so only the chunks around {@code to} are loaded.
      */
     public static void transferPlayerToDimension(EntityPlayerMP player, int dim, ServerConfigurationManager manager, Environment environ, Location to) {
 
@@ -98,11 +65,7 @@ public class ThermiteTeleportationHandler {
             player.mountEntity(null);
         }
         player.isDead = false;
-        if (to != null) {
-            transferEntityToWorld(player, worldserver1, to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
-        } else {
-            transferEntityToWorld(player, worldserver, worldserver1);
-        }
+        transferEntityToWorld(player, worldserver1, to.getX(), to.getY(), to.getZ(), to.getYaw(), to.getPitch());
         manager.func_72375_a(player, worldserver);
         player.playerNetServerHandler.setPlayerLocation(player.posX, player.posY, player.posZ, player.rotationYaw, player.rotationPitch);
         player.theItemInWorldManager.setWorld(worldserver1);
