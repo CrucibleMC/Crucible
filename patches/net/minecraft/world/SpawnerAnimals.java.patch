@@ -9,9 +9,11 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
-@@ -22,9 +19,15 @@
+@@ -21,10 +18,17 @@
+ 
  import cpw.mods.fml.common.eventhandler.Event.Result;
  import net.minecraftforge.event.ForgeEventFactory;
++import io.github.crucible.NaturalSpawnGate;
  
 +// CraftBukkit start
 +import org.bukkit.craftbukkit.v1_7_R4.util.LongHash;
@@ -26,7 +28,7 @@
      private static final String __OBFID = "CL_00000152";
  
      protected static ChunkPosition func_151350_a(World p_151350_0_, int p_151350_1_, int p_151350_2_)
-@@ -54,22 +57,30 @@
+@@ -54,22 +58,30 @@
                  int j = MathHelper.floor_double(entityplayer.posX / 16.0D);
                  k = MathHelper.floor_double(entityplayer.posZ / 16.0D);
                  byte b0 = 8;
@@ -61,7 +63,7 @@
                      }
                  }
              }
-@@ -82,22 +93,46 @@
+@@ -82,22 +94,46 @@
              for (int k3 = 0; k3 < k; ++k3)
              {
                  EnumCreatureType enumcreaturetype = aenumcreaturetype[k3];
@@ -115,7 +117,20 @@
                              int j1 = chunkposition.chunkPosX;
                              int k1 = chunkposition.chunkPosY;
                              int l1 = chunkposition.chunkPosZ;
-@@ -170,7 +205,8 @@
+@@ -142,6 +178,12 @@
+ 
+                                                         if (f6 >= 576.0F)
+                                                         {
++                                                            // Crucible - ask before building the mob, so a refused spot costs no mob
++                                                            if (!NaturalSpawnGate.allows(p_77192_1_, k2, l2, i3, enumcreaturetype == EnumCreatureType.monster))
++                                                            {
++                                                                break label103;
++                                                            }
++
+                                                             if (spawnlistentry == null)
+                                                             {
+                                                                 spawnlistentry = p_77192_1_.spawnRandomCreature(enumcreaturetype, k2, l2, i3);
+@@ -170,7 +212,8 @@
                                                              if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
                                                              {
                                                                  ++i2;
@@ -125,7 +140,7 @@
                                                                  if (!ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, f1, f2))
                                                                  {
                                                                      ientitylivingdata = entityliving.onSpawnWithEgg(ientitylivingdata);
-@@ -266,8 +302,10 @@
+@@ -266,8 +309,10 @@
                              }
  
                              entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, p_77191_6_.nextFloat() * 360.0F, 0.0F);
