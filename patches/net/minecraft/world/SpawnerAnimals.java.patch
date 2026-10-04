@@ -9,7 +9,7 @@
  import java.util.Iterator;
  import java.util.List;
  import java.util.Random;
-@@ -22,9 +19,15 @@
+@@ -22,9 +19,23 @@
  import cpw.mods.fml.common.eventhandler.Event.Result;
  import net.minecraftforge.event.ForgeEventFactory;
  
@@ -19,6 +19,14 @@
 +import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 +// CraftBukkit end
 +
++// Crucible start
++import com.destroystokyo.paper.event.entity.PreCreatureSpawnEvent;
++import cpw.mods.fml.common.registry.EntityRegistry;
++import net.minecraft.entity.EntityList;
++import org.bukkit.Location;
++import org.bukkit.entity.EntityType;
++// Crucible end
++
  public final class SpawnerAnimals
  {
 -    private HashMap eligibleChunksForSpawning = new HashMap();
@@ -26,7 +34,7 @@
      private static final String __OBFID = "CL_00000152";
  
      protected static ChunkPosition func_151350_a(World p_151350_0_, int p_151350_1_, int p_151350_2_)
-@@ -54,22 +57,30 @@
+@@ -54,22 +65,30 @@
                  int j = MathHelper.floor_double(entityplayer.posX / 16.0D);
                  k = MathHelper.floor_double(entityplayer.posZ / 16.0D);
                  byte b0 = 8;
@@ -61,7 +69,7 @@
                      }
                  }
              }
-@@ -82,22 +93,46 @@
+@@ -82,22 +101,46 @@
              for (int k3 = 0; k3 < k; ++k3)
              {
                  EnumCreatureType enumcreaturetype = aenumcreaturetype[k3];
@@ -115,7 +123,40 @@
                              int j1 = chunkposition.chunkPosX;
                              int k1 = chunkposition.chunkPosY;
                              int l1 = chunkposition.chunkPosZ;
-@@ -170,7 +205,8 @@
+@@ -152,6 +195,32 @@
+                                                                 }
+                                                             }
+ 
++                                                            // Crucible start - let plugins refuse the spawn before the mob is built
++                                                            if (PreCreatureSpawnEvent.getHandlerList().getRegisteredListeners().length > 0)
++                                                            {
++                                                                // mod mobs are known to Bukkit by EntityRegistry's "modid-Name", vanilla ones by their EntityList name
++                                                                String typeName = EntityRegistry.entityTypeMap.get(spawnlistentry.entityClass);
++                                                                EntityType type = EntityType.fromName(typeName != null ? typeName : (String)EntityList.classToStringMapping.get(spawnlistentry.entityClass));
++
++                                                                if (type != null)
++                                                                {
++                                                                    PreCreatureSpawnEvent event = new PreCreatureSpawnEvent(new Location(p_77192_1_.getWorld(), f, f1, f2), type, SpawnReason.NATURAL);
++                                                                    p_77192_1_.getServer().getPluginManager().callEvent(event);
++
++                                                                    if (event.isCancelled())
++                                                                    {
++                                                                        if (event.shouldAbortSpawn())
++                                                                        {
++                                                                            continue label110; // give up on this creature type in this chunk
++                                                                        }
++
++                                                                        ++j3; // skip only this attempt
++                                                                        continue;
++                                                                    }
++                                                                }
++                                                            }
++                                                            // Crucible end
++
+                                                             EntityLiving entityliving;
+ 
+                                                             try
+@@ -170,7 +239,8 @@
                                                              if (canSpawn == Result.ALLOW || (canSpawn == Result.DEFAULT && entityliving.getCanSpawnHere()))
                                                              {
                                                                  ++i2;
@@ -125,7 +166,7 @@
                                                                  if (!ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, f1, f2))
                                                                  {
                                                                      ientitylivingdata = entityliving.onSpawnWithEgg(ientitylivingdata);
-@@ -266,8 +302,10 @@
+@@ -266,8 +336,10 @@
                              }
  
                              entityliving.setLocationAndAngles((double)f, (double)f1, (double)f2, p_77191_6_.nextFloat() * 360.0F, 0.0F);
