@@ -22,7 +22,7 @@
      private int[] field_149262_d;
      private byte[] field_149263_e;
 -    private byte[][] field_149260_f;
-+    private byte[][] field_149260_f; // Crucible - filled by readPacketData only; the server keeps just the lengths
++    private byte[][] field_149260_f; // Crucible - the server fills it only when a mixin may read it
 +    private int[] chunkDataLengths;
      private int field_149261_g;
      private boolean field_149267_h;
@@ -46,7 +46,7 @@
  
      public S26PacketMapChunkBulk() {}
  
-@@ -38,50 +49,115 @@
+@@ -38,50 +49,117 @@
          this.field_149264_b = new int[i];
          this.field_149265_c = new int[i];
          this.field_149262_d = new int[i];
@@ -54,13 +54,15 @@
 +        this.chunkDataLengths = new int[i];
          this.field_149267_h = !p_i45197_1_.isEmpty() && !((Chunk)p_i45197_1_.get(0)).worldObj.provider.hasNoSky;
 -        int j = 0;
-+        // Crucible start - NotEnoughIDs hooks S21PacketChunkData.func_149269_a to send its wider block
-+        // ids, so with it loaded each chunk is copied through that method. Otherwise measure every
-+        // chunk first so the raw buffer is allocated once, at its exact size, and each chunk is
-+        // copied straight into it.
-+        if (S21PacketChunkData.notEnoughIdsLoaded())
++        // Crucible start - id-extending mods hook S21PacketChunkData.func_149269_a to send their own
++        // block storage, and may replace writePacketData with one that reads the per chunk arrays.
++        // So with one mixed in, each chunk is copied through that method and its array is kept.
++        // Otherwise measure every chunk first so the raw buffer is allocated once, at its exact
++        // size, and each chunk is copied straight into it.
++        if (S21PacketChunkData.chunkDataMixedIn())
 +        {
 +            byte[][] parts = new byte[i][];
++            this.field_149260_f = parts;
 +            int total = 0;
  
 +            for (int k = 0; k < i; ++k)
@@ -186,7 +188,7 @@
      public static int func_149258_c()
      {
          return 5;
-@@ -97,6 +173,7 @@
+@@ -97,6 +175,7 @@
          this.field_149265_c = new int[short1];
          this.field_149262_d = new int[short1];
          this.field_149260_f = new byte[short1][];
@@ -194,7 +196,7 @@
  
          if (field_149268_i.length < this.field_149261_g)
          {
-@@ -148,6 +225,7 @@
+@@ -148,6 +227,7 @@
              }
  
              this.field_149260_f[j] = new byte[i1];
@@ -202,7 +204,7 @@
              System.arraycopy(abyte, i, this.field_149260_f[j], 0, i1);
              i += i1;
          }
-@@ -155,16 +233,7 @@
+@@ -155,16 +235,7 @@
  
      public void writePacketData(PacketBuffer p_148840_1_) throws IOException
      {
@@ -220,7 +222,7 @@
          p_148840_1_.writeShort(this.field_149266_a.length);
          p_148840_1_.writeInt(this.field_149261_g);
          p_148840_1_.writeBoolean(this.field_149267_h);
-@@ -207,7 +276,7 @@
+@@ -207,7 +278,7 @@
                  stringbuilder.append(", ");
              }
  

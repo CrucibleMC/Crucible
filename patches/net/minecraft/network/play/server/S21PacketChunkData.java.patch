@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/S21PacketChunkData.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/S21PacketChunkData.java
-@@ -45,13 +45,25 @@
+@@ -3,6 +3,8 @@
+ import cpw.mods.fml.relauncher.Side;
+ import cpw.mods.fml.relauncher.SideOnly;
+ import java.io.IOException;
++import java.lang.annotation.Annotation;
++import java.lang.reflect.Method;
+ import java.util.concurrent.Semaphore;
+ import java.util.zip.DataFormatException;
+ import java.util.zip.Deflater;
+@@ -45,13 +47,25 @@
  
      private void deflate()
      {
@@ -28,7 +37,7 @@
              this.field_149281_e = deflated;
          }
          finally
-@@ -65,6 +77,15 @@
+@@ -65,6 +79,15 @@
          return 196864;
      }
  
@@ -44,14 +53,14 @@
      public void readPacketData(PacketBuffer p_148837_1_) throws IOException
      {
          this.field_149284_a = p_148837_1_.readInt();
-@@ -154,6 +175,21 @@
+@@ -154,6 +177,21 @@
  
      public static S21PacketChunkData.Extracted func_149269_a(Chunk p_149269_0_, boolean p_149269_1_, int p_149269_2_)
      {
-+        // Crucible start - NotEnoughIDs hooks the block copy further down to send its wider block ids,
-+        // so with it loaded the chunk goes the old way. Otherwise measure first so the payload is
-+        // allocated at its exact size and copied once, straight from the chunk.
-+        if (!notEnoughIdsLoaded())
++        // Crucible start - id-extending mods hook the block copy further down to send their own
++        // block storage, so with one mixed in the chunk goes the old way. Otherwise measure first so
++        // the payload is allocated at its exact size and copied once, straight from the chunk.
++        if (!chunkDataMixedIn())
 +        {
 +            S21PacketChunkData.ChunkDataLayout layout = layoutOf(p_149269_0_, p_149269_1_, p_149269_2_);
 +            S21PacketChunkData.Extracted fast = new S21PacketChunkData.Extracted();
@@ -66,7 +75,7 @@
          int j = 0;
          ExtendedBlockStorage[] aextendedblockstorage = p_149269_0_.getBlockStorageArray();
          int k = 0;
-@@ -198,8 +234,10 @@
+@@ -198,8 +236,10 @@
              if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
              {
                  nibblearray = aextendedblockstorage[l].getMetadataArray();
@@ -79,7 +88,7 @@
              }
          }
  
-@@ -208,8 +246,10 @@
+@@ -208,8 +248,10 @@
              if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
              {
                  nibblearray = aextendedblockstorage[l].getBlocklightArray();
@@ -92,7 +101,7 @@
              }
          }
  
-@@ -220,8 +260,10 @@
+@@ -220,8 +262,10 @@
                  if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && (p_149269_2_ & 1 << l) != 0)
                  {
                      nibblearray = aextendedblockstorage[l].getSkylightArray();
@@ -105,7 +114,7 @@
                  }
              }
          }
-@@ -233,8 +275,10 @@
+@@ -233,8 +277,10 @@
                  if (aextendedblockstorage[l] != null && (!p_149269_1_ || !aextendedblockstorage[l].isEmpty()) && aextendedblockstorage[l].getBlockMSBArray() != null && (p_149269_2_ & 1 << l) != 0)
                  {
                      nibblearray = aextendedblockstorage[l].getBlockMSBArray();
@@ -118,34 +127,52 @@
                  }
              }
          }
-@@ -251,6 +295,150 @@
+@@ -251,6 +297,168 @@
          return extracted;
      }
  
 +    // Crucible start
-+    private static Boolean notEnoughIds;
++    private static Boolean chunkDataMixedIn;
 +
-+    /** Whether NotEnoughIDs is installed. It rewrites the block copy in func_149269_a. */
-+    public static boolean notEnoughIdsLoaded()
++    /**
++     * Whether a mixin was merged into the chunk packets or the block storage they read. Such a mod
++     * may keep block ids elsewhere or put them on the wire differently, so {@link #layoutOf} and
++     * {@link #writeChunkData} are only safe when this is false. A mod that rewrites those classes
++     * with a plain class transformer leaves no mark and is not detected.
++     */
++    public static boolean chunkDataMixedIn()
 +    {
-+        if (notEnoughIds == null)
++        if (chunkDataMixedIn == null)
 +        {
-+            notEnoughIds = classExists("com.gtnewhorizons.neid.NEID");
++            chunkDataMixedIn = hasMixinMethods(S21PacketChunkData.class)
++                    || hasMixinMethods(S26PacketMapChunkBulk.class)
++                    || hasMixinMethods(ExtendedBlockStorage.class);
 +        }
 +
-+        return notEnoughIds;
++        return chunkDataMixedIn;
 +    }
 +
-+    private static boolean classExists(String name)
++    private static boolean hasMixinMethods(Class<?> type)
 +    {
 +        try
 +        {
-+            Class.forName(name, false, S21PacketChunkData.class.getClassLoader());
-+            return true;
-+        }
-+        catch (ClassNotFoundException e)
-+        {
++            for (Method method : type.getDeclaredMethods())
++            {
++                for (Annotation annotation : method.getDeclaredAnnotations())
++                {
++                    // matched by simple name so a relocated Mixin library counts too
++                    if (annotation.annotationType().getSimpleName().equals("MixinMerged"))
++                    {
++                        return true;
++                    }
++                }
++            }
++
 +            return false;
++        }
++        catch (LinkageError e)
++        {
++            return true; // the class cannot be inspected, so it cannot be shown to be untouched
 +        }
 +    }
 +    // Crucible end
@@ -269,7 +296,7 @@
      public void processPacket(INetHandler p_148833_1_)
      {
          this.processPacket((INetHandlerPlayClient)p_148833_1_);
-@@ -286,6 +474,14 @@
+@@ -286,6 +494,14 @@
          return this.field_149279_g;
      }
  
