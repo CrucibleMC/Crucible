@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.network.play.server.*;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldSettings;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.Validate;
 import org.bukkit.*;
@@ -859,12 +860,27 @@ public class CraftPlayer extends CraftHumanEntity implements Player {
         return GameMode.getByValue(getHandle().theItemInWorldManager.getGameType().getID());
     }
 
+    /**
+     * Whether the server has a game type for {@code mode}. SPECTATOR exists in the API for newer plugins,
+     * but only becomes available when a mod registers the spectator game type.
+     */
+    public static boolean isGameModeAvailable(GameMode mode) {
+        // GameType.getByID falls back to SURVIVAL for an id no one registered
+        return WorldSettings.GameType.getByID(mode.getValue()).getID() == mode.getValue();
+    }
+
     @Override
     public void setGameMode(GameMode mode) {
         if (getHandle().playerNetServerHandler == null) return;
 
         if (mode == null) {
             throw new IllegalArgumentException("Mode cannot be null");
+        }
+
+        if (!isGameModeAvailable(mode)) {
+            server.getLogger().warning("Game mode of " + getName() + " left unchanged at " + getGameMode() + ": " + mode
+                    + " is not available because no installed mod adds that game type. Install one that does, or pick another mode.");
+            return;
         }
 
         if (mode != getGameMode()) {

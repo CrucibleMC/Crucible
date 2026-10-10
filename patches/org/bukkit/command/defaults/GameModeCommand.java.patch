@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/org/bukkit/command/defaults/GameModeCommand.java
 +++ ../src-work/minecraft/org/bukkit/command/defaults/GameModeCommand.java
-@@ -50,7 +50,7 @@
+@@ -9,13 +9,14 @@
+ import org.bukkit.GameMode;
+ import org.bukkit.command.Command;
+ import org.bukkit.command.CommandSender;
++import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer; // Crucible
+ import org.bukkit.entity.Player;
+ import org.bukkit.util.StringUtil;
+ 
+ import com.google.common.collect.ImmutableList;
+ 
+ public class GameModeCommand extends VanillaCommand {
+-    private static final List<String> GAMEMODE_NAMES = ImmutableList.of("adventure", "creative", "survival");
++    private static final List<String> GAMEMODE_NAMES = ImmutableList.of("adventure", "creative", "survival", "spectator"); // Crucible
+ 
+     public GameModeCommand() {
+         super("gamemode");
+@@ -50,16 +51,28 @@
  
              GameMode mode = GameMode.getByValue(value);
  
@@ -9,3 +25,24 @@
                  if (modeArg.equalsIgnoreCase("creative") || modeArg.equalsIgnoreCase("c")) {
                      mode = GameMode.CREATIVE;
                  } else if (modeArg.equalsIgnoreCase("adventure") || modeArg.equalsIgnoreCase("a")) {
+                     mode = GameMode.ADVENTURE;
++                // Crucible start
++                } else if (modeArg.equalsIgnoreCase("spectator") || modeArg.equalsIgnoreCase("sp")) {
++                    mode = GameMode.SPECTATOR;
++                // Crucible end
+                 } else {
+                     mode = GameMode.SURVIVAL;
+                 }
+             }
+ 
++            // Crucible start
++            if (!CraftPlayer.isGameModeAvailable(mode)) {
++                sender.sendMessage(ChatColor.RED + "Game mode " + mode + " is not available on this server: no installed mod adds it. "
++                        + "Install a mod that does (suggestion: Et Futurum Requiem) to use it.");
++                return true;
++            }
++            // Crucible end
++
+             if (mode != player.getGameMode()) {
+                 player.setGameMode(mode);
+ 
