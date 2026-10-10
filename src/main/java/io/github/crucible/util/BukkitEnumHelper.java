@@ -14,6 +14,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.inventory.InventoryType;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class BukkitEnumHelper {
@@ -52,10 +53,26 @@ public class BukkitEnumHelper {
         return bukkitType;
     }
 
-    public static InventoryType addInventoryType(TileEntity tileentity)
+    // Each world has its own chunk loader, so the same TE class reaches here once per world.
+    // Cache by class so the enum is only added once, not once per dimension.
+    private static final Map<Class<?>, InventoryType> inventoryTypes = new HashMap<Class<?>, InventoryType>();
+
+    public static synchronized InventoryType addInventoryType(TileEntity tileentity)
     {
-        if (!IInventory.class.isAssignableFrom(tileentity.getClass())) return null;
-        String id = (String)TileEntity.classToNameMap.get(tileentity.getClass());
+        if (!(tileentity instanceof IInventory)) return null;
+        Class<?> clazz = tileentity.getClass();
+        InventoryType type = inventoryTypes.get(clazz);
+        if (type == null)
+        {
+            type = makeInventoryType(tileentity, clazz);
+            inventoryTypes.put(clazz, type);
+        }
+        return type;
+    }
+
+    private static InventoryType makeInventoryType(TileEntity tileentity, Class<?> clazz)
+    {
+        String id = (String)TileEntity.classToNameMap.get(clazz);
 
         try
         {
@@ -67,8 +84,8 @@ public class BukkitEnumHelper {
         {
             if (MinecraftServer.getServer().tileEntityConfig.enableTEInventoryWarning.getValue())
             {
-                logger.log(Level.WARN, "Could not create inventory type " + tileentity.getClass().getName() + " Exception: " + e.toString());
-                logger.log(Level.WARN, "Could not determine default inventory size for type " + tileentity.getClass().getName() + " using size of 9");
+                logger.log(Level.WARN, "Could not create inventory type " + clazz.getName() + " Exception: " + e.toString());
+                logger.log(Level.WARN, "Could not determine default inventory size for type " + clazz.getName() + " using size of 9");
             }
             return EnumHelper.addEnum(InventoryType.class, id, new Class[]{Integer.TYPE, String.class}, new Object[]{9, id});
         }
