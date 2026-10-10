@@ -48,6 +48,11 @@ public class CrucibleConfigs extends YamlConfig {
     @Comment("How many players will visible in the tab list (negative to use server's max players)")
     public int cauldron_settings_maxPlayersVisible = -1;
 
+    @Comments({"Seconds between updates of each player's ping in the tab list. 30 is vanilla.",
+            "The updates are spread over the interval, so a longer one sends fewer packets per tick.",
+            "0 or less turns them off, and the tab list keeps the 1000ms a player joined with."})
+    public int crucible_tabListPingInterval = 30;
+
     @Comment("Instead of DIM##, use the world name prescribed by the mod! Be careful with this one, could create incompatibilities with existing setups!")
     public boolean cauldron_settings_useWorldRealNames = false;
 
