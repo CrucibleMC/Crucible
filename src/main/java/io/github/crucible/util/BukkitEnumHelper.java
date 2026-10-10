@@ -40,11 +40,16 @@ public class BukkitEnumHelper {
     }
 
     public static EntityType addBukkitEntityType(String name, Class <? extends org.bukkit.entity.Entity> clazz, int typeId, boolean independent) {
-        String entityType = name.replace("-", "_").toUpperCase();
-        EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
-
         Map<String, EntityType> NAME_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "NAME_MAP");
         Map<Short, EntityType> ID_MAP = ReflectionHelper.getPrivateValue(EntityType.class, null, "ID_MAP");
+
+        // Mappings are rebuilt on every enablePlugins (startup and post-world); hand back the
+        // constant plugins already hold instead of minting a second one with the same name.
+        EntityType existing = NAME_MAP.get(name.toLowerCase());
+        if (existing != null && existing.getTypeId() == (short) typeId) return existing; // EntityType stores the id as a short
+
+        String entityType = name.replace("-", "_").toUpperCase();
+        EntityType bukkitType = EnumHelper.addEnum(EntityType.class, entityType, new Class[] { String.class, Class.class, Integer.TYPE, Boolean.TYPE }, new Object[] { name, clazz, typeId, independent });
 
         NAME_MAP.put(name.toLowerCase(), bukkitType);
         ID_MAP.put((short)typeId, bukkitType);
