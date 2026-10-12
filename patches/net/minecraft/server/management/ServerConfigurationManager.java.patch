@@ -908,7 +908,7 @@
      }
  
      public void transferEntityToWorld(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, Teleporter teleporter)
-@@ -605,6 +1133,109 @@
+@@ -605,17 +1133,140 @@
          p_82448_1_.setWorld(p_82448_4_);
      }
  
@@ -1017,22 +1017,43 @@
 +
      public void sendPlayerInfoToAllPlayers()
      {
-         if (++this.playerPingIndex > 600)
-@@ -612,11 +1243,13 @@
+-        if (++this.playerPingIndex > 600)
++        // One cycle per interval; each tick resends the players whose index falls on it, so every
++        // player is covered once per cycle however many are online
++        int cycleTicks = CrucibleConfigs.configs.crucible_tabListPingInterval * 20;
++
++        if (cycleTicks <= 0)
+         {
++            return;
++        }
++
++        if (++this.playerPingIndex >= cycleTicks)
++        {
              this.playerPingIndex = 0;
          }
  
-+        /* CraftBukkit start - Remove updating of lag to players -- it spams way to much on big servers.
-         if (this.playerPingIndex < this.playerEntityList.size())
+-        if (this.playerPingIndex < this.playerEntityList.size())
++        for (int index = this.playerPingIndex; index < this.playerEntityList.size(); index += cycleTicks)
          {
-             EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(this.playerPingIndex);
-             this.sendPacketToAllPlayers(new S38PacketPlayerListItem(entityplayermp.getCommandSenderName(), true, entityplayermp.ping));
+-            EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(this.playerPingIndex);
+-            this.sendPacketToAllPlayers(new S38PacketPlayerListItem(entityplayermp.getCommandSenderName(), true, entityplayermp.ping));
++            EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(index);
++            // Same listName and visibility rules as the join/leave entries, so a hidden player stays hidden
++            S38PacketPlayerListItem packet = new S38PacketPlayerListItem(entityplayermp.listName, true, entityplayermp.ping);
++
++            for (int i = 0; i < this.playerEntityList.size(); ++i)
++            {
++                EntityPlayerMP receiver = (EntityPlayerMP)this.playerEntityList.get(i);
++
++                if (receiver.getBukkitEntity().canSee(entityplayermp.getBukkitEntity()))
++                {
++                    receiver.playerNetServerHandler.sendPacket(packet);
++                }
++            }
          }
-+        // CraftBukkit end */
      }
  
-     public void sendPacketToAllPlayers(Packet p_148540_1_)
-@@ -877,13 +1510,24 @@
+@@ -877,13 +1528,24 @@
          for (int j = 0; j < this.playerEntityList.size(); ++j)
          {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)this.playerEntityList.get(j);
@@ -1059,7 +1080,7 @@
                  if (d4 * d4 + d5 * d5 + d6 * d6 < p_148543_8_ * p_148543_8_)
                  {
                      entityplayermp.playerNetServerHandler.sendPacket(p_148543_11_);
-@@ -941,13 +1585,16 @@
+@@ -941,13 +1603,16 @@
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(1, 0.0F));
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(7, p_72354_2_.getRainStrength(1.0F)));
              p_72354_1_.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(8, p_72354_2_.getWeightedThunderStrength(1.0F)));
@@ -1077,7 +1098,7 @@
          p_72385_1_.playerNetServerHandler.sendPacket(new S09PacketHeldItemChange(p_72385_1_.inventory.currentItem));
      }
  
-@@ -961,9 +1608,17 @@
+@@ -961,9 +1626,17 @@
          return this.maxPlayers;
      }
  
@@ -1096,7 +1117,7 @@
      }
  
      public void setWhiteListEnabled(boolean p_72371_1_)
-@@ -1032,12 +1687,30 @@
+@@ -1032,12 +1705,30 @@
  
      public void removeAllPlayers()
      {
@@ -1129,7 +1150,7 @@
      public void sendChatMsgImpl(IChatComponent p_148544_1_, boolean p_148544_2_)
      {
          this.mcServer.addChatMessage(p_148544_1_);
-@@ -1058,17 +1731,18 @@
+@@ -1058,17 +1749,18 @@
          {
              File file1 = new File(this.mcServer.worldServerForDimension(0).getSaveHandler().getWorldDirectory(), "stats");
              File file2 = new File(file1, uuid.toString() + ".json");
