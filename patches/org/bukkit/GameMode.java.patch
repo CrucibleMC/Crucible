@@ -14,3 +14,22 @@
       * Creative mode may fly, build instantly, become invulnerable and create
       * free items.
       */
+@@ -25,8 +31,17 @@
+     /**
+      * Adventure mode cannot break blocks, use chat, use buckets, etc.
+      */
+-    ADVENTURE(2);
++    ADVENTURE(2),
+ 
++    // Crucible start - plugins built against 1.8+ APIs reference SPECTATOR directly
++    /**
++     * Spectator mode cannot interact with the world and is invisible to
++     * other players. Only available when a mod adds the spectator game type;
++     * otherwise the server refuses to switch to it.
++     */
++    SPECTATOR(3);
++    // Crucible end
++
+     private final int value;
+     private final static Map<Integer, GameMode> BY_ID = Maps.newHashMap();
+ 
