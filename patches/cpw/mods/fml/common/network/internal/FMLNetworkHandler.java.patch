@@ -16,7 +16,7 @@
  
  public class FMLNetworkHandler
  {
-@@ -75,6 +84,31 @@
+@@ -75,14 +84,42 @@
              Container remoteGuiContainer = NetworkRegistry.INSTANCE.getRemoteGuiContainer(mc, entityPlayerMP, modGuiId, world, x, y, z);
              if (remoteGuiContainer != null)
              {
@@ -48,7 +48,50 @@
                  entityPlayerMP.getNextWindowId();
                  entityPlayerMP.closeContainer();
                  int windowId = entityPlayerMP.currentWindowId;
-@@ -131,6 +165,7 @@
+                 FMLMessage.OpenGui openGui = new FMLMessage.OpenGui(windowId, mc.getModId(), modGuiId, x, y, z);
+                 EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
+-                embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
+-                embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityPlayerMP);
+-                embeddedChannel.writeOutbound(openGui);
++                synchronized (embeddedChannel) // Crucible - see forwardHandshake
++                {
++                    embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
++                    embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityPlayerMP);
++                    embeddedChannel.writeOutbound(openGui);
++                }
+                 entityPlayerMP.openContainer = remoteGuiContainer;
+                 entityPlayerMP.openContainer.windowId = windowId;
+                 entityPlayerMP.openContainer.addCraftingToCrafters(entityPlayerMP);
+@@ -103,9 +140,12 @@
+     public static void makeEntitySpawnAdjustment(Entity entity, EntityPlayerMP player, int serverX, int serverY, int serverZ)
+     {
+         EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
+-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
+-        embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
+-        embeddedChannel.writeOutbound(new FMLMessage.EntityAdjustMessage(entity, serverX, serverY, serverZ));
++        synchronized (embeddedChannel) // Crucible - see forwardHandshake
++        {
++            embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.PLAYER);
++            embeddedChannel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
++            embeddedChannel.writeOutbound(new FMLMessage.EntityAdjustMessage(entity, serverX, serverY, serverZ));
++        }
+     }
+ 
+     public static Packet getEntitySpawningPacket(Entity entity)
+@@ -120,7 +160,11 @@
+             return null;
+         }
+ 
+-        return channelPair.get(Side.SERVER).generatePacketFrom(new FMLMessage.EntitySpawnMessage(er, entity, er.getContainer()));
++        FMLEmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);
++        synchronized (embeddedChannel) // Crucible - see forwardHandshake
++        {
++            return embeddedChannel.generatePacketFrom(new FMLMessage.EntitySpawnMessage(er, entity, er.getContainer()));
++        }
+     }
+ 
+     public static String checkModList(FMLHandshakeMessage.ModList modListPacket, Side side)
+@@ -131,6 +175,7 @@
      public static String checkModList(Map<String,String> listData, Side side)
      {
          List<ModContainer> rejects = Lists.newArrayList();
@@ -56,7 +99,7 @@
          for (Entry<ModContainer, NetworkModHolder> networkMod : NetworkRegistry.INSTANCE.registry().entrySet())
          {
              boolean result = networkMod.getValue().check(listData, side);
-@@ -138,9 +173,15 @@
+@@ -138,9 +183,15 @@
              {
                  rejects.add(networkMod.getKey());
              }
@@ -72,3 +115,43 @@
              return null;
          }
          else
+@@ -172,16 +223,31 @@
+ 
+     public static List<FMLProxyPacket> forwardHandshake(CompleteHandshake push, NetworkDispatcher target, Side side)
+     {
+-        channelPair.get(side).attr(NetworkDispatcher.FML_DISPATCHER).set(target);
+-        channelPair.get(side).writeOutbound(push);
+-
+-        ArrayList<FMLProxyPacket> list = new ArrayList<FMLProxyPacket>();
+-        for (Object o: channelPair.get(side).outboundMessages())
++        // Crucible start - every connection shares this one channel, and each finishes its handshake on its
++        // own Netty thread: unlocked, two logins swap dispatchers and drain each other's packets.
++        FMLEmbeddedChannel embeddedChannel = channelPair.get(side);
++        synchronized (embeddedChannel)
+         {
+-            list.add((FMLProxyPacket)o);
++            embeddedChannel.attr(NetworkDispatcher.FML_DISPATCHER).set(target);
++            try
++            {
++                embeddedChannel.writeOutbound(push);
++
++                ArrayList<FMLProxyPacket> list = new ArrayList<FMLProxyPacket>();
++                for (Object o: embeddedChannel.outboundMessages())
++                {
++                    list.add((FMLProxyPacket)o);
++                }
++                embeddedChannel.outboundMessages().clear();
++                return list;
++            }
++            finally
++            {
++                // Left set, FMLOutboundHandler would pass every later FML message out as handshake-internal.
++                embeddedChannel.attr(NetworkDispatcher.FML_DISPATCHER).remove();
++            }
+         }
+-        channelPair.get(side).outboundMessages().clear();
+-        return list;
++        // Crucible end
+     }
+ 
+ 
