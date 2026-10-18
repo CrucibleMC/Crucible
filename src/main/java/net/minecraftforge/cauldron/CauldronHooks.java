@@ -252,7 +252,7 @@ public class CauldronHooks {
         if (world.chunkProvider instanceof ChunkProviderServer) // Thermos - allow the server to tick entities that are in chunks trying to unload
         {
             ChunkProviderServer cps = ((ChunkProviderServer) world.chunkProvider);
-            if (cps.chunksToUnload.contains(cX, cZ)) {
+            if (cps.unloadQueue.contains(cX, cZ)) {
                 Chunk c = cps.getChunkIfLoaded(cX, cZ);
                 if (c != null) {
                     if (c.lastAccessedTick < 2L) {
@@ -289,7 +289,7 @@ public class CauldronHooks {
             if (world.chunkProvider instanceof ChunkProviderServer) // Thermos - allow the server to tick tiles that are trying to unload
             {
                 ChunkProviderServer cps = ((ChunkProviderServer) world.chunkProvider);
-                if (cps.chunksToUnload.contains(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4)) {
+                if (cps.unloadQueue.contains(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4)) {
                     Chunk c = cps.getChunkIfLoaded(tileEntity.xCoord >> 4, tileEntity.zCoord >> 4);
                     if (c != null) {
                         return c.lastAccessedTick < 2L;

@@ -319,7 +319,7 @@
 +            int chunkX = World.keyToX(chunkCoord);
 +            int chunkZ = World.keyToZ(chunkCoord);
 +            // If unloaded, or in process of being unloaded, drop it
-+            if ((!this.chunkExists(chunkX, chunkZ)) || (this.theChunkProviderServer.chunksToUnload.contains(chunkX, chunkZ)))
++            if ((!this.chunkExists(chunkX, chunkZ)) || (this.theChunkProviderServer.unloadQueue.contains(chunkX, chunkZ)))
 +            {
 +                activeChunkSet.remove(new ChunkCoordIntPair(chunkX, chunkZ)); // Cauldron - vanilla compatibility
 +                iter.remove();
