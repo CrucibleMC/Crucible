@@ -1,19 +1,49 @@
 --- ../src-base/minecraft/cpw/mods/fml/common/network/internal/HandshakeCompletionHandler.java
 +++ ../src-work/minecraft/cpw/mods/fml/common/network/internal/HandshakeCompletionHandler.java
-@@ -13,8 +13,14 @@
+@@ -1,20 +1,44 @@
+ package cpw.mods.fml.common.network.internal;
+ 
+ import org.apache.logging.log4j.Level;
++import cpw.mods.fml.common.FMLCommonHandler;
+ import cpw.mods.fml.common.FMLLog;
++import cpw.mods.fml.common.network.NetworkRegistry;
+ import cpw.mods.fml.common.network.handshake.NetworkDispatcher;
+ import cpw.mods.fml.common.network.internal.FMLMessage.CompleteHandshake;
++import cpw.mods.fml.relauncher.Side;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.SimpleChannelInboundHandler;
+ import io.netty.channel.ChannelHandler.Sharable;
++import net.minecraft.network.INetHandler;
++import net.minecraft.network.NetHandlerPlayServer;
++import net.minecraft.network.NetworkManager;
+ 
+ @Sharable
+ public class HandshakeCompletionHandler extends SimpleChannelInboundHandler<FMLMessage.CompleteHandshake> {
      @Override
      protected void channelRead0(ChannelHandlerContext ctx, CompleteHandshake msg) throws Exception
      {
 -        NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).getAndRemove();
 -        dispatcher.completeHandshake(msg.target);
-+        // Cauldron start - attempt to fix race condition with attr being null
-+        io.netty.util.Attribute<NetworkDispatcher> attr = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER);
-+        if (attr != null)
++        // Crucible start - this runs on the main thread, long after the Netty thread that queued the packet, and
++        // the channel is shared by every connection: take the dispatcher from the connection the packet came in on.
++        INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
++        NetworkManager manager;
++        if (netHandler instanceof NetHandlerPlayServer)
 +        {
-+            NetworkDispatcher dispatcher = attr.getAndRemove();
-+            if (dispatcher != null) dispatcher.completeHandshake(msg.target);
++            manager = ((NetHandlerPlayServer) netHandler).netManager;
 +        }
-+        // Cauldron end
++        else if (msg.target == Side.CLIENT)
++        {
++            manager = FMLCommonHandler.instance().getClientToServerNetworkManager();
++        }
++        else
++        {
++            FMLLog.warning("A server handshake completion arrived on %s instead of a player's play handler, so no connection can be completed; that player will time out.", netHandler);
++            return;
++        }
++        NetworkDispatcher dispatcher = manager == null ? null : NetworkDispatcher.get(manager);
++        if (dispatcher != null) dispatcher.completeHandshake(msg.target); // null: the connection closed while the packet was queued
++        // Crucible end
      }
  
      @Override
