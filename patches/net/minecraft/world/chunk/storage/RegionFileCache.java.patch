@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFileCache.java
-@@ -1,79 +1,162 @@
+@@ -1,79 +1,153 @@
  package net.minecraft.world.chunk.storage;
  
 +import io.github.crucible.CrucibleConfigs;
