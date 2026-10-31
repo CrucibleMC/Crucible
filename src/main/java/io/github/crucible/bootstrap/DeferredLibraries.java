@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  * Attaches the libraries that are downloaded like any other but kept off the jar's
@@ -22,8 +21,6 @@ import java.nio.file.Paths;
  * from an old JVM is to never name it there and add it here instead.</p>
  */
 public final class DeferredLibraries {
-
-    private static final Path LIBRARY_ROOT = Paths.get("libraries").toAbsolutePath();
 
     /**
      * Puts every deferred library this JVM is new enough for on the classpath, and leaves the rest
@@ -50,7 +47,7 @@ public final class DeferredLibraries {
             if (rfb.javaMajorVersion() < minimumJava) {
                 continue;
             }
-            Path jar = LibraryManager.resolveJar(LIBRARY_ROOT, coordinate);
+            Path jar = LibraryManager.resolveJar(LibraryManager.LIBRARY_ROOT, coordinate);
             if (!Files.isRegularFile(jar)) {
                 System.out.println("[Crucible] " + coordinate + " is missing from " + jar
                   + " and will not be available. Start the server without"
