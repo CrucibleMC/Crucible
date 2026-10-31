@@ -114,7 +114,7 @@ public class CrucibleServerMainHook {
     private static void fixClasspathProperty() {
         String[] classpath = System.getProperty("java.class.path").split(File.pathSeparator);
         URL location = CrucibleServerMainHook.class.getProtectionDomain().getCodeSource().getLocation();
-        if(location == null || !location.toString().endsWith(".jar")) {
+        if(location == null || !location.toString().toLowerCase(Locale.ROOT).endsWith(".jar")) {
             return;
         }
         try(JarInputStream input = new JarInputStream(location.openStream())){

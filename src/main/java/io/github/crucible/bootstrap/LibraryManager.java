@@ -41,10 +41,13 @@ public class LibraryManager {
 
     private static Path findLibraryRoot() {
         CodeSource source = LibraryManager.class.getProtectionDomain().getCodeSource();
-        if (source != null && source.getLocation() != null && source.getLocation().toString().endsWith(".jar")) {
+        if (source != null && source.getLocation() != null) {
             try {
-                return Paths.get(source.getLocation().toURI()).getParent().resolve("libraries").toAbsolutePath();
-            } catch (URISyntaxException ignored) {
+                Path location = Paths.get(source.getLocation().toURI());
+                if (Files.isRegularFile(location)) {
+                    return location.getParent().resolve("libraries").toAbsolutePath();
+                }
+            } catch (URISyntaxException | RuntimeException notALocalFile) {
             }
         }
         return Paths.get("libraries").toAbsolutePath(); //not running from a jar, as in the dev workspace
