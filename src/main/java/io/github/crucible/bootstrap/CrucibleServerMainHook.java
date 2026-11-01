@@ -29,7 +29,7 @@ public class CrucibleServerMainHook {
       "https://repo.maven.apache.org/maven2/",
       "https://nexus.gtnewhorizons.com/repository/public/"
     };
-    private static final Path LIBRARY_ROOT = Paths.get("libraries").toAbsolutePath();
+    private static final Path LIBRARY_ROOT = LibraryManager.LIBRARY_ROOT;
     public static final PrintStream originalOut = System.out;
     public static final PrintStream originalErr = System.err;
 
@@ -114,20 +114,23 @@ public class CrucibleServerMainHook {
     private static void fixClasspathProperty() {
         String[] classpath = System.getProperty("java.class.path").split(File.pathSeparator);
         URL location = CrucibleServerMainHook.class.getProtectionDomain().getCodeSource().getLocation();
-        if(location == null || !location.toString().endsWith(".jar")) {
+        if(location == null || !location.toString().toLowerCase(Locale.ROOT).endsWith(".jar")) {
             return;
         }
         try(JarInputStream input = new JarInputStream(location.openStream())){
             Manifest manifest = input.getManifest();
             String classPathFromManifest = (String) manifest.getMainAttributes().get(new Attributes.Name("Class-Path"));
             String[] internalClasspath = classPathFromManifest.split(" ");
+            //the JVM resolved these against the jar's folder; anyone reading the property resolves them against the working directory
+            Path jarFolder = Paths.get(location.toURI()).getParent();
             Set<String> set = new HashSet<>();
             Collections.addAll(set, classpath);
             List<String> allClasspath = new ArrayList<>(classpath.length + internalClasspath.length);
             Collections.addAll(allClasspath, classpath);
             for(String s : internalClasspath) {
-                if(!set.contains(s)) {
-                    allClasspath.add(s);
+                String entry = jarFolder.resolve(s).toString();
+                if(!set.contains(entry)) {
+                    allClasspath.add(entry);
                 }
             }
             System.setProperty("java.class.path", String.join(File.pathSeparator, allClasspath));

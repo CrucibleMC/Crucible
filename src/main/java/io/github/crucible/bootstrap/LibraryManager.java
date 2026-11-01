@@ -9,12 +9,15 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.security.CodeSource;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +31,27 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LibraryManager {
+
+    /**
+     * The {@code libraries} folder next to the server jar, where every library is verified, downloaded
+     * and loaded from. The JVM resolves the jar's {@code Class-Path} against the jar's own folder, not the
+     * working directory, so this is the only place a downloaded library can be picked up from.
+     */
+    public static final Path LIBRARY_ROOT = findLibraryRoot();
+
+    private static Path findLibraryRoot() {
+        CodeSource source = LibraryManager.class.getProtectionDomain().getCodeSource();
+        if (source != null && source.getLocation() != null) {
+            try {
+                Path location = Paths.get(source.getLocation().toURI());
+                if (Files.isRegularFile(location)) {
+                    return location.getParent().resolve("libraries").toAbsolutePath();
+                }
+            } catch (URISyntaxException | RuntimeException notALocalFile) {
+            }
+        }
+        return Paths.get("libraries").toAbsolutePath(); //not running from a jar, as in the dev workspace
+    }
 
     /** Where {@code group:artifact:version} sits under a library root, and under a maven repo. */
     public static Path resolveJar(Path libraryRoot, String library) {
