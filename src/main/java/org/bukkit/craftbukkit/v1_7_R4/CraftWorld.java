@@ -201,7 +201,7 @@ public class CraftWorld implements World {
         }
 
         // Already unloading?
-        if (world.theChunkProviderServer.chunksToUnload.contains(x, z)) {
+        if (world.theChunkProviderServer.unloadQueue.contains(x, z)) {
             return true;
         }
         // Cauldron end
@@ -219,7 +219,7 @@ public class CraftWorld implements World {
         }
 
         // Already unloading?
-        if (world.theChunkProviderServer.chunksToUnload.contains(x, z)) {
+        if (world.theChunkProviderServer.unloadQueue.contains(x, z)) {
             return true;
         }
 
@@ -232,7 +232,7 @@ public class CraftWorld implements World {
     public boolean regenerateChunk(int x, int z) {
         unloadChunk(x, z, false, false);
 
-        //world.theChunkProviderServer.chunksToUnload.remove(x, z); // Cauldron - this is handled in unloadChunksIfNotNearSpawn
+        //world.theChunkProviderServer.unloadQueue.remove(x, z); // Cauldron - this is handled in unloadChunksIfNotNearSpawn
 
         net.minecraft.world.chunk.Chunk chunk = null;
 
@@ -282,7 +282,7 @@ public class CraftWorld implements World {
             return world.theChunkProviderServer.loadChunk(x, z) != null;
         }
 
-        world.theChunkProviderServer.chunksToUnload.remove(x, z);
+        world.theChunkProviderServer.unloadQueue.remove(x, z);
         //net.minecraft.world.chunk.Chunk chunk = world.theChunkProviderServer.loadedChunkHashMap_TH.get(LongHash.toLong(x, z));
         net.minecraft.world.chunk.Chunk chunk = world.theChunkProviderServer.loadedChunkHashMap_KC.rawThermos().get(x, z); //Thermos replacement for line above
 
@@ -1454,7 +1454,7 @@ public class CraftWorld implements World {
             }
 
             // Already unloading?
-            if (cps.chunksToUnload.contains(chunk.xPosition, chunk.zPosition)) {
+            if (cps.unloadQueue.contains(chunk.xPosition, chunk.zPosition)) {
                 continue;
             }
 
